@@ -1,0 +1,2260 @@
+{
+  "info": {
+    "_postman_id": "73cbf62a-0b5c-4a37-943d-6fafc4b8217a",
+    "name": "Wellbore DDMS",
+    "schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Setup",
+      "item": [
+        {
+          "name": "Get an SPN Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// this snippet extracts the new access and id tokens\r",
+                  "// and puts them to environment variables\r",
+                  "cp = pm.environment.get(\"cloud_platform\");\r",
+                  "\r",
+                  "var data = JSON.parse(responseBody)\r",
+                  "pm.environment.set(\"access_token\", data.access_token);\r",
+                  "if (cp == \"AWS\" || cp == \"IBM\") {\r",
+                  "   pm.environment.set(\"id_token\", data.id_token);\r",
+                  "}\r",
+                  "// Uncomment if server returns a new refresh_token,\r",
+                  "// otherwise comment out to prevent overwriting it with null\r",
+                  "if (cp == \"Azure\") {\r",
+                  "    pm.environment.set(\"refresh_token\", data.refresh_token);\r",
+                  "}\r",
+                  "\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "grant_type",
+                  "value": "client_credentials",
+                  "type": "text"
+                },
+                {
+                  "key": "client_id",
+                  "value": "{{CLIENT_ID}}",
+                  "type": "text"
+                },
+                {
+                  "key": "client_secret",
+                  "value": "{{CLIENT_SECRET}}",
+                  "type": "text"
+                },
+                {
+                  "key": "scope",
+                  "value": "{{SCOPE}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": "https://login.microsoftonline.com/{{TENANT_ID}}/oauth2/v2.0/token"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Legal Tag for WDMS",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "var rand = _.random(999111111111, 999999999999);",
+                  "var dataPartition = pm.environment.get(\"data-partition-id\");",
+                  "postman.setEnvironmentVariable(\"WellboreDMSRunId\", \"AutoTest_\"+ rand);",
+                  "postman.setEnvironmentVariable(\"WellboreRecordDMSRunId\", \"AutoTest_\"+ rand);",
+                  "pm.environment.set(\"tagName\", \"Wellbore-Legal-Tag-Test\" + rand);",
+                  "",
+                  "cp = pm.environment.get(\"cloud_platform\");",
+                  "if (cp == \"GCP\") {",
+                  "   pm.environment.set(\"access_token\", pm.environment.get(\"gcp_access_token\"));",
+                  "}",
+                  "",
+                  "if (cp == \"Azure\") {",
+                  "    pm.environment.set(\"New_OwnerDataGroup\", \"data.default.owners\");",
+                  "    pm.environment.set(\"New_ViewerDataGroup\", \"data.default.viewers\");",
+                  "   }",
+                  "else{",
+                  "    pm.environment.set(\"New_OwnerDataGroup\", \"data.default.owners\");",
+                  "    pm.environment.set(\"New_ViewerDataGroup\", \"data.default.viewers\");",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "/*pm.test(\"Status description - OK\", function () {",
+                  "    pm.response.to.have.status(\"OK\");",
+                  "});*/",
+                  "cp = pm.environment.get(\"cloud_platform\");",
+                  "if (cp == \"GCP\") {",
+                  "   pm.environment.set(\"access_token\", pm.environment.get(\"id_token\"));",
+                  "}",
+                  "//capture the legal tag name from response",
+                  "//capture the legal tag name from response",
+                  "try {",
+                  "    let resBody = pm.response.json();",
+                  "    let createdLegaltagName = resBody.name;",
+                  "    pm.environment.set(\"tagName\", createdLegaltagName);",
+                  "    pm.environment.set(\"LegalTagNameExists\", createdLegaltagName);",
+                  "    console.log(createdLegaltagName.length);",
+                  "    tests[\"Leagal tag created: \" + createdLegaltagName] = createdLegaltagName.length > 1;",
+                  "}",
+                  "",
+                  "catch (e) {",
+                  "    console.log(e.message);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {}
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "{{access_token}}"
+              }
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "type": "text",
+                "value": "application/json"
+              },
+              {
+                "key": "data-partition-id",
+                "type": "text",
+                "value": "{{data-partition-id}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"{{tagName}}\",\n    \"description\": \"Legal Tag added for Wellbore\",\n    \"properties\": {\n        \"contractId\": \"123456\",\n        \"countryOfOrigin\": [\n            \"US\",\n            \"CA\"\n        ],\n        \"dataType\": \"Public Domain Data\",\n        \"exportClassification\": \"EAR99\",\n        \"originator\": \"Schlumberger\",\n        \"personalData\": \"No Personal Data\",\n        \"securityClassification\": \"Private\",\n        \"expirationDate\": \"2025-12-25\"\n    }\n}"
+            },
+            "url": "{{base_url}}/{{legal}}/legaltags"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Basic",
+      "item": [
+        {
+          "name": "About",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "{{access_token}}"
+              }
+            },
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/{{wellbore}}/ddms/v2/about"
+          },
+          "response": []
+        },
+        {
+          "name": "Version",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "{{access_token}}"
+              }
+            },
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/{{wellbore}}/ddms/v2/version"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Well",
+      "item": [
+        {
+          "name": "Create Well",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "var dataPartition = pm.environment.get(\"data-partition-id\");\r",
+                  "var rand = pm.environment.get(\"WellboreDMSRunId\")\r",
+                  "postman.setEnvironmentVariable(\"WellRecordID\", dataPartition + \":master-data--Well:\" + rand);"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"response must be valid\", function () {\r",
+                  "     pm.response.to.be.ok;\r",
+                  "     pm.response.to.be.withBody;\r",
+                  "     pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"status code is 200\", function () {\r",
+                  "     pm.expect(pm.response.code).to.eql(200);\r",
+                  "     var jsonData = pm.response.json();\r",
+                  "     pm.environment.set(\"wellid\", jsonData.recordIds[0]);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"No records were skipped\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.skippedRecordIds.length).to.equal(0);\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "{{access_token}}"
+              }
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "data-partition-id",
+                "type": "text",
+                "value": "{{data-partition-id}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[\r\n    {\r\n        \"acl\": {\r\n            \"viewers\": [\r\n                \"{{New_ViewerDataGroup}}@{{data-partition-id}}{{domain}}\"\r\n            ],\r\n            \"owners\": [\r\n                \"{{New_OwnerDataGroup}}@{{data-partition-id}}{{domain}}\"\r\n            ]\r\n        },\r\n        \"data\": {\r\n            \"FacilityName\": \"Faciliity_{{WellboreDMSRunId}}\",\r\n            \"ExtensionProperties\": {\r\n                \"UWI\": \"20-000-00000-00\"\r\n            }\r\n        },\r\n        \"id\": \"{{data-partition-id}}:master-data--Well:{{WellboreDMSRunId}}\",\r\n        \"kind\": \"osdu:wks:master-data--Well:1.0.0\",\r\n        \"legal\": {\r\n            \"legaltags\": [\r\n                \"{{tagName}}\"\r\n            ],\r\n            \"otherRelevantDataCountries\": [\r\n                \"FR\",\r\n                \"US\"\r\n            ],\r\n            \"status\": \"compliant\"\r\n        }\r\n    }\r\n]",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/{{wellbore}}/ddms/v3/wells",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{wellbore}}",
+                "ddms",
+                "v3",
+                "wells"
+              ],
+              "query": [
+                {
+                  "key": "data-partition-id",
+                  "value": "{{data-partition-id}}",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Well",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"response must be valid\", function () {\r",
+                  "     pm.response.to.be.ok;\r",
+                  "     pm.response.to.be.withBody;\r",
+                  "     pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "var wellrecordid = pm.environment.get(\"WellRecordID\");\r",
+                  "pm.test(\"status code is 200\", function () {\r",
+                  "     pm.expect(pm.response.code).to.eql(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Check record id\", function () {\r",
+                  "     var jsonData = pm.response.json();\r",
+                  "     pm.expect(jsonData.id).to.eql(wellrecordid);\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "{{access_token}}"
+              }
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "data-partition-id",
+                "type": "text",
+                "value": "{{data-partition-id}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{wellbore}}/ddms/v3/wells/{{WellRecordID}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{wellbore}}",
+                "ddms",
+                "v3",
+                "wells",
+                "{{WellRecordID}}"
+              ],
+              "query": [
+                {
+                  "key": "data-partition-id",
+                  "value": "{{data-partition-id}}",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Well versions",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"response must be valid\", function () {\r",
+                  "     pm.response.to.be.ok;\r",
+                  "     pm.response.to.be.withBody;\r",
+                  "     pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "var wellrecordid = pm.environment.get(\"WellRecordID\");\r",
+                  "var version = pm.response.json().versions;\r",
+                  "postman.setEnvironmentVariable(\"RecordVersion\", version[0]);\r",
+                  "\r",
+                  "pm.test(\"status code is 200\", function () {\r",
+                  "     pm.expect(pm.response.code).to.eql(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Check record id\", function () {\r",
+                  "     var jsonData = pm.response.json();\r",
+                  "     pm.expect(jsonData.recordId).to.eql(wellrecordid);\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "{{access_token}}"
+              }
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "data-partition-id",
+                "type": "text",
+                "value": "{{data-partition-id}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{wellbore}}/ddms/v3/wells/{{WellRecordID}}/versions",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{wellbore}}",
+                "ddms",
+                "v3",
+                "wells",
+                "{{WellRecordID}}",
+                "versions"
+              ],
+              "query": [
+                {
+                  "key": "data-partition-id",
+                  "value": "{{data-partition-id}}",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Well Specific version",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"response must be valid\", function () {\r",
+                  "     pm.response.to.be.ok;\r",
+                  "     pm.response.to.be.withBody;\r",
+                  "     pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "var wellrecordid = pm.environment.get(\"WellRecordID\");\r",
+                  "pm.test(\"status code is 200\", function () {\r",
+                  "     pm.expect(pm.response.code).to.eql(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Check record id\", function () {\r",
+                  "     var jsonData = pm.response.json();\r",
+                  "     pm.expect(jsonData.id).to.eql(wellrecordid);\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "{{access_token}}"
+              }
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "data-partition-id",
+                "type": "text",
+                "value": "{{data-partition-id}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{wellbore}}/ddms/v3/wells/{{WellRecordID}}/versions/{{RecordVersion}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{wellbore}}",
+                "ddms",
+                "v3",
+                "wells",
+                "{{WellRecordID}}",
+                "versions",
+                "{{RecordVersion}}"
+              ],
+              "query": [
+                {
+                  "key": "data-partition-id",
+                  "value": "{{data-partition-id}}",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Wellbore",
+      "item": [
+        {
+          "name": "Create Wellbore",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "var dataPartition = pm.environment.get(\"data-partition-id\");\r",
+                  "var rand = pm.environment.get(\"WellboreRecordDMSRunId\")\r",
+                  "postman.setEnvironmentVariable(\"WellboreRecordID\", dataPartition + \":master-data--Wellbore:\" + rand);"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"response must be valid\", function () {\r",
+                  "     pm.response.to.be.ok;\r",
+                  "     pm.response.to.be.withBody;\r",
+                  "     pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"status code is 200\", function () {\r",
+                  "     pm.expect(pm.response.code).to.eql(200);\r",
+                  "     var jsonData = pm.response.json();\r",
+                  "     pm.environment.set(\"wellboreid\", jsonData.recordIds[0]);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"No records were skipped\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.skippedRecordIds.length).to.equal(0);\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "{{access_token}}"
+              }
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "data-partition-id",
+                "type": "text",
+                "value": "{{data-partition-id}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[{\r\n        \"acl\": {\r\n             \"viewers\": [\r\n                \"{{New_ViewerDataGroup}}@{{data-partition-id}}{{domain}}\"\r\n            ],\r\n            \"owners\": [\r\n                \"{{New_OwnerDataGroup}}@{{data-partition-id}}{{domain}}\"\r\n            ]\r\n        },\r\n        \"id\": \"{{data-partition-id}}:master-data--Wellbore:{{WellboreRecordDMSRunId}}\",\r\n        \"kind\": \"osdu:wks:master-data--Wellbore:1.0.0\",\r\n        \"legal\": {\r\n            \"legaltags\": [\r\n                \"{{tagName}}\"\r\n            ],\r\n            \"otherRelevantDataCountries\": [\r\n                \"FR\", \"US\"\r\n            ]\r\n        },\r\n        \"data\": {\r\n            \"ExtensionProperties\": {\r\n                \"airGap\": {\r\n                    \"unitKey\": \"ft\",\r\n                    \"value\": 35.0\r\n                },\r\n                \"country\": \"United States of America\",\r\n                \"operator\": \"Francois Vinyes\",\r\n                \"uwi\": \"33-089-00300-00-01\",\r\n                \"wellboreType\": \"bypass\"\r\n            },\r\n            \"SpatialLocation\": {\r\n                \"Wgs84Coordinates\": {\r\n                    \"features\": [{\r\n                            \"geometry\": {\r\n                                \"coordinates\": [\r\n                                    [\r\n                                        -103.2380248,\r\n                                        46.8925081,\r\n                                        5301.0\r\n                                    ],\r\n                                    [\r\n                                        -103.2380248,\r\n                                        46.8925081,\r\n                                        2801.0\r\n                                    ],\r\n                                    [\r\n                                        -103.2378748,\r\n                                        46.892608100000004,\r\n                                        301.0\r\n                                    ],\r\n                                    [\r\n                                        -103.23742477750001,\r\n                                        46.89270811,\r\n                                        -2199.0\r\n                                    ],\r\n                                    [\r\n                                        -103.23667470999663,\r\n                                        46.892808120001,\r\n                                        -4699.0\r\n                                    ],\r\n                                    [\r\n                                        -103.2356245974865,\r\n                                        46.892908130002,\r\n                                        -7199.0\r\n                                    ]\r\n                                ],\r\n                                \"type\": \"LineString\"\r\n                            },\r\n                            \"properties\": {\r\n                                \"name\": \"Newton 2-31-Lat-1\"\r\n                            },\r\n                            \"type\": \"Feature\"\r\n                        }\r\n                    ],\r\n                    \"type\": \"FeatureCollection\"\r\n                }\r\n            },\r\n            \"FacilityName\": \"Faciliity_{{WellboreRecordDMSRunId}}\",\r\n            \"WellID\": \"{{WellRecordID}}:\"           \r\n        },        \r\n        \"meta\": [{\r\n                \"kind\": \"Unit\",\r\n                \"name\": \"Measure depth default unit\",\r\n                \"persistableReference\": \"persistableReference\",\r\n                \"propertyNames\": [\"symbol\"],\r\n                \"propertyValues\": [\"ft\"] \r\n            }\r\n        ]\r\n    }\r\n]",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/{{wellbore}}/ddms/v3/wellbores"
+          },
+          "response": []
+        },
+        {
+          "name": "Wellbore",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"response must be valid\", function () {\r",
+                  "     pm.response.to.be.ok;\r",
+                  "     pm.response.to.be.withBody;\r",
+                  "     pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "var lwellboreid = pm.environment.get(\"WellboreRecordID\");\r",
+                  "pm.test(\"status code is 200\", function () {\r",
+                  "     pm.expect(pm.response.code).to.eql(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Check record id\", function () {\r",
+                  "     var jsonData = pm.response.json();\r",
+                  "     pm.expect(jsonData.id).to.eql(lwellboreid);\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "{{access_token}}"
+              }
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "data-partition-id",
+                "type": "text",
+                "value": "{{data-partition-id}}"
+              }
+            ],
+            "url": "{{base_url}}/{{wellbore}}/ddms/v3/wellbores/{{WellboreRecordID}}"
+          },
+          "response": []
+        },
+        {
+          "name": "Wellbore Versions",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"response must be valid\", function () {\r",
+                  "     pm.response.to.be.ok;\r",
+                  "     pm.response.to.be.withBody;\r",
+                  "     pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "var lwellboreid = pm.environment.get(\"WellboreRecordID\");\r",
+                  "var version = pm.response.json().versions;\r",
+                  "postman.setEnvironmentVariable(\"WellboreRecordVersion\", version[0]);\r",
+                  "\r",
+                  "pm.test(\"status code is 200\", function () {\r",
+                  "     pm.expect(pm.response.code).to.eql(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Check record id\", function () {\r",
+                  "     var jsonData = pm.response.json();\r",
+                  "     pm.expect(jsonData.recordId).to.eql(lwellboreid);\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "{{access_token}}"
+              }
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "data-partition-id",
+                "type": "text",
+                "value": "{{data-partition-id}}"
+              }
+            ],
+            "url": "{{base_url}}/{{wellbore}}/ddms/v3/wellbores/{{WellboreRecordID}}/versions"
+          },
+          "response": []
+        },
+        {
+          "name": "Wellbore Specific Version",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"response must be valid\", function () {\r",
+                  "     pm.response.to.be.ok;\r",
+                  "     pm.response.to.be.withBody;\r",
+                  "     pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "var lwellboreid = pm.environment.get(\"WellboreRecordID\");\r",
+                  "pm.test(\"status code is 200\", function () {\r",
+                  "     pm.expect(pm.response.code).to.eql(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Check record id\", function () {\r",
+                  "     var jsonData = pm.response.json();\r",
+                  "     pm.expect(jsonData.id).to.eql(lwellboreid);\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "{{access_token}}"
+              }
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "data-partition-id",
+                "type": "text",
+                "value": "{{data-partition-id}}"
+              }
+            ],
+            "url": "{{base_url}}/{{wellbore}}/ddms/v3/wellbores/{{WellboreRecordID}}/versions/{{WellboreRecordVersion}}"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "WellLog",
+      "item": [
+        {
+          "name": "Create WellLog",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "var dataPartition = pm.environment.get(\"data-partition-id\");\r",
+                  "var rand = pm.environment.get(\"WellboreDMSRunId\")\r",
+                  "postman.setEnvironmentVariable(\"WellLogID\", dataPartition + \":work-product-component--WellLog:\" + rand);"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"response must be valid\", function () {\r",
+                  "     pm.response.to.be.ok;\r",
+                  "     pm.response.to.be.withBody;\r",
+                  "     pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"status code is 200\", function () {\r",
+                  "     pm.expect(pm.response.code).to.eql(200);\r",
+                  "     var jsonData = pm.response.json();\r",
+                  "     pm.environment.set(\"wellogid\", jsonData.recordIds[0]);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"No records were skipped\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.skippedRecordIds.length).to.equal(0);\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "{{access_token}}"
+              }
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "data-partition-id",
+                "type": "text",
+                "value": "{{data-partition-id}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[{\r\n        \"acl\": {\r\n            \"viewers\": [\r\n                \"{{New_ViewerDataGroup}}@{{data-partition-id}}{{domain}}\"\r\n            ],\r\n            \"owners\": [\r\n                \"{{New_OwnerDataGroup}}@{{data-partition-id}}{{domain}}\"\r\n            ]\r\n        },\r\n        \"data\": {\r\n            \"Curves\": [\r\n                {\r\n                    \"CurveID\": \"GR_ID\",\r\n                    \"Mnemonic\": \"GR\",\r\n                    \"CurveUnit\": \"{{data-partition-id}}:reference-data--UnitOfMeasure:m:\",\r\n                    \"LogCurveFamilyID\": \"{{data-partition-id}}:reference-data--LogCurveFamily:GammaRay:\"\r\n                },\r\n                {\r\n                    \"CurveID\": \"POR_ID\",\r\n                    \"Mnemonic\": \"NPOR\",\r\n                    \"CurveUnit\": \"{{data-partition-id}}:reference-data--UnitOfMeasure:m:\",\r\n                    \"LogCurveFamilyID\": \"{{data-partition-id}}:reference-data--LogCurveFamily:NeutronPorosity:\"\r\n                },\r\n                {\r\n                    \"CurveID\": \"Bulk Density\",\r\n                    \"Mnemonic\": \"RHOB\",\r\n                    \"CurveUnit\": \"{{data-partition-id}}:reference-data--UnitOfMeasure:m:\",\r\n                    \"LogCurveFamilyID\": \"{{data-partition-id}}:reference-data--LogCurveFamily:BulkDensity:\"\r\n                }\r\n            ],\r\n            \"WellboreID\": \"{{WellboreRecordID}}:\",\r\n            \"CreationDateTime\": \"2013-03-22T11:16:03Z\",\r\n            \"VerticalMeasurement\": {\r\n                \"VerticalMeasurement\": 2680.5,\r\n                \"VerticalMeasurementPathID\": \"{{data-partition-id}}:reference-data--VerticalMeasurementPath:MD:\",\r\n                \"VerticalMeasurementUnitOfMeasureID\": \"{{data-partition-id}}:reference-data--UnitOfMeasure:ft:\"\r\n            },\r\n            \"TopMeasuredDepth\": 12345.6,\r\n            \"BottomMeasuredDepth\": 13856.25,\r\n            \"Name\": \"{{WellboreDMSRunId}}\",\r\n       \r\n            \"ExtensionProperties\": {\r\n                \"step\": {\r\n                    \"unitKey\": \"ft\",\r\n                    \"value\": 0.1\r\n                },\r\n                \"dateModified\": \"2013-03-22T11:16:03Z\"\r\n            }\r\n        },\r\n        \"id\": \"{{data-partition-id}}:work-product-component--WellLog:{{WellboreDMSRunId}}\",\r\n        \"kind\": \"osdu:wks:work-product-component--WellLog:1.0.0\",\r\n        \"legal\": {\r\n            \"legaltags\": [\r\n                \"{{tagName}}\"\r\n            ],\r\n            \"otherRelevantDataCountries\": [\r\n                \"US\",\r\n                \"FR\"\r\n            ]\r\n        },\r\n        \"meta\": [{\r\n                \"kind\": \"Unit\",\r\n                \"name\": \"ft\",\r\n                \"persistableReference\": \"{\\\"scaleOffset\\\":{\\\"scale\\\":0.3048,\\\"offset\\\":0.0},\\\"symbol\\\":\\\"ft\\\",\\\"baseMeasurement\\\":{\\\"ancestry\\\":\\\"Length\\\",\\\"type\\\":\\\"UM\\\"},\\\"type\\\":\\\"USO\\\"}\",\r\n                \"propertyNames\": [\r\n                    \"stop.value\",\r\n                    \"elevationReference.elevationFromMsl.value\",\r\n                    \"start.value\",\r\n                    \"step.value\",\r\n                    \"reference.unitKey\"\r\n                ],\r\n                \"propertyValues\": [\r\n                    \"ft\"\r\n                ]\r\n            }, {\r\n                \"kind\": \"DateTime\",\r\n                \"name\": \"datetime\",\r\n                \"persistableReference\": \"{\\\"format\\\":\\\"yyyy-MM-ddTHH:mm:ssZ\\\",\\\"timeZone\\\":\\\"UTC\\\",\\\"type\\\":\\\"DTM\\\"}\",\r\n                \"propertyNames\": [\r\n                    \"dateModified\",\r\n                    \"dateCreated\"\r\n                ]\r\n            }\r\n        ]\r\n    }\r\n]",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/{{wellbore}}/ddms/v3/welllogs",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{wellbore}}",
+                "ddms",
+                "v3",
+                "welllogs"
+              ],
+              "query": [
+                {
+                  "key": "data-partition-id",
+                  "value": "{{data-partition-id}}",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "WellLog data",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"response must be valid\", function () {\r",
+                  "     pm.response.to.be.ok;\r",
+                  "     pm.response.to.be.withBody;\r",
+                  "     pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"status code is 200\", function () {\r",
+                  "     pm.expect(pm.response.code).to.eql(200);\r",
+                  "     var jsonData = pm.response.json();\r",
+                  "     pm.environment.set(\"welllogid\", jsonData.recordIds[0]);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"No records were skipped\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.skippedRecordIds.length).to.equal(0);\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "{{access_token}}"
+              }
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "data-partition-id",
+                "type": "text",
+                "value": "{{data-partition-id}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"columns\": [\r\n    \"Ref\",\r\n    \"col_1\",\r\n    \"col_2\"\r\n  ],\r\n  \"index\": [\r\n    0,\r\n    1,\r\n    2,\r\n    3,\r\n    4\r\n  ],\r\n  \"data\": [\r\n    [\r\n      0,\r\n      1111.1,\r\n      2222.1\r\n    ],\r\n    [\r\n      0.5,\r\n      1111.2,\r\n      2222.2\r\n    ],\r\n    [\r\n      1,\r\n      1111.3,\r\n      2222.3\r\n    ],\r\n    [\r\n      1.5,\r\n      1111.4,\r\n      2222.4\r\n    ],\r\n    [\r\n      2,\r\n      1111.5,\r\n      2222.5\r\n    ]\r\n  ]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/{{wellbore}}/ddms/v3/welllogs/{{WellLogID}}/data",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{wellbore}}",
+                "ddms",
+                "v3",
+                "welllogs",
+                "{{WellLogID}}",
+                "data"
+              ],
+              "query": [
+                {
+                  "key": "data-partition-id",
+                  "value": "{{data-partition-id}}",
+                  "disabled": true
+                },
+                {
+                  "key": "orient",
+                  "value": "split",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "WellLog",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"response must be valid\", function () {\r",
+                  "     pm.response.to.be.ok;\r",
+                  "     pm.response.to.be.withBody;\r",
+                  "     pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "var lwelllogid = pm.environment.get(\"WellLogID\");\r",
+                  "pm.test(\"status code is 200\", function () {\r",
+                  "     pm.expect(pm.response.code).to.eql(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Check record id\", function () {\r",
+                  "     var jsonData = pm.response.json();\r",
+                  "     pm.expect(jsonData.id).to.eql(lwelllogid);\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "{{access_token}}"
+              }
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "data-partition-id",
+                "value": "{{data-partition-id}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{base_url}}/{{wellbore}}/ddms/v3/welllogs/{{WellLogID}}"
+          },
+          "response": []
+        },
+        {
+          "name": "WellLog data",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"response must be valid\", function () {\r",
+                  "     pm.response.to.be.ok;\r",
+                  "     pm.response.to.be.withBody;\r",
+                  "     pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"status code is 200\", function () {\r",
+                  "     pm.expect(pm.response.code).to.eql(200);\r",
+                  "});\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "{{access_token}}"
+              }
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "data-partition-id",
+                "value": "{{data-partition-id}}",
+                "type": "text"
+              },
+              {
+                "key": "offset",
+                "value": "0",
+                "type": "integer"
+              },
+              {
+                "key": "limit",
+                "value": "100",
+                "type": "integer"
+              },
+              {
+                "key": "curves",
+                "value": "",
+                "type": "text"
+              },
+              {
+                "key": "describe",
+                "value": "false",
+                "type": "boolean"
+              },
+              {
+                "key": "orient",
+                "value": "split",
+                "type": "text"
+              },
+              {
+                "key": "accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{base_url}}/{{wellbore}}/ddms/v3/welllogs/{{WellLogID}}/data"
+          },
+          "response": []
+        },
+        {
+          "name": "Create WellLog session",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"response must be valid\", function () {",
+                  "     pm.response.to.be.ok;",
+                  "     pm.response.to.be.withBody;",
+                  "     pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "const resobj = pm.response.json();",
+                  "pm.collectionVariables.set(\"welllogSessionId\", resobj.id);",
+                  "",
+                  "pm.test(\"status code is 200\", function () {",
+                  "     pm.expect(pm.response.code).to.eql(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Check record id\", function () {",
+                  "     var jsonData = pm.response.json();",
+                  "     pm.expect(jsonData.mode).to.eql(\"update\") && pm.expect(jsonData.state).to.eql(\"open\") ;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "{{access_token}}"
+              }
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "data-partition-id",
+                "value": "{{data-partition-id}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"fromVersion\": 0,\r\n  \"timeToLive\": 60,\r\n  \"mode\": \"update\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/{{wellbore}}/ddms/v3/welllogs/{{WellLogID}}/sessions",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{wellbore}}",
+                "ddms",
+                "v3",
+                "welllogs",
+                "{{WellLogID}}",
+                "sessions"
+              ],
+              "query": [
+                {
+                  "key": "data-partition-id",
+                  "value": "{{data-partition-id}}",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "WellLog all sessions",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"response must be valid\", function () {\r",
+                  "     pm.response.to.be.ok;\r",
+                  "     pm.response.to.be.withBody;\r",
+                  "     pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"status code is 200\", function () {\r",
+                  "     pm.expect(pm.response.code).to.eql(200);\r",
+                  "});\r",
+                  "\r",
+                  "var sessid = pm.collectionVariables.get(\"welllogSessionId\");\r",
+                  "pm.test(\"Check record id\", function () {\r",
+                  "     var jsonData = pm.response.json();\r",
+                  "     pm.expect(jsonData[0].id).to.eql(sessid);\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "{{access_token}}"
+              }
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "data-partition-id",
+                "value": "{{data-partition-id}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{wellbore}}/ddms/v3/welllogs/{{WellLogID}}/sessions",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{wellbore}}",
+                "ddms",
+                "v3",
+                "welllogs",
+                "{{WellLogID}}",
+                "sessions"
+              ],
+              "query": [
+                {
+                  "key": "data-partition-id",
+                  "value": "{{data-partition-id}}",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "WellLog Specific Session",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"response must be valid\", function () {\r",
+                  "     pm.response.to.be.ok;\r",
+                  "     pm.response.to.be.withBody;\r",
+                  "     pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"status code is 200\", function () {\r",
+                  "     pm.expect(pm.response.code).to.eql(200);\r",
+                  "});\r",
+                  "\r",
+                  "var sessid = pm.collectionVariables.get(\"welllogSessionId\");\r",
+                  "pm.test(\"Check record id\", function () {\r",
+                  "     var jsonData = pm.response.json();\r",
+                  "     pm.expect(jsonData.id).to.eql(sessid);\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "{{access_token}}"
+              }
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "data-partition-id",
+                "value": "{{data-partition-id}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{wellbore}}/ddms/v3/welllogs/{{WellLogID}}/sessions/{{welllogSessionId}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{wellbore}}",
+                "ddms",
+                "v3",
+                "welllogs",
+                "{{WellLogID}}",
+                "sessions",
+                "{{welllogSessionId}}"
+              ],
+              "query": [
+                {
+                  "key": "data-partition-id",
+                  "value": "{{data-partition-id}}",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "WellLog session data",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"status code is 200\", function () {\r",
+                  "     pm.expect(pm.response.code).to.eql(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Status description - OK.\", function () {\r",
+                  "    pm.expect(pm.response.status).to.be.oneOf([\"OK\"]);\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "{{access_token}}"
+              }
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "data-partition-id",
+                "type": "text",
+                "value": "{{data-partition-id}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"columns\": [\r\n    \"Ref\",\r\n    \"col_1\",\r\n    \"col_2\"\r\n  ],\r\n  \"index\": [\r\n    0,\r\n    5,\r\n    6\r\n  ],\r\n  \"data\": [\r\n    [\r\n      0,\r\n      1010.1,\r\n      2020.1\r\n    ],\r\n    [\r\n      10,\r\n      9999,\r\n      8888\r\n    ],\r\n    [\r\n      100,\r\n      7777.77,\r\n      66.6666\r\n    ]\r\n  ]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/{{wellbore}}/ddms/v3/welllogs/{{WellLogID}}/sessions/{{welllogSessionId}}/data",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{wellbore}}",
+                "ddms",
+                "v3",
+                "welllogs",
+                "{{WellLogID}}",
+                "sessions",
+                "{{welllogSessionId}}",
+                "data"
+              ],
+              "query": [
+                {
+                  "key": "data-partition-id",
+                  "value": "{{data-partition-id}}",
+                  "disabled": true
+                },
+                {
+                  "key": "orient",
+                  "value": "split",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "commit WellLog session",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"response must be valid\", function () {\r",
+                  "     pm.response.to.be.ok;\r",
+                  "     pm.response.to.be.withBody;\r",
+                  "     pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "const resobj = pm.response.json();\r",
+                  "pm.collectionVariables.set(\"welllogSessionId\", resobj.id);\r",
+                  "\r",
+                  "pm.test(\"status code is 200\", function () {\r",
+                  "     pm.expect(pm.response.code).to.eql(200);\r",
+                  "});\r",
+                  "\r",
+                  "var sessid = pm.collectionVariables.get(\"welllogSessionId\");\r",
+                  "pm.test(\"Check record id\", function () {\r",
+                  "     var jsonData = pm.response.json();\r",
+                  "     pm.expect(jsonData.id).to.eql(sessid) && pm.expect(jsonData.state).to.eql(\"committed\") ;\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "{{access_token}}"
+              }
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "data-partition-id",
+                "value": "{{data-partition-id}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"state\": \"commit\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/{{wellbore}}/ddms/v3/welllogs/{{WellLogID}}/sessions/{{welllogSessionId}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{wellbore}}",
+                "ddms",
+                "v3",
+                "welllogs",
+                "{{WellLogID}}",
+                "sessions",
+                "{{welllogSessionId}}"
+              ],
+              "query": [
+                {
+                  "key": "data-partition-id",
+                  "value": "{{data-partition-id}}",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "WellLog All Versions",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"response must be valid\", function () {\r",
+                  "     pm.response.to.be.ok;\r",
+                  "     pm.response.to.be.withBody;\r",
+                  "     pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "var version = pm.response.json().versions;\r",
+                  "postman.setEnvironmentVariable(\"WellLogVersion\", version[0]);\r",
+                  "\r",
+                  "pm.test(\"status code is 200\", function () {\r",
+                  "     pm.expect(pm.response.code).to.eql(200);\r",
+                  "});\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "{{access_token}}"
+              }
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "data-partition-id",
+                "value": "{{data-partition-id}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{base_url}}/{{wellbore}}/ddms/v3/welllogs/{{WellLogID}}/versions"
+          },
+          "response": []
+        },
+        {
+          "name": "WellLog  Sepecfic Version",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"response must be valid\", function () {\r",
+                  "     pm.response.to.be.ok;\r",
+                  "     pm.response.to.be.withBody;\r",
+                  "     pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"status code is 200\", function () {\r",
+                  "     pm.expect(pm.response.code).to.eql(200);\r",
+                  "});\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "{{access_token}}"
+              }
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "data-partition-id",
+                "value": "{{data-partition-id}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{base_url}}/{{wellbore}}/ddms/v3/welllogs/{{WellLogID}}/versions/{{WellLogVersion}}"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Trajectory",
+      "item": [
+        {
+          "name": "Create Trajectory",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "var dataPartition = pm.environment.get(\"data-partition-id\");\r",
+                  "var rand = pm.environment.get(\"WellboreDMSRunId\")\r",
+                  "postman.setEnvironmentVariable(\"WellboreTrajectoryID\", dataPartition + \":work-product-component--WellboreTrajectory:\" + rand);"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"response must be valid\", function () {\r",
+                  "     pm.response.to.be.ok;\r",
+                  "     pm.response.to.be.withBody;\r",
+                  "     pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"status code is 200\", function () {\r",
+                  "     pm.expect(pm.response.code).to.eql(200);\r",
+                  "     var jsonData = pm.response.json();\r",
+                  "     pm.expect(jsonData.recordIds[0])\r",
+                  "     pm.environment.set(\"wellboretrajecid\", jsonData.recordIds[0]);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"No records were skipped\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.skippedRecordIds.length).to.equal(0);\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "{{access_token}}"
+              }
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "data-partition-id",
+                "type": "text",
+                "value": "{{data-partition-id}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[\r\n  {\r\n\r\n    \"acl\": {\r\n            \"viewers\": [\r\n            \"{{New_ViewerDataGroup}}@{{data-partition-id}}{{domain}}\"\r\n        ],\r\n        \"owners\": [\r\n            \"{{New_OwnerDataGroup}}@{{data-partition-id}}{{domain}}\"\r\n        ]\r\n    },\r\n\r\n    \"legal\": {\r\n        \"legaltags\": [\r\n            \"{{tagName}}\"\r\n        ],\r\n        \"otherRelevantDataCountries\": [\r\n            \"FR\", \"US\"\r\n        ]\r\n    },\r\n\r\n    \"id\": \"{{data-partition-id}}:work-product-component--WellboreTrajectory:{{WellboreDMSRunId}}\",\r\n    \"kind\": \"osdu:wks:work-product-component--WellboreTrajectory:1.1.0\",\r\n\r\n    \"data\": {\r\n      \"Name\": \"Wellbore_Trajectory_{{WellboreDMSRunId}}\",\r\n      \"WellboreID\": \"{{data-partition-id}}:master-data--Wellbore::{{WellboreDMSRunId}}:\",\r\n      \"TopDepthMeasuredDepth\": 0,\r\n      \"BaseDepthMeasuredDepth\": 0,\r\n      \"VerticalMeasurement\": {\r\n        \"EffectiveDateTime\": \"2021-08-17T14:13:08.174Z\",\r\n        \"VerticalMeasurement\": 0\r\n      }\r\n    }\r\n  }\r\n]",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/{{wellbore}}/ddms/v3/wellboretrajectories"
+          },
+          "response": []
+        },
+        {
+          "name": "Trajectory",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"response must be valid\", function () {\r",
+                  "     pm.response.to.be.ok;\r",
+                  "     pm.response.to.be.withBody;\r",
+                  "     pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "var wellboretrajectoryid = pm.environment.get(\"WellboreTrajectoryID\");\r",
+                  "pm.test(\"status code is 200\", function () {\r",
+                  "     pm.expect(pm.response.code).to.eql(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Check record id\", function () {\r",
+                  "     var jsonData = pm.response.json();\r",
+                  "     pm.expect(jsonData.id).to.eql(wellboretrajectoryid);\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "{{access_token}}"
+              }
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "data-partition-id",
+                "type": "text",
+                "value": "{{data-partition-id}}"
+              }
+            ],
+            "url": "{{base_url}}/{{wellbore}}/ddms/v3/wellboretrajectories/{{WellboreTrajectoryID}}"
+          },
+          "response": []
+        },
+        {
+          "name": "Trajectory Versions Copy",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"response must be valid\", function () {\r",
+                  "     pm.response.to.be.ok;\r",
+                  "     pm.response.to.be.withBody;\r",
+                  "     pm.response.to.be.json;\r",
+                  "});\r",
+                  "var version = pm.response.json().versions;\r",
+                  "postman.setEnvironmentVariable(\"WellboreTrajRecordVersion\", version[0]);\r",
+                  "\r",
+                  "var wellboretrajectoryid = pm.environment.get(\"WellboreTrajectoryID\");\r",
+                  "pm.test(\"status code is 200\", function () {\r",
+                  "     pm.expect(pm.response.code).to.eql(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Check record id\", function () {\r",
+                  "     var jsonData = pm.response.json();\r",
+                  "     pm.expect(jsonData.recordId).to.eql(wellboretrajectoryid);\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "{{access_token}}"
+              }
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "data-partition-id",
+                "type": "text",
+                "value": "{{data-partition-id}}"
+              }
+            ],
+            "url": "{{base_url}}/{{wellbore}}/ddms/v3/wellboretrajectories/{{WellboreTrajectoryID}}/versions"
+          },
+          "response": []
+        },
+        {
+          "name": "Trajectory Sepcific Versions",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"response must be valid\", function () {\r",
+                  "     pm.response.to.be.ok;\r",
+                  "     pm.response.to.be.withBody;\r",
+                  "     pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "var wellboretrajectoryid = pm.environment.get(\"WellboreTrajectoryID\");\r",
+                  "pm.test(\"status code is 200\", function () {\r",
+                  "     pm.expect(pm.response.code).to.eql(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Check record id\", function () {\r",
+                  "     var jsonData = pm.response.json();\r",
+                  "     pm.expect(jsonData.id).to.eql(wellboretrajectoryid);\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "{{access_token}}"
+              }
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "data-partition-id",
+                "type": "text",
+                "value": "{{data-partition-id}}"
+              }
+            ],
+            "url": "{{base_url}}/{{wellbore}}/ddms/v3/wellboretrajectories/{{WellboreTrajectoryID}}/versions/{{WellboreTrajRecordVersion}}"
+          },
+          "response": []
+        },
+        {
+          "name": "Trajectory Data",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"response must be valid\", function () {\r",
+                  "     pm.response.to.be.ok;\r",
+                  "     pm.response.to.be.withBody;\r",
+                  "     pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "var wellboretrajectoryid = pm.environment.get(\"WellboreTrajectoryID\");\r",
+                  "pm.test(\"status code is 200\", function () {\r",
+                  "     pm.expect(pm.response.code).to.eql(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Check record id\", function () {\r",
+                  "     var jsonData = pm.response.json();\r",
+                  "     pm.expect(jsonData.recordIds[0]).to.eql(wellboretrajectoryid);\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "data-partition-id",
+                "type": "text",
+                "value": "{{data-partition-id}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"columns\": [\r\n    \"Ref\",\r\n    \"col_1\",\r\n    \"col_2\"\r\n  ],\r\n  \"index\": [\r\n    0,\r\n    1,\r\n    2,\r\n    3,\r\n    4\r\n  ],\r\n  \"data\": [\r\n    [\r\n      0,\r\n      1111.1,\r\n      2222.1\r\n    ],\r\n    [\r\n      0.5,\r\n      1111.2,\r\n      2222.2\r\n    ],\r\n    [\r\n      1,\r\n      1111.3,\r\n      2222.3\r\n    ],\r\n    [\r\n      1.5,\r\n      1111.4,\r\n      2222.4\r\n    ],\r\n    [\r\n      2,\r\n      1111.5,\r\n      2222.5\r\n    ]\r\n  ]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/{{wellbore}}/ddms/v3/wellboretrajectories/{{WellboreTrajectoryID}}/data"
+          },
+          "response": []
+        },
+        {
+          "name": "Trajectory Session",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"response must be valid\", function () {\r",
+                  "     pm.response.to.be.ok;\r",
+                  "     pm.response.to.be.withBody;\r",
+                  "     pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "var wellboretrajectoryid = pm.environment.get(\"WellboreTrajectoryID\");\r",
+                  "pm.test(\"status code is 200\", function () {\r",
+                  "     pm.expect(pm.response.code).to.eql(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Check record id\", function () {\r",
+                  "     var jsonData = pm.response.json();\r",
+                  "     pm.expect(jsonData.recordId).to.eql(wellboretrajectoryid);\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "data-partition-id",
+                "type": "text",
+                "value": "{{data-partition-id}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"fromVersion\": 0,\r\n  \"meta\": {\r\n    \"additionalProp1\": \"string\",\r\n    \"additionalProp2\": \"string\",\r\n    \"additionalProp3\": \"string\"\r\n  },\r\n  \"mode\": \"overwrite\",\r\n  \"timeToLive\": 1440\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/{{wellbore}}/ddms/v3/wellboretrajectories/{{WellboreTrajectoryID}}/sessions"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Clean up",
+      "item": [
+        {
+          "name": "Wellbore trajectory record",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"status code is 204\", function () {\r",
+                  "     pm.expect(pm.response.code).to.eql(204);\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {
+              "accept": true
+            }
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "{{access_token}}"
+              }
+            },
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "accept",
+                "type": "text",
+                "value": "application/json"
+              },
+              {
+                "key": "data-partition-id",
+                "type": "text",
+                "value": "{{data-partition-id}}"
+              },
+              {
+                "key": "recursive",
+                "type": "text",
+                "value": "false"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{wellbore}}/ddms/v3/wellboretrajectories/{{WellboreTrajectoryID}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{wellbore}}",
+                "ddms",
+                "v3",
+                "wellboretrajectories",
+                "{{WellboreTrajectoryID}}"
+              ],
+              "query": [
+                {
+                  "key": "recursive",
+                  "value": "false",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "WellLog record",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"status code is 204\", function () {\r",
+                  "     pm.expect(pm.response.code).to.eql(204);\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {
+              "accept": true
+            }
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "{{access_token}}"
+              }
+            },
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "accept",
+                "type": "text",
+                "value": "application/json"
+              },
+              {
+                "key": "data-partition-id",
+                "type": "text",
+                "value": "{{data-partition-id}}"
+              },
+              {
+                "key": "recursive",
+                "type": "text",
+                "value": "false"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{wellbore}}/ddms/v3/welllogs/{{WellLogID}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{wellbore}}",
+                "ddms",
+                "v3",
+                "welllogs",
+                "{{WellLogID}}"
+              ],
+              "query": [
+                {
+                  "key": "recursive",
+                  "value": "false",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Wellbore",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"status code is 204\", function () {\r",
+                  "     pm.expect(pm.response.code).to.eql(204);\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {
+              "accept": true
+            }
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "{{access_token}}"
+              }
+            },
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "accept",
+                "type": "text",
+                "value": "application/json"
+              },
+              {
+                "key": "data-partition-id",
+                "type": "text",
+                "value": "{{data-partition-id}}"
+              },
+              {
+                "key": "recursive",
+                "type": "text",
+                "value": "false"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{wellbore}}/ddms/v2/wellbores/{{WellboreRecordID}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{wellbore}}",
+                "ddms",
+                "v2",
+                "wellbores",
+                "{{WellboreRecordID}}"
+              ],
+              "query": [
+                {
+                  "key": "recursive",
+                  "value": "false",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Well Record",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"status code is 204\", function () {\r",
+                  "     pm.expect(pm.response.code).to.eql(204);\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {
+              "accept": true
+            }
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "{{access_token}}"
+              }
+            },
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "accept",
+                "type": "text",
+                "value": "application/json"
+              },
+              {
+                "key": "data-partition-id",
+                "type": "text",
+                "value": "{{data-partition-id}}"
+              },
+              {
+                "key": "recursive",
+                "type": "text",
+                "value": "false"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{wellbore}}/ddms/v2/wells/{{WellRecordID}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{wellbore}}",
+                "ddms",
+                "v2",
+                "wells",
+                "{{WellRecordID}}"
+              ],
+              "query": [
+                {
+                  "key": "recursive",
+                  "value": "false",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Legal Tag",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Ensure the API was able to send a successful response",
+                  "pm.test(\"Status code is 204\", function () {",
+                  "    pm.response.to.have.status(204);",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "{{access_token}}"
+              }
+            },
+            "method": "DELETE",
+            "header": [
+              {
+                "description": "This value should be the desired data partition id.",
+                "key": "data-partition-id",
+                "type": "text",
+                "value": "{{data-partition-id}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{legal}}/legaltags/:name",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{legal}}",
+                "legaltags",
+                ":name"
+              ],
+              "variable": [
+                {
+                  "key": "name",
+                  "value": "{{tagName}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Refresh Token",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "// this snippet extracts the new access and id tokens",
+              "// and puts them to environment variables",
+              "cp = pm.environment.get(\"cloud_platform\");",
+              "",
+              "var data = JSON.parse(responseBody)",
+              "pm.environment.set(\"access_token\", data.access_token);",
+              "if (cp == \"AWS\" || cp == \"IBM\") {",
+              "   pm.environment.set(\"id_token\", data.id_token);",
+              "}",
+              "// Uncomment if server returns a new refresh_token,",
+              "// otherwise comment out to prevent overwriting it with null",
+              "if (cp == \"Azure\") {",
+              "    pm.environment.set(\"refresh_token\", data.refresh_token);",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "name": "Content-Type",
+            "type": "text",
+            "value": "application/x-www-form-urlencoded"
+          },
+          {
+            "key": "Ocp-Apim-Subscription-Key",
+            "type": "text",
+            "value": "xxxxxxxx",
+            "disabled": true
+          }
+        ],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {
+              "key": "grant_type",
+              "value": "refresh_token",
+              "type": "text"
+            },
+            {
+              "key": "client_id",
+              "value": "{{clientId}}",
+              "description": "Supply your client id as an environment variable",
+              "type": "text"
+            },
+            {
+              "key": "client_secret",
+              "value": "{{clientSecret}}",
+              "description": "Supply your client secret as an environment variable",
+              "type": "text"
+            },
+            {
+              "key": "refresh_token",
+              "value": "{{refresh_token}}",
+              "type": "text"
+            },
+            {
+              "key": "scope",
+              "value": "{{scope}}",
+              "type": "text"
+            }
+          ]
+        },
+        "url": "https://login.microsoftonline.com/{{tenantid}}/oauth2/v2.0/token"
+      },
+      "response": []
+    }
+  ],
+  "auth": {
+    "type": "oauth2",
+    "oauth2": {
+      "scope": "{{OIDC_SCOPE}}",
+      "clientId": "{{OIDC_CLIENT_ID}}",
+      "clientSecret": "{{OIDC_CLIENT_SECRET}}",
+      "accessTokenUrl": "{{OIDC_TOKEN_URL}}",
+      "grant_type": "client_credentials",
+      "tokenName": "oauth_client_credentials",
+      "addTokenTo": "header"
+    }
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "welllogSessionId",
+      "value": ""
+    }
+  ]
+}
