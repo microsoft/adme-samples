@@ -1,0 +1,676 @@
+swagger: '2.0'
+info:
+  contact: {}
+  description: >
+    Workflow Service API is a wrapper API on existing orchestrator services (airflow) defined in way which suits the domain workflow needs.Operational tasks like starting,stopping, pausing etc will be part of this API. Also creation and maintenance will be responsilbilities of this API.
+
+
+    ## Key Points:
+
+
+    **Workflow** - Workflow is a collection of steps taken in some order to perform some meaning full tasks. For example, CSV workflow will perform the steps needed to successfully ingest a CSV file into data platform. Each workflow is repsented by a unique workflow id. (`id`).    <br> Workflows are represented as Directed Acyclic Graphs. In case of Airflow implementation of Workflow, each workflow will corresepond to an Airflow DAG.
+
+
+    **Workflow Run** - Workflow Run is single execution of a workflow. For example, a CSV workflow executed to ingest a CSV is CSV workflow run.
+
+    In case of Airflow as orchestrator, a workflow run will be equivalent to one dag run.
+
+
+    Each instance of workflow run is represented by unique run id. (`runId`).
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0'
+  termsOfService: 'urn:tos'
+  title: Workflow Api Documentation
+  version: '1.0'
+host: os-workflow-attcrcktoa-uc.a.run.app
+basePath: /
+schemes:
+  - https
+paths:
+  /api/workflow/info:
+    get:
+      produces:
+        - application/json
+      parameters:
+        - description: The file type/format of the request body
+          in: header
+          name: Content-Type
+          required: true
+          type: string
+        - description: Which tenant to use
+          in: header
+          name: data-partition-id
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/VersionInfo'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - Authorization: []
+      tags:
+        - info-api
+      operationId: infoUsingGET
+      summary: info
+  /api/workflow/liveness_check:
+    get:
+      produces:
+        - application/octet-stream
+      parameters:
+        - description: The file type/format of the request body
+          in: header
+          name: Content-Type
+          required: true
+          type: string
+        - description: Which tenant to use
+          in: header
+          name: data-partition-id
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - Authorization: []
+      tags:
+        - health-check-api
+      operationId: livenessCheckUsingGET
+      summary: livenessCheck
+  /api/workflow/readiness_check:
+    get:
+      produces:
+        - application/octet-stream
+      parameters:
+        - description: The file type/format of the request body
+          in: header
+          name: Content-Type
+          required: true
+          type: string
+        - description: Which tenant to use
+          in: header
+          name: data-partition-id
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - Authorization: []
+      tags:
+        - health-check-api
+      operationId: readinessCheckUsingGET
+      summary: readinessCheck
+  /api/workflow/v1/workflow:
+    get:
+      produces:
+        - application/octet-stream
+      parameters:
+        - description: The file type/format of the request body
+          in: header
+          name: Content-Type
+          required: true
+          type: string
+        - description: Which tenant to use
+          in: header
+          name: data-partition-id
+          required: true
+          type: string
+        - description: prefix
+          in: query
+          name: prefix
+          required: false
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/WorkflowMetadata'
+            type: array
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - Authorization: []
+      tags:
+        - workflow-manager-api
+      operationId: getAllWorkflowsForTenantUsingGET
+      summary: getAllWorkflowsForTenant
+    post:
+      consumes:
+        - application/json
+      produces:
+        - application/octet-stream
+      parameters:
+        - description: The file type/format of the request body
+          in: header
+          name: Content-Type
+          required: true
+          type: string
+        - description: Which tenant to use
+          in: header
+          name: data-partition-id
+          required: true
+          type: string
+        - in: body
+          name: body
+          schema:
+            $ref: '#/definitions/CreateWorkflowRequest'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/WorkflowMetadata'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - Authorization: []
+      tags:
+        - workflow-manager-api
+      operationId: createUsingPOST
+      summary: create
+  /api/workflow/v1/workflow/system:
+    post:
+      consumes:
+        - application/json
+      produces:
+        - application/octet-stream
+      parameters:
+        - description: The file type/format of the request body
+          in: header
+          name: Content-Type
+          required: true
+          type: string
+        - description: Which tenant to use
+          in: header
+          name: data-partition-id
+          required: true
+          type: string
+        - in: body
+          name: body
+          schema:
+            $ref: '#/definitions/CreateWorkflowRequest'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/WorkflowMetadata'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - Authorization: []
+      tags:
+        - workflow-system-manager-api
+      operationId: createSystemWorkflowUsingPOST
+      summary: createSystemWorkflow
+  '/api/workflow/v1/workflow/system/{workflow_name}':
+    delete:
+      parameters:
+        - description: The file type/format of the request body
+          in: header
+          name: Content-Type
+          required: true
+          type: string
+        - description: Which tenant to use
+          in: header
+          name: data-partition-id
+          required: true
+          type: string
+        - description: workflow_name
+          in: path
+          name: workflow_name
+          required: true
+          type: string
+      responses:
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+        - Authorization: []
+      tags:
+        - workflow-system-manager-api
+      operationId: deleteSystemWorkflowByIdUsingDELETE
+      summary: deleteSystemWorkflowById
+  '/api/workflow/v1/workflow/{workflow_name}':
+    delete:
+      parameters:
+        - description: The file type/format of the request body
+          in: header
+          name: Content-Type
+          required: true
+          type: string
+        - description: Which tenant to use
+          in: header
+          name: data-partition-id
+          required: true
+          type: string
+        - description: workflow_name
+          in: path
+          name: workflow_name
+          required: true
+          type: string
+      responses:
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+        - Authorization: []
+      tags:
+        - workflow-manager-api
+      operationId: deleteWorkflowByIdUsingDELETE
+      summary: deleteWorkflowById
+    get:
+      produces:
+        - application/octet-stream
+      parameters:
+        - description: The file type/format of the request body
+          in: header
+          name: Content-Type
+          required: true
+          type: string
+        - description: Which tenant to use
+          in: header
+          name: data-partition-id
+          required: true
+          type: string
+        - description: workflow_name
+          in: path
+          name: workflow_name
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/WorkflowMetadata'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - Authorization: []
+      tags:
+        - workflow-manager-api
+      operationId: getWorkflowByNameUsingGET
+      summary: getWorkflowByName
+  '/api/workflow/v1/workflow/{workflow_name}/workflowRun':
+    get:
+      produces:
+        - application/octet-stream
+      parameters:
+        - description: The file type/format of the request body
+          in: header
+          name: Content-Type
+          required: true
+          type: string
+        - description: Which tenant to use
+          in: header
+          name: data-partition-id
+          required: true
+          type: string
+        - description: workflow_name
+          in: path
+          name: workflow_name
+          required: true
+          type: string
+        - description: Number of workflow runs to return
+          in: query
+          name: limit
+          required: false
+          type: integer
+        - description: Cursor to fetch the next set of workflow runs
+          in: query
+          name: cursor
+          required: false
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/WorkflowRun'
+            type: array
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - Authorization: []
+      tags:
+        - workflow-run-api
+      operationId: getAllRunInstancesUsingGET
+      summary: getAllRunInstances
+    post:
+      consumes:
+        - application/json
+      produces:
+        - application/octet-stream
+      parameters:
+        - description: The file type/format of the request body
+          in: header
+          name: Content-Type
+          required: true
+          type: string
+        - description: Which tenant to use
+          in: header
+          name: data-partition-id
+          required: true
+          type: string
+        - description: workflow_name
+          in: path
+          name: workflow_name
+          required: true
+          type: string
+        - in: body
+          name: body
+          schema:
+            $ref: '#/definitions/TriggerWorkflowRequest'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/WorkflowRunResponse'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - Authorization: []
+      tags:
+        - workflow-run-api
+      operationId: triggerWorkflowUsingPOST
+      summary: triggerWorkflow
+  '/api/workflow/v1/workflow/{workflow_name}/workflowRun/{runId}':
+    get:
+      produces:
+        - application/octet-stream
+      parameters:
+        - description: The file type/format of the request body
+          in: header
+          name: Content-Type
+          required: true
+          type: string
+        - description: Which tenant to use
+          in: header
+          name: data-partition-id
+          required: true
+          type: string
+        - description: workflow_name
+          in: path
+          name: workflow_name
+          required: true
+          type: string
+        - description: runId
+          in: path
+          name: runId
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/WorkflowRunResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - Authorization: []
+      tags:
+        - workflow-run-api
+      operationId: getWorkflowRunByIdUsingGET
+      summary: getWorkflowRunById
+    put:
+      consumes:
+        - application/json
+      produces:
+        - application/octet-stream
+      parameters:
+        - description: The file type/format of the request body
+          in: header
+          name: Content-Type
+          required: true
+          type: string
+        - description: Which tenant to use
+          in: header
+          name: data-partition-id
+          required: true
+          type: string
+        - description: workflow_name
+          in: path
+          name: workflow_name
+          required: true
+          type: string
+        - description: runId
+          in: path
+          name: runId
+          required: true
+          type: string
+        - in: body
+          name: body
+          schema:
+            $ref: '#/definitions/UpdateWorkflowRunRequest'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/WorkflowRunResponse'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - Authorization: []
+      tags:
+        - workflow-run-api
+      operationId: updateWorkflowRunUsingPUT
+      summary: updateWorkflowRun
+definitions:
+  ConnectedOuterService:
+    properties:
+      name:
+        type: string
+      version:
+        type: string
+    title: ConnectedOuterService
+    type: object
+  CreateWorkflowRequest:
+    properties:
+      description:
+        type: string
+      registrationInstructions:
+        type: object
+      workflowName:
+        type: string
+    title: CreateWorkflowRequest
+    type: object
+  TriggerWorkflowRequest:
+    properties:
+      executionContext:
+        type: object
+      runId:
+        type: string
+    title: TriggerWorkflowRequest
+    type: object
+  UpdateWorkflowRunRequest:
+    properties:
+      status:
+        enum:
+          - FAILED
+          - FINISHED
+          - RUNNING
+          - SUBMITTED
+          - SUCCESS
+        type: string
+    title: UpdateWorkflowRunRequest
+    type: object
+  VersionInfo:
+    properties:
+      artifactId:
+        type: string
+      branch:
+        type: string
+      buildTime:
+        type: string
+      commitId:
+        type: string
+      commitMessage:
+        type: string
+      connectedOuterServices:
+        items:
+          $ref: '#/definitions/ConnectedOuterService'
+        type: array
+      groupId:
+        type: string
+      version:
+        type: string
+    title: VersionInfo
+    type: object
+  WorkflowMetadata:
+    properties:
+      createdBy:
+        type: string
+      creationTimestamp:
+        format: int64
+        type: integer
+      description:
+        type: string
+      registrationInstructions:
+        type: object
+      version:
+        format: int64
+        type: integer
+      workflowId:
+        type: string
+      workflowName:
+        type: string
+    title: WorkflowMetadata
+    type: object
+  WorkflowRun:
+    properties:
+      endTimeStamp:
+        format: int64
+        type: integer
+      runId:
+        type: string
+      startTimeStamp:
+        format: int64
+        type: integer
+      status:
+        enum:
+          - FAILED
+          - FINISHED
+          - RUNNING
+          - SUBMITTED
+          - SUCCESS
+        type: string
+      submittedBy:
+        type: string
+      workflowEngineExecutionDate:
+        type: string
+      workflowId:
+        type: string
+      workflowName:
+        type: string
+    title: WorkflowRun
+    type: object
+  WorkflowRunResponse:
+    properties:
+      endTimeStamp:
+        format: int64
+        type: integer
+      runId:
+        type: string
+      startTimeStamp:
+        format: int64
+        type: integer
+      status:
+        enum:
+          - FAILED
+          - FINISHED
+          - RUNNING
+          - SUBMITTED
+          - SUCCESS
+        type: string
+      submittedBy:
+        type: string
+      workflowId:
+        type: string
+    title: WorkflowRunResponse
+    type: object
+securityDefinitions:
+  Authorization:
+    in: header
+    name: Authorization
+    type: apiKey
+tags:
+  - description: Health Check Api
+    name: health-check-api
+  - description: Info Api
+    name: info-api
+  - description: Workflow Manager Api
+    name: workflow-manager-api
+  - description: Workflow Run Api
+    name: workflow-run-api
+  - description: Workflow System Manager Api
+    name: workflow-system-manager-api
+x-components: {}

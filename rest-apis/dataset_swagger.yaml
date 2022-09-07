@@ -1,0 +1,455 @@
+swagger: '2.0'
+info:
+  description: Dataset service
+  version: '1'
+  title: Dataset service
+  termsOfService: 'urn:tos'
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0'
+# host: 'localhost:8080'
+# basePath: /api/dataset/v1
+tags:
+  - name: dataset-api
+    description: Dataset Api
+paths:
+  /getDatasetRegistry:
+    get:
+      tags:
+        - dataset-api
+      summary: getDatasetRegistry
+      operationId: getDatasetRegistryUsingGET
+      consumes:
+        - application.json
+      produces:
+        - '*/*'
+      parameters:
+        - name: data-partition-id
+          in: header
+          description: tenant
+          required: true
+          type: string
+          default: "opendes"
+        - name: id
+          in: query
+          description: "dataset registry id"
+          required: true
+          type: string
+          default: "opendes:dataset--File.Generic:8118591ee2a24eada7152e54b369e99a"
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/GetCreateUpdateDatasetRegistryResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+    post:
+      tags:
+        - dataset-api
+      summary: getDatasetRegistries
+      operationId: getDatasetRegistryUsingPOST
+      consumes:
+        - application.json
+      produces:
+        - '*/*'
+      parameters:
+        - name: data-partition-id
+          in: header
+          description: tenant
+          required: true
+          type: string
+          default: "opendes"
+        - in: body
+          name: request
+          description: request
+          required: true
+          schema:
+            $ref: '#/definitions/GetUsingDatasetRegistryIdsRequest'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/GetCreateUpdateDatasetRegistryResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+  /registerDataset:
+    put:
+      tags:
+        - dataset-api
+      summary: createOrUpdateDatasetRegistries
+      operationId: createOrUpdateDatasetRegistryUsingPUT
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - name: data-partition-id
+          in: header
+          description: tenant
+          required: true
+          type: string
+          default: "opendes"
+        - in: body
+          name: request
+          description: request
+          required: true
+          schema:
+            $ref: '#/definitions/CreateUpdateDatasetRegistryRequest'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/GetCreateUpdateDatasetRegistryResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+
+  /storageInstructions:
+    post:
+      tags:
+        - dataset-api
+      summary: Generate storage instructions (Eg - Signed URLs) for datasets
+      operationId: storageInstructions
+      consumes:
+        - application.json
+      produces:
+        - '*/*'
+      parameters:
+        - name: data-partition-id
+          in: header
+          description: tenant
+          required: true
+          type: string
+          default: "opendes"
+        - name: kindSubType
+          in: query
+          description: subType of the kind (partition:wks:kindSubType:version)
+          required: true
+          type: string
+          default: "dataset--File.Generic"
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/StorageInstructionsResponse'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '500':
+          description: Internal Server Error
+
+  /retrievalInstructions:
+    get:
+      tags:
+        - dataset-api
+      summary: Generate retrieval instructions (Eg - Signed URLs) for single dataset
+      operationId: retrievalInstructions
+      consumes:
+        - application.json
+      produces:
+        - '*/*'
+      parameters:
+        - name: data-partition-id
+          in: header
+          description: tenant
+          required: true
+          type: string
+          default: "opendes"
+        - name: datasetRegistryId
+          in: query
+          description: "Dataset registry id"
+          required: true
+          type: string
+          default: "opendes:dataset--File.Generic:8118591ee2a24eada7152e54b369e99a"
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/RetrievalInstructionsResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+    post:
+      tags:
+        - dataset-api
+      summary: Generate retrieval instructions (Eg - Signed URLs) for multiple datasets
+      operationId: retrievalInstructionsWithPost
+      consumes:
+        - application.json
+      produces:
+        - '*/*'
+      parameters:
+        - name: data-partition-id
+          in: header
+          description: tenant
+          required: true
+          type: string
+          default: "opendes"
+        - in: body
+          name: request
+          description: request
+          required: true
+          schema:
+            $ref: '#/definitions/GetUsingDatasetRegistryIdsRequest'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/RetrievalInstructionsResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      # security:
+      #   - JWT:
+      #       - global
+  # securityDefinitions:
+  # JWT:
+  #   type: apiKey
+  #   name: Authorization
+  #   in: header
+definitions:
+  GetUsingDatasetRegistryIdsRequest:
+    type: object
+    properties:
+      datasetRegistryIds:
+        type: array
+        items:
+          type: string
+          example: "opendes:dataset--File.Generic:8118591ee2a24eada7152e54b369e99a"
+  CreateUpdateDatasetRegistryRequest:
+    type: object
+    properties:
+      datasetRegistries:
+        type: array
+        items:
+          $ref: '#/definitions/DatasetRegistryRequest'
+  GetCreateUpdateDatasetRegistryResponse:
+    type: object
+    properties:
+      datasetRegistries:
+        type: array
+        items:
+          $ref: '#/definitions/DatasetRegistryResponse'
+  DatasetRegistryRequest:
+    type: object
+    required:
+      - kind
+      - data
+      - acl
+      - legal
+      - type
+      - namespace
+    properties:
+      id:
+        type: string
+        example: 'opendes:dataset--File.Generic:8118591ee2a24eada7152e54b369e99a'
+        description: 'Unique identifier in whole Data Ecosystem. When not provided, Data Ecosystem will create and assign an id to the record. Must follow the naming convention: {Data-Partition-Id}:{object-type}:{uuid}.'
+      kind:
+        type: string
+        example: 'osdu:wks:dataset--File.Generic:1.0.0'
+        description: Record kind for which the schema information is applied to.
+      namespace:
+        type: string
+        example: "opendes:osdu"
+      acl:
+        $ref: '#/definitions/Acl'
+      data:
+        $ref: '#/definitions/DatasetRegistryData'
+      legal:
+        $ref: '#/definitions/Legal'
+      meta:
+        type: array
+        items:
+          $ref: '#/definitions/Map'
+      ancestry:
+        $ref: '#/definitions/RecordAncestry'
+  DatasetRegistryResponse:
+    type: object
+    required:
+      - kind
+      - data
+      - acl
+      - legal
+      - type
+      - namespace
+    properties:
+      id:
+        type: string
+        example: 'opendes:dataset--File.Generic:8118591ee2a24eada7152e54b369e99a'
+        description: 'Unique identifier in whole Data Ecosystem. When not provided, Data Ecosystem will create and assign an id to the record. Must follow the naming convention: {Data-Partition-Id}:{kind-sub-type}:{uuid}.'
+      kind:
+        type: string
+        example: 'osdu:wks:dataset--File.Generic:1.0.0'
+        description: Record kind for which the schema information is applied to.
+      namespace:
+        type: string
+        example: "opendes:osdu"
+      version:
+        type: integer
+        format: int64
+        example: 1605804087572060
+      acl:
+        $ref: '#/definitions/Acl'
+      data:
+        $ref: '#/definitions/DatasetRegistryData'
+      legal:
+        $ref: '#/definitions/Legal'
+      meta:
+        type: array
+        items:
+          $ref: '#/definitions/Map'
+      ancestry:
+        $ref: '#/definitions/RecordAncestry'
+  DatasetRegistryData:
+    type: object
+    properties:
+      ResourceId:
+        type: string
+        example: "srn:osdu:file:dc556e0e3a554105a80cfcb19372a62d:"
+      ResourceTypeID:
+        type: string
+        example: "srn:type:file/json:"
+      ResourceSecurityClassification:
+        type: string
+        example: "srn:reference-data/ResourceSecurityClassification:RESTRICTED:"
+      ResourceSource:
+        type: string
+        example: "Some Company App"
+      ResourceName:
+        type: "string"
+        example: "trajectories - 1000.json"
+      ResourceDescription:
+        type: string
+        example: "Trajectory For Wellbore xyz"
+      DatasetProperties:
+        $ref: '#/definitions/FileDataset'
+  FileDataset:
+    type: object
+    properties:
+      FileSourceInfo:
+        type: object
+        properties:
+          FileSource:
+            type: string
+            example: ""
+          PreloadFilePath:
+            type: string
+            example: "s3://default_bucket/r1/data/provided/trajectories/1000.json"
+  Acl:
+    type: object
+    properties:
+      owners:
+        type: array
+        items:
+          type: string
+          example: "data.default.owners@opendes.testing.com"
+      viewers:
+        type: array
+        items:
+          type: string
+          example: "data.default.viewers@opendes.testing.com"
+  Legal:
+    type: object
+    properties:
+      legaltags:
+        type: array
+        items:
+          type: string
+          example: "opendes-public-usa-dataset"
+      otherRelevantDataCountries:
+        type: array
+        items:
+          type: string
+          example: "US"
+      status:
+        type: string
+        enum:
+          - compliant
+          - incompliant
+  Map:
+    type: object
+    additionalProperties:
+      type: object
+  RecordAncestry:
+    type: object
+    example: null
+    properties:
+      parents:
+        type: array
+        items:
+          type: string
+  StorageInstructionsResponse:
+    type: object
+    properties:
+      storageLocation:
+        type: object
+        properties:
+          CSP_SPECIFIC_PROPERTY_1:
+            type: string
+          CSP_SPECIFIC_PROPERTY_2:
+            type: string
+          CSP_SPECIFIC_PROPERTY_3:
+            type: string
+      providerKey:
+        type: string
+        example: "AZURE"
+
+  RetrievalInstructionsResponse:
+    type: object
+    properties:
+      providerKey:
+        type: string
+        example: "AZURE"
+      datasets:
+        type: array
+        items:
+          type: object
+          properties:
+            datasetRegistryId:
+              type: string
+              example: "opendes:dataset--File.Generic:8118591ee2a24eada7152e54b369e99a"
+            retrievalProperties:
+              type: object
+              properties:
+                CSP_SPECIFIC_PROPERTY_1:
+                  type: string
+                CSP_SPECIFIC_PROPERTY_2:
+                  type: string
+                CSP_SPECIFIC_PROPERTY_3:
+                  type: string
+
+# Added by API Auto Mocking Plugin
+# host: virtserver.swaggerhub.com
+basePath: /api/dataset/v1
+schemes:
+  - https

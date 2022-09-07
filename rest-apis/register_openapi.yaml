@@ -1,0 +1,1539 @@
+swagger: '2.0'
+info:
+  version: '1.0.0'
+  title: Register Service
+  description: APIs to manage registrations in the OSDU.
+basePath: /api/register/v1
+securityDefinitions:
+  bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+  appkey:
+    type: apiKey
+    name: appkey
+    in: header
+schemes:
+- https
+consumes:
+- application/json
+produces:
+- application/json
+paths:
+  /ddms/{id}:
+    get:
+      description: "Get a DDMS registration with the given id. Required roles: 'users.datalake.viewers' or 'users.datalake.editors' or 'users.datalake.admins'"
+      summary: Get a DDMS registration
+      tags:
+      - Domain Data Management Service (DDMS)
+      operationId: GetaDDMSregistration
+      deprecated: false
+      produces:
+      - application/json
+      parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+        pattern: ^[A-Za-z0-9-]{2,50}
+        description: ''
+      - name: data-partition-id
+        in: header
+        required: true
+        type: string
+        description: Specifies the partition to use. This should be either the partition name associated with the partition.
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ddms'
+          headers: {}
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '429':
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '500':
+          description: Server Error
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '502':
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '503':
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+      security:
+      - bearer: []
+      - appkey: []
+    delete:
+      description: "Delete a DDMS registration with the given id. Required roles: 'users.datalake.admins'"
+      summary: Delete a DDMS registration
+      tags:
+      - Domain Data Management Service (DDMS)
+      operationId: DeleteaDDMSregistration
+      deprecated: false
+      produces:
+      - application/json
+      parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+        pattern: ^[A-Za-z0-9-]{2,50}
+        description: ''
+      - name: data-partition-id
+        in: header
+        required: true
+        type: string
+        description: Specifies the partition to use. This should be either the partition name associated with the partition.
+      responses:
+        '204':
+          description: No Content
+          headers: {}
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '429':
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '500':
+          description: Server Error
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '502':
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '503':
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+      security:
+      - bearer: []
+      - appkey: []
+  /ddms:
+    post:
+      description: "Create a DDMS registration using an OpenApi spec V3 document. Required roles: 'users.datalake.editors' or 'users.datalake.admins'"
+      summary: Create a DDMS registration
+      tags:
+      - Domain Data Management Service (DDMS)
+      operationId: CreateaDDMSregistration
+      deprecated: false
+      produces:
+      - application/json
+      consumes:
+      - application/json
+      parameters:
+      - name: data-partition-id
+        in: header
+        required: true
+        type: string
+        description: Specifies the partition to use. This should be either the partition name associated with the partition.
+      - name: Content-Type
+        in: header
+        required: false
+        enum:
+        - application/json
+        type: string
+        description: ''
+      - name: body
+        in: body
+        required: false
+        description: ''
+        schema:
+          $ref: '#/definitions/ddms'
+      responses:
+        '201':
+          description: Created
+          schema:
+            $ref: '#/definitions/ddms'
+          headers: {}
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '409':
+          description: Conflict
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '429':
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '500':
+          description: Server Error
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '502':
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '503':
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+      security:
+      - bearer: []
+      - appkey: []
+    get:
+      description: "Query for DDMS registrations allowing retrievals by type. Required roles: 'users.datalake.viewers' or 'users.datalake.editors' or 'users.datalake.admins'"
+      summary: Query a DDMS registration
+      tags:
+      - Domain Data Management Service (DDMS)
+      operationId: QueryaDDMSregistration
+      deprecated: false
+      produces:
+      - application/json
+      parameters:
+      - name: type
+        in: query
+        required: true
+        type: string
+        pattern: ^[A-Za-z0-9 ]{2,50}
+        description: ''
+      - name: data-partition-id
+        in: header
+        required: true
+        type: string
+        description: Specifies the partition to use. This should be either the partition name associated with the partition.
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            default: ''
+            items:
+              $ref: '#/definitions/ddms'
+          headers: {}
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '429':
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '500':
+          description: Server Error
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '502':
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '503':
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+      security:
+      - bearer: []
+      - appkey: []
+  /ddms/{id}/{type}/{localid}:
+    get:
+      description: "Get a DDMS registration with the given id, type and localid. Required roles: 'users.datalake.viewers' or 'users.datalake.editors' or 'users.datalake.admins'"
+      summary: Get a DDMS registration
+      tags:
+      - Domain Data Management Service (DDMS)
+      operationId: GetaDDMSregistration1
+      deprecated: false
+      produces:
+      - application/json
+      parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+        pattern: ^[A-Za-z0-9-]{2,50}
+        description: ''
+      - name: type
+        in: path
+        required: true
+        type: string
+        pattern: ^[A-Za-z]{2,50}
+        description: ''
+      - name: localid
+        in: path
+        required: true
+        type: string
+        pattern: ^[A-Za-z0-9-]{2,50}
+        description: ''
+      - name: data-partition-id
+        in: header
+        required: true
+        type: string
+        description: Specifies the partition to use. This should be either the partition name associated with the partition.
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ddms'
+          headers: {}
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '429':
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '500':
+          description: Server Error
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '502':
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '503':
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+      security:
+      - bearer: []
+      - appkey: []
+  /action/{id}:
+    get:
+      description: "Get an action registration with the given id. Required roles: 'users.datalake.viewers' or 'users.datalake.editors' or 'users.datalake.admins'"
+      summary: Get an action registration
+      tags:
+      - Action
+      operationId: Getanactionregistration
+      deprecated: false
+      produces:
+      - application/json
+      parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+        pattern: ^[A-Za-z0-9-]{2,50}
+        description: ''
+      - name: data-partition-id
+        in: header
+        required: true
+        type: string
+        description: Specifies the partition to use. This should be either the partition name associated with the partition.
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/action'
+          headers: {}
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '429':
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '500':
+          description: Server Error
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '502':
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '503':
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+      security:
+      - bearer: []
+      - appkey: []
+    delete:
+      description: "Delete an action registration with the given id. Required role: 'users.datalake.admins'"
+      summary: Delete an action registration
+      tags:
+      - Action
+      operationId: Deleteanactionregistration
+      deprecated: false
+      produces:
+      - application/json
+      parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+        pattern: ^[A-Za-z0-9-]{2,50}
+        description: ''
+      - name: data-partition-id
+        in: header
+        required: true
+        type: string
+        description: Specifies the partition to use. This should be either the partition name associated with the partition.
+      responses:
+        '204':
+          description: No Content
+          headers: {}
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '429':
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '500':
+          description: Server Error
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '502':
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '503':
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+      security:
+      - bearer: []
+      - appkey: []
+  /action:
+    post:
+      description: "Create an action registration. Required role: 'users.datalake.admins'"
+      summary: Create an action registration
+      tags:
+      - Action
+      operationId: Createanactionregistration
+      deprecated: false
+      produces:
+      - application/json
+      consumes:
+      - application/json
+      parameters:
+      - name: data-partition-id
+        in: header
+        required: true
+        type: string
+        description: Specifies the partition to use. This should be either the partition name associated with the partition.
+      - name: Content-Type
+        in: header
+        required: false
+        enum:
+        - application/json
+        type: string
+        description: ''
+      - name: body
+        in: body
+        required: false
+        description: ''
+        schema:
+          $ref: '#/definitions/createAction'
+      responses:
+        '201':
+          description: Created
+          schema:
+            $ref: '#/definitions/action'
+          headers: {}
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '409':
+          description: Conflict
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '429':
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '500':
+          description: Server Error
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '502':
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '503':
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+      security:
+      - bearer: []
+      - appkey: []
+  /action:test:
+    post:
+      description: "Test an action registration. Required roles: 'users.datalake.viewers' or 'users.datalake.editors' or 'users.datalake.admins'"
+      summary: Test an action registration
+      tags:
+      - Action
+      operationId: Testanactionregistration
+      deprecated: false
+      produces:
+      - application/json
+      consumes:
+      - application/json
+      parameters:
+      - name: data-partition-id
+        in: header
+        required: true
+        type: string
+        description: Specifies the partition to use. This should be either the partition name associated with the partition.
+      - name: Content-Type
+        in: header
+        required: false
+        enum:
+        - application/json
+        type: string
+        description: ''
+      - name: body
+        in: body
+        required: false
+        description: ''
+        schema:
+          $ref: '#/definitions/testAction'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/testActionResult'
+          headers: {}
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '409':
+          description: Conflict
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '429':
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '500':
+          description: Server Error
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '502':
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '503':
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+      security:
+      - bearer: []
+      - appkey: []
+  /action:retrieve:
+    post:
+      description: "Retrieve an action registration. Required roles: 'users.datalake.viewers' or 'users.datalake.editors' or 'users.datalake.admins'"
+      summary: Retrieve an action registration
+      tags:
+      - Action
+      operationId: Retrieveanactionregistration
+      deprecated: false
+      produces:
+      - application/json
+      consumes:
+      - application/json
+      parameters:
+      - name: data-partition-id
+        in: header
+        required: true
+        type: string
+        description: Specifies the partition to use. This should be either the partition name associated with the partition.
+      - name: Content-Type
+        in: header
+        required: false
+        enum:
+        - application/json
+        type: string
+        description: ''
+      - name: body
+        in: body
+        required: false
+        description: The Record to find matching actions for and apply the template for.
+        schema:
+          $ref: '#/definitions/record'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            default: ''
+            items:
+              $ref: '#/definitions/action'
+          headers: {}
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '409':
+          description: Conflict
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '429':
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '500':
+          description: Server Error
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '502':
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '503':
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+      security:
+      - bearer: []
+      - appkey: []
+  /subscription:
+    post:
+      description: "Create a subscription. Required roles: 'users.datalake.editors' or 'users.datalake.admins'"
+      summary: Create a subscription
+      tags:
+      - Subscription
+      operationId: Createasubscription
+      deprecated: false
+      produces:
+      - application/json
+      consumes:
+      - application/json
+      parameters:
+      - name: data-partition-id
+        in: header
+        required: true
+        type: string
+        description: Specifies the partition to use. This should be either the partition name associated with the partition.
+      - name: Content-Type
+        in: header
+        required: false
+        enum:
+        - application/json
+        type: string
+        description: ''
+      - name: body
+        in: body
+        required: false
+        description: ''
+        schema:
+          $ref: '#/definitions/subscription'
+      responses:
+        '201':
+          description: Created
+          schema:
+            $ref: '#/definitions/subscriptionCreateResult'
+          headers: {}
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '409':
+          description: Conflict
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '429':
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '500':
+          description: Server Error
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '502':
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '503':
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+      security:
+      - bearer: []
+      - appkey: []
+  /subscription/{id}:
+    get:
+      description: "Get a subscription with its Id. Required role: 'users.datalake.editors' or 'users.datalake.admins'"
+      summary: Get a subscription by Id
+      tags:
+      - Subscription
+      operationId: GetasubscriptionbyId
+      deprecated: false
+      produces:
+      - application/json
+      parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+        description: ''
+      - name: data-partition-id
+        in: header
+        required: true
+        type: string
+        description: Specifies the partition to use. This should be either the partition name associated with the partition.
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/getSubscriptionResult'
+          headers: {}
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '429':
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '500':
+          description: Server Error
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '502':
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '503':
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+      security:
+      - bearer: []
+      - appkey: []
+    delete:
+      description: "Delete a subscription with its Id. Required role: 'users.datalake.admins'"
+      summary: Delete a subscription by Id
+      tags:
+      - Subscription
+      operationId: DeleteasubscriptionbyId
+      deprecated: false
+      produces:
+      - application/json
+      parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+        description: ''
+      - name: data-partition-id
+        in: header
+        required: true
+        type: string
+        description: Specifies the partition to use. This should be either the partition name associated with the partition.
+      responses:
+        '204':
+          description: No Content
+          headers: {}
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '429':
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '500':
+          description: Server Error
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '502':
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '503':
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+      security:
+      - bearer: []
+      - appkey: []
+  /subscription/{notificationId}:
+    get:
+      description: "Get a subscription with its Notification Id. Required role: 'users.datalake.editors' or 'users.datalake.admins'"
+      summary: Get a subscription by Notification Id
+      tags:
+      - Subscription
+      operationId: GetasubscriptionbyNotificationId
+      deprecated: false
+      produces:
+      - application/json
+      parameters:
+      - name: notificationId
+        in: path
+        required: true
+        type: string
+      - name: data-partition-id
+        in: header
+        required: true
+        type: string
+        description: Specifies the partition to use. This should be either the partition name associated with the partition.
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/getSubscriptionResult'
+          headers: {}
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '429':
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '500':
+          description: Server Error
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '502':
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '503':
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+      security:
+      - bearer: []
+      - appkey: []
+  /subscription/{id}/secret:
+    put:
+      description: "Update secret for a subscription. Required role: 'users.datalake.editors' or 'users.datalake.admins'"
+      summary: Update secret for subscription
+      tags:
+      - Subscription
+      operationId: Updatesecretforsubscription
+      deprecated: false
+      produces:
+      - application/json
+      consumes:
+      - application/json
+      parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+        description: ''
+      - name: data-partition-id
+        in: header
+        required: true
+        type: string
+        description: Specifies the partition to use. This should be either the partition name associated with the partition.
+      - name: Content-Type
+        in: header
+        required: false
+        enum:
+        - application/json
+        type: string
+        description: ''
+      - name: body
+        in: body
+        required: false
+        description: ''
+        schema:
+          $ref: '#/definitions/secret'
+      responses:
+        '204':
+          description: No Content
+          headers: {}
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '429':
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '500':
+          description: Server Error
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '502':
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '503':
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+      security:
+      - bearer: []
+      - appkey: []
+  /topics:
+    get:
+      description: "List all topics that you can create a subscription for, along with the corresponding sample messages. Required role: 'users.datalake.editors' or 'users.datalake.admins'"
+      summary: List all topics
+      tags:
+      - Subscription
+      operationId: Listalltopics
+      deprecated: false
+      produces:
+      - application/json
+      parameters:
+      - name: data-partition-id
+        in: header
+        required: true
+        type: string
+        description: Specifies the partition to use. This should be either the partition name associated with the partition.
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            default: ''
+            items:
+              $ref: '#/definitions/topic'
+          headers: {}
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '429':
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '500':
+          description: Server Error
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '502':
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+        '503':
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/AppError'
+          headers: {}
+      security:
+      - bearer: []
+      - appkey: []
+  /info:
+    get:
+      description: For deployment available public `/info` endpoint,  which provides build and git related information.
+      summary: Version info
+      tags:
+      - Info
+      operationId: Versioninfo
+      deprecated: false
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        '200':
+          description: Version info.
+          headers: {}
+definitions:
+  ddms:
+    title: ddms
+    example:
+      id: example-id-123
+      name: example-name
+      description: example-description
+      contactEmail: abc@test.com
+      interfaces:
+      - entityType: wellbore
+        schema: {}
+    type: object
+    properties:
+      id:
+        type: string
+        pattern: ^[A-Za-z0-9-]{2,50}
+      name:
+        type: string
+        pattern: ^[A-Za-z0-9- ]{2,50}
+      description:
+        type: string
+        pattern: ^[A-Za-z0-9. ]{0,255}
+      contactEmail:
+        type: string
+      interfaces:
+        type: array
+        items:
+          $ref: '#/definitions/ddmsInterface'
+  AppError:
+    title: AppError
+    description: An error that occurs during normal application logic
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      reason:
+        type: string
+      message:
+        type: string
+  ddmsInterface:
+    title: ddmsInterface
+    type: object
+    properties:
+      entityType:
+        type: string
+        pattern: ^[A-Za-z0-9-]{2,50}
+      schema:
+        type: object
+    required:
+    - schema
+  createAction:
+    title: createAction
+    type: object
+    properties:
+      id:
+        type: string
+        pattern: ^[A-Za-z0-9-]{2,50}
+      name:
+        type: string
+        pattern: ^[A-Za-z0-9- ]{2,50}
+      description:
+        type: string
+        pattern: ^[A-Za-z0-9. ]{0,255}
+      contactEmail:
+        type: string
+      img:
+        description: Reference link to an image file that can be usd in an UI to represent the action.
+        type: string
+        pattern: ^(https:\/\/)[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&\(\)\*\+,;=.]+$
+      url:
+        type: string
+        pattern: ^(https:\/\/)[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&\(\)\*\+,;=.]+$
+      filter:
+        $ref: '#/definitions/filter'
+  testAction:
+    title: testAction
+    type: object
+    properties:
+      action:
+        $ref: '#/definitions/createAction'
+      testPayload:
+        type: object
+  testActionResult:
+    title: testActionResult
+    example:
+      url: https://myapp.osdu.com/action/abc123
+      errors: ''
+    type: object
+    properties:
+      url:
+        type: string
+      errors:
+        type: string
+  action:
+    title: action
+    type: object
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      description:
+        type: string
+      contactEmail:
+        type: string
+      img:
+        type: string
+      url:
+        example: https://myapp.osdu.com/action/{type}/{id}
+        type: string
+      filter:
+        $ref: '#/definitions/filter'
+      createdOnEpoch:
+        $ref: '#/definitions/createdOnEpoch'
+  record:
+    title: record
+    example:
+      id: common:regularheightfield:123456
+      kind: common:petrel:regularheightfield:1.0.0
+      acl:
+        viewers:
+        - data.default.viewers@{datapartition}.{domain}.com
+        owners:
+        - data.default.owners@{datapartition}.{domain}.com
+      legal:
+        legaltags:
+        - common-sample-legaltag
+        otherRelevantDataCountries:
+        - US
+      data:
+        msg: Hello
+        uri: https://myproj.com/abc123
+    type: object
+    properties:
+      id:
+        type: string
+      kind:
+        type: string
+      acl:
+        $ref: '#/definitions/acl'
+      legal:
+        $ref: '#/definitions/legal'
+      data:
+        $ref: '#/definitions/data'
+  acl:
+    title: acl
+    type: object
+    properties:
+      viewers:
+        type: array
+        items:
+          type: string
+      owners:
+        type: array
+        items:
+          type: string
+  data:
+    title: data
+    type: object
+    properties:
+      msg:
+        example: Hello
+        type: string
+      uri:
+        example: https://myproj.com/abc123
+        type: string
+  legal:
+    title: legal
+    type: object
+    properties:
+      legaltags:
+        type: array
+        items:
+          type: string
+      otherRelevantDataCountries:
+        type: array
+        items:
+          type: string
+  filter:
+    title: filter
+    type: object
+    properties:
+      entityType:
+        type: array
+        items:
+          type: string
+          pattern: ^[a-z0-9-]{0,50}
+        pattern: ^[a-z0-9-]{0,50}
+      source:
+        type: array
+        items:
+          type: string
+          pattern: ^[a-z0-9-]{0,50}
+        pattern: ^[a-z0-9-]{0,50}
+      version:
+        type: array
+        items:
+          type: string
+          pattern: ^[0-9.]{0,10}
+        pattern: ^[0-9.]{0,10}
+  subscription:
+    title: subscription
+    type: object
+    properties:
+      name:
+        example: test-subscription
+        type: string
+        pattern: ^[A-Za-z0-9- ]{2,50}
+      description:
+        example: test description
+        type: string
+        pattern: ^[A-Za-z0-9. ]{0,255}
+      topic:
+        example: data-changed-v1
+        type: string
+      pushEndpoint:
+        example: https://myListener.com
+        type: string
+      secret:
+        $ref: '#/definitions/secret'
+  getSubscriptionResult:
+    title: getSubscriptionResult
+    type: object
+    properties:
+      id:
+        example: dGVzdC1uYW1l
+        type: string
+      name:
+        example: test-subscription
+        type: string
+      description:
+        example: test description
+        type: string
+      topic:
+        example: data-changed-v1
+        type: string
+      pushEndpoint:
+        example: https://myListener.com
+        type: string
+      createdBy:
+        example: test@myapp.com
+        type: string
+      notificationId:
+        example: de-6ee609b9-620e-477b-86f9-3b8907643a12
+        type: string
+  subscriptionCreateResult:
+    title: subscriptionCreateResult
+    type: object
+    properties:
+      id:
+        example: dGVzdC1uYW1l
+        type: string
+      name:
+        example: test-subscription
+        type: string
+        pattern: ^[A-Za-z0-9- ]{2,50}
+      description:
+        example: test description
+        type: string
+        pattern: ^[A-Za-z0-9. ]{0,255}
+      topic:
+        example: data-changed-v1
+        type: string
+      pushEndpoint:
+        example: https://myListener.com
+        type: string
+      createdBy:
+        example: test@myapp.com
+        type: string
+      notificationId:
+        example: de-6ee609b9-620e-477b-86f9-3b8907643a12
+        type: string
+      createdOnEpoch:
+        $ref: '#/definitions/createdOnEpoch'
+      secret:
+        $ref: '#/definitions/secret'
+  secret:
+    title: secret
+    type: object
+    properties:
+      secretType:
+        $ref: '#/definitions/SecretType'
+      value:
+        type: object
+  createdOnEpoch:
+    title: createdOnEpoch
+    type: object
+    properties:
+      seconds:
+        example: 1572275081
+        type: integer
+        format: int32
+      nanos:
+        example: 51000000
+        type: integer
+        format: int32
+  topic:
+    title: topic
+    type: object
+    properties:
+      name:
+        example: records-changed
+        type: string
+      description:
+        example: This notification is sent whenever a record is created, updated or deleted.
+        type: string
+      state:
+        example: ACTIVE
+        type: string
+      example:
+        type: array
+        items:
+          $ref: '#/definitions/topicExample'
+  topicExample:
+    title: topicExample
+    type: object
+    properties:
+      id:
+        example: common:test:123
+        type: string
+      kind:
+        example: common:source:type:1.0.0
+        type: string
+      op:
+        example: deleted
+        type: string
+  VersionInfo:
+    title: VersionInfo
+    description: Version info.
+    type: object
+    properties:
+      groupId:
+        description: Maven artifact group ID.
+        type: string
+      actifactId:
+        description: Maven artifact ID.
+        type: string
+      version:
+        description: Maven artifact version
+        type: string
+      buildTime:
+        description: Maven artifact build time
+        type: string
+      branch:
+        description: Current git branch
+        type: string
+      commitId:
+        description: Latest commit hash
+        type: string
+      commitMessage:
+        description: Latest commit message
+        type: string
+      connectedOuterServices:
+        description: Connected outer services information
+        type: array
+        items:
+          $ref: '#/definitions/ConnectedOuterService'
+  ConnectedOuterService:
+    title: ConnectedOuterService
+    description: Connected outer service information.
+    type: object
+    properties:
+      name:
+        description: Connected outer service name.
+        type: string
+      version:
+        description: Connected outer service version.
+        type: string
+  SecretType:
+    title: SecretType
+    example: HMAC
+    type: string
+    enum:
+    - HMAC
+    - GSA
+security:
+- bearer: []
+- appkey: []
+tags:
+- name: Domain Data Management Service (DDMS)
+  description: ''
+- name: Action
+  description: ''
+- name: Subscription
+  description: ''
+- name: Info
+  description: Version info endpoint

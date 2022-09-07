@@ -1,0 +1,264 @@
+swagger: '2.0'
+info:
+  version: '1.0'
+  title: Indexer Service
+  description: Api Documentation
+  contact: {}
+basePath: /api/indexer/v2
+securityDefinitions:
+  JWT:
+    type: apiKey
+    name: Authorization
+    in: header
+schemes:
+- https
+consumes:
+- application/json
+produces:
+- application/json
+paths:
+  /info:
+    get:
+      description: info
+      summary: infoUsingGET
+      tags:
+      - info-api
+      operationId: infoUsingGET
+      deprecated: false
+      produces:
+      - application/json
+      parameters:
+      - name: data-partition-id
+        in: header
+        required: true
+        type: string
+        description: data partition id
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/VersionInfo'
+          headers: {}
+        '401':
+          description: Unauthorized
+          headers: {}
+        '403':
+          description: Forbidden
+          headers: {}
+        '404':
+          description: Not Found
+          headers: {}
+      security:
+      - JWT: []
+  /liveness_check:
+    get:
+      description: livenessCheck
+      summary: livenessCheckUsingGET
+      tags:
+      - health-check-api
+      operationId: livenessCheckUsingGET
+      deprecated: false
+      produces:
+      - text/plain
+      parameters:
+      - name: data-partition-id
+        in: header
+        required: true
+        type: string
+        description: data partition id
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string
+            default: ''
+          headers: {}
+        '401':
+          description: Unauthorized
+          headers: {}
+        '403':
+          description: Forbidden
+          headers: {}
+        '404':
+          description: Not Found
+          headers: {}
+      security:
+      - JWT: []
+  /readiness_check:
+    get:
+      description: readinessCheck
+      summary: readinessCheckUsingGET
+      tags:
+      - health-check-api
+      operationId: readinessCheckUsingGET
+      deprecated: false
+      produces:
+      - text/plain
+      parameters:
+      - name: data-partition-id
+        in: header
+        required: true
+        type: string
+        description: data partition id
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string
+            default: ''
+          headers: {}
+        '401':
+          description: Unauthorized
+          headers: {}
+        '403':
+          description: Forbidden
+          headers: {}
+        '404':
+          description: Not Found
+          headers: {}
+      security:
+      - JWT: []
+  /reindex:
+    post:
+      description: reindex
+      summary: reindexUsingPOST_1
+      tags:
+      - reindex-api
+      operationId: reindexUsingPOST_1
+      deprecated: false
+      produces:
+      - application/json
+      consumes:
+      - application/json
+      parameters:
+      - name: data-partition-id
+        in: header
+        required: true
+        type: string
+        description: data partition id
+      - name: force_clean
+        in: query
+        required: false
+        default: false
+        type: boolean
+        description: force_clean
+      - name: Content-Type
+        in: header
+        required: false
+        enum:
+        - application/json
+        type: string
+        description: ''
+      - name: body
+        in: body
+        required: true
+        description: recordReindexRequest
+        schema:
+          $ref: '#/definitions/RecordReindexRequest'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            default: ''
+          headers: {}
+        '201':
+          description: Created
+          headers: {}
+        '401':
+          description: Unauthorized
+          headers: {}
+        '403':
+          description: Forbidden
+          headers: {}
+        '404':
+          description: Not Found
+          headers: {}
+      security:
+      - JWT: []
+    patch:
+      description: fullReindex
+      summary: fullReindexUsingPATCH
+      tags:
+      - reindex-api
+      operationId: fullReindexUsingPATCH
+      deprecated: false
+      produces:
+      - text/plain
+      parameters:
+      - name: data-partition-id
+        in: header
+        required: true
+        type: string
+        description: data partition id
+      - name: force_clean
+        in: query
+        required: false
+        default: false
+        type: boolean
+        description: force_clean
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string
+            default: ''
+          headers: {}
+        '204':
+          description: No Content
+          headers: {}
+        '401':
+          description: Unauthorized
+          headers: {}
+        '403':
+          description: Forbidden
+          headers: {}
+      security:
+      - JWT: []
+definitions:
+  ConnectedOuterService:
+    title: ConnectedOuterService
+    type: object
+    properties:
+      name:
+        type: string
+      version:
+        type: string
+  RecordReindexRequest:
+    title: RecordReindexRequest
+    type: object
+    properties:
+      cursor:
+        type: string
+      kind:
+        type: string
+  VersionInfo:
+    title: VersionInfo
+    type: object
+    properties:
+      artifactId:
+        type: string
+      branch:
+        type: string
+      buildTime:
+        type: string
+      commitId:
+        type: string
+      commitMessage:
+        type: string
+      connectedOuterServices:
+        type: array
+        items:
+          $ref: '#/definitions/ConnectedOuterService'
+      groupId:
+        type: string
+      version:
+        type: string
+security: []
+tags:
+- name: info-api
+  description: Info Api
+- name: health-check-api
+  description: Health Check Api
+- name: reindex-api
+  description: Reindex Api

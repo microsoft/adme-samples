@@ -1,0 +1,376 @@
+swagger: "2.0"
+info:
+  description: "Search service"
+  version: "1.0.0"
+  title: "Search Service"
+basePath: "/api/search/v2"
+tags:
+- name: search
+  description: Service endpoints to search data in datalake
+- name: Search
+- name: info
+  description: Version info endpoint
+schemes:
+- https
+consumes:
+- application/json
+produces:
+- application/json
+security:
+- Bearer: []
+paths:
+  "/query":
+    post:
+      tags:
+      - Search
+      summary: Queries the index for the specified kind using the input query string.
+      description: The API supports full text search on string fields, range queries on date, numeric or string fields, along with geo-spatial search. Required access levels to use this API are service.search.user, service.search.admin. In addition, users must be a member of data groups to access the data.
+      operationId: queryRecords
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - name: OSDU-Account-Id
+        in: header
+        description: Account ID is the active OSDU account (OSDU account or customer's account) which the users choose to use with the Search API.
+        required: true
+        type: string
+      - name: OSDU-On-Behalf-Of
+        in: header
+        description: On behalf email or token is the token/email of the original user making the call. For now, only email is supported but eventually, primary usage will be token.
+        required: false
+        type: string
+      - in: body
+        name: body
+        required: true
+        description: Specifies the API parameters. The only required parameter is the kind which needs to be formatted correctly.
+        schema:
+          "$ref": "#/definitions/QueryRequest"
+      responses:
+        '200':
+          description: Success.
+          schema:
+            "$ref": "#/definitions/QueryResponse"
+        '400':
+          description: Invalid parameters were given on request / Unrecognized fields found on request/ Bad JSON format.
+          schema:
+            "$ref": "#/definitions/AppError"
+        '403':
+          description: User not authorized to perform the action.
+          schema:
+            "$ref": "#/definitions/AppError"
+        '404':
+          description: Resource you are trying to find does not exists
+          schema:
+           "$ref": "#/definitions/AppError"
+      security:
+        - Bearer: []
+       
+  "/query_with_cursor":
+    post:
+      tags:
+      - Search
+      summary: Query the index using cursor and optionally return only requested fields.
+      description: The API supports full text search on string fields, range queries on date, numeric or string fields, along with geo-spatial search. Required access levels to use this API are service.search.user, service.search.admin. In addition, users must be a member of data groups to access the data. It can be used to retrieve large numbers of results (or even all results) from a single search request, in much the same way as you would use a cursor on a traditional database.
+      operationId: queryWithCursor
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - name: OSDU-Account-Id
+        in: header
+        description: Account ID is the active OSDU account (OSDU account or customer's account) which the users choose to use with the Search API.
+        required: true
+        type: string
+      - name: OSDU-On-Behalf-Of
+        in: header
+        description: On behalf email or token is the token/email of the original user making the call. For now, only email is supported but eventually, primary usage will be token.
+        required: false
+        type: string
+      - in: body
+        name: body
+        required: true
+        description: Specifies the API parameters. The only required parameter is the kind which needs to be formatted correctly.
+        schema:
+          "$ref": "#/definitions/CursorQueryRequest"
+      responses:
+        '200':
+          description: Success.
+          schema:
+            "$ref": "#/definitions/CursorQueryResponse"
+        '400':
+          description: Invalid parameters were given on request / Unrecognized fields found on request/ Bad JSON format.
+          schema:
+            "$ref": "#/definitions/AppError"
+        '403':
+          description: User not authorized to perform the action.
+          schema:
+            "$ref": "#/definitions/AppError"
+        '404':
+          description: Resource you are trying to find does not exists
+          schema:
+            "$ref": "#/definitions/AppError"
+      security:
+        - Bearer: []
+   
+  /info:
+    get:
+      tags:
+        - info
+      summary: "Version info"
+      description: "For deployment available public `/info` endpoint, \
+        \ which provides build and git related information."
+      operationId: "Version info"
+      produces:
+        - "application/json"
+      responses:
+        200:
+          description: "Version info."
+          schema:
+            $ref: "#/definitions/VersionInfo"
+definitions:
+  AppError:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      reason:
+        type: string
+      message:
+        type: string
+  QueryResponse:
+    type: object
+    properties:
+      results:
+        type: array
+        items:
+          type: object
+          additionalProperties:
+            type: object
+      totalCount:
+        type: integer
+        format: int64
+  ByBoundingBox:
+    title: Query by bounding box
+    description : A spatial filter criteria to allow to filter documents based on a point location within a bounding box.
+    type: object
+    required:
+    - topLeft
+    - bottomRight
+    properties:
+      topLeft:
+        "$ref": "#/definitions/Point"
+      bottomRight:
+        "$ref": "#/definitions/Point"
+  ByDistance:
+    title: Query by distance
+    description: A spatial filter criteria to filter documents that exist within a specific distance from a geo point.
+    type: object
+    required:
+    - point
+    properties:
+      distance:
+        type: number
+        format: double
+        minimum: 0
+      point:
+        "$ref": "#/definitions/Point"
+  ByGeoPolygon:
+    title: Query by polygon
+    description: A spatial filter criteria to filter documents which falls within a polygon of points.
+    type: array
+    items:
+      "$ref": "#/definitions/Point"
+    required:
+    - points
+    properties:
+      points:
+        type: array
+        items:
+            "$ref": "#/definitions/Point"
+  Point:
+    title: Point
+    description: Geo-point with latitude and longitude
+    type: object
+    properties:
+      latitude:
+        type: number
+        format: double
+        minimum: -90
+        maximum: 90
+      longitude:
+        type: number
+        format: double
+        minimum: -180
+        maximum: 180
+  QueryRequest:
+    description: Json object to query the Search API
+    type: object
+    required:
+    - kind
+    properties:
+      offset:
+        type: integer
+        format: int32
+        minimum: 0
+        description: The starting offset from which to return results
+      kind:
+        type: string
+        description: The kind of the record to query e.g. 'tenant1:test:well:1.0.0'.
+      limit:
+        type: integer
+        format: int32
+        minimum: 0
+        description: The maximum number of results to return from the given offset. If no limit is provided, then it will return 10 items. Max number of items which can be fetched by the query is 1000.
+      query:
+        type: string
+        description: The query string in Lucene query string syntax.
+      spatialFilter:
+        "$ref": "#/definitions/SpatialFilter"
+      returnedFields:
+        type: array
+        items:
+          type: string
+        description: The fields on which to project the results.
+    example:
+      offset: 10
+      kind: tenant1:test:well:1.0.0
+      limit: 30
+      query: Status:Active
+      spatialFilter:
+        field: Location
+        byBoundingBox:
+          topLeft:
+            latitude: 37.450727
+            longitude: -122.174762
+          bottomRight:
+            latitude: 36.450727
+            longitude: 122.174762
+      returnedFields: [Location]
+  SpatialFilter:
+    title: Spatial Filter
+    description: This filter is used to filter geo-point geo data which supports lat/lon pairs. The queries in this group are Geo Distance, Geo Polygon and Bounding Box. Only one spatial criteria can be used while defining filter.
+    type: object
+    required:
+    - field
+    properties:
+      field:
+        type: string
+        description: geo-point field in the index on which filtering will be performed.
+      byBoundingBox:
+        "$ref": "#/definitions/ByBoundingBox"
+      byDistance:
+        "$ref": "#/definitions/ByDistance"
+      byGeoPolygon:
+        "$ref": "#/definitions/ByGeoPolygon"
+  CursorQueryResponse:
+    type: object
+    properties:
+      cursor:
+        type: string
+      results:
+        type: array
+        items:
+          type: object
+          additionalProperties:
+            type: object
+      totalCount:
+        type: integer
+        format: int64
+  CursorQueryRequest:
+    description: Json object to query the Search API
+    type: object
+    required:
+    - kind
+    properties:
+      cursor:
+        type: string
+        description: The cursor value returned from a previous query.
+      kind:
+        type: string
+        description: The kind of the record to query e.g. 'tenant1:test:well:1.0.0'.
+      limit:
+        type: integer
+        format: int32
+        minimum: 0
+        description: The maximum number of results to return from the given offset. If no limit is provided, then it will return 10 items. Max number of items which can be fetched by the query is 1000.
+      query:
+        type: string
+        description: The query string in Lucene query string syntax.
+      spatialFilter:
+        "$ref": "#/definitions/SpatialFilter"
+      returnedFields:
+        type: array
+        items:
+          type: string
+        description: The fields on which to project the results.
+    example:
+      cursor: yyyyyyy
+      kind: tenant1:test:well:1.0.0
+      limit: 30
+      query: Status:Active
+      spatialFilter:
+        field: Location
+        byBoundingBox:
+          topLeft:
+            latitude: 37.450727
+            longitude: -122.174762
+          bottomRight:
+            latitude: 36.450727
+            longitude: 122.174762
+      returnedFields: [Location]
+  VersionInfo:
+    type: "object"
+    properties:
+      groupId:
+        type: "string"
+        description: "Maven artifact group ID."
+      actifactId:
+        type: "string"
+        description: "Maven artifact ID."
+      version:
+        type: "string"
+        description: "Maven artifact version"
+      buildTime:
+        type: "string"
+        description: "Maven artifact build time"
+      branch:
+        type: "string"
+        description: "Current git branch"
+      commitId:
+        type: "string"
+        description: "Latest commit hash"
+      commitMessage:
+        type: "string"
+        description: "Latest commit message"
+      connectedOuterServices:
+        type: "array"
+        description: "Connected outer services information"
+        items:
+          $ref: "#/definitions/ConnectedOuterService"
+    description: "Version info."
+  ConnectedOuterService:
+    type: "object"
+    properties:
+      name:
+        type: "string"
+        description: "Connected outer service name."
+      version:
+        type: "string"
+        description: "Connected outer service version."
+    description: "Connected outer service information."
+  # This section is the general responses shared by all apis
+  GeneralResponse:
+    properties:
+      502:
+        description: Too many requests are received in short period of time. Please retry later.
+# This section requires all requests to any path to require an API key.
+securityDefinitions:
+  #Security configuration or the portal
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
