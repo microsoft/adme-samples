@@ -1,8 +1,8 @@
-swagger: '2.0'
+swagger: "2.0"
 info:
-  version: '1.0'
+  version: "2.0.0"
   title: Storage Service
-  description: Api Documentation for storage service
+  description: Api Documentation for Storage service
   contact: {}
 basePath: /
 securityDefinitions:
