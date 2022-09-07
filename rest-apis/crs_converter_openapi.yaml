@@ -6,16 +6,62 @@ info:
     are involved, i.e. source and target CRS do not share the same datum.
   version: 1.0.0
   title: CRS Conversion Service
-basePath: /api/crs/converter
+basePath: "/api/crs/converter"
 security:
   - Bearer: []
 tags:
+  - name: health-check
   - name: CRS Point Conversion
+  - name: Info Api
   - name: Trajectory Computation and Conversion
 schemes:
   - https
 paths:
-  "/convertTrajectory":
+  "/_ah/liveness_check":
+    get:
+      tags:
+        - health-check
+      summary: livenessCheck
+      operationId: livenessCheckUsingGET
+      produces:
+        - "*/*"
+      parameters: []
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - Bearer: []
+  "/_ah/readiness_check":
+    get:
+      tags:
+        - health-check
+      summary: readinessCheck
+      operationId: readinessCheckUsingGET
+      produces:
+        - "*/*"
+      parameters: []
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - Bearer: []
+  "/v2/convertTrajectory":
     post:
       tags:
         - Trajectory Computation and Conversion
@@ -30,13 +76,12 @@ paths:
       parameters:
         - in: body
           name: body
-          required: false
+          required: true
           schema:
             "$ref": "#/definitions/ConvertTrajectoryRequest"
         - in: header
           name: data-partition-id
-          type: string
-          required: false
+          required: true
       responses:
         '200':
           description: Trajectory conversion performed successfully
@@ -52,7 +97,7 @@ paths:
             "$ref": "#/definitions/ErrorResponse"
       security:
         - Bearer: []
-  "/convert":
+  "/v2/convert":
     post:
       tags:
         - CRS Point Conversion
@@ -66,13 +111,12 @@ paths:
       parameters:
         - in: body
           name: body
-          required: false
+          required: true
           schema:
             "$ref": "#/definitions/ConvertPointsRequest"
         - in: header
           name: data-partition-id
-          type: string
-          required: false
+          required: true
       responses:
         '200':
           description: Conversion performed successfully
@@ -88,7 +132,7 @@ paths:
             "$ref": "#/definitions/ErrorResponse"
       security:
         - Bearer: []
-  "/convertGeoJson":
+  "/v2/convertGeoJson":
     post:
       tags:
         - CRS Point Conversion
@@ -103,13 +147,12 @@ paths:
       parameters:
         - in: body
           name: body
-          required: false
+          required: true
           schema:
             "$ref": "#/definitions/ConvertGeoJsonRequest"
         - in: header
           name: data-partition-id
-          type: string
-          required: false
+          required: true
       responses:
         '200':
           description: Conversion performed successfully
@@ -123,6 +166,36 @@ paths:
           description: CRS-converter overloaded; try again later. See HttpHeader 'Retry-After'.
           schema:
             "$ref": "#/definitions/ErrorResponse"
+      security:
+        - Bearer: []
+  "/v2/info":
+    get:
+      tags:
+        - Info Api
+      summary: info
+      operationId: infoUsingGET
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: data-partition-id
+          in: header
+          description: tenant
+          required: true
+          type: string
+          default: opendes
+      responses:
+        '200':
+          description: OK
+          schema:
+            "$ref": "#/definitions/VersionInfo"
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
       security:
         - Bearer: []
 securityDefinitions:
@@ -842,3 +915,20 @@ definitions:
         description: The vertical axis unit for this AnyCrsGeoJsonFeatureCollection
           as persistable reference string.
         title: Vertical Unit
+  VersionInfo:
+    type: object
+    properties:
+      artifactId:
+        type: string
+      branch:
+        type: string
+      buildTime:
+        type: string
+      commitId:
+        type: string
+      commitMessage:
+        type: string
+      groupId:
+        type: string
+      version:
+        type: string
