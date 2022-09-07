@@ -297,6 +297,64 @@ paths:
           headers: {}
       security:
       - bearer: []
+  /schemas/system:
+    put:
+      tags:
+        - schemas/system
+      summary: Creates/Updates a schema in development status
+      description: Creates a new schema or updates an already existing schema with status `DEVELOPMENT` in the schema repository. If a user tries to create a schema with status other then `DEVELOPMENT`, API will not throw an exception. The update
+        of schema without `DEVELOPMENT` status would cause error.Any schema instance with the same schemaIdentity is replaced. A schema state can also be changed from `DEVELOPMENT` to `PUBLISHED` or `OBSOLETE` while updating schema content or by providing the same schema content. **Note:** The
+        schema may refer to other schema definitions in `DEVELOPMENT` state. If those schemas are updated themselves, it is the developer's
+        responsibility to PUT the dependent schemas again to update the schema. Scope for a schema will be SHARED for all the schemas created using this API. Service principal
+        authorization is required to call thi API.
+      operationId: UpdateSystemSchema
+      deprecated: false
+      produces:
+      - application/json
+      consumes:
+      - application/json
+      parameters:
+      - name: data-partition-id
+        in: header
+        required: true
+        type: string
+        description: Specifies the data partition to use. This should be either the partition name or crm account ID associated with the partition.
+      - name: Content-Type
+        in: header
+        required: false
+        enum:
+        - application/json
+        type: string
+        description: ''
+      - name: body
+        in: body
+        required: true
+        description: SchemaRequest
+        schema:
+          $ref: '#/definitions/SchemaRequest'
+      responses:
+        '201':
+          description: Schema created
+          schema:
+            $ref: '#/definitions/SchemaInfo'
+          headers: {}
+        '400':
+          description: Bad user input. Mandatory fields missing or unacceptable value passed to API
+          schema:
+            $ref: '#/definitions/ErrorResponseFormat'
+          headers: {}
+        '401':
+          description: Unknown or invalid user.
+          schema:
+            $ref: '#/definitions/ErrorResponseFormat'
+          headers: {}
+        '403':
+          description: User not authorised to access the API
+          schema:
+            $ref: '#/definitions/ErrorResponseFormat'
+          headers: {}
+      security:
+      - bearer: []
   /info:
     get:
       description: For deployment available public `/info` endpoint,  which provides build and git related information.
@@ -540,3 +598,5 @@ tags:
   description: Core Schema Service related methods
 - name: info
   description: Version info endpoint
+- name: schemas/system
+  description: Core System Schema Service related methods
