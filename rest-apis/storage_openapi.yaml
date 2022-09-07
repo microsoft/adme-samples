@@ -1,0 +1,1053 @@
+swagger: "2.0"
+info:
+  description: API documentation for Storage service
+  version: "2.0.0"
+  title: Storage Service
+basePath: "/api/storage/v2"
+tags:
+- name: "records"
+  description: "Records management operations."
+- name: "schemas"
+  description: "Schema management"
+- name: "query"
+  description: "Record queries"
+- name: "info"
+  description: "Version info endpoint"
+schemes:
+- "https"
+consumes:
+- "application/json"
+produces:
+- "application/json"
+paths:
+  /query/kinds:
+    get:
+      tags:
+      - "query"
+      summary: "Get all kinds"
+      description: "The API returns a list of all kinds in the specific {Account-Id}.\
+        \ Allowed roles: service.storage.admin."
+      operationId: "Get all kinds"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "cursor"
+        in: "query"
+        description: "Cursor"
+        required: false
+        type: "string"
+      - name: "limit"
+        in: "query"
+        description: "Page Size"
+        required: false
+        type: "integer"
+        default: 10
+        format: "int32"
+      - name: "OSDU-Account-Id"
+        in: "header"
+        description: "Account ID is the active account\
+          \ account) which the users choose to use with the Search API."
+        required: true
+        type: "string"
+        default: "tenant1"
+      responses:
+        200:
+          description: "All kinds retrieved successfully."
+          schema:
+            $ref: "#/definitions/DatastoreQueryResult"
+        500:
+          description: "Unknown Error."
+          schema:
+            $ref: "#/definitions/AppError"
+      security:
+      - Bearer: []  
+  /query/records:
+    get:
+      tags:
+      - "query"
+      summary: "Get all record from kind"
+      description: "The API returns a list of all record ids which belong to the specified\
+        \ kind. Allowed roles: service.storage.admin."
+      operationId: "Get all record from kind"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "cursor"
+        in: "query"
+        description: "Cursor"
+        required: false
+        type: "string"
+      - name: "limit"
+        in: "query"
+        description: "Page Size"
+        required: false
+        type: "integer"
+        default: 10
+        format: "int32"
+      - name: "kind"
+        in: "query"
+        description: "Filter Kind"
+        required: false
+        type: "string"
+        default: "tenant1:public:well:1.0.2"
+      - name: "OSDU-Account-Id"
+        in: "header"
+        description: "Account ID is the active OSDU account (OSDU account or customer's\
+          \ account) which the users choose to use with the Search API."
+        required: true
+        type: "string"
+        default: "tenant1"
+      responses:
+        200:
+          description: "Record Ids retrieved successfully."
+          schema:
+            $ref: "#/definitions/DatastoreQueryResult"
+        404:
+          description: "Kind or cursor not found."
+          schema:
+            $ref: "#/definitions/AppError"
+      security:
+      - Bearer: []  
+    post:
+      tags:
+      - "query"
+      summary: "Fetch records"
+      description: "The API fetches multiple records at once. Allowed roles: service.storage.viewer,\
+        \ service.storage.creator and service.storage.admin."
+      operationId: "Fetch records"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          $ref: "#/definitions/MultiRecordIds"
+      - name: "OSDU-Account-Id"
+        in: "header"
+        description: "Account ID is the active OSDU account (OSDU account or customer's\
+          \ account) which the users choose to use with the Search API."
+        required: true
+        type: "string"
+        default: "tenant1"
+      responses:
+        200:
+          description: "Fetch multiple records successfully."
+          schema:
+            $ref: "#/definitions/MultiRecordIds"
+        500:
+          description: "Unknown storage error."
+          schema:
+            $ref: "#/definitions/AppError"
+      security:
+      - Bearer: []  
+  /records/{id}:delete:
+    post:
+      tags:
+      - "records"
+      summary: "Delete record"
+      description: "The API performs a logical deletion of the given record. This\
+        \ operation can be reverted later. Allowed roles: service.storage.creator\
+        \ and service.storage.admin."
+      operationId: "Delete record"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "Record id"
+        required: true
+        type: "string"
+        default: "tenant1:well:123456789"
+      - name: "OSDU-Account-Id"
+        in: "header"
+        description: "Account ID is the active OSDU account (OSDU account or customer's\
+          \ account) which the users choose to use with the Search API."
+        required: true
+        type: "string"
+        default: "tenant1"
+      responses:
+        204:
+          description: "Record deleted successfully."
+        404:
+          description: "Record not found."
+          schema:
+            $ref: "#/definitions/AppError"
+      security:
+      - Bearer: []  
+  "/records/delete":
+    post:
+      tags:
+        - records
+      summary: Soft delete of multiple records
+      description: "The API performs a soft deletion of the given list of records. Required roles: 'users.datalake.editors' or
+        'users.datalake.admins'."
+      operationId: Delete records
+      parameters:
+        - name: data-partition-id
+          in: header
+          description: This value should be the desired data partition id.
+          required: true
+          schema:
+            type: string
+            default: common
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+      responses:
+        "204":
+          description: All records deleted successfully.
+        "207":
+          description: Some of the records weren't deleted successfully.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DeleteRecordsException"
+        "400":
+          description: "Invalid id format"
+          schema:
+            $ref: "#/definitions/AppError"
+      security:
+        - bearer: []
+        - appkey: []
+  /records/{id}:
+    get:
+      tags:
+      - "records"
+      summary: "Get record"
+      description: "This API returns the latest version of the given record. Allowed\
+        \ roles: service.storage.viewer, service.storage.creator and service.storage.admin."
+      operationId: "Get record"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "Record id"
+        required: true
+        type: "string"
+        default: "tenant1:well:123456789"
+      - name: "attribute"
+        in: "query"
+        description: "Filter attributes to restrict the returned fields of the record.\
+          \ Usage: data.{record-data-field-name}."
+        required: false
+        type: "array"
+        items:
+          type: "string"
+          default: "data.wellName"
+        collectionFormat: "multi"
+      - name: "OSDU-Account-Id"
+        in: "header"
+        description: "Account ID is the active OSDU account (OSDU account or customer's\
+          \ account) which the users choose to use with the Search API."
+        required: true
+        type: "string"
+        default: "tenant1"
+      responses:
+        200:
+          description: "Record retrieved successfully."
+          schema:
+            $ref: "#/definitions/RecordData"
+        404:
+          description: "Record not found."
+          schema:
+            $ref: "#/definitions/AppError"
+      security:
+      - Bearer: []  
+    delete:
+      tags:
+      - "records"
+      summary: "Purge record"
+      description: "The API performs the physical deletion of the given record and\
+        \ all of its versions. This operation cannot be undone. Allowed roles: service.storage.admin."
+      operationId: "Purge record"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "Record id"
+        required: true
+        type: "string"
+        default: "tenant1:well:123456789"
+      - name: "OSDU-Account-Id"
+        in: "header"
+        description: "Account ID is the active OSDU account (OSDU account or customer's\
+          \ account) which the users choose to use with the Search API."
+        required: true
+        type: "string"
+        default: "tenant1"
+      responses:
+        204:
+          description: "Record purged successfully."
+        404:
+          description: "Record not found."
+          schema:
+            $ref: "#/definitions/AppError"
+      security:
+      - Bearer: []  
+  /records/{id}/{version}:
+    get:
+      tags:
+      - "records"
+      summary: "Get record version"
+      description: "The API retrieves the specific version of the given record. Allowed\
+        \ roles: service.storage.viewer, service.storage.creator and service.storage.admin."
+      operationId: "Get record version"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "Record id"
+        required: true
+        type: "string"
+      - name: "version"
+        in: "path"
+        description: "Record version"
+        required: true
+        type: "integer"
+        default: 123456789
+        format: "int64"
+      - name: "attribute"
+        in: "query"
+        description: "Filter attributes to restrict the returned fields of the record.\
+          \ Usage: data.{record-data-field-name}."
+        required: false
+        type: "array"
+        items:
+          type: "string"
+          default: "data.wellName"
+        collectionFormat: "multi"
+      - name: "OSDU-Account-Id"
+        in: "header"
+        description: "Account ID is the active OSDU account (OSDU account or customer's\
+          \ account) which the users choose to use with the Search API."
+        required: true
+        type: "string"
+        default: "tenant1"
+      responses:
+        200:
+          description: "Record retrieved successfully."
+          schema:
+            $ref: "#/definitions/RecordData"
+        404:
+          description: "Record id or version not found."
+          schema:
+            $ref: "#/definitions/AppError"
+      security:
+      - Bearer: []  
+  /records/versions/{id}:
+    get:
+      tags:
+      - "records"
+      summary: "Get all record versions"
+      description: "The API returns a list containing all versions for the given record\
+        \ id. Allowed roles: service.storage.viewer, service.storage.creator and service.storage.admin."
+      operationId: "Get all record versions"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "Record id"
+        required: true
+        type: "string"
+        default: "tenant1:well:123456789"
+      - name: "OSDU-Account-Id"
+        in: "header"
+        description: "Account ID is the active OSDU account (OSDU account or customer's\
+          \ account) which the users choose to use with the Search API."
+        required: true
+        type: "string"
+        default: "tenant1"
+      responses:
+        200:
+          description: "Record versions retrieved successfully."
+          schema:
+            $ref: "#/definitions/RecordVersions"
+        404:
+          description: "Record id or version not found."
+          schema:
+            $ref: "#/definitions/AppError"
+      security:
+      - Bearer: []  
+  /records:
+    put:
+      tags:
+      - "records"
+      summary: "Create or update records"
+      description: "The API represents the main injection mechanism into the Data\
+        \ Lake. It allows records creation and/or update. When no record id is provided\
+        \ or when the provided id is not already present in the Data Lake then a new\
+        \ record is created. If the id is related to an existing record in the Data\
+        \ Lake then an update operation takes place and a new version of the record\
+        \ is created. Allowed roles: service.storage.creator and service.storage.admin."
+      operationId: "Create or update records"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "skipdupes"
+        in: "query"
+        description: "Skip duplicates when updating records with the same value."
+        required: false
+        type: "boolean"
+        default: true
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          type: "array"
+          items:
+            $ref: "#/definitions/Record"
+      - name: "OSDU-Account-Id"
+        in: "header"
+        description: "Account ID is the active OSDU account (OSDU account or customer's\
+          \ account) which the users choose to use with the Search API."
+        required: true
+        type: "string"
+        default: "tenant1"
+      responses:
+        201:
+          description: "Records created and/or updated successfully."
+          schema:
+            $ref: "#/definitions/Record"
+        400:
+          description: "Invalid record format."
+          schema:
+            $ref: "#/definitions/AppError"
+        404:
+          description: "Invalid acl group."
+          schema:
+            $ref: "#/definitions/AppError"
+        403:
+          description: "User not authorized to perform the action."
+          schema:
+            $ref: "#/definitions/AppError"
+      security:
+      - Bearer: []
+    patch:
+      tags:
+      - "records"
+      summary: "Modify record metadata attributes using patch operations"
+      description: "The API represents the patch update mechanism for records. It allows\
+        \ updating multiple records in one request. The currently supported operations are replace,\
+        \ add, and remove for Legal Tags, ACLs, and Tags. \
+        \ Required roles: 'users.datalake.editors' or 'users.datalake.admins'."
+      operationId: "Patch update records"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          type: "array"
+          items:
+            $ref: "#/definitions/RecordBulkUpdateParam"
+      - name: "OSDU-Account-Id"
+        in: "header"
+        description: "Account ID is the active OSDU account (OSDU account or customer's\
+          \ account) which the users choose to use with the Search API."
+        required: true
+        type: "string"
+        default: "tenant1"
+      responses:
+        200:
+          description: "Records updated successfully."
+          schema:
+            $ref: "#/definitions/BulkUpdateRecordsResponse"
+        206:
+          description: "Records updated successful partially."
+          schema:
+            $ref: "#/definitions/BulkUpdateRecordsResponse"
+        400:
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/AppError"
+        403:
+          description: "User not authorized to perform the action."
+          schema:
+            $ref: "#/definitions/AppError"
+      security:
+      - Bearer: []  
+  /schemas/{kind}:
+    get:
+      tags:
+      - "schemas"
+      summary: "Get schema"
+      description: "The API returns the schema specified byt the given kind, which\
+        \ must follow the naming convention {OSDU-Account-Id}:{dataset}:{type}:{version}.\
+        \ Allowed roles: service.storage.viewer, service.storage.creator and service.storage.admin."
+      operationId: "Get schema"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "kind"
+        in: "path"
+        description: "Kind"
+        required: true
+        type: "string"
+        default: "tenant1:public:well:1.0.2"
+      - name: "OSDU-Account-Id"
+        in: "header"
+        description: "Account ID is the active OSDU account (OSDU account or customer's\
+          \ account) which the users choose to use with the Search API."
+        required: true
+        type: "string"
+        default: "tenant1"
+      responses:
+        200:
+          description: "Schema obtained successfully."
+          schema:
+            $ref: "#/definitions/Schema"
+        400:
+          description: "Bad request."
+          schema:
+            $ref: "#/definitions/AppError"
+        404:
+          description: "Schema not found for specified kind."
+          schema:
+            $ref: "#/definitions/AppError"
+      security:
+      - Bearer: []  
+    delete:
+      tags:
+      - "schemas"
+      summary: "Delete a schema"
+      description: "Allowed roles: service.storage.admin. Delete a schema by kind\
+        \ in {OSDU-Account-Id}:{dataset}:{type}:{version} format."
+      operationId: "Delete a schema"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "kind"
+        in: "path"
+        description: "Kind"
+        required: true
+        type: "string"
+        default: "tenant1:public:well:1.0.2"
+      - name: "OSDU-Account-Id"
+        in: "header"
+        description: "Account ID is the active OSDU account (OSDU account or customer's\
+          \ account) which the users choose to use with the Search API."
+        required: true
+        type: "string"
+        default: "tenant1"
+      responses:
+        204:
+          description: "Schema deleted successfully."
+        400:
+          description: "Bad request."
+          schema:
+            $ref: "#/definitions/AppError"
+        404:
+          description: "Schema not found."
+          schema:
+            $ref: "#/definitions/AppError"
+      security:
+      - Bearer: []  
+  /schemas:
+    post:
+      tags:
+      - "schemas"
+      summary: "Create schema"
+      description: "The API allows the creation of a new schema for the given kind.\
+        \ Allowed roles: service.storage.creator and service.storage.admin."
+      operationId: "Create schema"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          $ref: "#/definitions/Schema"
+      - name: "OSDU-Account-Id"
+        in: "header"
+        description: "Account ID is the active OSDU account (OSDU account or customer's\
+          \ account) which the users choose to use with the Search API."
+        required: true
+        type: "string"
+        default: "tenant1"
+      responses:
+        201:
+          description: "Schema created successfully."
+          schema:
+            $ref: "#/definitions/Schema"
+        400:
+          description: "Bad request."
+          schema:
+            $ref: "#/definitions/AppError"
+        409:
+          description: "Schema already registered."
+          schema:
+            $ref: "#/definitions/AppError"
+      security:
+      - Bearer: []
+  /info:
+    get:
+      tags:
+      - "info"
+      summary: "Version info"
+      description: "For deployment available public `/info` endpoint, \
+        \ which provides build and git related information."
+      operationId: "Version info"
+      produces:
+        - "application/json"
+      responses:
+        200:
+          description: "Version info."
+          schema:
+            $ref: "#/definitions/VersionInfo"
+securityDefinitions:
+  #SAuth security configuration or the portal
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header    
+definitions:
+  DatastoreQueryResult:
+    type: "object"
+    properties:
+      cursor:
+        type: "string"
+      results:
+        type: "array"
+        items:
+          type: "string"
+  AppError:
+    type: "object"
+    properties:
+      code:
+        type: "integer"
+        format: "int32"
+      reason:
+        type: "string"
+      message:
+        type: "string"
+    description: "An error that occurs during normal application logic"
+  MultiRecordInfo:
+    type: "object"
+    properties:
+      records:
+        type: "array"
+        items:
+          type: "string"
+      invalidRecords:
+        type: "array"
+        items:
+          type: "string"
+      retryRecords:
+        type: "array"
+        items:
+          type: "string"
+    description: "Multiple Storage records."
+  MultiRecordIds:
+    type: "object"
+    required:
+    - "records"
+    properties:
+      records:
+        type: "array"
+        example: "tenant1:well:123456789"
+        description: "List of record ids. Each record id must follow the naming convention\
+          \ {OSDU-Account-Id}:{dataset-name}:{record-type}:{version}."
+        items:
+          type: "string"
+      attributes:
+        type: "array"
+        example: "data.wellName"
+        description: "Filter attributes to restrict the returned fields of the record.\
+          \ Usage: data.{record-data-field-name}."
+        allowEmptyValue: true
+        items:
+          type: "string"
+    description: "Multiple storage record ids and filter attributes."
+    example:
+      records:
+      - "tenant1:well:123456789"
+      - "tenant1:wellTop:abc789456"
+      - "tenant1:wellLog:654abc987"
+      attributes:
+      - "data.msg"
+  DeleteRecordsException:
+    type: object
+    properties:
+      notDeletedRecordId:
+        type: string
+        example: common:welldb:123456
+        description: Record id which wasn't deleted successfully.
+      message:
+        type: string
+        example: Record with id 'common:welldb:123456' not found
+        description: Brief description of the cause why record wasn't delete
+    description: Delete Records Response Body
+  RecordData:
+    type: "object"
+    properties:
+      data:
+        type: "object"
+        additionalProperties:
+          type: "object"
+      meta:
+        type: "array"
+        items:
+          type: "object"
+          additionalProperties:
+            type: "object"
+    description: "Storage record"
+  RecordVersions:
+    type: "object"
+    properties:
+      recordId:
+        type: "string"
+      versions:
+        type: "array"
+        items:
+          type: "integer"
+          format: "int64"
+    description: "Storage record versions."
+  CreateUpdateRecordsResponse:
+    type: "object"
+    properties:
+      recordCount:
+        type: "integer"
+        format: "int32"
+        description: "Number of records ingested successfully."
+      recordIds:
+        type: "array"
+        description: "List of ingested record id."
+        items:
+          type: "string"
+      skippedRecordIds:
+        type: "array"
+        description: "List of record id that skipped update because it was a duplicate\
+          \ of the existing record."
+        items:
+          type: "string"
+    description: "Result of the ingestion request."
+  Legal:
+    type: "object"
+    properties:
+      legaltags:
+        type: "array"
+        description: "List of legaltag names associated with the record."
+        uniqueItems: true
+        items:
+          type: "string"
+      otherRelevantDataCountries:
+        type: "array"
+        description: "List of other relevant data countries. Must have 2 values: where\
+          \ the data was ingested from and where Data Lake stores the data."
+        uniqueItems: true
+        items:
+          type: "string"
+  Record:
+    type: "object"
+    required:
+    - "acl"
+    - "data"
+    - "kind"
+    - "legal"
+    properties:
+      id:
+        type: "string"
+        example: "tenant1:well:123456789"
+        description: "Unique identifier in whole Data Lake. When not provided, Data\
+          \ Lake will create and assign an id to the record. Must follow the naming\
+          \ convention: {OSDU-Account-Id}:{object-type}:{uuid}."
+        pattern: "^[\\w\\-\\.]+:[\\w-\\.\\/]+:.+$"
+      kind:
+        type: "string"
+        example: "tenant1:public:well:1.0.2"
+        description: "Kind of data it is being ingested. Must follow the naming convention:\
+          \ {OSDU-Account-Id}:{dataset-name}:{record-type}:{version}."
+        pattern: "^[\\w\\-\\.]+:[\\w\\-\\.]+:[\\w\\-\\.\\/]+:[0-9]+.[0-9]+.[0-9]+$"
+      acl:
+        description: "Group of users who have access to the record."
+        $ref: "#/definitions/StorageAcl"
+      legal:
+        description: "Attributes which represent the legal constraints associated\
+          \ with the record."
+        $ref: "#/definitions/Legal"
+      data:
+        type: "object"
+        description: "Record payload represented as a list of key-value pairs."
+        additionalProperties:
+          type: "object"
+      history:
+        description: "Record ancestry information."
+        allowEmptyValue: true
+        $ref: "#/definitions/RecordHistory"
+    description: "Storage record"
+    example:
+    - id: "tenant1:well:123456789"
+      kind: "tenant1:public:well:1.0.2"
+      acl:
+        viewers:
+        - "my-viewer-group@[OSDU].com"
+        owners:
+        - "my-owner-group@[OSDU].com"
+      legal:
+        legaltags:
+        - "sample-legal-tag"
+        otherRelevantDataCountries:
+        - "US"
+      data:
+        msg: "hello world from Data Lake"
+      history:
+        parents:
+        - "OSDU:parent-record:1.0.0"
+  RecordHistory:
+    type: "object"
+    properties:
+      parents:
+        type: "array"
+        description: "List of parent records. Must follow the naming convention: {parent-record-id}:{parent-record-version}."
+        allowEmptyValue: true
+        uniqueItems: true
+        items:
+          type: "string"
+  StorageAcl:
+    type: "object"
+    required:
+    - "owners"
+    - "viewers"
+    properties:
+      viewers:
+        type: "array"
+        description: "List of valid groups which will have view/read privileges over\
+          \ the record."
+        items:
+          type: "string"
+      owners:
+        type: "array"
+        description: "List of valid groups which will have write privileges over the\
+          \ record."
+        items:
+          type: "string"
+  Schema:
+    type: "object"
+    required:
+    - "kind"
+    - "schema"
+    properties:
+      kind:
+        type: "string"
+        example: "tenant1:public:well:1.0.2"
+        description: "Record kind for which the schema information is applied to."
+      schema:
+        type: "array"
+        description: "List of schema items which compose the schema."
+        items:
+          $ref: "#/definitions/SchemaItem"
+    description: "Schema definition for the specified record kind."
+    example:
+      kind: "tenant1:public:well:1.0.2"
+      schema:
+      - path: "msg"
+        kind: "string"
+      - path: "year"
+        kind: "int"
+      - path: "weight"
+        kind: "float"
+      - path: "location"
+        kind: "core:dl:geopoint"
+      - path: "valid"
+        kind: "bool"
+  SchemaItem:
+    type: "object"
+    required:
+    - "kind"
+    - "path"
+    properties:
+      path:
+        type: "string"
+        description: "Schema item property name."
+      kind:
+        type: "string"
+        description: "Schema item property data type."
+        enum:
+        - "string"
+        - "int"
+        - "float"
+        - "double"
+        - "long"
+        - "boolean"
+        - "link"
+        - "datetime."
+    description: "Schema item which describes schema properties and their data types."
+  RecordBulkUpdateParam:
+    type: "object"
+    required:
+    - "query"
+    - "ops"
+    properties:
+      query:
+        description: "Patch update query information"
+        allowEmptyValue: false
+        $ref: "#/definitions/RecordQuery"
+      ops:
+        type: "array"
+        description: "List of operations for records pathc update"
+        allowEmptyValue: false
+        items:
+          $ref: "#/definitions/PatchOperation"
+    description: "Patch update input information"
+    example:
+      query:
+      - ids:
+          - "tenant:type:unique-identifier:version"
+      ops:
+      - op: "replace or add or remove"
+        path: "/acl/viewers or /acl/owners or /legal/legaltags"
+        value:
+        - "value1"
+        - "value2"
+        - "value3"
+      - op: "replace or add"
+        path: "/tags"
+        value:
+          - "key1:value1"
+          - "key2:value2"
+          - "key3:value3"
+      - op: "remove"
+        path: "/tags"
+        value:
+          - "key1"
+          - "key2"
+          - "key3"
+  RecordQuery:
+    type: "object"
+    required:
+    - "ids"
+    properties:
+      ids:
+        type: "array"
+        description: "Records ids for whom patch operations going to be applied"
+    description: "Patch api query specific information"
+  PatchOperation:
+    type: "object"
+    required:
+      - "op"
+      - "path"
+      - "value"
+    properties:
+      op:
+        type: "string"
+        description: "Type of patch operation"
+        enum:
+        - "add"
+        - "replace"
+        - "remove"
+      path:
+        type: "string"
+        description: "Path for batch operation"
+      value:
+        type: "array"
+        description: "Path for batch operation"
+        items:
+          type: "string"
+    description: "Patch api operation specific information"
+  BulkUpdateRecordsResponse:
+    type: "object"
+    properties:
+      recordCount:
+        type: "integer"
+        format: "int32"
+        description: "Number of records which updated successfully."
+      recordIds:
+        type: "array"
+        description: "List of successfully updated record ids."
+        items:
+          type: "string"
+      notFoundRecordIds:
+        type: "array"
+        description: "List of record ids for whom RecordMetadata was not found"
+        items:
+          type: "string"
+      unAuthorizedRecordIds:
+        type: "array"
+        description: "List of record ids for whom user does not has owner permissions"
+        items:
+          type: "string"
+      lockedRecordIds:
+        type: "array"
+        description: "List of locked record ids"
+        items:
+          type: "string"
+    description: "Result of the record batch update request."
+  VersionInfo:
+    type: "object"
+    properties:
+      groupId:
+        type: "string"
+        description: "Maven artifact group ID."
+      actifactId:
+        type: "string"
+        description: "Maven artifact ID."
+      version:
+        type: "string"
+        description: "Maven artifact version"
+      buildTime:
+        type: "string"
+        description: "Maven artifact build time"
+      branch:
+        type: "string"
+        description: "Current git branch"
+      commitId:
+        type: "string"
+        description: "Latest commit hash"
+      commitMessage:
+        type: "string"
+        description: "Latest commit message"
+      connectedOuterServices:
+        type: "array"
+        description: "Connected outer services information"
+        items:
+          $ref: "#/definitions/ConnectedOuterService"
+    description: "Version info."
+  ConnectedOuterService:
+    type: "object"
+    properties:
+      name:
+        type: "string"
+        description: "Connected outer service name."
+      version:
+        type: "string"
+        description: "Connected outer service version."
+    description: "Connected outer service information."

@@ -1,0 +1,273 @@
+swagger: '2.0'
+info:
+  description: API documentation for Partition service
+  version: '1.0.0'
+  title: Partition Service
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0'
+basePath: /api/partition/v1
+tags:
+  - name: partition-api
+    description: Partition Api
+  - name: health-check
+    description: Health Check
+  - name: info
+    description: "Version info endpoint"
+paths:
+  /actuator/health:
+    get:
+      tags:
+        - health-check
+      summary: livenessCheck
+      operationId: livenessCheckUsingGET
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - JWT: []
+  '/partitions/{partitionId}':
+    get:
+      tags:
+        - partition-api
+      summary: get
+      operationId: getUsingGET
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: partitionId
+          in: path
+          description: partitionId
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            additionalProperties:
+              "$ref": "#/definitions/Property"
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - JWT: []
+    post:
+      tags:
+        - partition-api
+      summary: create
+      operationId: createUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: partitionId
+          in: path
+          description: partitionId
+          required: true
+          type: string
+        - in: body
+          name: partitionInfo
+          description: partitionInfo
+          required: true
+          schema:
+            $ref: '#/definitions/PartitionInfo'
+      responses:
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - JWT: []
+    patch:
+      tags:
+      - partition-api
+      summary: update
+      operationId: updateUsingPATCH
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - name: partitionId
+        in: path
+        description: partitionId
+        required: true
+        type: string
+      - in: body
+        name: partitionInfo
+        description: partitionInfo
+        required: true
+        schema:
+          $ref: '#/definitions/PartitionInfo'
+      responses:
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - JWT: []
+    delete:
+      tags:
+        - partition-api
+      summary: delete
+      operationId: deleteUsingDELETE
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: partitionId
+          in: path
+          description: partitionId
+          required: true
+          type: string
+      responses:
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+        - JWT: []
+  '/partitions':
+    get:
+      tags:
+        - partition-api
+      summary: list
+      operationId: listUsingGET
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - JWT: []
+  /info:
+    get:
+      tags:
+        - info
+      summary: "Version info"
+      description: "For deployment available public `/info` endpoint, \
+          \ which provides build and git related information."
+      operationId: "Version info"
+      produces:
+        - "application/json"
+      responses:
+        200:
+          description: "Version info."
+          schema:
+            $ref: "#/definitions/VersionInfo"
+securityDefinitions:
+  JWT:
+    type: apiKey
+    name: Authorization
+    in: header
+definitions:
+  PartitionInfo:
+    type: object
+    required:
+      - properties
+    properties:
+      properties:
+        type: object
+        description: 'Free form key value pair object for any data partition specific values'
+        additionalProperties:
+          "$ref": "#/definitions/Property"
+    example:
+      properties:
+        compliance-ruleset:
+          sensitive: false
+          value: 'shared'
+        elastic-endpoint:
+          sensitive: true
+          value: 'elastic-endpoint'
+        cosmos-connection:
+          sensitive: true
+          value: 'cosmos-connection'
+  VersionInfo:
+    type: "object"
+    properties:
+      groupId:
+        type: "string"
+        description: "Maven artifact group ID."
+      actifactId:
+        type: "string"
+        description: "Maven artifact ID."
+      version:
+        type: "string"
+        description: "Maven artifact version"
+      buildTime:
+        type: "string"
+        description: "Maven artifact build time"
+      branch:
+        type: "string"
+        description: "Current git branch"
+      commitId:
+        type: "string"
+        description: "Latest commit hash"
+      commitMessage:
+        type: "string"
+        description: "Latest commit message"
+      connectedOuterServices:
+        type: "array"
+        description: "Connected outer services information"
+        items:
+          $ref: "#/definitions/ConnectedOuterService"
+    description: "Version info."
+  ConnectedOuterService:
+    type: "object"
+    properties:
+      name:
+        type: "string"
+        description: "Connected outer service name."
+      version:
+        type: "string"
+        description: "Connected outer service version."
+    description: "Connected outer service information."
+  Property:
+    type: object
+    properties:
+      sensitive:
+        type: boolean
+      value:
+        type: object

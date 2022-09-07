@@ -1,0 +1,553 @@
+swagger: '2.0'
+info:
+  description: Api Documentation for Entitlements service
+  version: '1.0'
+  title: Entitlements Service
+  termsOfService: 'urn:tos'
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0'
+basePath: /api/entitlements/v2
+schemes:
+  - https
+tags:
+  - name: delete-group-api
+    description: Delete Group Api
+  - name: init-api
+    description: Init Api
+  - name: health-checks-api
+    description: Health Checks Api
+  - name: add-member-api
+    description: Add Member Api
+  - name: delete-member-api
+    description: Delete Member Api
+  - name: list-group-on-behalf-of-api
+    description: List Group On Behalf Of Api
+  - name: remove-member-api
+    description: Remove Member Api
+  - name: create-group-api
+    description: Create Group Api
+  - name: list-group-api
+    description: List Group Api
+  - name: update-group-api
+    description: Update Group Api
+  - name: list-member-api
+    description: List Member Api
+  - name: info
+    description: Version info endpoint
+paths:
+  /_ah/liveness_check:
+    get:
+      tags:
+        - health-checks-api
+      summary: livenessCheck
+      operationId: livenessCheckUsingGET
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - name: data-partition-id
+          in: header
+          description: tenant
+          required: true
+          type: string
+          default: common
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - JWT: []
+  /_ah/readiness_check:
+    get:
+      tags:
+        - health-checks-api
+      summary: readinessCheck
+      operationId: readinessCheckUsingGET
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - name: data-partition-id
+          in: header
+          description: tenant
+          required: true
+          type: string
+          default: common
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - JWT: []
+  /groups:
+    get:
+      tags:
+        - list-group-api
+      summary: listGroups
+      operationId: listGroupsUsingGET
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - name: data-partition-id
+          in: header
+          description: tenant
+          required: true
+          type: string
+          default: common
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ListGroupResponseDto'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - JWT: []
+    post:
+      tags:
+        - create-group-api
+      summary: createGroup
+      operationId: createGroupUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - name: data-partition-id
+          in: header
+          description: tenant
+          required: true
+          type: string
+          default: common
+        - in: body
+          name: groupInfoDto
+          description: groupInfoDto
+          required: true
+          schema:
+            $ref: '#/definitions/CreateGroupDto'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/GroupDto'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - JWT: []
+  '/groups/{group_email}':
+    delete:
+      tags:
+        - delete-group-api
+      summary: deleteGroup
+      operationId: deleteGroupUsingDELETE
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - name: data-partition-id
+          in: header
+          description: tenant
+          required: true
+          type: string
+          default: common
+        - name: groupEmail
+          in: query
+          required: false
+          type: string
+        - name: group_email
+          in: path
+          description: group_email
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+        - JWT: []
+    patch:
+      tags:
+        - update-group-api
+      summary: updateGroup
+      operationId: updateGroupUsingPATCH
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - name: data-partition-id
+          in: header
+          description: tenant
+          required: true
+          type: string
+          default: common
+        - name: group_email
+          in: path
+          description: group_email
+          required: true
+          type: string
+        - in: body
+          name: updateGroupRequest
+          description: updateGroupRequest
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/UpdateGroupOperation'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/UpdateGroupResponseDto'
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+        - JWT: []
+  '/groups/{group_email}/members':
+    get:
+      tags:
+        - list-member-api
+      summary: listGroupMembers
+      operationId: listGroupMembersUsingGET
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - name: data-partition-id
+          in: header
+          description: tenant
+          required: true
+          type: string
+          default: common
+        - name: group_email
+          in: path
+          description: group_email
+          required: true
+          type: string
+        - name: role
+          in: query
+          description: role
+          required: false
+          type: string
+          enum:
+            - MEMBER
+            - OWNER
+        - name: includeType
+          in: query
+          description: includeType
+          required: false
+          type: boolean
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ListMemberResponseDto'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - JWT: []
+    post:
+      tags:
+        - add-member-api
+      summary: addMember
+      operationId: addMemberUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - name: data-partition-id
+          in: header
+          description: tenant
+          required: true
+          type: string
+          default: common
+        - in: body
+          name: addMemberDto
+          description: addMemberDto
+          required: true
+          schema:
+            $ref: '#/definitions/AddMemberDto'
+        - name: group_email
+          in: path
+          description: group_email
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/AddMemberDto'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - JWT: []
+  '/groups/{group_email}/members/{member_email}':
+    delete:
+      tags:
+        - remove-member-api
+      summary: deleteMember
+      operationId: deleteMemberUsingDELETE_1
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - name: data-partition-id
+          in: header
+          description: tenant
+          required: true
+          type: string
+          default: common
+        - name: group_email
+          in: path
+          description: group_email
+          required: true
+          type: string
+        - name: member_email
+          in: path
+          description: member_email
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+        - JWT: []
+  '/members/{member_email}':
+    delete:
+      tags:
+        - delete-member-api
+      summary: deleteMember
+      operationId: deleteMemberUsingDELETE
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - name: data-partition-id
+          in: header
+          description: tenant
+          required: true
+          type: string
+          default: common
+        - name: member_email
+          in: path
+          description: member_email
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+        - JWT: []
+  '/members/{member_email}/groups':
+    get:
+      tags:
+        - list-group-on-behalf-of-api
+      summary: listGroupsOnBehalfOf
+      operationId: listGroupsOnBehalfOfUsingGET
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - name: data-partition-id
+          in: header
+          description: tenant
+          required: true
+          type: string
+          default: common
+        - name: member_email
+          in: path
+          description: member_email
+          required: true
+          type: string
+        - name: type
+          in: query
+          description: type
+          required: false
+          type: string
+        - name: appid
+          in: query
+          description: appid
+          required: false
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ListGroupResponseDto'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - JWT: []
+  /tenant-provisioning:
+    post:
+      tags:
+        - init-api
+      summary: initiateTenant
+      operationId: initiateTenantUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - name: data-partition-id
+          in: header
+          description: tenant
+          required: true
+          type: string
+          default: common
+      responses:
+        '200':
+          description: OK
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - JWT: []
+  /info:
+    get:
+      tags:
+        - info
+      summary: Version info
+      description: For deployment available public `/info` endpoint, \
+          \ which provides build and git related information.
+      operationId: Version info
+      produces:
+        - application/json
+      responses:
+        200:
+          description: Version info.
+          schema:
+            $ref: '#/definitions/VersionInfo'
+securityDefinitions:
+  JWT:
+    type: apiKey
+    name: Authorization
+    in: header
+definitions:
+  AddMemberDto:
+    type: object
+  CreateGroupDto:
+    type: object
+  GroupDto:
+    type: object
+  ListGroupResponseDto:
+    type: object
+  ListMemberResponseDto:
+    type: object
+  UpdateGroupOperation:
+    type: object
+  UpdateGroupResponseDto:
+    type: object
+  VersionInfo:
+    type: object
+    properties:
+      groupId:
+        type: string
+        description: Maven artifact group ID.
+      actifactId:
+        type: string
+        description: Maven artifact ID.
+      version:
+        type: string
+        description: Maven artifact version
+      buildTime:
+        type: string
+        description: Maven artifact build time
+      branch:
+        type: string
+        description: Current git branch
+      commitId:
+        type: string
+        description: Latest commit hash
+      commitMessage:
+        type: string
+        description: Latest commit message
+      connectedOuterServices:
+        type: array
+        description: Connected outer services information
+        items:
+          $ref: '#/definitions/ConnectedOuterService'
+    description: Version info.
+  ConnectedOuterService:
+    type: object
+    properties:
+      name:
+        type: string
+        description: Connected outer service name.
+      version:
+        type: string
+        description: Connected outer service version.
+    description: Connected outer service information.
