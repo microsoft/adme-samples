@@ -1,4 +1,4 @@
-# Microsoft Energy Data Services (energy-data-services) - Samples
+# Microsoft Energy Data Services - Samples
 
 This repo contains samples for Microsoft Energy Data Services APIs
 
@@ -7,7 +7,7 @@ This repo contains samples for Microsoft Energy Data Services APIs
 * [Indexer Service](/meds-samples/rest-apis/index.html?page=/meds-samples/rest-apis/indexer_openapi.yaml)
 * [Dataset Service](/meds-samples/rest-apis/index.html?page=/meds-samples/rest-apis/dataset_swagger.yaml)
 * [File Service](/meds-samples/rest-apis/index.html?page=/meds-samples/rest-apis/file_service_openapi.yaml)
-* [Schema Service](/meds-samples/rest-apis/index.html?page=/meds-samplesmeds-samples/rest-apis/schema_openapi.yaml)
+* [Schema Service](/meds-samples/rest-apis/index.html?page=/meds-samples/rest-apis/schema_openapi.yaml)
 * [Search Service](/meds-samples/rest-apis/index.html?page=/meds-samples/rest-apis/search_openapi.yaml)
 * [Register Service](/meds-samples/rest-apis/index.html?page=/meds-samples/rest-apis/register_openapi.yaml)
 * [Notification Service](/meds-samples/rest-apis/index.html?page=/meds-samples/rest-apis/notification_openapi.yaml)
