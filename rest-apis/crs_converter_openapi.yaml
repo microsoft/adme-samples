@@ -10,57 +10,12 @@ basePath: "/api/crs/converter"
 security:
   - Bearer: []
 tags:
-  - name: health-check
   - name: CRS Point Conversion
   - name: Info Api
   - name: Trajectory Computation and Conversion
 schemes:
   - https
 paths:
-  "/_ah/liveness_check":
-    get:
-      tags:
-        - health-check
-      summary: livenessCheck
-      operationId: livenessCheckUsingGET
-      produces:
-        - "*/*"
-      parameters: []
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-        '404':
-          description: Not Found
-      security:
-        - Bearer: []
-  "/_ah/readiness_check":
-    get:
-      tags:
-        - health-check
-      summary: readinessCheck
-      operationId: readinessCheckUsingGET
-      produces:
-        - "*/*"
-      parameters: []
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-        '404':
-          description: Not Found
-      security:
-        - Bearer: []
   "/v2/convertTrajectory":
     post:
       tags:
@@ -173,6 +128,7 @@ paths:
       tags:
         - Info Api
       summary: info
+      description: This API provides which provides build and git related information.
       operationId: infoUsingGET
       consumes:
         - application/json
