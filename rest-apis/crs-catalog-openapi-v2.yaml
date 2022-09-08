@@ -1,130 +1,162 @@
 swagger: '2.0'
 info:
   version: 2.0.0
-  title: CRS Catalog Service
+  title: CRS Catalog Service API
   description: API documentation for Coordinate Reference System (CRS) Catalog Service
-basePath: /api/crs/catalog
+basePath: "/api/crs/catalog/v2"
 tags:
-- name: CRS catalog
-- name: Cartographic Transformations
-- name: Areas of Use
-- name: Coordinate Reference Systems
+  - name: CRS catalog
+  - name: Cartographic Transformations
+  - name: Areas of Use
+  - name: Coordinate Reference Systems
+  - name: Info Api
 security:
-- Bearer: []
+  - Bearer: []
 schemes:
-- https
+  - https
 consumes:
-- application/json
+  - application/json
 produces:
-- application/json
+  - application/json
 paths:
+  "/info":
+    get:
+      tags:
+        - Info Api
+      summary: Get Version Info
+      description: This API provides which provides build and git related information.
+      operationId: infoUsingGET
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: data-partition-id
+          in: header
+          description: tenant
+          required: true
+          type: string
+          default: opendes
+      responses:
+        '200':
+          description: OK
+          schema:
+            "$ref": "#/definitions/VersionInfo"
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - Bearer Authorization: []
   "/catalog":
     get:
       tags:
-      - CRS catalog
+        - CRS catalog
       operationId: Get Catalog Summary
       summary: Get the Catalog summary (without lists)
       description: Get the catalog structure with populated number of items per list
         but empty lists ('lateBoundCRSes',...). It is expected that the lists are
         individually populated on demand via the specific methods ('CRSV2GetLateBoundCRSes',...).
       parameters:
-      - in: header
-        name: data-partition-id
-        type: string
-        required: false
+        - in: header
+          name: data-partition-id
+          type: string
+          required: true
       responses:
         '200':
           description: A successful response
           schema:
             "$ref": "#/definitions/Catalog"
       security:
-      - Bearer: []
+        - Bearer: []
   "/catalog/attributes":
     get:
       tags:
-      - CRS catalog
+        - CRS catalog
       operationId: Get Catalog Attributes
       summary: Get Catalog Name and Update Dates
       description: Get the catalog name and last update date
       parameters:
-      - in: header
-        name: data-partition-id
-        type: string
-        required: false
+        - in: header
+          name: data-partition-id
+          type: string
+          required: true
       responses:
         '200':
           description: A successful response
           schema:
             "$ref": "#/definitions/CatalogAttributes"
       security:
-      - Bearer: []
+        - Bearer: []
   "/area":
     get:
       tags:
-      - Areas of Use
+        - Areas of Use
       operationId: Get all Areas Of Use
       summary: Get Areas of Use
       description: Get Area of Use records - returning named bounding box definitions
         in latitude and longitude.
       parameters:
-      - name: offset
-        in: query
-        required: false
-        type: integer
-        format: int32
-        description: The offset of the first item in the list of all AreaOfUse. It
-          is optional and is 0 by default.
-      - name: limit
-        in: query
-        required: false
-        type: integer
-        format: int32
-        description: The maximum number of the AreaOfUse returned. It is optional
-          and is 100 by default.
-      - name: mode
-        in: query
-        required: false
-        type: string
-        description: 'The mode of return: ''persistable_reference'' (default) string
+        - name: offset
+          in: query
+          required: false
+          type: integer
+          format: int32
+          description: The offset of the first item in the list of all AreaOfUse. It
+            is optional and is 0 by default.
+        - name: limit
+          in: query
+          required: false
+          type: integer
+          format: int32
+          description: The maximum number of the AreaOfUse returned. It is optional
+            and is 100 by default.
+        - name: mode
+          in: query
+          required: false
+          type: string
+          description: 'The mode of return: ''persistable_reference'' (default) string
           or ''essence'' structure or both ''persistable_reference_essence''.'
-        default: persistable_reference
-      - in: header
-        name: data-partition-id
-        type: string
-        required: false
+          default: persistable_reference
+        - in: header
+          name: data-partition-id
+          type: string
+          required: true
       responses:
         '200':
           description: A successful response
           schema:
             "$ref": "#/definitions/AreaOfUseResults"
       security:
-      - Bearer: []
+        - Bearer: []
     post:
       tags:
-      - Areas of Use
+        - Areas of Use
       operationId: Get one Area Of Use
       summary: Get one Area of Use
       description: Get one Area of Use record by essence - returning a named bounding
         box definition in latitude and longitude.
       parameters:
-      - name: body
-        in: body
-        required: false
-        description: A unique description of an AreaOfUse, either as persistable reference
-          string or essence JSON.
-        schema:
-          "$ref": "#/definitions/AreaOfUseRequest"
-      - name: mode
-        in: query
-        required: false
-        type: string
-        description: 'The mode of return: ''persistable_reference'' (default) string
+        - name: body
+          in: body
+          required: true
+          description: A unique description of an AreaOfUse, either as persistable reference
+            string or essence JSON.
+          schema:
+            "$ref": "#/definitions/AreaOfUseRequest"
+        - name: mode
+          in: query
+          required: false
+          type: string
+          description: 'The mode of return: ''persistable_reference'' (default) string
           or ''essence'' structure or both ''persistable_reference_essence''.'
-        default: persistable_reference
-      - in: header
-        name: data-partition-id
-        type: string
-        required: false
+          default: persistable_reference
+        - in: header
+          name: data-partition-id
+          type: string
+          required: true
       responses:
         '200':
           description: A successful response
@@ -135,72 +167,72 @@ paths:
           schema:
             "$ref": "#/definitions/ErrorResponse"
       security:
-      - Bearer: []
+        - Bearer: []
   "/crs":
     get:
       tags:
-      - Coordinate Reference Systems
+        - Coordinate Reference Systems
       operationId: Get all CRS
       summary: Get all CRSes
       description: Get all the CRSes (any sub-type) defined in the catalog.
       parameters:
-      - name: offset
-        in: query
-        required: false
-        type: integer
-        format: int32
-        description: The offset of the first item in the list of all CRSes. It is
-          optional and is 0 by default.
-      - name: limit
-        in: query
-        required: false
-        type: integer
-        format: int32
-        description: The maximum number of the CRSes returned. It is optional and
-          is 100 by default.
-      - name: mode
-        in: query
-        required: false
-        type: string
-        description: 'The mode of return: ''persistable_reference'' (default) string
+        - name: offset
+          in: query
+          required: false
+          type: integer
+          format: int32
+          description: The offset of the first item in the list of all CRSes. It is
+            optional and is 0 by default.
+        - name: limit
+          in: query
+          required: false
+          type: integer
+          format: int32
+          description: The maximum number of the CRSes returned. It is optional and
+            is 100 by default.
+        - name: mode
+          in: query
+          required: false
+          type: string
+          description: 'The mode of return: ''persistable_reference'' (default) string
           or ''essence'' structure or both ''persistable_reference_essence''.'
-        default: persistable_reference
-      - in: header
-        name: data-partition-id
-        type: string
-        required: false
+          default: persistable_reference
+        - in: header
+          name: data-partition-id
+          type: string
+          required: true
       responses:
         '200':
           description: A successful response
           schema:
             "$ref": "#/definitions/CRSResults"
       security:
-      - Bearer: []
+        - Bearer: []
     post:
       tags:
-      - Coordinate Reference Systems
+        - Coordinate Reference Systems
       operationId: Get one CRS
       summary: Get one CRS
       description: Get one CRS (any sub-type) given its essence
       parameters:
-      - name: body
-        in: body
-        required: false
-        description: A unique description of a coordinate reference system (CRS),
-          either as persistable reference string or essence JSON.
-        schema:
-          "$ref": "#/definitions/CRSRequest"
-      - name: mode
-        in: query
-        required: false
-        type: string
-        description: 'The mode of return: ''persistable_reference'' (default) string
+        - name: body
+          in: body
+          required: true
+          description: A unique description of a coordinate reference system (CRS),
+            either as persistable reference string or essence JSON.
+          schema:
+            "$ref": "#/definitions/CRSRequest"
+        - name: mode
+          in: query
+          required: false
+          type: string
+          description: 'The mode of return: ''persistable_reference'' (default) string
           or ''essence'' structure or both ''persistable_reference_essence''.'
-        default: persistable_reference
-      - in: header
-        name: data-partition-id
-        type: string
-        required: false
+          default: persistable_reference
+        - in: header
+          name: data-partition-id
+          type: string
+          required: true
       responses:
         '200':
           description: A successful response
@@ -211,72 +243,72 @@ paths:
           schema:
             "$ref": "#/definitions/ErrorResponse"
       security:
-      - Bearer: []
+        - Bearer: []
   "/compoundcrs":
     get:
       tags:
-      - Coordinate Reference Systems
+        - Coordinate Reference Systems
       operationId: Get all CompoundCRS
       summary: Get all CompoundCRSes
       description: Get all the CompoundCRSes defined in the catalog.
       parameters:
-      - name: offset
-        in: query
-        required: false
-        type: integer
-        format: int32
-        description: The offset of the first item in the list of all CompoundCRSes.
-          It is optional and is 0 by default.
-      - name: limit
-        in: query
-        required: false
-        type: integer
-        format: int32
-        description: The maximum number of the CompoundCRSes returned. It is optional
-          and is 100 by default.
-      - name: mode
-        in: query
-        required: false
-        type: string
-        description: 'The mode of return: ''persistable_reference'' (default) string
+        - name: offset
+          in: query
+          required: false
+          type: integer
+          format: int32
+          description: The offset of the first item in the list of all CompoundCRSes.
+            It is optional and is 0 by default.
+        - name: limit
+          in: query
+          required: false
+          type: integer
+          format: int32
+          description: The maximum number of the CompoundCRSes returned. It is optional
+            and is 100 by default.
+        - name: mode
+          in: query
+          required: false
+          type: string
+          description: 'The mode of return: ''persistable_reference'' (default) string
           or ''essence'' structure or both ''persistable_reference_essence''.'
-        default: persistable_reference
-      - in: header
-        name: data-partition-id
-        type: string
-        required: false
+          default: persistable_reference
+        - in: header
+          name: data-partition-id
+          type: string
+          required: true
       responses:
         '200':
           description: A successful response
           schema:
             "$ref": "#/definitions/CompoundCRSResults"
       security:
-      - Bearer: []
+        - Bearer: []
     post:
       tags:
-      - Coordinate Reference Systems
+        - Coordinate Reference Systems
       operationId: Get one CompoundCRS
       summary: Get one CompoundCRS
       description: Get one the CompoundCRS given its essence.
       parameters:
-      - name: body
-        in: body
-        required: false
-        description: A unique description of a compound coordinate reference system
-          (CompoundCRS), either as persistable reference string or essence JSON.
-        schema:
-          "$ref": "#/definitions/CompoundCRSRequest"
-      - name: mode
-        in: query
-        required: false
-        type: string
-        description: 'The mode of return: ''persistable_reference'' (default) string
+        - name: body
+          in: body
+          required: true
+          description: A unique description of a compound coordinate reference system
+            (CompoundCRS), either as persistable reference string or essence JSON.
+          schema:
+            "$ref": "#/definitions/CompoundCRSRequest"
+        - name: mode
+          in: query
+          required: false
+          type: string
+          description: 'The mode of return: ''persistable_reference'' (default) string
           or ''essence'' structure or both ''persistable_reference_essence''.'
-        default: persistable_reference
-      - in: header
-        name: data-partition-id
-        type: string
-        required: false
+          default: persistable_reference
+        - in: header
+          name: data-partition-id
+          type: string
+          required: true
       responses:
         '200':
           description: A successful response
@@ -287,72 +319,72 @@ paths:
           schema:
             "$ref": "#/definitions/ErrorResponse"
       security:
-      - Bearer: []
+        - Bearer: []
   "/earlyboundcrs":
     get:
       tags:
-      - Coordinate Reference Systems
+        - Coordinate Reference Systems
       operationId: Get all EarlyBoundCRS
       summary: Get all EarlyBoundCRSes
       description: Get all the EarlyBoundCRSes defined in the catalog.
       parameters:
-      - name: offset
-        in: query
-        required: false
-        type: integer
-        format: int32
-        description: The offset of the first item in the list of all EarlyBoundCRSes.
-          It is optional and is 0 by default.
-      - name: limit
-        in: query
-        required: false
-        type: integer
-        format: int32
-        description: The maximum number of the EarlyBoundCRSes returned. It is optional
-          and is 100 by default.
-      - name: mode
-        in: query
-        required: false
-        type: string
-        description: 'The mode of return: ''persistable_reference'' (default) string
+        - name: offset
+          in: query
+          required: false
+          type: integer
+          format: int32
+          description: The offset of the first item in the list of all EarlyBoundCRSes.
+            It is optional and is 0 by default.
+        - name: limit
+          in: query
+          required: false
+          type: integer
+          format: int32
+          description: The maximum number of the EarlyBoundCRSes returned. It is optional
+            and is 100 by default.
+        - name: mode
+          in: query
+          required: false
+          type: string
+          description: 'The mode of return: ''persistable_reference'' (default) string
           or ''essence'' structure or both ''persistable_reference_essence''.'
-        default: persistable_reference
-      - in: header
-        name: data-partition-id
-        type: string
-        required: false
+          default: persistable_reference
+        - in: header
+          name: data-partition-id
+          type: string
+          required: true
       responses:
         '200':
           description: A successful response
           schema:
             "$ref": "#/definitions/EarlyBoundCRSResults"
       security:
-      - Bearer: []
+        - Bearer: []
     post:
       tags:
-      - Coordinate Reference Systems
+        - Coordinate Reference Systems
       operationId: Get one EarlyBoundCRS
       summary: Get one EarlyBoundCRS
       description: Get one EarlyBoundCRS given its essence
       parameters:
-      - name: body
-        in: body
-        required: false
-        description: A unique description of a early-bound coordinate reference system
-          (EarlyBoundCRS), either as persistable reference string or essence JSON.
-        schema:
-          "$ref": "#/definitions/EarlyBoundCRSRequest"
-      - name: mode
-        in: query
-        required: false
-        type: string
-        description: 'The mode of return: ''persistable_reference'' (default) string
+        - name: body
+          in: body
+          required: true
+          description: A unique description of a early-bound coordinate reference system
+            (EarlyBoundCRS), either as persistable reference string or essence JSON.
+          schema:
+            "$ref": "#/definitions/EarlyBoundCRSRequest"
+        - name: mode
+          in: query
+          required: false
+          type: string
+          description: 'The mode of return: ''persistable_reference'' (default) string
           or ''essence'' structure or both ''persistable_reference_essence''.'
-        default: persistable_reference
-      - in: header
-        name: data-partition-id
-        type: string
-        required: false
+          default: persistable_reference
+        - in: header
+          name: data-partition-id
+          type: string
+          required: true
       responses:
         '200':
           description: A successful response
@@ -363,73 +395,73 @@ paths:
           schema:
             "$ref": "#/definitions/ErrorResponse"
       security:
-      - Bearer: []
+        - Bearer: []
   "/lateboundcrs":
     get:
       tags:
-      - Coordinate Reference Systems
+        - Coordinate Reference Systems
       operationId: Get all LateBoundCRS
       summary: Get all LateBoundCRSes
       description: Get all the LateBoundCRSes defined in the catalog.
       parameters:
-      - name: offset
-        in: query
-        required: false
-        type: integer
-        format: int32
-        description: The offset of the first item in the list of all LateBoundCRSes.
-          It is optional and is 0 by default.
-      - name: limit
-        in: query
-        required: false
-        type: integer
-        format: int32
-        description: The maximum number of the LateBoundCRSes returned. It is optional
-          and is 100 by default.
-      - name: mode
-        in: query
-        required: false
-        type: string
-        description: 'The mode of return: ''persistable_reference'' (default) string
+        - name: offset
+          in: query
+          required: false
+          type: integer
+          format: int32
+          description: The offset of the first item in the list of all LateBoundCRSes.
+            It is optional and is 0 by default.
+        - name: limit
+          in: query
+          required: false
+          type: integer
+          format: int32
+          description: The maximum number of the LateBoundCRSes returned. It is optional
+            and is 100 by default.
+        - name: mode
+          in: query
+          required: false
+          type: string
+          description: 'The mode of return: ''persistable_reference'' (default) string
           or ''essence'' structure or both ''persistable_reference_essence''.'
-        default: persistable_reference
-      - in: header
-        name: data-partition-id
-        type: string
-        required: false
+          default: persistable_reference
+        - in: header
+          name: data-partition-id
+          type: string
+          required: true
       responses:
         '200':
           description: A successful response
           schema:
             "$ref": "#/definitions/LateBoundCRSResults"
       security:
-      - Bearer: []
+        - Bearer: []
     post:
       tags:
-      - Coordinate Reference Systems
+        - Coordinate Reference Systems
       operationId: Get one LateBoundCRS
       summary: Get one LateBoundCRS
       description: Get one LateBoundCRS given its persistable reference string or
         essence structure.
       parameters:
-      - name: body
-        in: body
-        required: false
-        description: A unique description of a late-bound coordinate reference system
-          (LateBoundCRS), either as persistable reference string or essence JSON.
-        schema:
-          "$ref": "#/definitions/LateBoundCRSRequest"
-      - name: mode
-        in: query
-        required: false
-        type: string
-        description: 'The mode of return: ''persistable_reference'' (default) string
+        - name: body
+          in: body
+          required: true
+          description: A unique description of a late-bound coordinate reference system
+            (LateBoundCRS), either as persistable reference string or essence JSON.
+          schema:
+            "$ref": "#/definitions/LateBoundCRSRequest"
+        - name: mode
+          in: query
+          required: false
+          type: string
+          description: 'The mode of return: ''persistable_reference'' (default) string
           or ''essence'' structure or both ''persistable_reference_essence''.'
-        default: persistable_reference
-      - in: header
-        name: data-partition-id
-        type: string
-        required: false
+          default: persistable_reference
+        - in: header
+          name: data-partition-id
+          type: string
+          required: true
       responses:
         '200':
           description: A successful response
@@ -440,72 +472,72 @@ paths:
           schema:
             "$ref": "#/definitions/ErrorResponse"
       security:
-      - Bearer: []
+        - Bearer: []
   "/ct":
     get:
       tags:
-      - Cartographic Transformations
+        - Cartographic Transformations
       operationId: Get all CT
       summary: Get all Cartographic Transformations
       description: Get all cartographic transformations declared in the catalog.
       parameters:
-      - name: offset
-        in: query
-        required: false
-        type: integer
-        format: int32
-        description: The offset of the first item in the list of all CT. It is optional
-          and is 0 by default.
-      - name: limit
-        in: query
-        required: false
-        type: integer
-        format: int32
-        description: The maximum number of the CT returned. It is optional and is
-          100 by default.
-      - name: mode
-        in: query
-        required: false
-        type: string
-        description: 'The mode of return: ''persistable_reference'' (default) string
+        - name: offset
+          in: query
+          required: false
+          type: integer
+          format: int32
+          description: The offset of the first item in the list of all CT. It is optional
+            and is 0 by default.
+        - name: limit
+          in: query
+          required: false
+          type: integer
+          format: int32
+          description: The maximum number of the CT returned. It is optional and is
+            100 by default.
+        - name: mode
+          in: query
+          required: false
+          type: string
+          description: 'The mode of return: ''persistable_reference'' (default) string
           or ''essence'' structure or both ''persistable_reference_essence''.'
-        default: persistable_reference
-      - in: header
-        name: data-partition-id
-        type: string
-        required: false
+          default: persistable_reference
+        - in: header
+          name: data-partition-id
+          type: string
+          required: true
       responses:
         '200':
           description: A successful response
           schema:
             "$ref": "#/definitions/CTResults"
       security:
-      - Bearer: []
+        - Bearer: []
     post:
       tags:
-      - Cartographic Transformations
+        - Cartographic Transformations
       operationId: Get one CT
       summary: Get one Cartographic Transformation
       description: Get one cartographic transformation given its essence
       parameters:
-      - name: body
-        in: body
-        required: false
-        description: A unique description of a cartographic transform (CT), either
-          as persistable reference string or essence JSON.
-        schema:
-          "$ref": "#/definitions/CTRequest"
-      - name: mode
-        in: query
-        required: false
-        type: string
-        description: 'The mode of return: ''persistable_reference'' (default) string
+        - name: body
+          in: body
+          required: true
+          description: A unique description of a cartographic transform (CT), either
+            as persistable reference string or essence JSON.
+          schema:
+            "$ref": "#/definitions/CTRequest"
+        - name: mode
+          in: query
+          required: false
+          type: string
+          description: 'The mode of return: ''persistable_reference'' (default) string
           or ''essence'' structure or both ''persistable_reference_essence''.'
-        default: persistable_reference
-      - in: header
-        name: data-partition-id
-        type: string
-        required: false
+          default: persistable_reference
+        - in: header
+          name: data-partition-id
+          type: string
+          required: true
       responses:
         '200':
           description: A successful response
@@ -516,72 +548,72 @@ paths:
           schema:
             "$ref": "#/definitions/ErrorResponse"
       security:
-      - Bearer: []
+        - Bearer: []
   "/compoundct":
     get:
       tags:
-      - Cartographic Transformations
+        - Cartographic Transformations
       operationId: Get all CompoundCT
       summary: Get all CompoundCTs
       description: Get all the CompoundCTs defined in the catalog.
       parameters:
-      - name: offset
-        in: query
-        required: false
-        type: integer
-        format: int32
-        description: The offset of the first item in the list of all CompoundCTs.
-          It is optional and is 0 by default.
-      - name: limit
-        in: query
-        required: false
-        type: integer
-        format: int32
-        description: The maximum number of the CompoundCTs returned. It is optional
-          and is 100 by default.
-      - name: mode
-        in: query
-        required: false
-        type: string
-        description: 'The mode of return: ''persistable_reference'' (default) string
+        - name: offset
+          in: query
+          required: false
+          type: integer
+          format: int32
+          description: The offset of the first item in the list of all CompoundCTs.
+            It is optional and is 0 by default.
+        - name: limit
+          in: query
+          required: false
+          type: integer
+          format: int32
+          description: The maximum number of the CompoundCTs returned. It is optional
+            and is 100 by default.
+        - name: mode
+          in: query
+          required: false
+          type: string
+          description: 'The mode of return: ''persistable_reference'' (default) string
           or ''essence'' structure or both ''persistable_reference_essence''.'
-        default: persistable_reference
-      - in: header
-        name: data-partition-id
-        type: string
-        required: false
+          default: persistable_reference
+        - in: header
+          name: data-partition-id
+          type: string
+          required: true
       responses:
         '200':
           description: A successful response
           schema:
             "$ref": "#/definitions/CompoundCTResults"
       security:
-      - Bearer: []
+        - Bearer: []
     post:
       tags:
-      - Cartographic Transformations
+        - Cartographic Transformations
       operationId: Get one CompoundCT
       summary: Get one CompoundCT
       description: Get one CompoundCT by its essence.
       parameters:
-      - name: body
-        in: body
-        required: false
-        description: A unique description of a compound cartographic transform (CompoundCT),
-          either as persistable reference string or essence JSON.
-        schema:
-          "$ref": "#/definitions/CompoundCTRequest"
-      - name: mode
-        in: query
-        required: false
-        type: string
-        description: 'The mode of return: ''persistable_reference'' (default) string
+        - name: body
+          in: body
+          required: true
+          description: A unique description of a compound cartographic transform (CompoundCT),
+            either as persistable reference string or essence JSON.
+          schema:
+            "$ref": "#/definitions/CompoundCTRequest"
+        - name: mode
+          in: query
+          required: false
+          type: string
+          description: 'The mode of return: ''persistable_reference'' (default) string
           or ''essence'' structure or both ''persistable_reference_essence''.'
-        default: persistable_reference
-      - in: header
-        name: data-partition-id
-        type: string
-        required: false
+          default: persistable_reference
+        - in: header
+          name: data-partition-id
+          type: string
+          required: true
       responses:
         '200':
           description: A successful response
@@ -592,72 +624,72 @@ paths:
           schema:
             "$ref": "#/definitions/ErrorResponse"
       security:
-      - Bearer: []
+        - Bearer: []
   "/singlect":
     get:
       tags:
-      - Cartographic Transformations
+        - Cartographic Transformations
       operationId: Get all SingleCT
       summary: Get all SingleCTs
       description: Get all the SingleCTs defined in the catalog.
       parameters:
-      - name: offset
-        in: query
-        required: false
-        type: integer
-        format: int32
-        description: The offset of the first item in the list of all SingleCTs. It
-          is optional and is 0 by default.
-      - name: limit
-        in: query
-        required: false
-        type: integer
-        format: int32
-        description: The maximum number of the SingleCTs returned. It is optional
-          and is 100 by default.
-      - name: mode
-        in: query
-        required: false
-        type: string
-        description: 'The mode of return: ''persistable_reference'' (default) string
+        - name: offset
+          in: query
+          required: false
+          type: integer
+          format: int32
+          description: The offset of the first item in the list of all SingleCTs. It
+            is optional and is 0 by default.
+        - name: limit
+          in: query
+          required: false
+          type: integer
+          format: int32
+          description: The maximum number of the SingleCTs returned. It is optional
+            and is 100 by default.
+        - name: mode
+          in: query
+          required: false
+          type: string
+          description: 'The mode of return: ''persistable_reference'' (default) string
           or ''essence'' structure or both ''persistable_reference_essence''.'
-        default: persistable_reference
-      - in: header
-        name: data-partition-id
-        type: string
-        required: false
+          default: persistable_reference
+        - in: header
+          name: data-partition-id
+          type: string
+          required: true
       responses:
         '200':
           description: A successful response
           schema:
             "$ref": "#/definitions/SingleCTResults"
       security:
-      - Bearer: []
+        - Bearer: []
     post:
       tags:
-      - Cartographic Transformations
+        - Cartographic Transformations
       operationId: Get one SingleCT
       summary: Get one SingleCT
       description: Get one SingleCT given its essence.
       parameters:
-      - name: body
-        in: body
-        required: false
-        description: A unique description of a single cartographic transform (SingleCT),
-          either as persistable reference string or essence JSON.
-        schema:
-          "$ref": "#/definitions/SingleCTRequest"
-      - name: mode
-        in: query
-        required: false
-        type: string
-        description: 'The mode of return: ''persistable_reference'' (default) string
+        - name: body
+          in: body
+          required: true
+          description: A unique description of a single cartographic transform (SingleCT),
+            either as persistable reference string or essence JSON.
+          schema:
+            "$ref": "#/definitions/SingleCTRequest"
+        - name: mode
+          in: query
+          required: false
+          type: string
+          description: 'The mode of return: ''persistable_reference'' (default) string
           or ''essence'' structure or both ''persistable_reference_essence''.'
-        default: persistable_reference
-      - in: header
-        name: data-partition-id
-        type: string
-        required: false
+          default: persistable_reference
+        - in: header
+          name: data-partition-id
+          type: string
+          required: true
       responses:
         '200':
           description: A successful response
@@ -668,11 +700,11 @@ paths:
           schema:
             "$ref": "#/definitions/ErrorResponse"
       security:
-      - Bearer: []
+        - Bearer: []
   "/search/area":
     post:
       tags:
-      - Areas of Use
+        - Areas of Use
       operationId: Search Area Of Use
       summary: Search Areas of Use
       description: 'Search Area of Use records by keywords and/or geographic area
@@ -683,78 +715,78 @@ paths:
         supported: ''name:'', ''description:'', ''authority:'', ''code:'', ''deprecationState:'',
         ''remarks:'' (deprecationState remarks), ''lastModified:''. Example ''name:*America*''.'
       parameters:
-      - name: body
-        in: body
-        required: true
-        description: 'A Lucene style keyword query. One of the following keywords:
+        - name: body
+          in: body
+          required: true
+          description: 'A Lucene style keyword query. One of the following keywords:
           ''name:'', ''description:'', ''authority:'', ''code:'', ''deprecationState:'',
           ''remarks:'' (deprecationState remarks), ''lastModified:''. Example ''name:*America*''.'
-        schema:
-          "$ref": "#/definitions/SearchAreaOfUseRequest"
-      - name: longitudeLeft
-        in: query
-        required: false
-        type: number
-        format: double
-        description: 'The left WGS 84 longitude limit of the search box. Value range:
+          schema:
+            "$ref": "#/definitions/SearchAreaOfUseRequest"
+        - name: longitudeLeft
+          in: query
+          required: false
+          type: number
+          format: double
+          description: 'The left WGS 84 longitude limit of the search box. Value range:
           [-180,180]'
-      - name: latitudeLower
-        in: query
-        required: false
-        type: number
-        format: double
-        description: 'The lower WGS 84 latitude limit of the search box. Value range:
+        - name: latitudeLower
+          in: query
+          required: false
+          type: number
+          format: double
+          description: 'The lower WGS 84 latitude limit of the search box. Value range:
           [-90,90]'
-      - name: longitudeRight
-        in: query
-        required: false
-        type: number
-        format: double
-        description: 'The right WGS 84 longitude limit of the search box. Value range:
+        - name: longitudeRight
+          in: query
+          required: false
+          type: number
+          format: double
+          description: 'The right WGS 84 longitude limit of the search box. Value range:
           [-180,180]'
-      - name: latitudeUpper
-        in: query
-        required: false
-        type: number
-        format: double
-        description: 'The lower WGS 84 latitude limit of the search box. Value range:
+        - name: latitudeUpper
+          in: query
+          required: false
+          type: number
+          format: double
+          description: 'The lower WGS 84 latitude limit of the search box. Value range:
           [-90,90]'
-      - name: offset
-        in: query
-        required: false
-        type: integer
-        format: int32
-        description: The offset of the first item in the list of all AreasOfUse. It
-          is optional and is 0 by default.
-      - name: limit
-        in: query
-        required: false
-        type: integer
-        format: int32
-        description: The maximum number of the AreasOfUse returned. It is optional
-          and is 100 by default.
-      - name: mode
-        in: query
-        required: false
-        type: string
-        description: 'The mode of return: ''persistable_reference'' (default) string
+        - name: offset
+          in: query
+          required: false
+          type: integer
+          format: int32
+          description: The offset of the first item in the list of all AreasOfUse. It
+            is optional and is 0 by default.
+        - name: limit
+          in: query
+          required: false
+          type: integer
+          format: int32
+          description: The maximum number of the AreasOfUse returned. It is optional
+            and is 100 by default.
+        - name: mode
+          in: query
+          required: false
+          type: string
+          description: 'The mode of return: ''persistable_reference'' (default) string
           or ''essence'' structure or both ''persistable_reference_essence''.'
-        default: persistable_reference
-      - in: header
-        name: data-partition-id
-        type: string
-        required: false
+          default: persistable_reference
+        - in: header
+          name: data-partition-id
+          type: string
+          required: true
       responses:
         '200':
           description: A successful response
           schema:
             "$ref": "#/definitions/AreaOfUseResults"
       security:
-      - Bearer: []
+        - Bearer: []
   "/search/ct":
     post:
       tags:
-      - Cartographic Transformations
+        - Cartographic Transformations
       operationId: Search CT
       summary: Search Cartographic Transformations
       description: 'Search cartographic transform records (any sub-type) by keywords
@@ -767,80 +799,80 @@ paths:
         ''fromCRS.code:'', ''toCRS.authority:'', toCRS.code:'', ''policy:''. followed
         by a value. Example: ''fromCRS.code:4267''.'
       parameters:
-      - name: body
-        in: body
-        required: true
-        description: 'A Lucene style keyword query. One of the following keywords
+        - name: body
+          in: body
+          required: true
+          description: 'A Lucene style keyword query. One of the following keywords
           ''name:'',''description:'', ''type:'', ''authority:'', ''code:'', ''deprecationState:'',
           ''remarks:'', ''lastModified:'', ''source:'', ''wellKnownText:'', ''fromCRS.authority:'',
           ''fromCRS.code:'', ''toCRS.authority:'', toCRS.code:'', ''policy:''. followed
           by a value. Example: ''fromCRS.code:4267''.'
-        schema:
-          "$ref": "#/definitions/SearchCTRequest"
-      - name: longitudeLeft
-        in: query
-        required: false
-        type: number
-        format: double
-        description: 'The left WGS 84 longitude limit of the search box. Value range:
+          schema:
+            "$ref": "#/definitions/SearchCTRequest"
+        - name: longitudeLeft
+          in: query
+          required: false
+          type: number
+          format: double
+          description: 'The left WGS 84 longitude limit of the search box. Value range:
           [-180,180]'
-      - name: latitudeLower
-        in: query
-        required: false
-        type: number
-        format: double
-        description: 'The lower WGS 84 latitude limit of the search box. Value range:
+        - name: latitudeLower
+          in: query
+          required: false
+          type: number
+          format: double
+          description: 'The lower WGS 84 latitude limit of the search box. Value range:
           [-90,90]'
-      - name: longitudeRight
-        in: query
-        required: false
-        type: number
-        format: double
-        description: 'The right WGS 84 longitude limit of the search box. Value range:
+        - name: longitudeRight
+          in: query
+          required: false
+          type: number
+          format: double
+          description: 'The right WGS 84 longitude limit of the search box. Value range:
           [-180,180]'
-      - name: latitudeUpper
-        in: query
-        required: false
-        type: number
-        format: double
-        description: 'The lower WGS 84 latitude limit of the search box. Value range:
+        - name: latitudeUpper
+          in: query
+          required: false
+          type: number
+          format: double
+          description: 'The lower WGS 84 latitude limit of the search box. Value range:
           [-90,90]'
-      - name: offset
-        in: query
-        required: false
-        type: integer
-        format: int32
-        description: The offset of the first item in the list of all CT. It is optional
-          and is 0 by default.
-      - name: limit
-        in: query
-        required: false
-        type: integer
-        format: int32
-        description: The maximum number of the CT returned. It is optional and is
-          100 by default.
-      - name: mode
-        in: query
-        required: false
-        type: string
-        description: 'The mode of return: ''persistable_reference'' (default) string
+        - name: offset
+          in: query
+          required: false
+          type: integer
+          format: int32
+          description: The offset of the first item in the list of all CT. It is optional
+            and is 0 by default.
+        - name: limit
+          in: query
+          required: false
+          type: integer
+          format: int32
+          description: The maximum number of the CT returned. It is optional and is
+            100 by default.
+        - name: mode
+          in: query
+          required: false
+          type: string
+          description: 'The mode of return: ''persistable_reference'' (default) string
           or ''essence'' structure or both ''persistable_reference_essence''.'
-        default: persistable_reference
-      - in: header
-        name: data-partition-id
-        type: string
-        required: false
+          default: persistable_reference
+        - in: header
+          name: data-partition-id
+          type: string
+          required: true
       responses:
         '200':
           description: A successful response
           schema:
             "$ref": "#/definitions/CTResults"
       security:
-      - Bearer: []
+        - Bearer: []
   "/search/crs":
     post:
       tags:
-      - Coordinate Reference Systems
+        - Coordinate Reference Systems
       operationId: Search CRS
       summary: Search CRSes
       description: 'Search CRS records (any sub-type) by keywords and/or geographic
@@ -855,78 +887,78 @@ paths:
         ''ct.authority:'', ''ct.code:'', ''transformationReady:''. followed by a value.
         Example: ''transformationReady:true''.'
       parameters:
-      - name: body
-        in: body
-        required: true
-        description: 'A Lucene style keyword query. One of the following keywords
+        - name: body
+          in: body
+          required: true
+          description: 'A Lucene style keyword query. One of the following keywords
           ''name:'', ''description:'', ''type:'', ''authority:'', ''code:'', ''deprecationState:'',
           ''remarks:'', ''lastModified:'', ''source:'', ''wellKnownText:'', ''crsType:'',
           ''baseCRS.authority:'', ''baseCRS.code:'', ''horizontalCRS.authority:'',
           ''horizontalCRS.code:'', ''verticalCRS.authority:'', ''verticalCRS.code:'',
           ''lateBoundCRS.authority:'', ''lateBoundCRS.code:'', ''ct.authority:'',
           ''ct.code:'', ''transformationReady:''. followed by a value. Example: ''transformationReady:true''.'
-        schema:
-          "$ref": "#/definitions/SearchCRSRequest"
-      - name: longitudeLeft
-        in: query
-        required: false
-        type: number
-        format: double
-        description: 'The left WGS 84 longitude limit of the search box. Value range:
+          schema:
+            "$ref": "#/definitions/SearchCRSRequest"
+        - name: longitudeLeft
+          in: query
+          required: false
+          type: number
+          format: double
+          description: 'The left WGS 84 longitude limit of the search box. Value range:
           [-180,180]'
-      - name: latitudeLower
-        in: query
-        required: false
-        type: number
-        format: double
-        description: 'The lower WGS 84 latitude limit of the search box. Value range:
+        - name: latitudeLower
+          in: query
+          required: false
+          type: number
+          format: double
+          description: 'The lower WGS 84 latitude limit of the search box. Value range:
           [-90,90]'
-      - name: longitudeRight
-        in: query
-        required: false
-        type: number
-        format: double
-        description: 'The right WGS 84 longitude limit of the search box. Value range:
+        - name: longitudeRight
+          in: query
+          required: false
+          type: number
+          format: double
+          description: 'The right WGS 84 longitude limit of the search box. Value range:
           [-180,180]'
-      - name: latitudeUpper
-        in: query
-        required: false
-        type: number
-        format: double
-        description: 'The lower WGS 84 latitude limit of the search box. Value range:
+        - name: latitudeUpper
+          in: query
+          required: false
+          type: number
+          format: double
+          description: 'The lower WGS 84 latitude limit of the search box. Value range:
           [-90,90]'
-      - name: offset
-        in: query
-        required: false
-        type: integer
-        format: int32
-        description: The offset of the first item in the list of all CRS. It is optional
-          and is 0 by default.
-      - name: limit
-        in: query
-        required: false
-        type: integer
-        format: int32
-        description: The maximum number of the CRS returned. It is optional and is
-          100 by default.
-      - name: mode
-        in: query
-        required: false
-        type: string
-        description: 'The mode of return: ''persistable_reference'' (default) string
+        - name: offset
+          in: query
+          required: false
+          type: integer
+          format: int32
+          description: The offset of the first item in the list of all CRS. It is optional
+            and is 0 by default.
+        - name: limit
+          in: query
+          required: false
+          type: integer
+          format: int32
+          description: The maximum number of the CRS returned. It is optional and is
+            100 by default.
+        - name: mode
+          in: query
+          required: false
+          type: string
+          description: 'The mode of return: ''persistable_reference'' (default) string
           or ''essence'' structure or both ''persistable_reference_essence''.'
-        default: persistable_reference
-      - in: header
-        name: data-partition-id
-        type: string
-        required: false
+          default: persistable_reference
+        - in: header
+          name: data-partition-id
+          type: string
+          required: true
       responses:
         '200':
           description: A successful response
           schema:
             "$ref": "#/definitions/CRSResults"
       security:
-      - Bearer: []
+        - Bearer: []
 securityDefinitions:
   Bearer:
     type: apiKey
@@ -1017,8 +1049,8 @@ definitions:
     title: Authority Code
     description: The AuthorityCode for this item.
     required:
-    - auth
-    - code
+      - auth
+      - code
     properties:
       auth:
         type: string
@@ -1058,24 +1090,24 @@ definitions:
         title: Latitude Lower
         description: The lower latitude limit in degrees.
     required:
-    - lonMin
-    - lonMax
-    - latMin
-    - latMax
+      - lonMin
+      - lonMax
+      - latMin
+      - latMax
   AreaOfUseEssence:
     type: object
     title: Area of Use Essence
     description: Area of use consisting of a bounding box in latitude and longitude
       WGS 84.
     required:
-    - type
-    - boundBox
+      - type
+      - boundBox
     properties:
       type:
         type: string
         title: Item Type.
         enum:
-        - AOU
+          - AOU
         default: AOU
         example: AOU
         description: The type identifier, fixed to 'AOU'.
@@ -1093,16 +1125,16 @@ definitions:
     description: Any coordinate reference system essence carrying all possible properties
       for LateBoundCRSEssence, EarlyBoundCRSEssence and CompoundCRSEssence.
     required:
-    - type
-    - name
+      - type
+      - name
     properties:
       type:
         type: string
         title: Item Type.
         enum:
-        - LBC
-        - EBC
-        - CC
+          - LBC
+          - EBC
+          - CC
         example: LBC
         description: The type identifier.
       name:
@@ -1166,15 +1198,15 @@ definitions:
     description: Late-bound coordinate reference system, i.e. a CRS without a transformation
       binding to WGS 84.
     required:
-    - type
-    - name
-    - wkt
+      - type
+      - name
+      - wkt
     properties:
       type:
         type: string
         title: Item Type.
         enum:
-        - LBC
+          - LBC
         default: LBC
         example: LBC
         description: The type identifier, fixed to 'LBC'.
@@ -1204,15 +1236,15 @@ definitions:
     description: Early-bound coordinate reference system, i.e. a CRS with a transformation
       binding to WGS 84
     required:
-    - type
-    - name
-    - lateBoundCRS
+      - type
+      - name
+      - lateBoundCRS
     properties:
       type:
         type: string
         title: Item Type.
         enum:
-        - EBC
+          - EBC
         example: EBC
         default: EBC
         description: The type identifier, fixed to 'EBC'.
@@ -1251,14 +1283,14 @@ definitions:
     description: Compound coordinate reference system aggregating a horizontal to
       a vertical CRS.
     required:
-    - type
-    - name
+      - type
+      - name
     properties:
       type:
         type: string
         title: Item Type.
         enum:
-        - CC
+          - CC
         example: CC
         default: CC
         description: The type identifier. fixed to 'CC'.
@@ -1301,15 +1333,15 @@ definitions:
     title: Any CT Essence
     description: Any sub-type of cartographic transformation.
     required:
-    - type
-    - name
+      - type
+      - name
     properties:
       type:
         type: string
         title: Item Type.
         enum:
-        - ST
-        - CT
+          - ST
+          - CT
         example: ST
         description: The type identifier, either 'ST' or 'CT'.
       name:
@@ -1332,11 +1364,11 @@ definitions:
         title: Policy
         description: The transformation policy - concatenated or fallback.
         example:
-        - Fallback
-        - Concatenated
+          - Fallback
+          - Concatenated
         enum:
-        - Fallback
-        - Concatenated
+          - Fallback
+          - Concatenated
       cts:
         type: array
         items:
@@ -1354,15 +1386,15 @@ definitions:
     title: Single CT Essence
     description: Single cartographic transformation.
     required:
-    - type
-    - name
-    - wkt
+      - type
+      - name
+      - wkt
     properties:
       type:
         type: string
         title: Item Type.
         enum:
-        - ST
+          - ST
         default: ST
         example: ST
         description: The type identifier, fixed to 'ST'.
@@ -1390,16 +1422,16 @@ definitions:
     title: Compound CT Essence
     description: Compound cartographic transformation.
     required:
-    - type
-    - name
-    - policy
-    - cts
+      - type
+      - name
+      - policy
+      - cts
     properties:
       type:
         type: string
         title: Item Type.
         enum:
-        - CT
+          - CT
         default: CT
         example: CT
         description: The type identifier, fixed to 'CT'.
@@ -1418,11 +1450,11 @@ definitions:
         title: Policy
         description: The transformation policy - concatenated or fallback.
         example:
-        - Fallback
-        - Concatenated
+          - Fallback
+          - Concatenated
         enum:
-        - Fallback
-        - Concatenated
+          - Fallback
+          - Concatenated
       cts:
         type: array
         items:
@@ -1441,7 +1473,7 @@ definitions:
     description: Generic coordinate reference system, either a late-bound, early-bound
       CRS or compound CRS.
     required:
-    - type
+      - type
     properties:
       essence:
         "$ref": "#/definitions/AnyCRSEssence"
@@ -1507,7 +1539,7 @@ definitions:
     title: Generic CT
     description: Generic cartographic transformation.
     required:
-    - type
+      - type
     properties:
       source:
         type: string
@@ -1908,8 +1940,8 @@ definitions:
         type: string
         description: Further explanation of the deprecation.
       supersededByCT:
-        "$ref": "#/definitions/CT"
         description: The cartographic transform to be used instead - if any is recommended.
+        "$ref": "#/definitions/CT"
   AreaOfUseRequest:
     type: object
     description: Request to get area of use
@@ -2214,6 +2246,32 @@ definitions:
           policy: Fallback
           type: CT
           cts:
+            - authCode:
+                auth: EPSG
+                code: '15851'
+              name: NAD_1927_To_WGS_1984_79_CONUS
+              type: ST
+              ver: PE_10_3_1
+              wkt: GEOGTRAN["NAD_1927_To_WGS_1984_79_CONUS",GEOGCS["GCS_North_American_1927",DATUM["D_North_American_1927",SPHEROID["Clarke_1866",6378206.4,294.9786982]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],METHOD["NADCON"],PARAMETER["Dataset_conus",0.0],AUTHORITY["EPSG",15851]]
+            - authCode:
+                auth: EPSG
+                code: '1693'
+              name: NAD_1927_To_WGS_1984_33
+              type: ST
+              ver: PE_10_3_1
+              wkt: GEOGTRAN["NAD_1927_To_WGS_1984_33",GEOGCS["GCS_North_American_1927",DATUM["D_North_American_1927",SPHEROID["Clarke_1866",6378206.4,294.9786982]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],METHOD["NTv2"],PARAMETER["Dataset_canada/Ntv2_0",0.0],AUTHORITY["EPSG",1693]]
+          ver: PE_10_3_1
+    example:
+      persistableReference: '{"policy":"Fallback","cts":[{"wkt":"GEOGTRAN[\"NAD_1927_To_WGS_1984_79_CONUS\",GEOGCS[\"GCS_North_American_1927\",DATUM[\"D_North_American_1927\",SPHEROID[\"Clarke_1866\",6378206.4,294.9786982]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],GEOGCS[\"GCS_WGS_1984\",DATUM[\"D_WGS_1984\",SPHEROID[\"WGS_1984\",6378137.0,298.257223563]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],METHOD[\"NADCON\"],PARAMETER[\"Dataset_conus\",0.0],AUTHORITY[\"EPSG\",15851]]","ver":"PE_10_3_1","name":"NAD_1927_To_WGS_1984_79_CONUS","authCode":{"auth":"EPSG","code":"15851"},"type":"ST"},{"wkt":"GEOGTRAN[\"NAD_1927_To_WGS_1984_33\",GEOGCS[\"GCS_North_American_1927\",DATUM[\"D_North_American_1927\",SPHEROID[\"Clarke_1866\",6378206.4,294.9786982]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],GEOGCS[\"GCS_WGS_1984\",DATUM[\"D_WGS_1984\",SPHEROID[\"WGS_1984\",6378137.0,298.257223563]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],METHOD[\"NTv2\"],PARAMETER[\"Dataset_canada/Ntv2_0\",0.0],AUTHORITY[\"EPSG\",1693]]","ver":"PE_10_3_1","name":"NAD_1927_To_WGS_1984_33","authCode":{"auth":"EPSG","code":"1693"},"type":"ST"}],"ver":"PE_10_3_1","name":"Fallback
+        NAD27 to WGS 84 (79)/NAD27 to WGS 84 (33)","authCode":{"auth":"SLB","code":"158511693"},"type":"CT"}'
+      essence:
+        authCode:
+          auth: SLB
+          code: '158511693'
+        name: Fallback NAD27 to WGS 84 (79)/NAD27 to WGS 84 (33)
+        policy: Fallback
+        type: CT
+        cts:
           - authCode:
               auth: EPSG
               code: '15851'
@@ -2228,32 +2286,6 @@ definitions:
             type: ST
             ver: PE_10_3_1
             wkt: GEOGTRAN["NAD_1927_To_WGS_1984_33",GEOGCS["GCS_North_American_1927",DATUM["D_North_American_1927",SPHEROID["Clarke_1866",6378206.4,294.9786982]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],METHOD["NTv2"],PARAMETER["Dataset_canada/Ntv2_0",0.0],AUTHORITY["EPSG",1693]]
-          ver: PE_10_3_1
-    example:
-      persistableReference: '{"policy":"Fallback","cts":[{"wkt":"GEOGTRAN[\"NAD_1927_To_WGS_1984_79_CONUS\",GEOGCS[\"GCS_North_American_1927\",DATUM[\"D_North_American_1927\",SPHEROID[\"Clarke_1866\",6378206.4,294.9786982]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],GEOGCS[\"GCS_WGS_1984\",DATUM[\"D_WGS_1984\",SPHEROID[\"WGS_1984\",6378137.0,298.257223563]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],METHOD[\"NADCON\"],PARAMETER[\"Dataset_conus\",0.0],AUTHORITY[\"EPSG\",15851]]","ver":"PE_10_3_1","name":"NAD_1927_To_WGS_1984_79_CONUS","authCode":{"auth":"EPSG","code":"15851"},"type":"ST"},{"wkt":"GEOGTRAN[\"NAD_1927_To_WGS_1984_33\",GEOGCS[\"GCS_North_American_1927\",DATUM[\"D_North_American_1927\",SPHEROID[\"Clarke_1866\",6378206.4,294.9786982]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],GEOGCS[\"GCS_WGS_1984\",DATUM[\"D_WGS_1984\",SPHEROID[\"WGS_1984\",6378137.0,298.257223563]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],METHOD[\"NTv2\"],PARAMETER[\"Dataset_canada/Ntv2_0\",0.0],AUTHORITY[\"EPSG\",1693]]","ver":"PE_10_3_1","name":"NAD_1927_To_WGS_1984_33","authCode":{"auth":"EPSG","code":"1693"},"type":"ST"}],"ver":"PE_10_3_1","name":"Fallback
-        NAD27 to WGS 84 (79)/NAD27 to WGS 84 (33)","authCode":{"auth":"SLB","code":"158511693"},"type":"CT"}'
-      essence:
-        authCode:
-          auth: SLB
-          code: '158511693'
-        name: Fallback NAD27 to WGS 84 (79)/NAD27 to WGS 84 (33)
-        policy: Fallback
-        type: CT
-        cts:
-        - authCode:
-            auth: EPSG
-            code: '15851'
-          name: NAD_1927_To_WGS_1984_79_CONUS
-          type: ST
-          ver: PE_10_3_1
-          wkt: GEOGTRAN["NAD_1927_To_WGS_1984_79_CONUS",GEOGCS["GCS_North_American_1927",DATUM["D_North_American_1927",SPHEROID["Clarke_1866",6378206.4,294.9786982]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],METHOD["NADCON"],PARAMETER["Dataset_conus",0.0],AUTHORITY["EPSG",15851]]
-        - authCode:
-            auth: EPSG
-            code: '1693'
-          name: NAD_1927_To_WGS_1984_33
-          type: ST
-          ver: PE_10_3_1
-          wkt: GEOGTRAN["NAD_1927_To_WGS_1984_33",GEOGCS["GCS_North_American_1927",DATUM["D_North_American_1927",SPHEROID["Clarke_1866",6378206.4,294.9786982]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],METHOD["NTv2"],PARAMETER["Dataset_canada/Ntv2_0",0.0],AUTHORITY["EPSG",1693]]
         ver: PE_10_3_1
   AreaOfUseResults:
     description: A response containing a list of areas of use.
@@ -2469,3 +2501,34 @@ definitions:
         example: description:*America*
     example:
       query: description:*America*
+  VersionInfo:
+    type: object
+    properties:
+      artifactId:
+        type: string
+      branch:
+        type: string
+      buildTime:
+        type: string
+      commitId:
+        type: string
+      commitMessage:
+        type: string
+      connectedOuterServices:
+        type: array
+        items:
+          "$ref": "#/definitions/ConnectedOuterService"
+      groupId:
+        type: string
+      version:
+        type: string
+  ConnectedOuterService:
+    type: object
+    description: Connected outer service information.
+    properties:
+      name:
+        type: string
+        description: Connected outer service name.
+      version:
+        type: string
+        description: Connected outer service version.
