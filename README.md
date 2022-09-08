@@ -1,6 +1,6 @@
 # Microsoft Energy Data Services - Samples
 
-This repo contains samples for Microsoft Energy Data Services APIs
+This repo contains samples for Microsoft Energy Data Services APIs.
 
 # REST API Reference
 
