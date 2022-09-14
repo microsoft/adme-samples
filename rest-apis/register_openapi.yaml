@@ -1,1539 +1,1220 @@
 swagger: '2.0'
 info:
-  version: '1.0.0'
+  description: Register Service
   title: Register Service
-  description: APIs to manage registrations in the OSDU.
-basePath: /api/register/v1
+tags:
+  - name: action-api
+    description: Action Api
+  - name: ddms-api
+    description: Ddms Api
+  - name: gsa-subscriber-listener-api
+    description: Gsa Subscriber Listener Api
+  - name: health-checks-api
+    description: Health Checks Api
+  - name: info-api
+    description: Info Api
+  - name: subscriber-api
+    description: Subscriber Api
+  - name: subscriber-listener-api
+    description: Subscriber Listener Api
+paths:
+  /api/register/v1/action:
+    post:
+      tags:
+        - action-api
+      summary: createAction
+      operationId: createActionUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: createActionDto
+          description: createActionDto
+          required: true
+          schema:
+            $ref: '#/definitions/CreateActionDto'
+        - in: header
+          name: data-partition-id
+          description: tenant
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Action'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - bearer: []
+  '/api/register/v1/action/{id}':
+    get:
+      tags:
+        - action-api
+      summary: getAction
+      operationId: getActionUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - in: header
+          name: data-partition-id
+          description: tenant
+          required: true
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: string
+          pattern: '^[A-Za-z0-9-]{2,50}'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Action'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - bearer: []
+    delete:
+      tags:
+        - action-api
+      summary: deleteAction
+      operationId: deleteActionUsingDELETE
+      produces:
+        - '*/*'
+      parameters:
+        - in: header
+          name: data-partition-id
+          description: tenant
+          required: true
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: string
+          pattern: '^[A-Za-z0-9-]{2,50}'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ResponseEntity'
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+        - bearer: []
+  '/api/register/v1/action:retrieve':
+    post:
+      tags:
+        - action-api
+      summary: retrieveAction
+      operationId: retrieveActionUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - in: header
+          name: data-partition-id
+          description: tenant
+          required: true
+        - in: body
+          name: jsonObject
+          description: jsonObject
+          required: true
+          schema:
+            $ref: '#/definitions/JsonNode'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Action'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - bearer: []
+  '/api/register/v1/action:test':
+    post:
+      tags:
+        - action-api
+      summary: testAction
+      operationId: testActionUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - in: header
+          name: data-partition-id
+          description: tenant
+          required: true
+        - in: body
+          name: testActionRequest
+          description: testActionRequest
+          required: true
+          schema:
+            $ref: '#/definitions/TestActionRequest'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ParsedAction'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - bearer: []
+  /api/register/v1/ah/liveness_check:
+    get:
+      tags:
+        - health-checks-api
+      summary: livenessCheck
+      operationId: livenessCheckUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - in: header
+          name: data-partition-id
+          description: tenant
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ResponseEntity'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - bearer: []
+  /api/register/v1/ah/readiness_check:
+    get:
+      tags:
+        - health-checks-api
+      summary: readinessCheck
+      operationId: readinessCheckUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - in: header
+          name: data-partition-id
+          description: tenant
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ResponseEntity'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - bearer: []
+  /api/register/v1/ddms:
+    get:
+      tags:
+        - ddms-api
+      summary: queryDMS
+      operationId: queryDMSUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - in: header
+          name: data-partition-id
+          description: tenant
+          required: true
+        - name: type
+          in: query
+          description: type
+          required: true
+          type: string
+          pattern: '^[A-Za-z0-9]{1,50}'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/DdmsRes'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - bearer: []
+    post:
+      tags:
+        - ddms-api
+      summary: postDMS
+      operationId: postDMSUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - in: header
+          name: data-partition-id
+          description: tenant
+          required: true
+        - in: body
+          name: spec
+          description: spec
+          required: true
+          schema:
+            $ref: '#/definitions/DdmsReq'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/DdmsRes'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - bearer: []
+  '/api/register/v1/ddms/{id}':
+    get:
+      tags:
+        - ddms-api
+      summary: getDMS
+      operationId: getDMSUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - in: header
+          name: data-partition-id
+          description: tenant
+          required: true
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: string
+          pattern: '^[A-Za-z0-9-]{2,50}'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/DdmsRes'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - bearer: []
+    delete:
+      tags:
+        - ddms-api
+      summary: deleteDMS
+      operationId: deleteDMSUsingDELETE
+      produces:
+        - '*/*'
+      parameters:
+        - in: header
+          name: data-partition-id
+          description: tenant
+          required: true
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: string
+          pattern: '^[A-Za-z0-9-]{2,50}'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ResponseEntity'
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+        - bearer: []
+  '/api/register/v1/ddms/{id}/{type}/{localid}':
+    get:
+      tags:
+        - ddms-api
+      summary: redirectToDms
+      operationId: redirectToDmsUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - in: header
+          name: data-partition-id
+          description: tenant
+          required: true
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: string
+          pattern: '^[A-Za-z0-9-]{2,50}'
+        - name: localid
+          in: path
+          description: localid
+          required: true
+          type: string
+          pattern: '^[A-Za-z0-9-]{2,50}'
+        - name: type
+          in: path
+          description: type
+          required: true
+          type: string
+          pattern: '^[A-Za-z]{2,50}'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ResponseEntity'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - bearer: []
+  /api/register/v1/info:
+    get:
+      tags:
+        - info-api
+      summary: info
+      operationId: infoUsingGET
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: data-partition-id
+          description: tenant
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/VersionInfo'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - bearer: []
+  /api/register/v1/subscription:
+    get:
+      tags:
+        - subscriber-api
+      summary: querySubscription
+      operationId: querySubscriptionUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - in: header
+          name: data-partition-id
+          description: tenant
+          required: true
+        - name: notificationId
+          in: query
+          description: notificationId
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Subscription'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - bearer: []
+    post:
+      tags:
+        - subscriber-api
+      summary: createSubscription
+      operationId: createSubscriptionUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - in: header
+          name: data-partition-id
+          description: tenant
+          required: true
+        - in: body
+          name: input
+          description: input
+          required: true
+          schema:
+            $ref: '#/definitions/Subscription'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Subscription'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - bearer: []
+  '/api/register/v1/subscription/{id}':
+    get:
+      tags:
+        - subscriber-api
+      summary: getSubscription
+      operationId: getSubscriptionUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - in: header
+          name: data-partition-id
+          description: tenant
+          required: true
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/SubscriptionInfo'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - bearer: []
+    delete:
+      tags:
+        - subscriber-api
+      summary: deleteSubscription
+      operationId: deleteSubscriptionUsingDELETE
+      produces:
+        - '*/*'
+      parameters:
+        - in: header
+          name: data-partition-id
+          description: tenant
+          required: true
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ResponseEntity'
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+        - bearer: []
+  '/api/register/v1/subscription/{id}/secret':
+    put:
+      tags:
+        - subscriber-api
+      summary: updateSecret
+      operationId: updateSecretUsingPUT
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - in: header
+          name: data-partition-id
+          description: tenant
+          required: true
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: string
+        - in: body
+          name: input
+          description: input
+          required: true
+          schema:
+            $ref: '#/definitions/Secret'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ResponseEntity'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - bearer: []
+  '/api/register/v1/test/challenge/{count}':
+    get:
+      tags:
+        - subscriber-listener-api
+      summary: testCrc
+      operationId: testCrcUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - name: crc
+          in: query
+          description: crc
+          required: true
+          type: string
+        - in: header
+          name: data-partition-id
+          description: tenant
+          required: true
+        - name: hmac
+          in: query
+          description: hmac
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ChallengeResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - bearer: []
+    post:
+      tags:
+        - subscriber-listener-api
+      summary: testPushHmac
+      operationId: testPushHmacUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - in: header
+          name: data-partition-id
+          description: tenant
+          required: true
+        - name: hmac
+          in: query
+          description: hmac
+          required: true
+          type: string
+        - in: body
+          name: o
+          description: o
+          required: true
+          schema:
+            type: object
+      responses:
+        '200':
+          description: OK
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - bearer: []
+  '/api/register/v1/test/gsa-challenge/{count}':
+    get:
+      tags:
+        - gsa-subscriber-listener-api
+      summary: testGsa
+      operationId: testGsaUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - name: crc
+          in: query
+          description: crc
+          required: true
+          type: string
+        - in: header
+          name: data-partition-id
+          description: tenant
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ChallengeResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - bearer: []
+    post:
+      tags:
+        - gsa-subscriber-listener-api
+      summary: testPushGsa
+      operationId: testPushGsaUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - in: header
+          name: data-partition-id
+          description: tenant
+          required: true
+        - in: body
+          name: o
+          description: o
+          required: true
+          schema:
+            type: object
+      responses:
+        '200':
+          description: OK
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - bearer: []
+  /api/register/v1/topics:
+    get:
+      tags:
+        - subscriber-api
+      summary: listMessages
+      operationId: listMessagesUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - in: header
+          name: data-partition-id
+          description: tenant
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Topic'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - bearer: []
 securityDefinitions:
-  bearer:
+  Authorization:
     type: apiKey
     name: Authorization
     in: header
-  appkey:
-    type: apiKey
-    name: appkey
-    in: header
-schemes:
-- https
-consumes:
-- application/json
-produces:
-- application/json
-paths:
-  /ddms/{id}:
-    get:
-      description: "Get a DDMS registration with the given id. Required roles: 'users.datalake.viewers' or 'users.datalake.editors' or 'users.datalake.admins'"
-      summary: Get a DDMS registration
-      tags:
-      - Domain Data Management Service (DDMS)
-      operationId: GetaDDMSregistration
-      deprecated: false
-      produces:
-      - application/json
-      parameters:
-      - name: id
-        in: path
-        required: true
-        type: string
-        pattern: ^[A-Za-z0-9-]{2,50}
-        description: ''
-      - name: data-partition-id
-        in: header
-        required: true
-        type: string
-        description: Specifies the partition to use. This should be either the partition name associated with the partition.
-      responses:
-        '200':
-          description: OK
-          schema:
-            $ref: '#/definitions/ddms'
-          headers: {}
-        '400':
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '401':
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '404':
-          description: Not Found
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '429':
-          description: Too Many Requests
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '500':
-          description: Server Error
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '502':
-          description: Bad Gateway
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '503':
-          description: Service Unavailable
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-      security:
-      - bearer: []
-      - appkey: []
-    delete:
-      description: "Delete a DDMS registration with the given id. Required roles: 'users.datalake.admins'"
-      summary: Delete a DDMS registration
-      tags:
-      - Domain Data Management Service (DDMS)
-      operationId: DeleteaDDMSregistration
-      deprecated: false
-      produces:
-      - application/json
-      parameters:
-      - name: id
-        in: path
-        required: true
-        type: string
-        pattern: ^[A-Za-z0-9-]{2,50}
-        description: ''
-      - name: data-partition-id
-        in: header
-        required: true
-        type: string
-        description: Specifies the partition to use. This should be either the partition name associated with the partition.
-      responses:
-        '204':
-          description: No Content
-          headers: {}
-        '400':
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '401':
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '404':
-          description: Not found
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '429':
-          description: Too Many Requests
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '500':
-          description: Server Error
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '502':
-          description: Bad Gateway
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '503':
-          description: Service Unavailable
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-      security:
-      - bearer: []
-      - appkey: []
-  /ddms:
-    post:
-      description: "Create a DDMS registration using an OpenApi spec V3 document. Required roles: 'users.datalake.editors' or 'users.datalake.admins'"
-      summary: Create a DDMS registration
-      tags:
-      - Domain Data Management Service (DDMS)
-      operationId: CreateaDDMSregistration
-      deprecated: false
-      produces:
-      - application/json
-      consumes:
-      - application/json
-      parameters:
-      - name: data-partition-id
-        in: header
-        required: true
-        type: string
-        description: Specifies the partition to use. This should be either the partition name associated with the partition.
-      - name: Content-Type
-        in: header
-        required: false
-        enum:
-        - application/json
-        type: string
-        description: ''
-      - name: body
-        in: body
-        required: false
-        description: ''
-        schema:
-          $ref: '#/definitions/ddms'
-      responses:
-        '201':
-          description: Created
-          schema:
-            $ref: '#/definitions/ddms'
-          headers: {}
-        '400':
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '401':
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '409':
-          description: Conflict
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '429':
-          description: Too Many Requests
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '500':
-          description: Server Error
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '502':
-          description: Bad Gateway
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '503':
-          description: Service Unavailable
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-      security:
-      - bearer: []
-      - appkey: []
-    get:
-      description: "Query for DDMS registrations allowing retrievals by type. Required roles: 'users.datalake.viewers' or 'users.datalake.editors' or 'users.datalake.admins'"
-      summary: Query a DDMS registration
-      tags:
-      - Domain Data Management Service (DDMS)
-      operationId: QueryaDDMSregistration
-      deprecated: false
-      produces:
-      - application/json
-      parameters:
-      - name: type
-        in: query
-        required: true
-        type: string
-        pattern: ^[A-Za-z0-9 ]{2,50}
-        description: ''
-      - name: data-partition-id
-        in: header
-        required: true
-        type: string
-        description: Specifies the partition to use. This should be either the partition name associated with the partition.
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: array
-            default: ''
-            items:
-              $ref: '#/definitions/ddms'
-          headers: {}
-        '400':
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '401':
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '404':
-          description: Not Found
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '429':
-          description: Too Many Requests
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '500':
-          description: Server Error
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '502':
-          description: Bad Gateway
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '503':
-          description: Service Unavailable
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-      security:
-      - bearer: []
-      - appkey: []
-  /ddms/{id}/{type}/{localid}:
-    get:
-      description: "Get a DDMS registration with the given id, type and localid. Required roles: 'users.datalake.viewers' or 'users.datalake.editors' or 'users.datalake.admins'"
-      summary: Get a DDMS registration
-      tags:
-      - Domain Data Management Service (DDMS)
-      operationId: GetaDDMSregistration1
-      deprecated: false
-      produces:
-      - application/json
-      parameters:
-      - name: id
-        in: path
-        required: true
-        type: string
-        pattern: ^[A-Za-z0-9-]{2,50}
-        description: ''
-      - name: type
-        in: path
-        required: true
-        type: string
-        pattern: ^[A-Za-z]{2,50}
-        description: ''
-      - name: localid
-        in: path
-        required: true
-        type: string
-        pattern: ^[A-Za-z0-9-]{2,50}
-        description: ''
-      - name: data-partition-id
-        in: header
-        required: true
-        type: string
-        description: Specifies the partition to use. This should be either the partition name associated with the partition.
-      responses:
-        '200':
-          description: OK
-          schema:
-            $ref: '#/definitions/ddms'
-          headers: {}
-        '400':
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '401':
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '404':
-          description: Not Found
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '429':
-          description: Too Many Requests
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '500':
-          description: Server Error
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '502':
-          description: Bad Gateway
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '503':
-          description: Service Unavailable
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-      security:
-      - bearer: []
-      - appkey: []
-  /action/{id}:
-    get:
-      description: "Get an action registration with the given id. Required roles: 'users.datalake.viewers' or 'users.datalake.editors' or 'users.datalake.admins'"
-      summary: Get an action registration
-      tags:
-      - Action
-      operationId: Getanactionregistration
-      deprecated: false
-      produces:
-      - application/json
-      parameters:
-      - name: id
-        in: path
-        required: true
-        type: string
-        pattern: ^[A-Za-z0-9-]{2,50}
-        description: ''
-      - name: data-partition-id
-        in: header
-        required: true
-        type: string
-        description: Specifies the partition to use. This should be either the partition name associated with the partition.
-      responses:
-        '200':
-          description: OK
-          schema:
-            $ref: '#/definitions/action'
-          headers: {}
-        '400':
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '401':
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '404':
-          description: Not Found
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '429':
-          description: Too Many Requests
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '500':
-          description: Server Error
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '502':
-          description: Bad Gateway
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '503':
-          description: Service Unavailable
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-      security:
-      - bearer: []
-      - appkey: []
-    delete:
-      description: "Delete an action registration with the given id. Required role: 'users.datalake.admins'"
-      summary: Delete an action registration
-      tags:
-      - Action
-      operationId: Deleteanactionregistration
-      deprecated: false
-      produces:
-      - application/json
-      parameters:
-      - name: id
-        in: path
-        required: true
-        type: string
-        pattern: ^[A-Za-z0-9-]{2,50}
-        description: ''
-      - name: data-partition-id
-        in: header
-        required: true
-        type: string
-        description: Specifies the partition to use. This should be either the partition name associated with the partition.
-      responses:
-        '204':
-          description: No Content
-          headers: {}
-        '400':
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '401':
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '404':
-          description: Not found
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '429':
-          description: Too Many Requests
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '500':
-          description: Server Error
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '502':
-          description: Bad Gateway
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '503':
-          description: Service Unavailable
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-      security:
-      - bearer: []
-      - appkey: []
-  /action:
-    post:
-      description: "Create an action registration. Required role: 'users.datalake.admins'"
-      summary: Create an action registration
-      tags:
-      - Action
-      operationId: Createanactionregistration
-      deprecated: false
-      produces:
-      - application/json
-      consumes:
-      - application/json
-      parameters:
-      - name: data-partition-id
-        in: header
-        required: true
-        type: string
-        description: Specifies the partition to use. This should be either the partition name associated with the partition.
-      - name: Content-Type
-        in: header
-        required: false
-        enum:
-        - application/json
-        type: string
-        description: ''
-      - name: body
-        in: body
-        required: false
-        description: ''
-        schema:
-          $ref: '#/definitions/createAction'
-      responses:
-        '201':
-          description: Created
-          schema:
-            $ref: '#/definitions/action'
-          headers: {}
-        '400':
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '401':
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '409':
-          description: Conflict
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '429':
-          description: Too Many Requests
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '500':
-          description: Server Error
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '502':
-          description: Bad Gateway
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '503':
-          description: Service Unavailable
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-      security:
-      - bearer: []
-      - appkey: []
-  /action:test:
-    post:
-      description: "Test an action registration. Required roles: 'users.datalake.viewers' or 'users.datalake.editors' or 'users.datalake.admins'"
-      summary: Test an action registration
-      tags:
-      - Action
-      operationId: Testanactionregistration
-      deprecated: false
-      produces:
-      - application/json
-      consumes:
-      - application/json
-      parameters:
-      - name: data-partition-id
-        in: header
-        required: true
-        type: string
-        description: Specifies the partition to use. This should be either the partition name associated with the partition.
-      - name: Content-Type
-        in: header
-        required: false
-        enum:
-        - application/json
-        type: string
-        description: ''
-      - name: body
-        in: body
-        required: false
-        description: ''
-        schema:
-          $ref: '#/definitions/testAction'
-      responses:
-        '200':
-          description: OK
-          schema:
-            $ref: '#/definitions/testActionResult'
-          headers: {}
-        '400':
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '401':
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '409':
-          description: Conflict
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '429':
-          description: Too Many Requests
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '500':
-          description: Server Error
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '502':
-          description: Bad Gateway
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '503':
-          description: Service Unavailable
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-      security:
-      - bearer: []
-      - appkey: []
-  /action:retrieve:
-    post:
-      description: "Retrieve an action registration. Required roles: 'users.datalake.viewers' or 'users.datalake.editors' or 'users.datalake.admins'"
-      summary: Retrieve an action registration
-      tags:
-      - Action
-      operationId: Retrieveanactionregistration
-      deprecated: false
-      produces:
-      - application/json
-      consumes:
-      - application/json
-      parameters:
-      - name: data-partition-id
-        in: header
-        required: true
-        type: string
-        description: Specifies the partition to use. This should be either the partition name associated with the partition.
-      - name: Content-Type
-        in: header
-        required: false
-        enum:
-        - application/json
-        type: string
-        description: ''
-      - name: body
-        in: body
-        required: false
-        description: The Record to find matching actions for and apply the template for.
-        schema:
-          $ref: '#/definitions/record'
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: array
-            default: ''
-            items:
-              $ref: '#/definitions/action'
-          headers: {}
-        '400':
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '401':
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '409':
-          description: Conflict
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '429':
-          description: Too Many Requests
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '500':
-          description: Server Error
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '502':
-          description: Bad Gateway
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '503':
-          description: Service Unavailable
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-      security:
-      - bearer: []
-      - appkey: []
-  /subscription:
-    post:
-      description: "Create a subscription. Required roles: 'users.datalake.editors' or 'users.datalake.admins'"
-      summary: Create a subscription
-      tags:
-      - Subscription
-      operationId: Createasubscription
-      deprecated: false
-      produces:
-      - application/json
-      consumes:
-      - application/json
-      parameters:
-      - name: data-partition-id
-        in: header
-        required: true
-        type: string
-        description: Specifies the partition to use. This should be either the partition name associated with the partition.
-      - name: Content-Type
-        in: header
-        required: false
-        enum:
-        - application/json
-        type: string
-        description: ''
-      - name: body
-        in: body
-        required: false
-        description: ''
-        schema:
-          $ref: '#/definitions/subscription'
-      responses:
-        '201':
-          description: Created
-          schema:
-            $ref: '#/definitions/subscriptionCreateResult'
-          headers: {}
-        '400':
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '401':
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '409':
-          description: Conflict
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '429':
-          description: Too Many Requests
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '500':
-          description: Server Error
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '502':
-          description: Bad Gateway
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '503':
-          description: Service Unavailable
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-      security:
-      - bearer: []
-      - appkey: []
-  /subscription/{id}:
-    get:
-      description: "Get a subscription with its Id. Required role: 'users.datalake.editors' or 'users.datalake.admins'"
-      summary: Get a subscription by Id
-      tags:
-      - Subscription
-      operationId: GetasubscriptionbyId
-      deprecated: false
-      produces:
-      - application/json
-      parameters:
-      - name: id
-        in: path
-        required: true
-        type: string
-        description: ''
-      - name: data-partition-id
-        in: header
-        required: true
-        type: string
-        description: Specifies the partition to use. This should be either the partition name associated with the partition.
-      responses:
-        '200':
-          description: OK
-          schema:
-            $ref: '#/definitions/getSubscriptionResult'
-          headers: {}
-        '400':
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '401':
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '404':
-          description: Not found
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '429':
-          description: Too Many Requests
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '500':
-          description: Server Error
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '502':
-          description: Bad Gateway
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '503':
-          description: Service Unavailable
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-      security:
-      - bearer: []
-      - appkey: []
-    delete:
-      description: "Delete a subscription with its Id. Required role: 'users.datalake.admins'"
-      summary: Delete a subscription by Id
-      tags:
-      - Subscription
-      operationId: DeleteasubscriptionbyId
-      deprecated: false
-      produces:
-      - application/json
-      parameters:
-      - name: id
-        in: path
-        required: true
-        type: string
-        description: ''
-      - name: data-partition-id
-        in: header
-        required: true
-        type: string
-        description: Specifies the partition to use. This should be either the partition name associated with the partition.
-      responses:
-        '204':
-          description: No Content
-          headers: {}
-        '400':
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '401':
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '404':
-          description: Not found
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '429':
-          description: Too Many Requests
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '500':
-          description: Server Error
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '502':
-          description: Bad Gateway
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '503':
-          description: Service Unavailable
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-      security:
-      - bearer: []
-      - appkey: []
-  /subscription/{notificationId}:
-    get:
-      description: "Get a subscription with its Notification Id. Required role: 'users.datalake.editors' or 'users.datalake.admins'"
-      summary: Get a subscription by Notification Id
-      tags:
-      - Subscription
-      operationId: GetasubscriptionbyNotificationId
-      deprecated: false
-      produces:
-      - application/json
-      parameters:
-      - name: notificationId
-        in: path
-        required: true
-        type: string
-      - name: data-partition-id
-        in: header
-        required: true
-        type: string
-        description: Specifies the partition to use. This should be either the partition name associated with the partition.
-      responses:
-        '200':
-          description: OK
-          schema:
-            $ref: '#/definitions/getSubscriptionResult'
-          headers: {}
-        '400':
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '401':
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '404':
-          description: Not found
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '429':
-          description: Too Many Requests
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '500':
-          description: Server Error
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '502':
-          description: Bad Gateway
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '503':
-          description: Service Unavailable
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-      security:
-      - bearer: []
-      - appkey: []
-  /subscription/{id}/secret:
-    put:
-      description: "Update secret for a subscription. Required role: 'users.datalake.editors' or 'users.datalake.admins'"
-      summary: Update secret for subscription
-      tags:
-      - Subscription
-      operationId: Updatesecretforsubscription
-      deprecated: false
-      produces:
-      - application/json
-      consumes:
-      - application/json
-      parameters:
-      - name: id
-        in: path
-        required: true
-        type: string
-        description: ''
-      - name: data-partition-id
-        in: header
-        required: true
-        type: string
-        description: Specifies the partition to use. This should be either the partition name associated with the partition.
-      - name: Content-Type
-        in: header
-        required: false
-        enum:
-        - application/json
-        type: string
-        description: ''
-      - name: body
-        in: body
-        required: false
-        description: ''
-        schema:
-          $ref: '#/definitions/secret'
-      responses:
-        '204':
-          description: No Content
-          headers: {}
-        '400':
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '401':
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '404':
-          description: Not found
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '429':
-          description: Too Many Requests
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '500':
-          description: Server Error
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '502':
-          description: Bad Gateway
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '503':
-          description: Service Unavailable
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-      security:
-      - bearer: []
-      - appkey: []
-  /topics:
-    get:
-      description: "List all topics that you can create a subscription for, along with the corresponding sample messages. Required role: 'users.datalake.editors' or 'users.datalake.admins'"
-      summary: List all topics
-      tags:
-      - Subscription
-      operationId: Listalltopics
-      deprecated: false
-      produces:
-      - application/json
-      parameters:
-      - name: data-partition-id
-        in: header
-        required: true
-        type: string
-        description: Specifies the partition to use. This should be either the partition name associated with the partition.
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: array
-            default: ''
-            items:
-              $ref: '#/definitions/topic'
-          headers: {}
-        '400':
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '401':
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '404':
-          description: Not found
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '429':
-          description: Too Many Requests
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '500':
-          description: Server Error
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '502':
-          description: Bad Gateway
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-        '503':
-          description: Service Unavailable
-          schema:
-            $ref: '#/definitions/AppError'
-          headers: {}
-      security:
-      - bearer: []
-      - appkey: []
-  /info:
-    get:
-      description: For deployment available public `/info` endpoint,  which provides build and git related information.
-      summary: Version info
-      tags:
-      - Info
-      operationId: Versioninfo
-      deprecated: false
-      produces:
-      - application/json
-      parameters: []
-      responses:
-        '200':
-          description: Version info.
-          headers: {}
 definitions:
-  ddms:
-    title: ddms
-    example:
-      id: example-id-123
-      name: example-name
-      description: example-description
-      contactEmail: abc@test.com
-      interfaces:
-      - entityType: wellbore
-        schema: {}
+  Action:
     type: object
     properties:
-      id:
-        type: string
-        pattern: ^[A-Za-z0-9-]{2,50}
-      name:
-        type: string
-        pattern: ^[A-Za-z0-9- ]{2,50}
-      description:
-        type: string
-        pattern: ^[A-Za-z0-9. ]{0,255}
       contactEmail:
         type: string
-      interfaces:
-        type: array
-        items:
-          $ref: '#/definitions/ddmsInterface'
-  AppError:
-    title: AppError
-    description: An error that occurs during normal application logic
-    type: object
-    properties:
-      code:
-        type: integer
-        format: int32
-      reason:
-        type: string
-      message:
-        type: string
-  ddmsInterface:
-    title: ddmsInterface
-    type: object
-    properties:
-      entityType:
-        type: string
-        pattern: ^[A-Za-z0-9-]{2,50}
-      schema:
-        type: object
-    required:
-    - schema
-  createAction:
-    title: createAction
-    type: object
-    properties:
-      id:
-        type: string
-        pattern: ^[A-Za-z0-9-]{2,50}
-      name:
-        type: string
-        pattern: ^[A-Za-z0-9- ]{2,50}
-      description:
-        type: string
-        pattern: ^[A-Za-z0-9. ]{0,255}
-      contactEmail:
-        type: string
-      img:
-        description: Reference link to an image file that can be usd in an UI to represent the action.
-        type: string
-        pattern: ^(https:\/\/)[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&\(\)\*\+,;=.]+$
-      url:
-        type: string
-        pattern: ^(https:\/\/)[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&\(\)\*\+,;=.]+$
-      filter:
-        $ref: '#/definitions/filter'
-  testAction:
-    title: testAction
-    type: object
-    properties:
-      action:
-        $ref: '#/definitions/createAction'
-      testPayload:
-        type: object
-  testActionResult:
-    title: testActionResult
-    example:
-      url: https://myapp.osdu.com/action/abc123
-      errors: ''
-    type: object
-    properties:
-      url:
-        type: string
-      errors:
-        type: string
-  action:
-    title: action
-    type: object
-    properties:
-      id:
-        type: string
-      name:
-        type: string
-      description:
-        type: string
-      contactEmail:
-        type: string
-      img:
-        type: string
-      url:
-        example: https://myapp.osdu.com/action/{type}/{id}
-        type: string
-      filter:
-        $ref: '#/definitions/filter'
       createdOnEpoch:
-        $ref: '#/definitions/createdOnEpoch'
-  record:
-    title: record
-    example:
-      id: common:regularheightfield:123456
-      kind: common:petrel:regularheightfield:1.0.0
-      acl:
-        viewers:
-        - data.default.viewers@{datapartition}.{domain}.com
-        owners:
-        - data.default.owners@{datapartition}.{domain}.com
-      legal:
-        legaltags:
-        - common-sample-legaltag
-        otherRelevantDataCountries:
-        - US
-      data:
-        msg: Hello
-        uri: https://myproj.com/abc123
-    type: object
-    properties:
+        $ref: '#/definitions/Timestamp'
+      description:
+        type: string
+      filter:
+        $ref: '#/definitions/Filter'
       id:
         type: string
-      kind:
+      img:
         type: string
-      acl:
-        $ref: '#/definitions/acl'
-      legal:
-        $ref: '#/definitions/legal'
-      data:
-        $ref: '#/definitions/data'
-  acl:
-    title: acl
+      name:
+        type: string
+      url:
+        type: string
+    title: Action
+  ChallengeResponse:
     type: object
     properties:
-      viewers:
-        type: array
-        items:
-          type: string
-      owners:
-        type: array
-        items:
-          type: string
-  data:
-    title: data
+      responseHash:
+        type: string
+    title: ChallengeResponse
+  ConnectedOuterService:
     type: object
     properties:
-      msg:
-        example: Hello
+      name:
         type: string
-      uri:
-        example: https://myproj.com/abc123
+      version:
         type: string
-  legal:
-    title: legal
+    title: ConnectedOuterService
+  CreateActionDto:
     type: object
     properties:
-      legaltags:
+      contactEmail:
+        type: string
+      description:
+        type: string
+        pattern: '^[A-Za-z0-9. ]{0,255}'
+      filter:
+        $ref: '#/definitions/Filter'
+      id:
+        type: string
+        pattern: '^[A-Za-z0-9-]{2,50}'
+      img:
+        type: string
+      name:
+        type: string
+        pattern: '^[A-Za-z0-9- ]{2,50}'
+      url:
+        type: string
+    title: CreateActionDto
+  DdmsReq:
+    type: object
+    required:
+      - id
+      - name
+    properties:
+      contactEmail:
+        type: string
+      createdDateTimeEpoch:
+        $ref: '#/definitions/TimestampReq'
+      description:
+        type: string
+        pattern: '^[A-Za-z0-9. ]{0,255}'
+      id:
+        type: string
+        pattern: '^[A-Za-z0-9-]{2,50}'
+      interfaces:
         type: array
+        uniqueItems: true
         items:
-          type: string
-      otherRelevantDataCountries:
+          $ref: '#/definitions/RegisteredInterface'
+      name:
+        type: string
+        pattern: '^[A-Za-z0-9- ]{2,50}'
+    title: DdmsReq
+  DdmsRes:
+    type: object
+    required:
+      - id
+      - name
+    properties:
+      contactEmail:
+        type: string
+      createdDateTimeEpoch:
+        $ref: '#/definitions/TimestampRes'
+      description:
+        type: string
+        pattern: '^[A-Za-z0-9. ]{0,255}'
+      id:
+        type: string
+        pattern: '^[A-Za-z0-9-]{2,50}'
+      interfaces:
         type: array
+        uniqueItems: true
         items:
-          type: string
-  filter:
-    title: filter
+          $ref: '#/definitions/RegisteredInterface'
+      name:
+        type: string
+        pattern: '^[A-Za-z0-9- ]{2,50}'
+    title: DdmsRes
+  Filter:
     type: object
     properties:
       entityType:
         type: array
         items:
           type: string
-          pattern: ^[a-z0-9-]{0,50}
-        pattern: ^[a-z0-9-]{0,50}
       source:
         type: array
         items:
           type: string
-          pattern: ^[a-z0-9-]{0,50}
-        pattern: ^[a-z0-9-]{0,50}
       version:
         type: array
         items:
           type: string
-          pattern: ^[0-9.]{0,10}
-        pattern: ^[0-9.]{0,10}
-  subscription:
-    title: subscription
+    title: Filter
+  GsaSecret:
     type: object
     properties:
-      name:
-        example: test-subscription
-        type: string
-        pattern: ^[A-Za-z0-9- ]{2,50}
-      description:
-        example: test description
-        type: string
-        pattern: ^[A-Za-z0-9. ]{0,255}
-      topic:
-        example: data-changed-v1
-        type: string
-      pushEndpoint:
-        example: https://myListener.com
-        type: string
-      secret:
-        $ref: '#/definitions/secret'
-  getSubscriptionResult:
-    title: getSubscriptionResult
-    type: object
-    properties:
-      id:
-        example: dGVzdC1uYW1l
-        type: string
-      name:
-        example: test-subscription
-        type: string
-      description:
-        example: test description
-        type: string
-      topic:
-        example: data-changed-v1
-        type: string
-      pushEndpoint:
-        example: https://myListener.com
-        type: string
-      createdBy:
-        example: test@myapp.com
-        type: string
-      notificationId:
-        example: de-6ee609b9-620e-477b-86f9-3b8907643a12
-        type: string
-  subscriptionCreateResult:
-    title: subscriptionCreateResult
-    type: object
-    properties:
-      id:
-        example: dGVzdC1uYW1l
-        type: string
-      name:
-        example: test-subscription
-        type: string
-        pattern: ^[A-Za-z0-9- ]{2,50}
-      description:
-        example: test description
-        type: string
-        pattern: ^[A-Za-z0-9. ]{0,255}
-      topic:
-        example: data-changed-v1
-        type: string
-      pushEndpoint:
-        example: https://myListener.com
-        type: string
-      createdBy:
-        example: test@myapp.com
-        type: string
-      notificationId:
-        example: de-6ee609b9-620e-477b-86f9-3b8907643a12
-        type: string
-      createdOnEpoch:
-        $ref: '#/definitions/createdOnEpoch'
-      secret:
-        $ref: '#/definitions/secret'
-  secret:
-    title: secret
-    type: object
-    properties:
-      secretType:
-        $ref: '#/definitions/SecretType'
       value:
-        type: object
-  createdOnEpoch:
-    title: createdOnEpoch
+        $ref: '#/definitions/GsaSecretValue'
+    title: GsaSecret
+  GsaSecretValue:
     type: object
     properties:
-      seconds:
-        example: 1572275081
+      audience:
+        type: string
+      key:
+        type: string
+    title: GsaSecretValue
+  HmacSecret:
+    type: object
+    properties:
+      value:
+        type: string
+    title: HmacSecret
+  JsonNode:
+    type: object
+    title: JsonNode
+  ParsedAction:
+    type: object
+    properties:
+      errors:
+        type: string
+      url:
+        type: string
+    title: ParsedAction
+  RegisteredInterface:
+    type: object
+    required:
+      - entityType
+    properties:
+      entityType:
+        type: string
+        pattern: '^[A-Za-z0-9 ]{2,50}'
+      schema:
+        type: object
+    title: RegisteredInterface
+  ResponseEntity:
+    type: object
+    properties:
+      body:
+        type: object
+      statusCode:
+        type: string
+        enum:
+          - ACCEPTED
+          - ALREADY_REPORTED
+          - BAD_GATEWAY
+          - BAD_REQUEST
+          - BANDWIDTH_LIMIT_EXCEEDED
+          - CHECKPOINT
+          - CONFLICT
+          - CONTINUE
+          - CREATED
+          - DESTINATION_LOCKED
+          - EXPECTATION_FAILED
+          - FAILED_DEPENDENCY
+          - FORBIDDEN
+          - FOUND
+          - GATEWAY_TIMEOUT
+          - GONE
+          - HTTP_VERSION_NOT_SUPPORTED
+          - IM_USED
+          - INSUFFICIENT_SPACE_ON_RESOURCE
+          - INSUFFICIENT_STORAGE
+          - INTERNAL_SERVER_ERROR
+          - I_AM_A_TEAPOT
+          - LENGTH_REQUIRED
+          - LOCKED
+          - LOOP_DETECTED
+          - METHOD_FAILURE
+          - METHOD_NOT_ALLOWED
+          - MOVED_PERMANENTLY
+          - MOVED_TEMPORARILY
+          - MULTIPLE_CHOICES
+          - MULTI_STATUS
+          - NETWORK_AUTHENTICATION_REQUIRED
+          - NON_AUTHORITATIVE_INFORMATION
+          - NOT_ACCEPTABLE
+          - NOT_EXTENDED
+          - NOT_FOUND
+          - NOT_IMPLEMENTED
+          - NOT_MODIFIED
+          - NO_CONTENT
+          - OK
+          - PARTIAL_CONTENT
+          - PAYLOAD_TOO_LARGE
+          - PAYMENT_REQUIRED
+          - PERMANENT_REDIRECT
+          - PRECONDITION_FAILED
+          - PRECONDITION_REQUIRED
+          - PROCESSING
+          - PROXY_AUTHENTICATION_REQUIRED
+          - REQUESTED_RANGE_NOT_SATISFIABLE
+          - REQUEST_ENTITY_TOO_LARGE
+          - REQUEST_HEADER_FIELDS_TOO_LARGE
+          - REQUEST_TIMEOUT
+          - REQUEST_URI_TOO_LONG
+          - RESET_CONTENT
+          - SEE_OTHER
+          - SERVICE_UNAVAILABLE
+          - SWITCHING_PROTOCOLS
+          - TEMPORARY_REDIRECT
+          - TOO_EARLY
+          - TOO_MANY_REQUESTS
+          - UNAUTHORIZED
+          - UNAVAILABLE_FOR_LEGAL_REASONS
+          - UNPROCESSABLE_ENTITY
+          - UNSUPPORTED_MEDIA_TYPE
+          - UPGRADE_REQUIRED
+          - URI_TOO_LONG
+          - USE_PROXY
+          - VARIANT_ALSO_NEGOTIATES
+      statusCodeValue:
+        type: integer
+        format: int32
+    title: ResponseEntity
+  Secret:
+    type: object
+    discriminator: secretType
+    title: Secret
+  Subscription:
+    type: object
+    required:
+      - name
+      - pushEndpoint
+      - topic
+    properties:
+      createdBy:
+        type: string
+      description:
+        type: string
+        pattern: '^[A-Za-z0-9. ]{0,255}'
+      id:
+        type: string
+      name:
+        type: string
+        pattern: '^[A-Za-z0-9- ]{2,50}'
+      notificationId:
+        type: string
+      pushEndpoint:
+        type: string
+      secret:
+        $ref: '#/definitions/Secret'
+      topic:
+        type: string
+    title: Subscription
+  SubscriptionInfo:
+    type: object
+    properties:
+      createdBy:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      notificationId:
+        type: string
+      pushEndpoint:
+        type: string
+      topic:
+        type: string
+    title: SubscriptionInfo
+  TestActionRequest:
+    type: object
+    required:
+      - testPayload
+    properties:
+      action:
+        $ref: '#/definitions/CreateActionDto'
+      testPayload:
+        $ref: '#/definitions/JsonNode'
+    title: TestActionRequest
+  Timestamp:
+    type: object
+    properties:
+      date:
+        type: integer
+        format: int32
+      day:
+        type: integer
+        format: int32
+      hours:
+        type: integer
+        format: int32
+      minutes:
+        type: integer
+        format: int32
+      month:
         type: integer
         format: int32
       nanos:
-        example: 51000000
         type: integer
         format: int32
-  topic:
-    title: topic
+      seconds:
+        type: integer
+        format: int32
+      time:
+        type: integer
+        format: int64
+      timezoneOffset:
+        type: integer
+        format: int32
+      year:
+        type: integer
+        format: int32
+    title: Timestamp
+  TimestampReq:
     type: object
     properties:
-      name:
-        example: records-changed
-        type: string
+      date:
+        type: integer
+        format: int32
+      hours:
+        type: integer
+        format: int32
+      minutes:
+        type: integer
+        format: int32
+      month:
+        type: integer
+        format: int32
+      nanos:
+        type: integer
+        format: int32
+      seconds:
+        type: integer
+        format: int32
+      time:
+        type: integer
+        format: int64
+      year:
+        type: integer
+        format: int32
+    title: TimestampReq
+  TimestampRes:
+    type: object
+    properties:
+      date:
+        type: integer
+        format: int32
+      day:
+        type: integer
+        format: int32
+      hours:
+        type: integer
+        format: int32
+      minutes:
+        type: integer
+        format: int32
+      month:
+        type: integer
+        format: int32
+      nanos:
+        type: integer
+        format: int32
+      seconds:
+        type: integer
+        format: int32
+      time:
+        type: integer
+        format: int64
+      timezoneOffset:
+        type: integer
+        format: int32
+      year:
+        type: integer
+        format: int32
+    title: TimestampRes
+  Topic:
+    type: object
+    properties:
       description:
-        example: This notification is sent whenever a record is created, updated or deleted.
-        type: string
-      state:
-        example: ACTIVE
         type: string
       example:
-        type: array
-        items:
-          $ref: '#/definitions/topicExample'
-  topicExample:
-    title: topicExample
-    type: object
-    properties:
-      id:
-        example: common:test:123
+        type: object
+      name:
         type: string
-      kind:
-        example: common:source:type:1.0.0
+      state:
         type: string
-      op:
-        example: deleted
-        type: string
+    title: Topic
   VersionInfo:
-    title: VersionInfo
-    description: Version info.
     type: object
     properties:
-      groupId:
-        description: Maven artifact group ID.
-        type: string
-      actifactId:
-        description: Maven artifact ID.
-        type: string
-      version:
-        description: Maven artifact version
-        type: string
-      buildTime:
-        description: Maven artifact build time
+      artifactId:
         type: string
       branch:
-        description: Current git branch
+        type: string
+      buildTime:
         type: string
       commitId:
-        description: Latest commit hash
         type: string
       commitMessage:
-        description: Latest commit message
         type: string
       connectedOuterServices:
-        description: Connected outer services information
         type: array
         items:
           $ref: '#/definitions/ConnectedOuterService'
-  ConnectedOuterService:
-    title: ConnectedOuterService
-    description: Connected outer service information.
-    type: object
-    properties:
-      name:
-        description: Connected outer service name.
+      groupId:
         type: string
       version:
-        description: Connected outer service version.
         type: string
-  SecretType:
-    title: SecretType
-    example: HMAC
-    type: string
-    enum:
-    - HMAC
-    - GSA
-security:
-- bearer: []
-- appkey: []
-tags:
-- name: Domain Data Management Service (DDMS)
-  description: ''
-- name: Action
-  description: ''
-- name: Subscription
-  description: ''
-- name: Info
-  description: Version info endpoint
+    title: VersionInfo
