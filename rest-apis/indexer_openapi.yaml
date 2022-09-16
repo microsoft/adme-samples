@@ -6,7 +6,7 @@ info:
 tags:
   - name: cleanup-indicies-api
     description: Cleanup Indicies Api
-   - name: info-api
+  - name: info-api
     description: Info Api
   - name: partition-setup-api
     description: Partition Setup Api
@@ -14,6 +14,8 @@ tags:
     description: Record Indexer Api
   - name: reindex-api
     description: Reindex Api
+  - name: health-check-api
+    description: Health check A
 paths:
   /api/indexer/v2/index:
     delete:
@@ -28,6 +30,7 @@ paths:
           name: data-partition-id
           description: data partition id
           required: true
+          type: string
         - name: kind
           in: query
           description: kind
@@ -45,8 +48,7 @@ paths:
         '403':
           description: Forbidden
       security:
-        - Authorization:
-            - Bearer: []
+        - Bearer: []
   /api/indexer/v2/info:
     get:
       tags:
@@ -60,6 +62,7 @@ paths:
           name: data-partition-id
           description: data partition id
           required: true
+          type: string
       responses:
         '200':
           description: OK
@@ -117,6 +120,7 @@ paths:
           name: data-partition-id
           description: data partition id
           required: true
+          type: string
       responses:
         '200':
           description: OK
@@ -146,6 +150,7 @@ paths:
           name: data-partition-id
           description: data partition id
           required: true
+          type: string
         - name: force_clean
           in: query
           description: force_clean
@@ -188,6 +193,7 @@ paths:
           name: data-partition-id
           description: data partition id
           required: true
+          type: string
         - name: force_clean
           in: query
           description: force_clean
@@ -209,7 +215,7 @@ paths:
         - Authorization:
             - global
 securityDefinitions:
-  Authorization:
+  Bearer:
     type: apiKey
     name: Authorization
     in: header
