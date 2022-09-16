@@ -79,6 +79,7 @@ paths:
       tags:
         - info-api
       summary: Get the info for the deployed version of Unit service.
+      description: For deployment available public /info endpoint, which provides build and git related information.
       operationId: infoUsingGET
       consumes:
         - application/json
