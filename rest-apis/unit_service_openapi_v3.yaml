@@ -24,13 +24,6 @@ paths:
         - application/json
       produces:
         - "*/*"
-      parameters:
-        - name: data-partition-id
-          in: header
-          description: tenant
-          required: true
-          type: string
-          default: opendes
       responses:
         '200':
           description: OK
@@ -54,13 +47,6 @@ paths:
         - application/json
       produces:
         - "*/*"
-      parameters:
-        - name: data-partition-id
-          in: header
-          description: tenant
-          required: true
-          type: string
-          default: opendes
       responses:
         '200':
           description: OK
@@ -74,7 +60,7 @@ paths:
           description: Not Found
       security:
         - Bearer Authorization: []
-  "/info":
+  "/v3/info":
     get:
       tags:
         - info-api
@@ -85,13 +71,6 @@ paths:
         - application/json
       produces:
         - application/json
-      parameters:
-        - name: data-partition-id
-          in: header
-          description: tenant
-          required: true
-          type: string
-          default: opendes
       responses:
         '200':
           description: OK
