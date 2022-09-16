@@ -7,30 +7,30 @@ basePath: "/api/unit"
 schemes:
   - https
 tags:
-- name: info-api
-  description: Info Api
-- name: unit-api-v-3
-  description: Unit Api V 3
-- name: health-check
-  description: Health Check
+  - name: info-api
+    description: Info Api
+  - name: unit-api-v-3
+    description: Unit Api V 3
+  - name: health-check
+    description: Health Check
 paths:
   "/_ah/liveness_check":
     get:
       tags:
-      - health-check
-      summary: livenessCheck
+        - health-check
+      summary: Checks the liveness of the service
       operationId: livenessCheckUsingGET
       consumes:
-      - application/json
+        - application/json
       produces:
-      - "*/*"
+        - "*/*"
       parameters:
-      - name: data-partition-id
-        in: header
-        description: tenant
-        required: true
-        type: string
-        default: opendes
+        - name: data-partition-id
+          in: header
+          description: tenant
+          required: true
+          type: string
+          default: opendes
       responses:
         '200':
           description: OK
@@ -43,24 +43,24 @@ paths:
         '404':
           description: Not Found
       security:
-      - Bearer Authorization: []
+        - Bearer Authorization: []
   "/_ah/readiness_check":
     get:
       tags:
-      - health-check
-      summary: readinessCheck
+        - health-check
+      summary: Checks the readiness of the service
       operationId: readinessCheckUsingGET
       consumes:
-      - application/json
+        - application/json
       produces:
-      - "*/*"
+        - "*/*"
       parameters:
-      - name: data-partition-id
-        in: header
-        description: tenant
-        required: true
-        type: string
-        default: opendes
+        - name: data-partition-id
+          in: header
+          description: tenant
+          required: true
+          type: string
+          default: opendes
       responses:
         '200':
           description: OK
@@ -73,24 +73,24 @@ paths:
         '404':
           description: Not Found
       security:
-      - Bearer Authorization: []
+        - Bearer Authorization: []
   "/info":
     get:
       tags:
-      - info-api
-      summary: info
+        - info-api
+      summary: Get the info for the deployed version of Unit service.
       operationId: infoUsingGET
       consumes:
-      - application/json
+        - application/json
       produces:
-      - application/json
+        - application/json
       parameters:
-      - name: data-partition-id
-        in: header
-        description: tenant
-        required: true
-        type: string
-        default: opendes
+        - name: data-partition-id
+          in: header
+          description: tenant
+          required: true
+          type: string
+          default: opendes
       responses:
         '200':
           description: OK
@@ -103,24 +103,25 @@ paths:
         '404':
           description: Not Found
       security:
-      - Bearer Authorization: []
+        - Bearer Authorization: []
   "/v3/catalog":
     get:
       tags:
-      - unit-api-v-3
-      summary: getCatalog
+        - unit-api-v-3
+      summary: Get the entire Catalog
+      description: Get the Units of Measure Catalog summary. The response contains empty lists and corresponding list counts. Use the specific endpoints to obtain the list contents as required.
       operationId: getCatalogUsingGET
       consumes:
-      - application/json
+        - application/json
       produces:
-      - "*/*"
+        - "*/*"
       parameters:
-      - name: data-partition-id
-        in: header
-        description: tenant
-        required: true
-        type: string
-        default: opendes
+        - name: data-partition-id
+          in: header
+          description: tenant
+          required: true
+          type: string
+          default: opendes
       responses:
         '200':
           description: OK
@@ -133,24 +134,25 @@ paths:
         '404':
           description: Not Found
       security:
-      - Bearer Authorization: []
+        - Bearer Authorization: []
   "/v3/catalog/lastmodified":
     get:
       tags:
-      - unit-api-v-3
-      summary: getLastModified
+        - unit-api-v-3
+      summary: Gets the Catalog's last modified date
+      description: Gets the last modification date of the catalog.
       operationId: getLastModifiedUsingGET
       consumes:
-      - application/json
+        - application/json
       produces:
-      - "*/*"
+        - "*/*"
       parameters:
-      - name: data-partition-id
-        in: header
-        description: tenant
-        required: true
-        type: string
-        default: opendes
+        - name: data-partition-id
+          in: header
+          description: tenant
+          required: true
+          type: string
+          default: opendes
       responses:
         '200':
           description: OK
@@ -163,38 +165,39 @@ paths:
         '404':
           description: Not Found
       security:
-      - Bearer Authorization: []
+        - Bearer Authorization: []
   "/v3/catalog/mapstates":
     get:
       tags:
-      - unit-api-v-3
-      summary: getMapStates
+        - unit-api-v-3
+      summary: Get the map and/or deprecation states
+      description: Get the defined states for deprecation and cross-namespace mappings as defined in this catalog.
       operationId: getMapStatesUsingGET
       consumes:
-      - application/json
+        - application/json
       produces:
-      - "*/*"
+        - "*/*"
       parameters:
-      - name: data-partition-id
-        in: header
-        description: tenant
-        required: true
-        type: string
-        default: opendes
-      - name: offset
-        in: query
-        description: offset
-        required: false
-        type: integer
-        default: 0
-        format: int32
-      - name: limit
-        in: query
-        description: limit
-        required: false
-        type: integer
-        default: 100
-        format: int32
+        - name: data-partition-id
+          in: header
+          description: tenant
+          required: true
+          type: string
+          default: opendes
+        - name: offset
+          in: query
+          description: The offset into the result array. Default 0.
+          required: false
+          type: integer
+          default: 0
+          format: int32
+        - name: limit
+          in: query
+          description: The size limit for the number of items in the response. Default 100; -1 for all items.
+          required: false
+          type: integer
+          default: 100
+          format: int32
       responses:
         '200':
           description: OK
@@ -207,44 +210,45 @@ paths:
         '404':
           description: Not Found
       security:
-      - Bearer Authorization: []
+        - Bearer Authorization: []
   "/v3/catalog/search":
     post:
       tags:
-      - unit-api-v-3
-      summary: postSearch
+        - unit-api-v-3
+      summary: Search Catalog by keyword(s)
+      description: Search units, measurements, etc. by keywords. Valid keywords are - 'name', 'namespace', 'source', 'symbol', 'type' (unit parameterization type Abcd or ScaleOffset), 'ancestry', 'code', 'dimensionCode', 'unitQuantityCode', 'dimensionAnalysis', 'state', 'baseMeasurement'.
       operationId: postSearchUsingPOST
       consumes:
-      - application/json
+        - application/json
       produces:
-      - "*/*"
+        - "*/*"
       parameters:
-      - name: data-partition-id
-        in: header
-        description: tenant
-        required: true
-        type: string
-        default: opendes
-      - in: body
-        name: request
-        description: request
-        required: true
-        schema:
-          "$ref": "#/definitions/SearchRequest"
-      - name: offset
-        in: query
-        description: offset
-        required: false
-        type: integer
-        default: 0
-        format: int32
-      - name: limit
-        in: query
-        description: limit
-        required: false
-        type: integer
-        default: 100
-        format: int32
+        - name: data-partition-id
+          in: header
+          description: tenant
+          required: true
+          type: string
+          default: opendes
+        - in: body
+          name: request
+          description: request
+          required: true
+          schema:
+            "$ref": "#/definitions/SearchRequest"
+        - name: offset
+          in: query
+          description: The offset into the result array. Default 0.
+          required: false
+          type: integer
+          default: 0
+          format: int32
+        - name: limit
+          in: query
+          description: The size limit for the number of items in the response. Default 100; -1 for all items.
+          required: false
+          type: integer
+          default: 100
+          format: int32
       responses:
         '200':
           description: OK
@@ -259,39 +263,40 @@ paths:
         '404':
           description: Not Found
       security:
-      - Bearer Authorization: []
+        - Bearer Authorization: []
   "/v3/conversion/abcd":
     get:
       tags:
-      - unit-api-v-3
-      summary: getConversionABCDBySymbols
+        - unit-api-v-3
+      summary: Get Abcd Unit conversion parameters given two Unit specifications
+      description: Get the Energistics style unit parameters given the 'from' and 'to' unit symbols and the namespace (list) to disambiguate the unit symbols. Example for a prioritized namespaces list- 'LIS,RP66,ECL,Energistics_UoM' this will prioritize the units in the LIS namespace over other namespaces.
       operationId: getConversionABCDBySymbolsUsingGET
       consumes:
-      - application/json
+        - application/json
       produces:
-      - "*/*"
+        - "*/*"
       parameters:
-      - name: data-partition-id
-        in: header
-        description: tenant
-        required: true
-        type: string
-        default: opendes
-      - name: namespaces
-        in: query
-        description: namespaces
-        required: true
-        type: string
-      - name: fromSymbol
-        in: query
-        description: fromSymbol
-        required: true
-        type: string
-      - name: toSymbol
-        in: query
-        description: toSymbol
-        required: true
-        type: string
+        - name: data-partition-id
+          in: header
+          description: tenant
+          required: true
+          type: string
+          default: opendes
+        - name: namespaces
+          in: query
+          description: List of namespace codes to disambiguate the unit symbols. Example- 'LIS,RP66,ECL,Energistics_UoM' to prioritize old LIS unit symbols.
+          required: true
+          type: string
+        - name: fromSymbol
+          in: query
+          description: The source (=from) unit symbol, example- 'ftUS'.
+          required: true
+          type: string
+        - name: toSymbol
+          in: query
+          description: The target (=to) unit symbol, example- 'm'.
+          required: true
+          type: string
       responses:
         '200':
           description: OK
@@ -304,29 +309,30 @@ paths:
         '404':
           description: Not Found
       security:
-      - Bearer Authorization: []
+        - Bearer Authorization: []
     post:
       tags:
-      - unit-api-v-3
-      summary: postConversionABCD
+        - unit-api-v-3
+      summary: Get Abcd Unit conversion parameters given two Units
+      description: Get the Energistics style unit parameters given the 'fromUnit' and 'toUnit'. The 'fromUnit' and 'toUnit' definitions can either be passed as persistable reference strings (JSON serialized Unit essence) or as Unit essence structures.
       operationId: postConversionABCDUsingPOST
       consumes:
-      - application/json
+        - application/json
       produces:
-      - "*/*"
+        - "*/*"
       parameters:
-      - name: data-partition-id
-        in: header
-        description: tenant
-        required: true
-        type: string
-        default: opendes
-      - in: body
-        name: request
-        description: request
-        required: true
-        schema:
-          "$ref": "#/definitions/ConversionABCDRequest"
+        - name: data-partition-id
+          in: header
+          description: tenant
+          required: true
+          type: string
+          default: opendes
+        - in: body
+          name: request
+          description: request
+          required: true
+          schema:
+            "$ref": "#/definitions/ConversionABCDRequest"
       responses:
         '200':
           description: OK
@@ -341,39 +347,40 @@ paths:
         '404':
           description: Not Found
       security:
-      - Bearer Authorization: []
+        - Bearer Authorization: []
   "/v3/conversion/scale":
     get:
       tags:
-      - unit-api-v-3
-      summary: getConversionScaleOffsetBySymbols
+        - unit-api-v-3
+      summary: Get ScaleOffset Unit conversion parameters given two unit specifications
+      description: Get the scale/offset unit parameters given the 'from' and 'to' unit symbols and the namespace(-list) to disambiguate the unit symbols. Example for a prioritized namespaces list 'LIS,RP66,ECL,Energistics_UoM' - this will prioritize the units in the LIS namespace over other namespaces.
       operationId: getConversionScaleOffsetBySymbolsUsingGET
       consumes:
-      - application/json
+        - application/json
       produces:
-      - "*/*"
+        - "*/*"
       parameters:
-      - name: data-partition-id
-        in: header
-        description: tenant
-        required: true
-        type: string
-        default: opendes
-      - name: namespaces
-        in: query
-        description: namespaces
-        required: true
-        type: string
-      - name: fromSymbol
-        in: query
-        description: fromSymbol
-        required: true
-        type: string
-      - name: toSymbol
-        in: query
-        description: toSymbol
-        required: true
-        type: string
+        - name: data-partition-id
+          in: header
+          description: tenant
+          required: true
+          type: string
+          default: opendes
+        - name: namespaces
+          in: query
+          description: List of namespace codes to disambiguate the unit symbols. Example- 'LIS,RP66,ECL,Energistics_UoM' to prioritize old LIS unit symbols
+          required: true
+          type: string
+        - name: fromSymbol
+          in: query
+          description: The source (=from) unit symbol, example- 'ftUS'.
+          required: true
+          type: string
+        - name: toSymbol
+          in: query
+          description: The target (=to) unit symbol, example- 'm'.
+          required: true
+          type: string
       responses:
         '200':
           description: OK
@@ -386,29 +393,30 @@ paths:
         '404':
           description: Not Found
       security:
-      - Bearer Authorization: []
+        - Bearer Authorization: []
     post:
       tags:
-      - unit-api-v-3
-      summary: postConversionScaleOffset
+        - unit-api-v-3
+      summary: Post ScaleOffset Unit conversion parameters given two Units
+      description: Get the scale/offset unit parameters given the 'fromUnit' and 'toUnit'. The 'fromUnit' and 'toUnit' definitions can either be passed as persistable reference strings (JSON serialized Unit essence) or as Unit essence structures.
       operationId: postConversionScaleOffsetUsingPOST
       consumes:
-      - application/json
+        - application/json
       produces:
-      - "*/*"
+        - "*/*"
       parameters:
-      - name: data-partition-id
-        in: header
-        description: tenant
-        required: true
-        type: string
-        default: opendes
-      - in: body
-        name: request
-        description: request
-        required: true
-        schema:
-          "$ref": "#/definitions/ConversionScaleOffsetRequest"
+        - name: data-partition-id
+          in: header
+          description: tenant
+          required: true
+          type: string
+          default: opendes
+        - in: body
+          name: request
+          description: request
+          required: true
+          schema:
+            "$ref": "#/definitions/ConversionScaleOffsetRequest"
       responses:
         '200':
           description: OK
@@ -423,29 +431,30 @@ paths:
         '404':
           description: Not Found
       security:
-      - Bearer Authorization: []
+        - Bearer Authorization: []
   "/v3/measurement":
     get:
       tags:
-      - unit-api-v-3
-      summary: getMeasurement
+        - unit-api-v-3
+      summary: Get a specific Measurement by ancestry
+      description: Get a specific measurement given dot separated measurement ancestry
       operationId: getMeasurementUsingGET
       consumes:
-      - application/json
+        - application/json
       produces:
-      - "*/*"
+        - "*/*"
       parameters:
-      - name: data-partition-id
-        in: header
-        description: tenant
-        required: true
-        type: string
-        default: opendes
-      - name: ancestry
-        in: query
-        description: ancestry
-        required: true
-        type: string
+        - name: data-partition-id
+          in: header
+          description: tenant
+          required: true
+          type: string
+          default: opendes
+        - name: ancestry
+          in: query
+          description: The measurement's ancestry, example 'Dimensionless'
+          required: true
+          type: string
       responses:
         '200':
           description: OK
@@ -458,29 +467,30 @@ paths:
         '404':
           description: Not Found
       security:
-      - Bearer Authorization: []
+        - Bearer Authorization: []
     post:
       tags:
-      - unit-api-v-3
-      summary: postMeasurement
+        - unit-api-v-3
+      summary: Get a specific Measurement
+      description: Get a specific measurement given a persistable reference string or measurement essence structure.
       operationId: postMeasurementUsingPOST
       consumes:
-      - application/json
+        - application/json
       produces:
-      - "*/*"
+        - "*/*"
       parameters:
-      - name: data-partition-id
-        in: header
-        description: tenant
-        required: true
-        type: string
-        default: opendes
-      - in: body
-        name: request
-        description: request
-        required: true
-        schema:
-          "$ref": "#/definitions/MeasurementRequest"
+        - name: data-partition-id
+          in: header
+          description: tenant
+          required: true
+          type: string
+          default: opendes
+        - in: body
+          name: request
+          description: The request to get a specific measurement given a persistable reference string or measurement essence structure.
+          required: true
+          schema:
+            "$ref": "#/definitions/MeasurementRequest"
       responses:
         '200':
           description: OK
@@ -495,38 +505,39 @@ paths:
         '404':
           description: Not Found
       security:
-      - Bearer Authorization: []
+        - Bearer Authorization: []
   "/v3/measurement/list":
     get:
       tags:
-      - unit-api-v-3
-      summary: getMeasurements
+        - unit-api-v-3
+      summary: Get all Measurements
+      description: Get all measurements defined in this catalog.
       operationId: getMeasurementsUsingGET
       consumes:
-      - application/json
+        - application/json
       produces:
-      - "*/*"
+        - "*/*"
       parameters:
-      - name: data-partition-id
-        in: header
-        description: tenant
-        required: true
-        type: string
-        default: opendes
-      - name: offset
-        in: query
-        description: offset
-        required: false
-        type: integer
-        default: 0
-        format: int32
-      - name: limit
-        in: query
-        description: limit
-        required: false
-        type: integer
-        default: 100
-        format: int32
+        - name: data-partition-id
+          in: header
+          description: tenant
+          required: true
+          type: string
+          default: opendes
+        - name: offset
+          in: query
+          description: The offset into the result array
+          required: false
+          type: integer
+          default: 0
+          format: int32
+        - name: limit
+          in: query
+          description: The size limit for the number of items in the response. Default 100; -1 for all items.
+          required: false
+          type: integer
+          default: 100
+          format: int32
       responses:
         '200':
           description: OK
@@ -539,38 +550,39 @@ paths:
         '404':
           description: Not Found
       security:
-      - Bearer Authorization: []
+        - Bearer Authorization: []
   "/v3/measurement/maps":
     get:
       tags:
-      - unit-api-v-3
-      summary: getMeasurementMaps
+        - unit-api-v-3
+      summary: Get the Measurement maps
+      description: Get the measurement maps defined in this catalog.
       operationId: getMeasurementMapsUsingGET
       consumes:
-      - application/json
+        - application/json
       produces:
-      - "*/*"
+        - "*/*"
       parameters:
-      - name: data-partition-id
-        in: header
-        description: tenant
-        required: true
-        type: string
-        default: opendes
-      - name: offset
-        in: query
-        description: offset
-        required: false
-        type: integer
-        default: 0
-        format: int32
-      - name: limit
-        in: query
-        description: limit
-        required: false
-        type: integer
-        default: 100
-        format: int32
+        - name: data-partition-id
+          in: header
+          description: tenant
+          required: true
+          type: string
+          default: opendes
+        - name: offset
+          in: query
+          description: The offset into the result array.
+          required: false
+          type: integer
+          default: 0
+          format: int32
+        - name: limit
+          in: query
+          description: The size limit for the number of items in the response. Default 100; -1 for all items.
+          required: false
+          type: integer
+          default: 100
+          format: int32
       responses:
         '200':
           description: OK
@@ -583,44 +595,45 @@ paths:
         '404':
           description: Not Found
       security:
-      - Bearer Authorization: []
+        - Bearer Authorization: []
   "/v3/measurement/search":
     post:
       tags:
-      - unit-api-v-3
-      summary: postSearchMeasurements
+        - unit-api-v-3
+      summary: Search Measurements by keyword(s),
+      description: Search measurements by keywords. Valid keywords are- 'name', 'namespace', 'source', 'ancestry', 'code', 'dimensionCode', 'unitQuantityCode', 'dimensionAnalysis', 'state', 'baseMeasurement'.
       operationId: postSearchMeasurementsUsingPOST
       consumes:
-      - application/json
+        - application/json
       produces:
-      - "*/*"
+        - "*/*"
       parameters:
-      - name: data-partition-id
-        in: header
-        description: tenant
-        required: true
-        type: string
-        default: opendes
-      - in: body
-        name: request
-        description: request
-        required: true
-        schema:
-          "$ref": "#/definitions/SearchRequest"
-      - name: offset
-        in: query
-        description: offset
-        required: false
-        type: integer
-        default: 0
-        format: int32
-      - name: limit
-        in: query
-        description: limit
-        required: false
-        type: integer
-        default: 100
-        format: int32
+        - name: data-partition-id
+          in: header
+          description: tenant
+          required: true
+          type: string
+          default: opendes
+        - in: body
+          name: request
+          description: request
+          required: true
+          schema:
+            "$ref": "#/definitions/SearchRequest"
+        - name: offset
+          in: query
+          description: The offset into the result array
+          required: false
+          type: integer
+          default: 0
+          format: int32
+        - name: limit
+          in: query
+          description: The size limit for the number of items in the response. Default 100; -1 for all items.
+          required: false
+          type: integer
+          default: 100
+          format: int32
       responses:
         '200':
           description: OK
@@ -635,38 +648,39 @@ paths:
         '404':
           description: Not Found
       security:
-      - Bearer Authorization: []
+        - Bearer Authorization: []
   "/v3/unit":
     get:
       tags:
-      - unit-api-v-3
-      summary: getUnits
+        - unit-api-v-3
+      summary: Get all Units
+      description: Get all units defined in this catalog
       operationId: getUnitsUsingGET
       consumes:
-      - application/json
+        - application/json
       produces:
-      - "*/*"
+        - "*/*"
       parameters:
-      - name: data-partition-id
-        in: header
-        description: tenant
-        required: true
-        type: string
-        default: opendes
-      - name: offset
-        in: query
-        description: offset
-        required: false
-        type: integer
-        default: 0
-        format: int32
-      - name: limit
-        in: query
-        description: limit
-        required: false
-        type: integer
-        default: 100
-        format: int32
+        - name: data-partition-id
+          in: header
+          description: tenant
+          required: true
+          type: string
+          default: opendes
+        - name: offset
+          in: query
+          description: The offset into the result array. Default 0.
+          required: false
+          type: integer
+          default: 0
+          format: int32
+        - name: limit
+          in: query
+          description: The size limit for the number of items in the response. Default 100; -1 for all items.
+          required: false
+          type: integer
+          default: 100
+          format: int32
       responses:
         '200':
           description: OK
@@ -679,29 +693,30 @@ paths:
         '404':
           description: Not Found
       security:
-      - Bearer Authorization: []
+        - Bearer Authorization: []
     post:
       tags:
-      - unit-api-v-3
-      summary: postUnit
+        - unit-api-v-3
+      summary: Get a specific Unit
+      description: Get a specific unit instance given either a persistable reference string or unit essence JSON structure.
       operationId: postUnitUsingPOST
       consumes:
-      - application/json
+        - application/json
       produces:
-      - "*/*"
+        - "*/*"
       parameters:
-      - name: data-partition-id
-        in: header
-        description: tenant
-        required: true
-        type: string
-        default: opendes
-      - in: body
-        name: request
-        description: request
-        required: true
-        schema:
-          "$ref": "#/definitions/UnitRequest"
+        - name: data-partition-id
+          in: header
+          description: tenant
+          required: true
+          type: string
+          default: opendes
+        - in: body
+          name: request
+          description: request
+          required: true
+          schema:
+            "$ref": "#/definitions/UnitRequest"
       responses:
         '200':
           description: OK
@@ -716,38 +731,39 @@ paths:
         '404':
           description: Not Found
       security:
-      - Bearer Authorization: []
+        - Bearer Authorization: []
   "/v3/unit/maps":
     get:
       tags:
-      - unit-api-v-3
-      summary: getUnitMaps
+        - unit-api-v-3
+      summary: Get Unit maps between namespaces
+      description: Get the UnitMapItems defined between namespaces in this catalog.
       operationId: getUnitMapsUsingGET
       consumes:
-      - application/json
+        - application/json
       produces:
-      - "*/*"
+        - "*/*"
       parameters:
-      - name: data-partition-id
-        in: header
-        description: tenant
-        required: true
-        type: string
-        default: opendes
-      - name: offset
-        in: query
-        description: offset
-        required: false
-        type: integer
-        default: 0
-        format: int32
-      - name: limit
-        in: query
-        description: limit
-        required: false
-        type: integer
-        default: 100
-        format: int32
+        - name: data-partition-id
+          in: header
+          description: tenant
+          required: true
+          type: string
+          default: opendes
+        - name: offset
+          in: query
+          description: The offset into the result array. Default 0
+          required: false
+          type: integer
+          default: 0
+          format: int32
+        - name: limit
+          in: query
+          description: The size limit for the number of items in the response. Default 100; -1 for all items.
+          required: false
+          type: integer
+          default: 100
+          format: int32
       responses:
         '200':
           description: OK
@@ -760,29 +776,30 @@ paths:
         '404':
           description: Not Found
       security:
-      - Bearer Authorization: []
+        - Bearer Authorization: []
   "/v3/unit/measurement":
     get:
       tags:
-      - unit-api-v-3
-      summary: getUnitsByMeasurement
+        - unit-api-v-3
+      summary: Get all Units for a Measurement by ancestry
+      description: Get all units given dot separated ancestry, e.g. Dimensionless.
       operationId: getUnitsByMeasurementUsingGET
       consumes:
-      - application/json
+        - application/json
       produces:
-      - "*/*"
+        - "*/*"
       parameters:
-      - name: data-partition-id
-        in: header
-        description: tenant
-        required: true
-        type: string
-        default: opendes
-      - name: ancestry
-        in: query
-        description: ancestry
-        required: true
-        type: string
+        - name: data-partition-id
+          in: header
+          description: tenant
+          required: true
+          type: string
+          default: opendes
+        - name: ancestry
+          in: query
+          description: The measurement's ancestry, example- Dimensionless
+          required: true
+          type: string
       responses:
         '200':
           description: OK
@@ -795,29 +812,30 @@ paths:
         '404':
           description: Not Found
       security:
-      - Bearer Authorization: []
+        - Bearer Authorization: []
     post:
       tags:
-      - unit-api-v-3
-      summary: postUnitsByMeasurement
+        - unit-api-v-3
+      summary: Get all Units for a Measurement
+      description: Get all units given either a measurement's persistable reference string or a measurement essence JSON structure.
       operationId: postUnitsByMeasurementUsingPOST
       consumes:
-      - application/json
+        - application/json
       produces:
-      - "*/*"
+        - "*/*"
       parameters:
-      - name: data-partition-id
-        in: header
-        description: tenant
-        required: true
-        type: string
-        default: opendes
-      - in: body
-        name: request
-        description: request
-        required: true
-        schema:
-          "$ref": "#/definitions/MeasurementRequest"
+        - name: data-partition-id
+          in: header
+          description: tenant
+          required: true
+          type: string
+          default: opendes
+        - in: body
+          name: request
+          description: The request to get a specific measurement given a persistable reference string or measurement essence structure.
+          required: true
+          schema:
+            "$ref": "#/definitions/MeasurementRequest"
       responses:
         '200':
           description: OK
@@ -832,29 +850,30 @@ paths:
         '404':
           description: Not Found
       security:
-      - Bearer Authorization: []
+        - Bearer Authorization: []
   "/v3/unit/measurement/preferred":
     get:
       tags:
-      - unit-api-v-3
-      summary: getPreferredUnitsByMeasurement
+        - unit-api-v-3
+      summary: Get preferred Units for a Measurement by ancestry
+      description: Get the preferred units given dot separated ancestry, e.g. Dimensionless
       operationId: getPreferredUnitsByMeasurementUsingGET
       consumes:
-      - application/json
+        - application/json
       produces:
-      - "*/*"
+        - "*/*"
       parameters:
-      - name: data-partition-id
-        in: header
-        description: tenant
-        required: true
-        type: string
-        default: opendes
-      - name: ancestry
-        in: query
-        description: ancestry
-        required: true
-        type: string
+        - name: data-partition-id
+          in: header
+          description: tenant
+          required: true
+          type: string
+          default: opendes
+        - name: ancestry
+          in: query
+          description: The measurement's ancestry, example- Dimensionless
+          required: true
+          type: string
       responses:
         '200':
           description: OK
@@ -867,29 +886,30 @@ paths:
         '404':
           description: Not Found
       security:
-      - Bearer Authorization: []
+        - Bearer Authorization: []
     post:
       tags:
-      - unit-api-v-3
-      summary: postPreferredUnitsByMeasurement
+        - unit-api-v-3
+      summary: Get preferred Units for a Measurement
+      description: Get the preferred units given a measurement persistable reference string or measurement essence JSON structure.
       operationId: postPreferredUnitsByMeasurementUsingPOST
       consumes:
-      - application/json
+        - application/json
       produces:
-      - "*/*"
+        - "*/*"
       parameters:
-      - name: data-partition-id
-        in: header
-        description: tenant
-        required: true
-        type: string
-        default: opendes
-      - in: body
-        name: request
-        description: request
-        required: true
-        schema:
-          "$ref": "#/definitions/MeasurementRequest"
+        - name: data-partition-id
+          in: header
+          description: tenant
+          required: true
+          type: string
+          default: opendes
+        - in: body
+          name: request
+          description: The request to get a specific measurement given a persistable reference string or measurement essence structure
+          required: true
+          schema:
+            "$ref": "#/definitions/MeasurementRequest"
       responses:
         '200':
           description: OK
@@ -904,44 +924,45 @@ paths:
         '404':
           description: Not Found
       security:
-      - Bearer Authorization: []
+        - Bearer Authorization: []
   "/v3/unit/search":
     post:
       tags:
-      - unit-api-v-3
-      summary: postSearchUnits
+        - unit-api-v-3
+      summary: Search Units by keyword(s)
+      description: Search units by keywords. Valid keywords are- 'name', 'namespace', 'source', 'symbol', 'type' (unit parameterization type Abcd or ScaleOffset), 'state'.
       operationId: postSearchUnitsUsingPOST
       consumes:
-      - application/json
+        - application/json
       produces:
-      - "*/*"
+        - "*/*"
       parameters:
-      - name: data-partition-id
-        in: header
-        description: tenant
-        required: true
-        type: string
-        default: opendes
-      - in: body
-        name: request
-        description: request
-        required: true
-        schema:
-          "$ref": "#/definitions/SearchRequest"
-      - name: offset
-        in: query
-        description: offset
-        required: false
-        type: integer
-        default: 0
-        format: int32
-      - name: limit
-        in: query
-        description: limit
-        required: false
-        type: integer
-        default: 100
-        format: int32
+        - name: data-partition-id
+          in: header
+          description: tenant
+          required: true
+          type: string
+          default: opendes
+        - in: body
+          name: request
+          description: request
+          required: true
+          schema:
+            "$ref": "#/definitions/SearchRequest"
+        - name: offset
+          in: query
+          description: The offset into the result array. Default 0.
+          required: false
+          type: integer
+          default: 0
+          format: int32
+        - name: limit
+          in: query
+          description: The size limit for the number of items in the response. Default 100; -1 for all items.
+          required: false
+          type: integer
+          default: 100
+          format: int32
       responses:
         '200':
           description: OK
@@ -956,34 +977,35 @@ paths:
         '404':
           description: Not Found
       security:
-      - Bearer Authorization: []
+        - Bearer Authorization: []
   "/v3/unit/symbol":
     get:
       tags:
-      - unit-api-v-3
-      summary: getUnitBySymbol
+        - unit-api-v-3
+      summary: Get a unique Unit by Namespace,Symbol
+      description: Get single, unique unit given a namespace or namespace list and a symbol. Example- namespace='LIS,RP66,ECL', symbol='F' returns the LIS Foot.
       operationId: getUnitBySymbolUsingGET
       consumes:
-      - application/json
+        - application/json
       produces:
-      - "*/*"
+        - "*/*"
       parameters:
-      - name: data-partition-id
-        in: header
-        description: tenant
-        required: true
-        type: string
-        default: opendes
-      - name: namespaces
-        in: query
-        description: namespaces
-        required: true
-        type: string
-      - name: symbol
-        in: query
-        description: symbol
-        required: true
-        type: string
+        - name: data-partition-id
+          in: header
+          description: tenant
+          required: true
+          type: string
+          default: opendes
+        - name: namespaces
+          in: query
+          description: The namespace or namespace list setting the priority of sources to resolve a symbol ambiguity. Example- 'Energistics_UoM' or 'LIS,RP66,ECL'.
+          required: true
+          type: string
+        - name: symbol
+          in: query
+          description: The unit symbol to look up. Example -'F'. 'F' is ambiguous and requires a namespace to disambiguate.
+          required: true
+          type: string
       responses:
         '200':
           description: OK
@@ -996,29 +1018,30 @@ paths:
         '404':
           description: Not Found
       security:
-      - Bearer Authorization: []
+        - Bearer Authorization: []
   "/v3/unit/symbols":
     get:
       tags:
-      - unit-api-v-3
-      summary: getUnitsBySymbol
+        - unit-api-v-3
+      summary: Get Units by symbol,
+      description: Get all units given a specific symbol. Example- 'F'. 'F' is defined in multiple namespaces belonging to different measurements.
       operationId: getUnitsBySymbolUsingGET
       consumes:
-      - application/json
+        - application/json
       produces:
-      - "*/*"
+        - "*/*"
       parameters:
-      - name: data-partition-id
-        in: header
-        description: tenant
-        required: true
-        type: string
-        default: opendes
-      - name: symbol
-        in: query
-        description: symbol
-        required: true
-        type: string
+        - name: data-partition-id
+          in: header
+          description: tenant
+          required: true
+          type: string
+          default: opendes
+        - name: symbol
+          in: query
+          description: The unit symbol to look up. Example- 'F'. 'F' is defined in multiple namespaces.
+          required: true
+          type: string
       responses:
         '200':
           description: OK
@@ -1031,34 +1054,35 @@ paths:
         '404':
           description: Not Found
       security:
-      - Bearer Authorization: []
+        - Bearer Authorization: []
   "/v3/unit/unitsystem":
     get:
       tags:
-      - unit-api-v-3
-      summary: getUnitBySystemAndMeasurement
+        - unit-api-v-3
+      summary: Get a unique Unit for the given Measurement ancestry in the named UnitSystem
+      description: Get a unique unit given a unit system name and dot separated measurement ancestry, e.g. Time_Per_Length.Acoustic_Slowness.
       operationId: getUnitBySystemAndMeasurementUsingGET
       consumes:
-      - application/json
+        - application/json
       produces:
-      - "*/*"
+        - "*/*"
       parameters:
-      - name: data-partition-id
-        in: header
-        description: tenant
-        required: true
-        type: string
-        default: opendes
-      - name: unitSystemName
-        in: query
-        description: unitSystemName
-        required: true
-        type: string
-      - name: ancestry
-        in: query
-        description: ancestry
-        required: true
-        type: string
+        - name: data-partition-id
+          in: header
+          description: tenant
+          required: true
+          type: string
+          default: opendes
+        - name: unitSystemName
+          in: query
+          description: The name of the unit system. Example- 'English'.
+          required: true
+          type: string
+        - name: ancestry
+          in: query
+          description: The measurement's ancestry, example- Dimensionless
+          required: true
+          type: string
       responses:
         '200':
           description: OK
@@ -1071,34 +1095,35 @@ paths:
         '404':
           description: Not Found
       security:
-      - Bearer Authorization: []
+        - Bearer Authorization: []
     post:
       tags:
-      - unit-api-v-3
-      summary: postUnitBySystemAndMeasurement
+        - unit-api-v-3
+      summary: Get a unique Unit for the given Measurement in the named UnitSystem
+      description: Get a unique unit given a unit system name and a measurement persistable reference string or measurement essence Json structure. Example- Unit system- English; measurement essence- { \"ancestry\"- \"Length\", \"type\"- \"UM\" }"
       operationId: postUnitBySystemAndMeasurementUsingPOST
       consumes:
-      - application/json
+        - application/json
       produces:
-      - "*/*"
+        - "*/*"
       parameters:
-      - name: data-partition-id
-        in: header
-        description: tenant
-        required: true
-        type: string
-        default: opendes
-      - name: unitSystemName
-        in: query
-        description: unitSystemName
-        required: true
-        type: string
-      - in: body
-        name: request
-        description: request
-        required: true
-        schema:
-          "$ref": "#/definitions/MeasurementRequest"
+        - name: data-partition-id
+          in: header
+          description: tenant
+          required: true
+          type: string
+          default: opendes
+        - name: unitSystemName
+          in: query
+          description: The name of the unit system. Example- 'English'.
+          required: true
+          type: string
+        - in: body
+          name: request
+          description: The request to get a specific measurement given a persistable reference string or measurement essence structure.
+          required: true
+          schema:
+            "$ref": "#/definitions/MeasurementRequest"
       responses:
         '200':
           description: OK
@@ -1113,43 +1138,44 @@ paths:
         '404':
           description: Not Found
       security:
-      - Bearer Authorization: []
+        - Bearer Authorization: []
   "/v3/unitsystem":
     get:
       tags:
-      - unit-api-v-3
-      summary: getUnitSystem
+        - unit-api-v-3
+      summary: Get all Units assigned to the UnitSystem name
+      description: Get all unit assignments for the given unit system.
       operationId: getUnitSystemUsingGET
       consumes:
-      - application/json
+        - application/json
       produces:
-      - "*/*"
+        - "*/*"
       parameters:
-      - name: data-partition-id
-        in: header
-        description: tenant
-        required: true
-        type: string
-        default: opendes
-      - name: name
-        in: query
-        description: name
-        required: true
-        type: string
-      - name: offset
-        in: query
-        description: offset
-        required: false
-        type: integer
-        default: 0
-        format: int32
-      - name: limit
-        in: query
-        description: limit
-        required: false
-        type: integer
-        default: 100
-        format: int32
+        - name: data-partition-id
+          in: header
+          description: tenant
+          required: true
+          type: string
+          default: opendes
+        - name: name
+          in: query
+          description: The name of the unit system. Example- 'English'.
+          required: true
+          type: string
+        - name: offset
+          in: query
+          description: The offset into the result array. Default 0.
+          required: false
+          type: integer
+          default: 0
+          format: int32
+        - name: limit
+          in: query
+          description: The size limit for the number of items in the response. Default 100; -1 for all items.
+          required: false
+          type: integer
+          default: 100
+          format: int32
       responses:
         '200':
           description: OK
@@ -1162,43 +1188,44 @@ paths:
         '404':
           description: Not Found
       security:
-      - Bearer Authorization: []
+        - Bearer Authorization: []
     post:
       tags:
-      - unit-api-v-3
-      summary: postUnitSystem
+        - unit-api-v-3
+      summary: Get all Units assigned to the UnitSystem",
+      description: Get all unit assignments for the given unit system essence.
       operationId: postUnitSystemUsingPOST
       consumes:
-      - application/json
+        - application/json
       produces:
-      - "*/*"
+        - "*/*"
       parameters:
-      - name: data-partition-id
-        in: header
-        description: tenant
-        required: true
-        type: string
-        default: opendes
-      - in: body
-        name: request
-        description: request
-        required: true
-        schema:
-          "$ref": "#/definitions/UnitSystemRequest"
-      - name: offset
-        in: query
-        description: offset
-        required: false
-        type: integer
-        default: 0
-        format: int32
-      - name: limit
-        in: query
-        description: limit
-        required: false
-        type: integer
-        default: 100
-        format: int32
+        - name: data-partition-id
+          in: header
+          description: tenant
+          required: true
+          type: string
+          default: opendes
+        - in: body
+          name: request
+          description: "The essence of the unit system. Example: {\"ancestry\"-\"English\"}"
+          required: true
+          schema:
+            "$ref": "#/definitions/UnitSystemRequest"
+        - name: offset
+          in: query
+          description: The offset into the result array. Default 0.
+          required: false
+          type: integer
+          default: 0
+          format: int32
+        - name: limit
+          in: query
+          description: The size limit for the number of items in the response. Default 100; -1 for all items.
+          required: false
+          type: integer
+          default: 100
+          format: int32
       responses:
         '200':
           description: OK
@@ -1213,38 +1240,39 @@ paths:
         '404':
           description: Not Found
       security:
-      - Bearer Authorization: []
+        - Bearer Authorization: []
   "/v3/unitsystem/list":
     get:
       tags:
-      - unit-api-v-3
-      summary: getUnitSystemInfoList
+        - unit-api-v-3
+      summary: Get all UnitSystem info
+      description: Get all known unit systems as info (name, description, ancestry, persistableReference) as declared in this catalog.
       operationId: getUnitSystemInfoListUsingGET
       consumes:
-      - application/json
+        - application/json
       produces:
-      - "*/*"
+        - "*/*"
       parameters:
-      - name: data-partition-id
-        in: header
-        description: tenant
-        required: true
-        type: string
-        default: opendes
-      - name: offset
-        in: query
-        description: offset
-        required: false
-        type: integer
-        default: 0
-        format: int32
-      - name: limit
-        in: query
-        description: limit
-        required: false
-        type: integer
-        default: 100
-        format: int32
+        - name: data-partition-id
+          in: header
+          description: tenant
+          required: true
+          type: string
+          default: opendes
+        - name: offset
+          in: query
+          description: The offset into the result array. Default 0
+          required: false
+          type: integer
+          default: 0
+          format: int32
+        - name: limit
+          in: query
+          description: The size limit of the response. Default 100; -1 for all items
+          required: false
+          type: integer
+          default: 100
+          format: int32
       responses:
         '200':
           description: OK
@@ -1257,7 +1285,7 @@ paths:
         '404':
           description: Not Found
       security:
-      - Bearer Authorization: []
+        - Bearer Authorization: []
 securityDefinitions:
   Bearer Authorization:
     type: apiKey
@@ -1530,74 +1558,74 @@ definitions:
       statusCode:
         type: string
         enum:
-        - 100 CONTINUE
-        - 101 SWITCHING_PROTOCOLS
-        - 102 PROCESSING
-        - 103 CHECKPOINT
-        - 200 OK
-        - 201 CREATED
-        - 202 ACCEPTED
-        - 203 NON_AUTHORITATIVE_INFORMATION
-        - 204 NO_CONTENT
-        - 205 RESET_CONTENT
-        - 206 PARTIAL_CONTENT
-        - 207 MULTI_STATUS
-        - 208 ALREADY_REPORTED
-        - 226 IM_USED
-        - 300 MULTIPLE_CHOICES
-        - 301 MOVED_PERMANENTLY
-        - 302 FOUND
-        - 302 MOVED_TEMPORARILY
-        - 303 SEE_OTHER
-        - 304 NOT_MODIFIED
-        - 305 USE_PROXY
-        - 307 TEMPORARY_REDIRECT
-        - 308 PERMANENT_REDIRECT
-        - 400 BAD_REQUEST
-        - 401 UNAUTHORIZED
-        - 402 PAYMENT_REQUIRED
-        - 403 FORBIDDEN
-        - 404 NOT_FOUND
-        - 405 METHOD_NOT_ALLOWED
-        - 406 NOT_ACCEPTABLE
-        - 407 PROXY_AUTHENTICATION_REQUIRED
-        - 408 REQUEST_TIMEOUT
-        - 409 CONFLICT
-        - 410 GONE
-        - 411 LENGTH_REQUIRED
-        - 412 PRECONDITION_FAILED
-        - 413 PAYLOAD_TOO_LARGE
-        - 413 REQUEST_ENTITY_TOO_LARGE
-        - 414 URI_TOO_LONG
-        - 414 REQUEST_URI_TOO_LONG
-        - 415 UNSUPPORTED_MEDIA_TYPE
-        - 416 REQUESTED_RANGE_NOT_SATISFIABLE
-        - 417 EXPECTATION_FAILED
-        - 418 I_AM_A_TEAPOT
-        - 419 INSUFFICIENT_SPACE_ON_RESOURCE
-        - 420 METHOD_FAILURE
-        - 421 DESTINATION_LOCKED
-        - 422 UNPROCESSABLE_ENTITY
-        - 423 LOCKED
-        - 424 FAILED_DEPENDENCY
-        - 425 TOO_EARLY
-        - 426 UPGRADE_REQUIRED
-        - 428 PRECONDITION_REQUIRED
-        - 429 TOO_MANY_REQUESTS
-        - 431 REQUEST_HEADER_FIELDS_TOO_LARGE
-        - 451 UNAVAILABLE_FOR_LEGAL_REASONS
-        - 500 INTERNAL_SERVER_ERROR
-        - 501 NOT_IMPLEMENTED
-        - 502 BAD_GATEWAY
-        - 503 SERVICE_UNAVAILABLE
-        - 504 GATEWAY_TIMEOUT
-        - 505 HTTP_VERSION_NOT_SUPPORTED
-        - 506 VARIANT_ALSO_NEGOTIATES
-        - 507 INSUFFICIENT_STORAGE
-        - 508 LOOP_DETECTED
-        - 509 BANDWIDTH_LIMIT_EXCEEDED
-        - 510 NOT_EXTENDED
-        - 511 NETWORK_AUTHENTICATION_REQUIRED
+          - 100 CONTINUE
+          - 101 SWITCHING_PROTOCOLS
+          - 102 PROCESSING
+          - 103 CHECKPOINT
+          - 200 OK
+          - 201 CREATED
+          - 202 ACCEPTED
+          - 203 NON_AUTHORITATIVE_INFORMATION
+          - 204 NO_CONTENT
+          - 205 RESET_CONTENT
+          - 206 PARTIAL_CONTENT
+          - 207 MULTI_STATUS
+          - 208 ALREADY_REPORTED
+          - 226 IM_USED
+          - 300 MULTIPLE_CHOICES
+          - 301 MOVED_PERMANENTLY
+          - 302 FOUND
+          - 302 MOVED_TEMPORARILY
+          - 303 SEE_OTHER
+          - 304 NOT_MODIFIED
+          - 305 USE_PROXY
+          - 307 TEMPORARY_REDIRECT
+          - 308 PERMANENT_REDIRECT
+          - 400 BAD_REQUEST
+          - 401 UNAUTHORIZED
+          - 402 PAYMENT_REQUIRED
+          - 403 FORBIDDEN
+          - 404 NOT_FOUND
+          - 405 METHOD_NOT_ALLOWED
+          - 406 NOT_ACCEPTABLE
+          - 407 PROXY_AUTHENTICATION_REQUIRED
+          - 408 REQUEST_TIMEOUT
+          - 409 CONFLICT
+          - 410 GONE
+          - 411 LENGTH_REQUIRED
+          - 412 PRECONDITION_FAILED
+          - 413 PAYLOAD_TOO_LARGE
+          - 413 REQUEST_ENTITY_TOO_LARGE
+          - 414 URI_TOO_LONG
+          - 414 REQUEST_URI_TOO_LONG
+          - 415 UNSUPPORTED_MEDIA_TYPE
+          - 416 REQUESTED_RANGE_NOT_SATISFIABLE
+          - 417 EXPECTATION_FAILED
+          - 418 I_AM_A_TEAPOT
+          - 419 INSUFFICIENT_SPACE_ON_RESOURCE
+          - 420 METHOD_FAILURE
+          - 421 DESTINATION_LOCKED
+          - 422 UNPROCESSABLE_ENTITY
+          - 423 LOCKED
+          - 424 FAILED_DEPENDENCY
+          - 425 TOO_EARLY
+          - 426 UPGRADE_REQUIRED
+          - 428 PRECONDITION_REQUIRED
+          - 429 TOO_MANY_REQUESTS
+          - 431 REQUEST_HEADER_FIELDS_TOO_LARGE
+          - 451 UNAVAILABLE_FOR_LEGAL_REASONS
+          - 500 INTERNAL_SERVER_ERROR
+          - 501 NOT_IMPLEMENTED
+          - 502 BAD_GATEWAY
+          - 503 SERVICE_UNAVAILABLE
+          - 504 GATEWAY_TIMEOUT
+          - 505 HTTP_VERSION_NOT_SUPPORTED
+          - 506 VARIANT_ALSO_NEGOTIATES
+          - 507 INSUFFICIENT_STORAGE
+          - 508 LOOP_DETECTED
+          - 509 BANDWIDTH_LIMIT_EXCEEDED
+          - 510 NOT_EXTENDED
+          - 511 NETWORK_AUTHENTICATION_REQUIRED
       statusCodeValue:
         type: integer
         format: int32
@@ -1812,8 +1840,6 @@ definitions:
         type: string
       connectedOuterServices:
         type: array
-        items:
-          "$ref": "#/definitions/ConnectedOuterService"
       groupId:
         type: string
       version:
