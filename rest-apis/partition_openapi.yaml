@@ -10,39 +10,15 @@ basePath: /api/partition/v1
 tags:
   - name: partition-api
     description: Partition Api
-  - name: health-check
-    description: Health Check
   - name: info
     description: "Version info endpoint"
 paths:
-  /actuator/health:
-    get:
-      tags:
-        - health-check
-      summary: livenessCheck
-      operationId: livenessCheckUsingGET
-      consumes:
-        - application/json
-      produces:
-        - application/json
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: string
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-        '404':
-          description: Not Found
-      security:
-        - JWT: []
   '/partitions/{partitionId}':
     get:
       tags:
         - partition-api
-      summary: get
+      summary: Get partition info
+      description: Get all properties and their values for a given data partition id
       operationId: getUsingGET
       consumes:
         - application/json
@@ -72,7 +48,8 @@ paths:
     post:
       tags:
         - partition-api
-      summary: create
+      summary: Create a new partition
+      description: Creates a new data partition with all given properties and their values.
       operationId: createUsingPOST
       consumes:
         - application/json
@@ -86,7 +63,7 @@ paths:
           type: string
         - in: body
           name: partitionInfo
-          description: partitionInfo
+          description: Partition properties and their values
           required: true
           schema:
             $ref: '#/definitions/PartitionInfo'
@@ -103,25 +80,26 @@ paths:
         - JWT: []
     patch:
       tags:
-      - partition-api
-      summary: update
+        - partition-api
+      summary: Updates an existing partition
+      description: Add new properties or update exsiting properties of a given data partition
       operationId: updateUsingPATCH
       consumes:
-      - application/json
+        - application/json
       produces:
-      - application/json
+        - application/json
       parameters:
-      - name: partitionId
-        in: path
-        description: partitionId
-        required: true
-        type: string
-      - in: body
-        name: partitionInfo
-        description: partitionInfo
-        required: true
-        schema:
-          $ref: '#/definitions/PartitionInfo'
+        - name: partitionId
+          in: path
+          description: partitionId
+          required: true
+          type: string
+        - in: body
+          name: partitionInfo
+          description: Partition properties and their values
+          required: true
+          schema:
+            $ref: '#/definitions/PartitionInfo'
       responses:
         '204':
           description: No Content
@@ -132,11 +110,12 @@ paths:
         '404':
           description: Not Found
       security:
-      - JWT: []
+        - JWT: []
     delete:
       tags:
         - partition-api
-      summary: delete
+      summary: Delete an existing partition
+      description: Delete all the properties of a given data partition
       operationId: deleteUsingDELETE
       consumes:
         - application/json
@@ -161,7 +140,8 @@ paths:
     get:
       tags:
         - partition-api
-      summary: list
+      summary: List all partitions
+      description: Returns all existing data partitions
       operationId: listUsingGET
       consumes:
         - application/json
@@ -197,6 +177,8 @@ paths:
           description: "Version info."
           schema:
             $ref: "#/definitions/VersionInfo"
+      security:
+        - JWT: []
 securityDefinitions:
   JWT:
     type: apiKey
