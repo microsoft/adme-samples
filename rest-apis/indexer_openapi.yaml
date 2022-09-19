@@ -14,8 +14,6 @@ tags:
     description: Record Indexer Api
   - name: reindex-api
     description: Reindex Api
-  - name: health-check-api
-    description: Health check A
 paths:
   /api/indexer/v2/index:
     delete:
@@ -107,34 +105,6 @@ paths:
           description: Not Found
       security:
         - Bearer: []
-  /api/indexer/v2/readiness_check:
-    get:
-      tags:
-        - health-check-api
-      summary: readinessCheck
-      operationId: readinessCheckUsingGET
-      produces:
-        - '*/*'
-      parameters:
-        - in: header
-          name: data-partition-id
-          description: data partition id
-          required: true
-          type: string
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: string
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-        '404':
-          description: Not Found
-      security:
-        - Authorization:
-            - global
   /api/indexer/v2/reindex:
     post:
       tags:
