@@ -286,6 +286,43 @@ paths:
           description: Requested LegalTag was not found.
       security:
         - Bearer: []
+    delete:
+      tags:
+        - LegalTag
+      summary: Deletes a LegalTag for the given 'name'.
+      description: This allows for the deletion of your LegalTag with the given name. This makes the given legaltags data invalid.
+      operationId: deleteLegalTag
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+          x-example: OSDU-Private-USA-EHC
+        - name: OSDU-Account-Id
+          in: header
+          description: Users account e.g. OSDU
+          required: true
+          type: string
+        - name: OSDU-On-Behalf-Of
+          in: header
+          description: User's email or auth token
+          required: false
+          type: string
+      responses:
+        '200':
+          description: Accepted
+        '400':
+          description: Invalid parameters were given on request.
+        '401':
+          description: You do not have permissions to access this API.
+        '404':
+          description: Requested LegalTag was not found.
+      security:
+        - Bearer: []
   /info:
     get:
       tags:
