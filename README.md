@@ -1,6 +1,6 @@
-# Microsoft Energy Data Services - Samples
+# Microsoft Azure Data Manager for Energy - Samples
 
-This repo contains samples for Microsoft Energy Data Services APIs.
+This repo contains samples for Azure Data Manager for Energy APIs.
 
 # REST API Reference
 
