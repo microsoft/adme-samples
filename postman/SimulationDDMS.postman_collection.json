@@ -1,0 +1,841 @@
+{
+  "info": {
+    "_postman_id": "739097ab-8d3f-4d48-a6d1-cef3f5926f4c",
+    "name": "Simulation DDMS",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "19314737"
+  },
+  "item": [
+    {
+      "name": "Setup",
+      "item": [
+        {
+          "name": "Get an SPN Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// this snippet extracts the new access and id tokens\r",
+                  "// and puts them to environment variables\r",
+                  "cp = pm.environment.get(\"cloud_platform\");\r",
+                  "\r",
+                  "var data = JSON.parse(responseBody)\r",
+                  "pm.environment.set(\"access_token\", data.access_token);\r",
+                  "if (cp == \"AWS\" || cp == \"IBM\") {\r",
+                  "   pm.environment.set(\"id_token\", data.id_token);\r",
+                  "}\r",
+                  "// Uncomment if server returns a new refresh_token,\r",
+                  "// otherwise comment out to prevent overwriting it with null\r",
+                  "if (cp == \"Azure\") {\r",
+                  "    pm.environment.set(\"refresh_token\", data.refresh_token);\r",
+                  "}\r",
+                  "\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "grant_type",
+                  "value": "client_credentials",
+                  "type": "text"
+                },
+                {
+                  "key": "client_id",
+                  "value": "{{CLIENT_ID}}",
+                  "type": "text"
+                },
+                {
+                  "key": "client_secret",
+                  "value": "{{CLIENT_SECRET}}",
+                  "type": "text"
+                },
+                {
+                  "key": "scope",
+                  "value": "{{SCOPE}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://login.microsoftonline.com/{{TENANT_ID}}/oauth2/v2.0/token",
+              "protocol": "https",
+              "host": [
+                "login",
+                "microsoftonline",
+                "com"
+              ],
+              "path": [
+                "{{TENANT_ID}}",
+                "oauth2",
+                "v2.0",
+                "token"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Legal Tag for SimDMS",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "var rand = _.random(999111111111, 999999999999);",
+                  "var dataPartition = pm.environment.get(\"data-partition-id\");",
+                  "pm.environment.set(\"tagName\", \"Simulation-Legal-Tag-Test\" + rand);",
+                  "",
+                  "pm.environment.set(\"New_OwnerDataGroup\", \"data.default.owners\");",
+                  "pm.environment.set(\"New_ViewerDataGroup\", \"data.default.viewers\");",
+                  "  "
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "/*pm.test(\"Status description - OK\", function () {",
+                  "    pm.response.to.have.status(\"OK\");",
+                  "});*/",
+                  "cp = pm.environment.get(\"cloud_platform\");",
+                  "if (cp == \"GCP\") {",
+                  "   pm.environment.set(\"access_token\", pm.environment.get(\"id_token\"));",
+                  "}",
+                  "//capture the legal tag name from response",
+                  "//capture the legal tag name from response",
+                  "try {",
+                  "    let resBody = pm.response.json();",
+                  "    let createdLegaltagName = resBody.name;",
+                  "    pm.environment.set(\"tagName\", createdLegaltagName);",
+                  "    pm.environment.set(\"LegalTagNameExists\", createdLegaltagName);",
+                  "    console.log(createdLegaltagName.length);",
+                  "    tests[\"Leagal tag created: \" + createdLegaltagName] = createdLegaltagName.length > 1;",
+                  "}",
+                  "",
+                  "catch (e) {",
+                  "    console.log(e.message);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {}
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "type": "text",
+                "value": "application/json"
+              },
+              {
+                "key": "data-partition-id",
+                "type": "text",
+                "value": "{{data-partition-id}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"{{tagName}}\",\n    \"description\": \"Legal Tag added for Simulation\",\n    \"properties\": {\n        \"contractId\": \"123456\",\n        \"countryOfOrigin\": [\n            \"US\",\n            \"GB\"\n        ],\n        \"dataType\": \"Public Domain Data\",\n        \"exportClassification\": \"EAR99\",\n        \"originator\": \"Schlumberger\",\n        \"personalData\": \"No Personal Data\",\n        \"securityClassification\": \"Private\",\n        \"expirationDate\": \"2025-12-25\"\n    }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/{{legal}}/legaltags",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{legal}}",
+                "legaltags"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "BVT",
+      "item": [
+        {
+          "name": "Health",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"response must be valid\", function () {\r",
+                  "     pm.response.to.be.ok;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/sim-dms/healthz",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "sim-dms",
+                "healthz"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Simulation",
+      "item": [
+        {
+          "name": "Create Simulation",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "var uuid = require('uuid'); \r",
+                  "var testUUID = uuid.v4();\r",
+                  "\r",
+                  "var dataPartition = pm.environment.get(\"data-partition-id\");\r",
+                  "postman.setEnvironmentVariable(\"SimulationRecordID\", testUUID);"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"status code is 201\", function () {\r",
+                  "     pm.expect(pm.response.code).to.eql(201);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Location uuid is correctly set\", function () {\r",
+                  "    pm.expect(pm.response.headers.get('Location')).to.eql(pm.environment.get('SimulationRecordID'));\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "data-partition-id",
+                "value": "{{data-partition-id}}",
+                "type": "default"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"acls\": {\r\n    \"owners\": [\r\n      \"{{New_OwnerDataGroup}}@{{data-partition-id}}.{{domain}}\"\r\n    ],\r\n    \"viewers\": [\r\n      \"{{New_ViewerDataGroup}}@{{data-partition-id}}.{{domain}}\"\r\n    ]\r\n  },\r\n  \"id\": \"{{SimulationRecordID}}\",  \r\n  \"legal\": {\r\n    \"legalTags\": [\r\n      \"{{tagName}}\"\r\n    ],\r\n    \"otherRelevantDataCountries\": [\r\n      \"US\",\r\n      \"GB\"\r\n    ]\r\n  },\r\n  \"namespace\": \"slb\",\r\n  \"inputs\": [\r\n    {\r\n      \"Path\": \"Res_All/Res_3/COUPLED_RES3.afi\",\r\n      \"Id\": \"1aeb1b70f9952fa7046a\"\r\n    },\r\n    {\r\n      \"Path\": \"Res_All/Res_3/COUPLED_RES3.manispec\",\r\n      \"Id\": \"af282bcae3959accfb2a\"\r\n    },\r\n    {\r\n      \"Path\": \"Res_All/Res_3/COUPLED_RES3.rtemref\",\r\n      \"Id\": \"ca6ce743cb08fa6b94ee\"\r\n    },\r\n    {\r\n      \"Path\": \"Res_All/Res_3/RES3_FM.ixf\",\r\n      \"Id\": \"4d7675f12e20bf6cc25a\"\r\n    },\r\n    {\r\n      \"Path\": \"Res_All/Res_3/RES3_IX.ixf\",\r\n      \"Id\": \"82028d331409ad59a488\"\r\n    },\r\n    {\r\n      \"Path\": \"Res_All/Res_3/RES3_REPORT.ixf\",\r\n      \"Id\": \"172c24632145920d9ea1\"\r\n    }\r\n  ],\r\n  \"outputs\": [\r\n    {\r\n      \"Path\": \"Res_All/Res_3/COUPLED_RES3.INIT\",\r\n      \"Id\": \"37ff16c09b3dd7bdad28\"\r\n    },\r\n    {\r\n      \"Path\": \"Res_All/Res_3/COUPLED_RES3.INSPEC\",\r\n      \"Id\": \"e4b52ce031c8c1ea50e1\"\r\n    },\r\n    {\r\n      \"Path\": \"Res_All/Res_3/COUPLED_RES3.MSG\",\r\n      \"Id\": \"63248a8bf36473888858\"\r\n    },\r\n    {\r\n      \"Path\": \"Res_All/Res_3/COUPLED_RES3.PRT\",\r\n      \"Id\": \"d60aee101c5e66c0fe52\"\r\n    },\r\n    {\r\n      \"Path\": \"Res_All/Res_3/COUPLED_RES3.PRTX\",\r\n      \"Id\": \"d2a2ca83f40db74c6aa1\"\r\n    },\r\n    {\r\n      \"Path\": \"Res_All/Res_3/COUPLED_RES3.REP\",\r\n      \"Id\": \"1def6aa9153c347b21dc\"\r\n    },\r\n    {\r\n      \"Path\": \"Res_All/Res_3/COUPLED_RES3.RSM\",\r\n      \"Id\": \"c7d523a089f7607b5408\"\r\n    },\r\n    {\r\n      \"Path\": \"Res_All/Res_3/COUPLED_RES3.RSSPEC\",\r\n      \"Id\": \"af682897a0d07af4f11f\"\r\n    },\r\n    {\r\n      \"Path\": \"Res_All/Res_3/COUPLED_RES3.SMSPEC\",\r\n      \"Id\": \"10c480b2fb3998ac4cc7\"\r\n    },\r\n    {\r\n      \"Path\": \"Res_All/Res_3/COUPLED_RES3.UNSMRY\",\r\n      \"Id\": \"f5709e82a21424b86bf6\"\r\n    },\r\n    {\r\n      \"Path\": \"Res_All/Res_3/COUPLED_RES3.h5\",\r\n      \"Id\": \"ea2a73fe86a03895a63a\"\r\n    }\r\n  ],\r\n  \"rootPath\":  \"Res_All/Res_3/COUPLED_RES3.afi\",\r\n  \"simulator\": \"ECLIPSE\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/sim-dms/v1/simulations",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "sim-dms",
+                "v1",
+                "simulations"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Simulation",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"response must be valid\", function () {\r",
+                  "     pm.response.to.be.ok;\r",
+                  "     pm.response.to.be.withBody;\r",
+                  "     pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Record id is the correct uuid\", function () {\r",
+                  "    const responseJson = pm.response.json();\r",
+                  "    pm.expect(responseJson.id).to.equal(pm.environment.get('SimulationRecordID'));\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "data-partition-id",
+                "value": "{{data-partition-id}}",
+                "type": "default"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/sim-dms/v1/simulations/{{SimulationRecordID}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "sim-dms",
+                "v1",
+                "simulations",
+                "{{SimulationRecordID}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Ensemble",
+      "item": [
+        {
+          "name": "Create Ensemble",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "var uuid = require('uuid'); \r",
+                  "var testUUID = uuid.v4();\r",
+                  "\r",
+                  "var dataPartition = pm.environment.get(\"data-partition-id\");\r",
+                  "postman.setEnvironmentVariable(\"EnsembleRecordID\", testUUID);\r",
+                  "var rand = _.random(999111111111, 999999999999);\r",
+                  "pm.environment.set(\"ensembleName\", \"Ensemble-Name-Test\" + rand);"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"status code is 201\", function () {\r",
+                  "     pm.expect(pm.response.code).to.eql(201);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Location uuid is correctly set\", function () {\r",
+                  "    pm.expect(pm.response.headers.get('Location')).to.eql(pm.environment.get('EnsembleRecordID'));\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "data-partition-id",
+                "value": "{{data-partition-id}}",
+                "type": "default"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"acls\": {\r\n    \"owners\": [\r\n      \"{{New_OwnerDataGroup}}@{{data-partition-id}}.{{domain}}\"\r\n    ],\r\n    \"viewers\": [\r\n      \"{{New_ViewerDataGroup}}@{{data-partition-id}}.{{domain}}\"\r\n    ]\r\n  },\r\n  \"id\": \"{{EnsembleRecordID}}\",\r\n  \"legal\": {\r\n    \"legalTags\": [\r\n      \"{{tagName}}\"\r\n    ],\r\n    \"otherRelevantDataCountries\": [\r\n      \"BE\",\r\n      \"GB\"\r\n    ]\r\n  },\r\n  \"name\": \"{{ensembleName}}\",\r\n  \"realizations\": [\r\n      {\r\n          \"simulationId\": \"{{SimulationRecordID}}\"\r\n      }\r\n  ]\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/sim-dms/v1/ensembles",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "sim-dms",
+                "v1",
+                "ensembles"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Ensemble",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"response must be valid\", function () {\r",
+                  "     pm.response.to.be.ok;\r",
+                  "     pm.response.to.be.withBody;\r",
+                  "     pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Record id is the correct uuid\", function () {\r",
+                  "    const responseJson = pm.response.json();\r",
+                  "    pm.expect(responseJson.id).to.equal(pm.environment.get('EnsembleRecordID'));\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "data-partition-id",
+                "value": "{{data-partition-id}}",
+                "type": "default"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/sim-dms/v1/ensembles/{{EnsembleRecordID}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "sim-dms",
+                "v1",
+                "ensembles",
+                "{{EnsembleRecordID}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Clean Up",
+      "item": [
+        {
+          "name": "Simulation",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 204\", function () {\r",
+                  "    pm.response.to.have.status(204);\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Data-Partition-Id",
+                "value": "{{data-partition-id}}",
+                "type": "default"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/storage/v2/records/{{data-partition-id}}:dre-experiment:{{SimulationRecordID}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "storage",
+                "v2",
+                "records",
+                "{{data-partition-id}}:dre-experiment:{{SimulationRecordID}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Legal Tag",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Ensure the API was able to send a successful response",
+                  "pm.test(\"Status code is 204\", function () {",
+                  "    pm.response.to.have.status(204);",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [
+              {
+                "description": "This value should be the desired data partition id.",
+                "key": "data-partition-id",
+                "type": "text",
+                "value": "{{data-partition-id}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{legal}}/legaltags/:name",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{legal}}",
+                "legaltags",
+                ":name"
+              ],
+              "variable": [
+                {
+                  "key": "name",
+                  "value": "{{tagName}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Refresh Token",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "// this snippet extracts the new access and id tokens",
+              "// and puts them to environment variables",
+              "cp = pm.environment.get(\"cloud_platform\");",
+              "",
+              "var data = JSON.parse(responseBody)",
+              "pm.environment.set(\"access_token\", data.access_token);",
+              "if (cp == \"AWS\" || cp == \"IBM\") {",
+              "   pm.environment.set(\"id_token\", data.id_token);",
+              "}",
+              "// Uncomment if server returns a new refresh_token,",
+              "// otherwise comment out to prevent overwriting it with null",
+              "if (cp == \"Azure\") {",
+              "    pm.environment.set(\"refresh_token\", data.refresh_token);",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "name": "Content-Type",
+            "type": "text",
+            "value": "application/x-www-form-urlencoded"
+          },
+          {
+            "key": "Ocp-Apim-Subscription-Key",
+            "type": "text",
+            "value": "xxxxxxxx",
+            "disabled": true
+          }
+        ],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {
+              "key": "grant_type",
+              "value": "refresh_token",
+              "type": "text"
+            },
+            {
+              "key": "client_id",
+              "value": "{{CLIENT_ID}}",
+              "description": "Supply your client id as an environment variable",
+              "type": "text"
+            },
+            {
+              "key": "client_secret",
+              "value": "{{CLIENT_SECRET}}",
+              "description": "Supply your client secret as an environment variable",
+              "type": "text"
+            },
+            {
+              "key": "refresh_token",
+              "value": "{{access_token}}",
+              "type": "text"
+            },
+            {
+              "key": "scope",
+              "value": "{{SCOPE}}",
+              "type": "text"
+            }
+          ]
+        },
+        "url": {
+          "raw": "https://login.microsoftonline.com/{{TENANT_ID}}/oauth2/v2.0/token",
+          "protocol": "https",
+          "host": [
+            "login",
+            "microsoftonline",
+            "com"
+          ],
+          "path": [
+            "{{TENANT_ID}}",
+            "oauth2",
+            "v2.0",
+            "token"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "auth": {
+    "type": "oauth2",
+    "oauth2": [
+      {
+        "key": "scope",
+        "value": "{{OIDC_SCOPE}}",
+        "type": "string"
+      },
+      {
+        "key": "clientId",
+        "value": "{{OIDC_CLIENT_ID}}",
+        "type": "string"
+      },
+      {
+        "key": "clientSecret",
+        "value": "{{OIDC_CLIENT_SECRET}}",
+        "type": "string"
+      },
+      {
+        "key": "accessTokenUrl",
+        "value": "{{OIDC_TOKEN_URL}}",
+        "type": "string"
+      },
+      {
+        "key": "grant_type",
+        "value": "client_credentials",
+        "type": "string"
+      },
+      {
+        "key": "tokenName",
+        "value": "oauth_client_credentials",
+        "type": "string"
+      },
+      {
+        "key": "addTokenTo",
+        "value": "header",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "welllogSessionId",
+      "value": ""
+    }
+  ]
+}
