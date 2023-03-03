@@ -1,0 +1,843 @@
+{
+	"info": {
+		"_postman_id": "eb72dc2d-7ebd-4a26-a6cf-c0e4344c056d",
+		"name": "Petrel DS v2 API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Petrel DS v2",
+			"item": [
+				{
+					"name": "Petrel DS v2: Setup",
+					"item": [
+						{
+							"name": "Get Token",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+											"});",
+											"",
+											"var body = pm.response.json()",
+											"pm.collectionVariables.set(\"access_token\", body.access_token);"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/x-www-form-urlencoded"
+									},
+									{
+										"key": "Ocp-Apim-Subscription-Key",
+										"type": "text",
+										"value": "xxxxxxxx",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "grant_type",
+											"value": "client_credentials",
+											"type": "text"
+										},
+										{
+											"key": "client_id",
+											"value": "{{OIDC_CLIENT_ID}}",
+											"description": "Supply your client id as an environment variable",
+											"type": "text"
+										},
+										{
+											"key": "client_secret",
+											"value": "{{OIDC_CLIENT_SECRET}}",
+											"description": "Supply your client secret as an environment variable",
+											"type": "text"
+										},
+										{
+											"key": "scope",
+											"value": "{{oidc_scope}}",
+											"description": "Supply your OIDC scope as an environment variable",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{oidc_token_url}}",
+									"host": [
+										"{{oidc_token_url}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add `MEMBER` to `users.datalake.admins`",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200 or 409\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([200,409]);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"description": "This value should be the desired data partition id.",
+										"key": "data-partition-id",
+										"type": "text",
+										"value": "{{in_partition}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"email\" : \"{{entitlement_user}}\",\n  \"role\" : \"MEMBER\"\n}"
+								},
+								"url": {
+									"raw": "{{entitlement_url}}/groups/:group_email/members",
+									"host": [
+										"{{entitlement_url}}"
+									],
+									"path": [
+										"groups",
+										":group_email",
+										"members"
+									],
+									"variable": [
+										{
+											"key": "group_email",
+											"value": "users.datalake.admins@{{entitlement_domainv2}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Default Legal Tag",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var response = pm.response.json();",
+											"",
+											"pm.test(\"Status code is 201 or 409\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([201,409]);",
+											"});",
+											"",
+											"pm.test(\"Legal Tag is Created\", function() {",
+											"    var createdLegaltagId = '';",
+											"",
+											"    switch(pm.response.code) {",
+											"        case 201:",
+											"            createdLegaltagId = response.name;",
+											"            break;",
+											"        case 409:",
+											"            var splits = response.message.split(' ');",
+											"            createdLegaltagId = splits.pop();",
+											"            pm.expect(response.message).contains(\"already exists\");",
+											"            break;",
+											"        default:",
+											"            console.log('Unexpected server code');",
+											"    }",
+											"    ",
+											"    pm.expect(createdLegaltagId.length).to.be.above(0);",
+											"    pm.collectionVariables.set(\"pdsv2_legal_tag_id\", createdLegaltagId);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.collectionVariables.set(\"legal_namev2\", \"{{in_partition}}-pds-default\");"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"description": "This value should be the desired data partition id.",
+										"key": "data-partition-id",
+										"type": "text",
+										"value": "{{in_partition}}"
+									},
+									{
+										"key": "OSDU-Account-Id",
+										"value": "test",
+										"type": "default",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"{{legal_namev2}}\",\n  \"description\": \"default legal tag for postman\",\n  \"properties\": {\n    \"countryOfOrigin\": [\n        \"US\"\n    ],\n    \"contractId\": \"No Contract Related\",\n    \"expirationDate\": \"2099-12-25\",\n    \"originator\": \"MSFT\",\n    \"dataType\": \"Public Domain Data\",\n    \"securityClassification\": \"Private\",\n    \"personalData\": \"No Personal Data\",\n    \"exportClassification\": \"EAR99\"\n  }\n}"
+								},
+								"url": {
+									"raw": "{{legal_url}}/legaltags",
+									"host": [
+										"{{legal_url}}"
+									],
+									"path": [
+										"legaltags"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"auth": {
+						"type": "bearer",
+						"bearer": [
+							{
+								"key": "token",
+								"value": "{{access_token}}",
+								"type": "string"
+							}
+						]
+					},
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Petrel DS v2: Projects",
+					"item": [
+						{
+							"name": "Get Project",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Response body is valid\", function () {\r",
+											"    let body = pm.response.json();\r",
+											"    pm.expect(body.id).to.contain(\":slb:petrel:master-data--PetrelProject:\")\r",
+											"});\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-user-id",
+										"value": "{{oid}}",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "data-partition-id",
+										"value": "{{in_partition}}",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_urlv2}}/projects/{{project_idv2}}",
+									"host": [
+										"{{base_urlv2}}"
+									],
+									"path": [
+										"projects",
+										"{{project_idv2}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Project",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Response body is valid\", function () {\r",
+											"    let body = pm.response.json();\r",
+											"    pm.expect(body[0]).to.contain(\":slb:petrel:master-data--PetrelProject:\")\r",
+											"});\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "x-user-id",
+										"value": "{{oid}}",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "data-partition-id",
+										"value": "{{in_partition}}",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "[\r\n    \"{{project_idv2}}\"\r\n]",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_urlv2}}/projects/{{project_idv2}}",
+									"host": [
+										"{{base_urlv2}}"
+									],
+									"path": [
+										"projects",
+										"{{project_idv2}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Project Version",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Response body is valid\", function () {\r",
+											"    let body = pm.response.json();\r",
+											"    pm.expect(body.id).to.contain(\":slb:petrel:master-data--PetrelProjectVersion:\")\r",
+											"});\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-user-id",
+										"value": "{{oid}}",
+										"type": "text"
+									},
+									{
+										"key": "data-partition-id",
+										"value": "{{in_partition}}",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_urlv2}}/projects/{{project_idv2}}/versions/{{version_id}}",
+									"host": [
+										"{{base_urlv2}}"
+									],
+									"path": [
+										"projects",
+										"{{project_idv2}}",
+										"versions",
+										"{{version_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Download URL",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Response body is valid\", function () {\r",
+											"    let body = pm.response.json();\r",
+											"    pm.expect(body).to.have.property(\"downloadUrl\")\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Download Url is valid\", function () {\r",
+											"    let body = pm.response.json()\r",
+											"    results = body.downloadUrl;\r",
+											"    pm.expect(results).to.have.length.greaterThan(0)\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-user-id",
+										"value": "{{oid}}",
+										"type": "text"
+									},
+									{
+										"key": "data-partition-id",
+										"value": "{{in_partition}}",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_urlv2}}/projects/{{project_idv2}}/download",
+									"host": [
+										"{{base_urlv2}}"
+									],
+									"path": [
+										"projects",
+										"{{project_idv2}}",
+										"download"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Upload URL",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Response body is valid\", function () {\r",
+											"    let body = pm.response.json();\r",
+											"    pm.expect(body).to.has.property(\"uploadUrl\");\r",
+											"    pm.expect(body.uploadUrl).not.eq(null);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var uuid = require('uuid');\r",
+											"var projectId = uuid.v4();\r",
+											"console.log(projectId);\r",
+											"\r",
+											"pm.collectionVariables.set(\"uuid\", projectId);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-user-id",
+										"value": "{{oid}}",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "data-partition-id",
+										"value": "{{in_partition}}",
+										"type": "default"
+									}
+								],
+								"url": {
+									"raw": "{{base_urlv2}}/projects/{{project_idv2}}/upload",
+									"host": [
+										"{{base_urlv2}}"
+									],
+									"path": [
+										"projects",
+										"{{project_idv2}}",
+										"upload"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Project",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 201\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "x-user-id",
+										"value": "{{oid}}",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "data-partition-id",
+										"value": "{{in_partition}}",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"signedUrl\": \"{{upload_url}}\",\r\n  \"records\": [\r\n    {\r\n      \"id\": \"{{project_idv2}}\",\r\n      \"kind\": \"slb:petrel:master-data--PetrelProject:1.0.0\",\r\n      \"acl\": {\r\n        \"viewers\": [\r\n          \"data.default.viewers@{{entitlement_domainv2}}\"\r\n        ],\r\n        \"owners\": [\r\n          \"data.default.owners@{{entitlement_domainv2}}\"\r\n        ]\r\n      },\r\n      \"legal\": {\r\n        \"legaltags\": [\r\n          \"{{pdsv2_legal_tag_id}}\"\r\n        ],\r\n        \"otherRelevantDataCountries\": [\r\n          \"US\"\r\n        ]\r\n      },\r\n      \"data\": {\r\n        \"msg\": \"hello world from Data Lake\"\r\n      }\r\n    }\r\n  ]\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_urlv2}}/projects/{{project_idv2}}/update",
+									"host": [
+										"{{base_urlv2}}"
+									],
+									"path": [
+										"projects",
+										"{{project_idv2}}",
+										"update"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Search Projects",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Response body is valid\", function () {\r",
+											"    let body = pm.response.json()\r",
+											"    results = body.results;\r",
+											"    pm.expect(results).to.have.length.greaterThan(0)\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"setTimeout(function(){}, [30000]);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-user-id",
+										"value": "{{oid}}",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "data-partition-id",
+										"value": "{{in_partition}}",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"kind\": \"slb:petrel:master-data--PetrelProjectVersion:1.0.0\",\r\n    \"limit\": 100000,\r\n    \"returnedFields\": [\"id\"],\r\n    \"queryAsOwner\": false\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_urlv2}}/query",
+									"host": [
+										"{{base_urlv2}}"
+									],
+									"path": [
+										"query"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{access_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "entitlement_url",
+			"value": "{{HOSTNAME}}/api/entitlements/v2"
+		},
+		{
+			"key": "entitlement_user",
+			"value": "{{OIDC_CLIENT_ID}}"
+		},
+		{
+			"key": "project_id",
+			"value": "{{$guid}}"
+		},
+		{
+			"key": "access_token",
+			"value": ""
+		},
+		{
+			"key": "in_tenant_id",
+			"value": "{{TENANT_ID}}",
+			"type": "string"
+		},
+		{
+			"key": "in_hostname",
+			"value": "{{HOSTNAME}}",
+			"type": "string"
+		},
+		{
+			"key": "in_partition",
+			"value": "{{DATA_PARTITION_ID}}",
+			"type": "string"
+		},
+		{
+			"key": "in_oidc_client_id",
+			"value": "{{OIDC_CLIENT_ID}}",
+			"type": "string"
+		},
+		{
+			"key": "in_oidc_client_secret",
+			"value": "{{OIDC_CLIENT_SECRET}}",
+			"type": "string"
+		},
+		{
+			"key": "oidc_scope",
+			"value": "{{in_oidc_client_id}}/.default openid profile offline_access",
+			"type": "string"
+		},
+		{
+			"key": "oidc_token_url",
+			"value": "https://login.microsoftonline.com/{{in_tenant_id}}/oauth2/v2.0/token",
+			"type": "string"
+		},
+		{
+			"key": "base_urlv2",
+			"value": "{{in_hostname}}/api/petreldms/v1",
+			"type": "string"
+		},
+		{
+			"key": "entitlement_domainv2",
+			"value": "{{in_partition}}.dataservices.energy",
+			"type": "string"
+		},
+		{
+			"key": "project_idv2",
+			"value": "{{in_partition}}:slb:petrel:master-data--PetrelProject:{{uuid}}",
+			"type": "string"
+		},
+		{
+			"key": "upload_url",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "version_id",
+			"value": "{{in_partition}}:slb:petrel:master-data--PetrelProjectVersion:{{uuid}}",
+			"type": "string"
+		},
+		{
+			"key": "uuid",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "legal_url",
+			"value": "{{in_hostname}}/api/legal/v1",
+			"type": "string"
+		},
+		{
+			"key": "pdsv2_legal_tag_id",
+			"value": ""
+		},
+		{
+			"key": "legal_namev2",
+			"value": ""
+		}
+	]
+}
