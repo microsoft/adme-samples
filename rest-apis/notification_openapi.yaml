@@ -1,5 +1,6 @@
 swagger: '2.0'
 info:
+  version: '1.0.0'
   description: Notification Service  
   title: Notification Service
 tags:
@@ -23,6 +24,7 @@ paths:
           name: data-partition-id
           description: tenant
           required: true
+          type: string
       responses:
         '200':
           description: OK
@@ -50,6 +52,7 @@ paths:
           name: data-partition-id
           description: tenant
           required: true
+          type: string
       responses:
         '200':
           description: OK
@@ -79,6 +82,7 @@ paths:
           name: data-partition-id
           description: tenant
           required: true
+          type: string
       responses:
         '200':
           description: OK
@@ -106,6 +110,7 @@ paths:
           name: data-partition-id
           description: tenant
           required: true
+          type: string
       responses:
         '200':
           description: OK
@@ -133,6 +138,7 @@ paths:
           name: data-partition-id
           description: tenant
           required: true
+          type: string
       responses:
         '200':
           description: OK
@@ -159,6 +165,7 @@ paths:
           name: data-partition-id
           description: tenant
           required: true
+          type: string
       responses:
         '200':
           description: OK
@@ -187,6 +194,7 @@ paths:
           name: data-partition-id
           description: tenant
           required: true
+          type: string
       responses:
         '200':
           description: OK
@@ -203,7 +211,7 @@ paths:
       security:
         - Bearer: []
 securityDefinitions:
-  Authorization:
+  Bearer:
     type: apiKey
     name: Authorization
     in: header
