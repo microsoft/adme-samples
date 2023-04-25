@@ -1,5 +1,6 @@
 swagger: '2.0'
 info:
+  version: '1.0.0'
   description: Register Service
   title: Register Service
 tags:
@@ -39,6 +40,7 @@ paths:
           name: data-partition-id
           description: tenant
           required: true
+          type: string
       responses:
         '200':
           description: OK
@@ -67,6 +69,7 @@ paths:
           name: data-partition-id
           description: tenant
           required: true
+          type: string
         - name: id
           in: path
           description: id
@@ -98,6 +101,7 @@ paths:
           name: data-partition-id
           description: tenant
           required: true
+          type: string
         - name: id
           in: path
           description: id
@@ -132,6 +136,7 @@ paths:
           name: data-partition-id
           description: tenant
           required: true
+          type: string
         - in: body
           name: jsonObject
           description: jsonObject
@@ -170,6 +175,7 @@ paths:
           name: data-partition-id
           description: tenant
           required: true
+          type: string
         - in: body
           name: testActionRequest
           description: testActionRequest
@@ -204,6 +210,7 @@ paths:
           name: data-partition-id
           description: tenant
           required: true
+          type: string
       responses:
         '200':
           description: OK
@@ -230,6 +237,7 @@ paths:
           name: data-partition-id
           description: tenant
           required: true
+          type: string
       responses:
         '200':
           description: OK
@@ -256,6 +264,7 @@ paths:
           name: data-partition-id
           description: tenant
           required: true
+          type: string
         - name: type
           in: query
           description: type
@@ -291,6 +300,7 @@ paths:
           name: data-partition-id
           description: tenant
           required: true
+          type: string
         - in: body
           name: spec
           description: spec
@@ -325,6 +335,7 @@ paths:
           name: data-partition-id
           description: tenant
           required: true
+          type: string
         - name: id
           in: path
           description: id
@@ -356,6 +367,7 @@ paths:
           name: data-partition-id
           description: tenant
           required: true
+          type: string
         - name: id
           in: path
           description: id
@@ -388,6 +400,7 @@ paths:
           name: data-partition-id
           description: tenant
           required: true
+          type: string
         - name: id
           in: path
           description: id
@@ -432,6 +445,7 @@ paths:
           name: data-partition-id
           description: tenant
           required: true
+          type: string
       responses:
         '200':
           description: OK
@@ -458,6 +472,7 @@ paths:
           name: data-partition-id
           description: tenant
           required: true
+          type: string
         - name: notificationId
           in: query
           description: notificationId
@@ -492,6 +507,7 @@ paths:
           name: data-partition-id
           description: tenant
           required: true
+          type: string
         - in: body
           name: input
           description: input
@@ -526,6 +542,7 @@ paths:
           name: data-partition-id
           description: tenant
           required: true
+          type: string
         - name: id
           in: path
           description: id
@@ -556,6 +573,7 @@ paths:
           name: data-partition-id
           description: tenant
           required: true
+          type: string
         - name: id
           in: path
           description: id
@@ -589,6 +607,7 @@ paths:
           name: data-partition-id
           description: tenant
           required: true
+          type: string
         - name: id
           in: path
           description: id
@@ -633,6 +652,7 @@ paths:
           name: data-partition-id
           description: tenant
           required: true
+          type: string
         - name: hmac
           in: query
           description: hmac
@@ -665,6 +685,7 @@ paths:
           name: data-partition-id
           description: tenant
           required: true
+          type: string
         - name: hmac
           in: query
           description: hmac
@@ -707,6 +728,7 @@ paths:
           name: data-partition-id
           description: tenant
           required: true
+          type: string
       responses:
         '200':
           description: OK
@@ -734,6 +756,7 @@ paths:
           name: data-partition-id
           description: tenant
           required: true
+          type: string
         - in: body
           name: o
           description: o
@@ -766,6 +789,7 @@ paths:
           name: data-partition-id
           description: tenant
           required: true
+          type: string
       responses:
         '200':
           description: OK
@@ -782,7 +806,7 @@ paths:
       security:
         - bearer: []
 securityDefinitions:
-  Authorization:
+  bearer:
     type: apiKey
     name: Authorization
     in: header
