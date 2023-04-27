@@ -1,0 +1,1920 @@
+openapi: 3.0.3
+info:
+  title: Api Documentation
+  description: Api Documentation
+  termsOfService: urn:tos
+  contact: {}
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0
+  version: '1.0'
+servers:
+- url: https://it1489plc.energy.azure.com
+  description: Inferred Url
+tags:
+- name: activity-plan-api
+  description: Activity Plan Api
+- name: bha-run-api
+  description: BHA Run Api
+- name: entity-api
+  description: Entity Api
+- name: fluids-program-api
+  description: Fluids Program Api
+- name: fluids-report-api
+  description: Fluids Report Api
+- name: health-check-api
+  description: Health Check Api
+- name: hole-section-api
+  description: Hole Section Api
+- name: info-api
+  description: Info Api
+- name: operations-report-api
+  description: Operations Report Api
+- name: query-api
+  description: Query Api
+- name: well-activity-program-api
+  description: Well Activity Program Api
+- name: well-api
+  description: Well Api
+- name: wellbore-api
+  description: Wellbore Api
+- name: wellbore-trajectory-api
+  description: Wellbore Trajectory Api
+paths:
+  /api/well-delivery/activityPlans/v1/by_well/{well_id}:
+    get:
+      tags:
+      - activity-plan-api
+      summary: getLatestActivityPlanByWell
+      operationId: getLatestActivityPlanByWellUsingGET
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: tenant
+        required: true
+      - name: frame-of-reference
+        in: header
+        description: reference
+        required: true
+      - name: well_id
+        in: path
+        description: well_id
+        required: true
+        style: simple
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+  /api/well-delivery/bhaRuns/v1/by_holeSection/{hole_section_id}:
+    get:
+      tags:
+      - bha-run-api
+      summary: getBHARunsBySegment
+      operationId: getBHARunsBySegmentUsingGET
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: tenant
+        required: true
+      - name: frame-of-reference
+        in: header
+        description: reference
+        required: true
+      - name: hole_section_id
+        in: path
+        description: hole_section_id
+        required: true
+        style: simple
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+  /api/well-delivery/bhaRuns/v1/by_wellbore/{wellbore_id}:actual:
+    get:
+      tags:
+      - bha-run-api
+      summary: getBHARunsByWellbore_actual
+      operationId: getBHARunsByWellbore_actualUsingGET
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: tenant
+        required: true
+      - name: frame-of-reference
+        in: header
+        description: reference
+        required: true
+      - name: wellbore_id
+        in: path
+        description: wellbore_id
+        required: true
+        style: simple
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+  /api/well-delivery/bhaRuns/v1/by_wells/{well_ids}:planned:
+    get:
+      tags:
+      - bha-run-api
+      summary: getBHARunsByWells_planned
+      operationId: getBHARunsByWells_plannedUsingGET
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: tenant
+        required: true
+      - name: frame-of-reference
+        in: header
+        description: reference
+        required: true
+      - name: well_ids
+        in: path
+        description: well_ids
+        required: true
+        style: simple
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+  /api/well-delivery/storage/v1/{type}:
+    put:
+      tags:
+      - entity-api
+      summary: createOrUpdateEntities
+      operationId: createOrUpdateEntitiesUsingPUT
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: tenant
+        required: true
+      - name: frame-of-reference
+        in: header
+        description: reference
+        required: true
+      - name: type
+        in: path
+        description: type
+        required: true
+        style: simple
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+  /api/well-delivery/storage/v1/{type}/versions/{id}:
+    get:
+      tags:
+      - entity-api
+      summary: getEntityVersionNumbers
+      operationId: getEntityVersionNumbersUsingGET
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: tenant
+        required: true
+      - name: frame-of-reference
+        in: header
+        description: reference
+        required: true
+      - name: type
+        in: path
+        description: type
+        required: true
+        style: simple
+        schema:
+          type: string
+      - name: id
+        in: path
+        description: id
+        required: true
+        style: simple
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+  /api/well-delivery/storage/v1/{type}/{id}:
+    get:
+      tags:
+      - entity-api
+      summary: getLatestEntityVersion
+      operationId: getLatestEntityVersionUsingGET
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: tenant
+        required: true
+      - name: frame-of-reference
+        in: header
+        description: reference
+        required: true
+      - name: type
+        in: path
+        description: type
+        required: true
+        style: simple
+        schema:
+          type: string
+      - name: id
+        in: path
+        description: id
+        required: true
+        style: simple
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+    delete:
+      tags:
+      - entity-api
+      summary: deleteEntity
+      operationId: deleteEntityUsingDELETE
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: tenant
+        required: true
+      - name: frame-of-reference
+        in: header
+        description: reference
+        required: true
+      - name: type
+        in: path
+        description: type
+        required: true
+        style: simple
+        schema:
+          type: string
+      - name: id
+        in: path
+        description: id
+        required: true
+        style: simple
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+      - Authorization:
+        - global
+  /api/well-delivery/storage/v1/{type}/{id}/{version}:
+    get:
+      tags:
+      - entity-api
+      summary: getSpecificEntityVersion
+      operationId: getSpecificEntityVersionUsingGET
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: tenant
+        required: true
+      - name: frame-of-reference
+        in: header
+        description: reference
+        required: true
+      - name: type
+        in: path
+        description: type
+        required: true
+        style: simple
+        schema:
+          type: string
+      - name: id
+        in: path
+        description: id
+        required: true
+        style: simple
+        schema:
+          type: string
+      - name: version
+        in: path
+        description: version
+        required: true
+        style: simple
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+    delete:
+      tags:
+      - entity-api
+      summary: deleteEntityVersion
+      operationId: deleteEntityVersionUsingDELETE
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: tenant
+        required: true
+      - name: frame-of-reference
+        in: header
+        description: reference
+        required: true
+      - name: type
+        in: path
+        description: type
+        required: true
+        style: simple
+        schema:
+          type: string
+      - name: id
+        in: path
+        description: id
+        required: true
+        style: simple
+        schema:
+          type: string
+      - name: version
+        in: path
+        description: version
+        required: true
+        style: simple
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+      - Authorization:
+        - global
+  /api/well-delivery/storage/v1/{type}/{id}/{version}:purge:
+    delete:
+      tags:
+      - entity-api
+      summary: purgeEntityVersion
+      operationId: purgeEntityVersionUsingDELETE
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: tenant
+        required: true
+      - name: frame-of-reference
+        in: header
+        description: reference
+        required: true
+      - name: type
+        in: path
+        description: type
+        required: true
+        style: simple
+        schema:
+          type: string
+      - name: id
+        in: path
+        description: id
+        required: true
+        style: simple
+        schema:
+          type: string
+      - name: version
+        in: path
+        description: version
+        required: true
+        style: simple
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+      - Authorization:
+        - global
+  /api/well-delivery/storage/v1/{type}/{id}:purge:
+    delete:
+      tags:
+      - entity-api
+      summary: purgeEntity
+      operationId: purgeEntityUsingDELETE
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: tenant
+        required: true
+      - name: frame-of-reference
+        in: header
+        description: reference
+        required: true
+      - name: type
+        in: path
+        description: type
+        required: true
+        style: simple
+        schema:
+          type: string
+      - name: id
+        in: path
+        description: id
+        required: true
+        style: simple
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+      - Authorization:
+        - global
+  /api/well-delivery/fluidsPrograms/v1/by_wellbore/{wellbore_id}:
+    get:
+      tags:
+      - fluids-program-api
+      summary: getFluidsProgramsByWellbore_planned
+      operationId: getFluidsProgramsByWellbore_plannedUsingGET
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: tenant
+        required: true
+      - name: frame-of-reference
+        in: header
+        description: reference
+        required: true
+      - name: wellbore_id
+        in: path
+        description: wellbore_id
+        required: true
+        style: simple
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+  /api/well-delivery/fluidsReports/v1/by_wellbore/{wellbore_id}:
+    get:
+      tags:
+      - fluids-report-api
+      summary: getFluidsReportsByWellbore
+      operationId: getFluidsReportsByWellboreUsingGET
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: tenant
+        required: true
+      - name: frame-of-reference
+        in: header
+        description: reference
+        required: true
+      - name: wellbore_id
+        in: path
+        description: wellbore_id
+        required: true
+        style: simple
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+  /api/well-delivery/_ah/warmup:
+    get:
+      tags:
+      - health-check-api
+      summary: warmup
+      operationId: warmupUsingGET
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: tenant
+        required: true
+      - name: frame-of-reference
+        in: header
+        description: reference
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseEntity'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+  /api/well-delivery/holeSections/v1/by_wellbore/{wellbore_id}:
+    get:
+      tags:
+      - hole-section-api
+      summary: getSectionsByWellbore_planned
+      operationId: getSectionsByWellbore_plannedUsingGET
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: tenant
+        required: true
+      - name: frame-of-reference
+        in: header
+        description: reference
+        required: true
+      - name: wellbore_id
+        in: path
+        description: wellbore_id
+        required: true
+        style: simple
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+  /api/well-delivery/info:
+    get:
+      tags:
+      - info-api
+      summary: info
+      operationId: infoUsingGET
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: tenant
+        required: true
+      - name: frame-of-reference
+        in: header
+        description: reference
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VersionInfo'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+  /api/well-delivery/operationsReports/v1/by_timeRange/{start_time}/{end_time}:
+    get:
+      tags:
+      - operations-report-api
+      summary: getOperationsReportsByTimeRange
+      operationId: getOperationsReportsByTimeRangeUsingGET
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: tenant
+        required: true
+      - name: frame-of-reference
+        in: header
+        description: reference
+        required: true
+      - name: start_time
+        in: path
+        description: start_time
+        required: true
+        style: simple
+        schema:
+          type: string
+      - name: end_time
+        in: path
+        description: end_time
+        required: true
+        style: simple
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+  /api/well-delivery/operationsReports/v1/by_wellbore/{wellbore_id}:
+    get:
+      tags:
+      - operations-report-api
+      summary: getOperationsReportsByWellbore
+      operationId: getOperationsReportsByWellboreUsingGET
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: tenant
+        required: true
+      - name: frame-of-reference
+        in: header
+        description: reference
+        required: true
+      - name: wellbore_id
+        in: path
+        description: wellbore_id
+        required: true
+        style: simple
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+  /api/well-delivery/operationsReports/v1/latest/by_wellbore/{wellbore_id}:
+    get:
+      tags:
+      - operations-report-api
+      summary: getLatestOperationsReportByWellbore
+      operationId: getLatestOperationsReportByWellboreUsingGET
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: tenant
+        required: true
+      - name: frame-of-reference
+        in: header
+        description: reference
+        required: true
+      - name: wellbore_id
+        in: path
+        description: wellbore_id
+        required: true
+        style: simple
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+  /api/well-delivery/operationsReports/v1/reference_tree/by_operationsReport/{operations_report_id}:
+    get:
+      tags:
+      - operations-report-api
+      summary: getLatestOperationsReportRefTree
+      operationId: getLatestOperationsReportRefTreeUsingGET
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: tenant
+        required: true
+      - name: frame-of-reference
+        in: header
+        description: reference
+        required: true
+      - name: operations_report_id
+        in: path
+        description: operations_report_id
+        required: true
+        style: simple
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+  /api/well-delivery/query/v1/by_well/{type}:batch:
+    post:
+      tags:
+      - query-api
+      summary: getEntitiesByWells_planned
+      operationId: getEntitiesByWells_plannedUsingPOST
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: tenant
+        required: true
+      - name: frame-of-reference
+        in: header
+        description: reference
+        required: true
+      - name: type
+        in: path
+        description: type
+        required: true
+        style: simple
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+  /api/well-delivery/query/v1/{type}/by_wellbore/{wellbore_id}:actual:
+    get:
+      tags:
+      - query-api
+      summary: getObjectsByWellbore_actual
+      operationId: getObjectsByWellbore_actualUsingGET
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: tenant
+        required: true
+      - name: frame-of-reference
+        in: header
+        description: reference
+        required: true
+      - name: type
+        in: path
+        description: type
+        required: true
+        style: simple
+        schema:
+          type: string
+      - name: wellbore_id
+        in: path
+        description: wellbore_id
+        required: true
+        style: simple
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+  /api/well-delivery/query/v1/{type}/by_wellbore/{wellbore_id}:planned:
+    get:
+      tags:
+      - query-api
+      summary: getObjectsByWellbore_planned
+      operationId: getObjectsByWellbore_plannedUsingGET
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: tenant
+        required: true
+      - name: frame-of-reference
+        in: header
+        description: reference
+        required: true
+      - name: type
+        in: path
+        description: type
+        required: true
+        style: simple
+        schema:
+          type: string
+      - name: wellbore_id
+        in: path
+        description: wellbore_id
+        required: true
+        style: simple
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+  /api/well-delivery/wellActivityPrograms/v1/by_well/{well_id}:
+    get:
+      tags:
+      - well-activity-program-api
+      summary: getLatestWellActivityProgramVersion
+      operationId: getLatestWellActivityProgramVersionUsingGET
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: tenant
+        required: true
+      - name: frame-of-reference
+        in: header
+        description: reference
+        required: true
+      - name: well_id
+        in: path
+        description: well_id
+        required: true
+        style: simple
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+  /api/well-delivery/wellActivityPrograms/v1/by_well/{well_id}/{wap_version}:
+    get:
+      tags:
+      - well-activity-program-api
+      summary: getSpecificWellActivityProgramVersion
+      operationId: getSpecificWellActivityProgramVersionUsingGET
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: tenant
+        required: true
+      - name: frame-of-reference
+        in: header
+        description: reference
+        required: true
+      - name: well_id
+        in: path
+        description: well_id
+        required: true
+        style: simple
+        schema:
+          type: string
+      - name: wap_version
+        in: path
+        description: wap_version
+        required: true
+        style: simple
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+  /api/well-delivery/wellActivityPrograms/v1/full_content/by_well/{well_id}:
+    get:
+      tags:
+      - well-activity-program-api
+      summary: getLatestWellActivityProgramChildrenList
+      operationId: getLatestWellActivityProgramChildrenListUsingGET
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: tenant
+        required: true
+      - name: frame-of-reference
+        in: header
+        description: reference
+        required: true
+      - name: well_id
+        in: path
+        description: well_id
+        required: true
+        style: simple
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+  /api/well-delivery/wellActivityPrograms/v1/reference_tree/by_well/{well_id}:
+    get:
+      tags:
+      - well-activity-program-api
+      summary: getLatestWellActivityProgramRefTree
+      operationId: getLatestWellActivityProgramRefTreeUsingGET
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: tenant
+        required: true
+      - name: frame-of-reference
+        in: header
+        description: reference
+        required: true
+      - name: well_id
+        in: path
+        description: well_id
+        required: true
+        style: simple
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+  /api/well-delivery/wellActivityPrograms/v1/reference_tree/by_well/{well_id}/{wap_version}:
+    get:
+      tags:
+      - well-activity-program-api
+      summary: getSpecificWellActivityProgramRefTree
+      operationId: getSpecificWellActivityProgramRefTreeUsingGET
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: tenant
+        required: true
+      - name: frame-of-reference
+        in: header
+        description: reference
+        required: true
+      - name: well_id
+        in: path
+        description: well_id
+        required: true
+        style: simple
+        schema:
+          type: string
+      - name: wap_version
+        in: path
+        description: wap_version
+        required: true
+        style: simple
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+  /api/well-delivery/wellActivityPrograms/v1/versions/by_well/{well_id}:
+    get:
+      tags:
+      - well-activity-program-api
+      summary: getWellActivityProgramVersionNumbers
+      operationId: getWellActivityProgramVersionNumbersUsingGET
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: tenant
+        required: true
+      - name: frame-of-reference
+        in: header
+        description: reference
+        required: true
+      - name: well_id
+        in: path
+        description: well_id
+        required: true
+        style: simple
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+  /api/well-delivery/wells/v1/by_name/{name}/{version}:actual:
+    get:
+      tags:
+      - well-api
+      summary: getSpecificWellboreVersion_actual
+      operationId: getSpecificWellboreVersion_actualUsingGET
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: tenant
+        required: true
+      - name: frame-of-reference
+        in: header
+        description: reference
+        required: true
+      - name: name
+        in: path
+        description: name
+        required: true
+        style: simple
+        schema:
+          type: string
+      - name: version
+        in: path
+        description: version
+        required: true
+        style: simple
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+  /api/well-delivery/wells/v1/by_name/{name}/{version}:planned:
+    get:
+      tags:
+      - well-api
+      summary: getSpecificWellVersion_planned
+      operationId: getSpecificWellVersion_plannedUsingGET
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: tenant
+        required: true
+      - name: frame-of-reference
+        in: header
+        description: reference
+        required: true
+      - name: name
+        in: path
+        description: name
+        required: true
+        style: simple
+        schema:
+          type: string
+      - name: version
+        in: path
+        description: version
+        required: true
+        style: simple
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+  /api/well-delivery/wells/v1/by_name/{name}:actual:
+    get:
+      tags:
+      - well-api
+      summary: getLatestWellVersion_actual
+      operationId: getLatestWellVersion_actualUsingGET
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: tenant
+        required: true
+      - name: frame-of-reference
+        in: header
+        description: reference
+        required: true
+      - name: name
+        in: path
+        description: name
+        required: true
+        style: simple
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+  /api/well-delivery/wells/v1/by_name/{name}:planned:
+    get:
+      tags:
+      - well-api
+      summary: getLatestWellVersion_planned
+      operationId: getLatestWellVersion_plannedUsingGET
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: tenant
+        required: true
+      - name: frame-of-reference
+        in: header
+        description: reference
+        required: true
+      - name: name
+        in: path
+        description: name
+        required: true
+        style: simple
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+  /api/well-delivery/wells/v1/versions/by_name/{name}:actual:
+    get:
+      tags:
+      - well-api
+      summary: getWellVersionNumbers_actual
+      operationId: getWellVersionNumbers_actualUsingGET
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: tenant
+        required: true
+      - name: frame-of-reference
+        in: header
+        description: reference
+        required: true
+      - name: name
+        in: path
+        description: name
+        required: true
+        style: simple
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+  /api/well-delivery/wells/v1/versions/by_name/{name}:planned:
+    get:
+      tags:
+      - well-api
+      summary: getWellVersionNumbers_planned
+      operationId: getWellVersionNumbers_plannedUsingGET
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: tenant
+        required: true
+      - name: frame-of-reference
+        in: header
+        description: reference
+        required: true
+      - name: name
+        in: path
+        description: name
+        required: true
+        style: simple
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+  /api/well-delivery/wellbores/v1/by_well/{well_id}/{wellbore_version}:actual:
+    get:
+      tags:
+      - wellbore-api
+      summary: getSpecificWellboreVersion_actual
+      operationId: getSpecificWellboreVersion_actualUsingGET_1
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: tenant
+        required: true
+      - name: frame-of-reference
+        in: header
+        description: reference
+        required: true
+      - name: well_id
+        in: path
+        description: well_id
+        required: true
+        style: simple
+        schema:
+          type: string
+      - name: wellbore_version
+        in: path
+        description: wellbore_version
+        required: true
+        style: simple
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+  /api/well-delivery/wellbores/v1/by_well/{well_id}/{wellbore_version}:planned:
+    get:
+      tags:
+      - wellbore-api
+      summary: getSpecificWellboreVersion_planned
+      operationId: getSpecificWellboreVersion_plannedUsingGET
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: tenant
+        required: true
+      - name: frame-of-reference
+        in: header
+        description: reference
+        required: true
+      - name: well_id
+        in: path
+        description: well_id
+        required: true
+        style: simple
+        schema:
+          type: string
+      - name: wellbore_version
+        in: path
+        description: wellbore_version
+        required: true
+        style: simple
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+  /api/well-delivery/wellbores/v1/by_well/{well_id}:actual:
+    get:
+      tags:
+      - wellbore-api
+      summary: getLatestWellboreVersion_actual
+      operationId: getLatestWellboreVersion_actualUsingGET
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: tenant
+        required: true
+      - name: frame-of-reference
+        in: header
+        description: reference
+        required: true
+      - name: well_id
+        in: path
+        description: well_id
+        required: true
+        style: simple
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+  /api/well-delivery/wellbores/v1/by_well/{well_id}:planned:
+    get:
+      tags:
+      - wellbore-api
+      summary: getLatestWellboreVersion_planned
+      operationId: getLatestWellboreVersion_plannedUsingGET
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: tenant
+        required: true
+      - name: frame-of-reference
+        in: header
+        description: reference
+        required: true
+      - name: well_id
+        in: path
+        description: well_id
+        required: true
+        style: simple
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+  /api/well-delivery/wellbores/v1/versions/by_well/{well_id}:actual:
+    get:
+      tags:
+      - wellbore-api
+      summary: getWellboreVersionNumbers_actual
+      operationId: getWellboreVersionNumbers_actualUsingGET
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: tenant
+        required: true
+      - name: frame-of-reference
+        in: header
+        description: reference
+        required: true
+      - name: well_id
+        in: path
+        description: well_id
+        required: true
+        style: simple
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+  /api/well-delivery/wellbores/v1/versions/by_well/{well_id}:planned:
+    get:
+      tags:
+      - wellbore-api
+      summary: getWellboreVersionNumbers_planned
+      operationId: getWellboreVersionNumbers_plannedUsingGET
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: tenant
+        required: true
+      - name: frame-of-reference
+        in: header
+        description: reference
+        required: true
+      - name: well_id
+        in: path
+        description: well_id
+        required: true
+        style: simple
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+  /api/well-delivery/wellboreTrajectories/v1/by_wells/{well_ids}:planned:
+    get:
+      tags:
+      - wellbore-trajectory-api
+      summary: getTrajectoriesByWells_planned
+      operationId: getTrajectoriesByWells_plannedUsingGET
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: tenant
+        required: true
+      - name: frame-of-reference
+        in: header
+        description: reference
+        required: true
+      - name: well_ids
+        in: path
+        description: well_ids
+        required: true
+        style: simple
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+components:
+  schemas:
+    ConnectedOuterService:
+      title: ConnectedOuterService
+      type: object
+      properties:
+        name:
+          type: string
+        version:
+          type: string
+    ResponseEntity:
+      title: ResponseEntity
+      type: object
+      properties:
+        body:
+          type: object
+        statusCode:
+          type: string
+          enum:
+          - ACCEPTED
+          - ALREADY_REPORTED
+          - BAD_GATEWAY
+          - BAD_REQUEST
+          - BANDWIDTH_LIMIT_EXCEEDED
+          - CHECKPOINT
+          - CONFLICT
+          - CONTINUE
+          - CREATED
+          - DESTINATION_LOCKED
+          - EXPECTATION_FAILED
+          - FAILED_DEPENDENCY
+          - FORBIDDEN
+          - FOUND
+          - GATEWAY_TIMEOUT
+          - GONE
+          - HTTP_VERSION_NOT_SUPPORTED
+          - IM_USED
+          - INSUFFICIENT_SPACE_ON_RESOURCE
+          - INSUFFICIENT_STORAGE
+          - INTERNAL_SERVER_ERROR
+          - I_AM_A_TEAPOT
+          - LENGTH_REQUIRED
+          - LOCKED
+          - LOOP_DETECTED
+          - METHOD_FAILURE
+          - METHOD_NOT_ALLOWED
+          - MOVED_PERMANENTLY
+          - MOVED_TEMPORARILY
+          - MULTIPLE_CHOICES
+          - MULTI_STATUS
+          - NETWORK_AUTHENTICATION_REQUIRED
+          - NON_AUTHORITATIVE_INFORMATION
+          - NOT_ACCEPTABLE
+          - NOT_EXTENDED
+          - NOT_FOUND
+          - NOT_IMPLEMENTED
+          - NOT_MODIFIED
+          - NO_CONTENT
+          - OK
+          - PARTIAL_CONTENT
+          - PAYLOAD_TOO_LARGE
+          - PAYMENT_REQUIRED
+          - PERMANENT_REDIRECT
+          - PRECONDITION_FAILED
+          - PRECONDITION_REQUIRED
+          - PROCESSING
+          - PROXY_AUTHENTICATION_REQUIRED
+          - REQUESTED_RANGE_NOT_SATISFIABLE
+          - REQUEST_ENTITY_TOO_LARGE
+          - REQUEST_HEADER_FIELDS_TOO_LARGE
+          - REQUEST_TIMEOUT
+          - REQUEST_URI_TOO_LONG
+          - RESET_CONTENT
+          - SEE_OTHER
+          - SERVICE_UNAVAILABLE
+          - SWITCHING_PROTOCOLS
+          - TEMPORARY_REDIRECT
+          - TOO_EARLY
+          - TOO_MANY_REQUESTS
+          - UNAUTHORIZED
+          - UNAVAILABLE_FOR_LEGAL_REASONS
+          - UNPROCESSABLE_ENTITY
+          - UNSUPPORTED_MEDIA_TYPE
+          - UPGRADE_REQUIRED
+          - URI_TOO_LONG
+          - USE_PROXY
+          - VARIANT_ALSO_NEGOTIATES
+        statusCodeValue:
+          type: integer
+          format: int32
+    VersionInfo:
+      title: VersionInfo
+      type: object
+      properties:
+        artifactId:
+          type: string
+        branch:
+          type: string
+        buildTime:
+          type: string
+        commitId:
+          type: string
+        commitMessage:
+          type: string
+        connectedOuterServices:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConnectedOuterService'
+        groupId:
+          type: string
+        version:
+          type: string
+  securitySchemes:
+    Authorization:
+      type: apiKey
+      name: Authorization
+      in: header

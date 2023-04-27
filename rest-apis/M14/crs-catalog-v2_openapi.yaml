@@ -1,0 +1,2020 @@
+openapi: 3.0.1
+info:
+  title: CRS Catalog Service
+  version: '1.0'
+servers:
+- url: /api/crs/catalog
+security:
+- Authorization: []
+paths:
+  /v3/points-in-aou:
+    post:
+      tags:
+      - crs-catalog-api-v-3
+      operationId: getAouInfo
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InPolygonQuery'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PointsInAouSearchResult'
+  /v3/coordinate-transformation:
+    get:
+      tags:
+      - crs-catalog-api-v-3
+      operationId: getCoordinateTransformation
+      parameters:
+      - name: recordId
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: dataId
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/SearchResponse'
+    post:
+      tags:
+      - crs-catalog-api-v-3
+      operationId: getCoordinateTransformations
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CoordinateTransformationsQuery'
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/SearchResponse'
+  /v3/coordinate-reference-system:
+    get:
+      tags:
+      - crs-catalog-api-v-3
+      operationId: getCoordinateReferenceSystem
+      parameters:
+      - name: recordId
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: dataId
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/SearchResponse'
+    post:
+      tags:
+      - crs-catalog-api-v-3
+      operationId: getCoordinateReferenceSystems
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CoordinateReferenceSystemsQuery'
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/SearchResponse'
+  /v2/singlect:
+    get:
+      tags:
+      - crs-catalog-api
+      operationId: getSingleCTs
+      parameters:
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 100
+      - name: mode
+        in: query
+        required: false
+        schema:
+          type: string
+          default: persistableReference
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/SingleCTResults'
+    post:
+      tags:
+      - crs-catalog-api
+      operationId: getSingleCT
+      parameters:
+      - name: mode
+        in: query
+        required: false
+        schema:
+          type: string
+          default: persistableReference
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SingleCTRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/SingleCT'
+  /v2/search/ct:
+    post:
+      tags:
+      - crs-catalog-api
+      operationId: searchCTs
+      parameters:
+      - name: longitudeLeft
+        in: query
+        required: false
+        schema:
+          type: number
+          format: double
+          default: -180.0
+      - name: latitudeLower
+        in: query
+        required: false
+        schema:
+          type: number
+          format: double
+          default: -90.0
+      - name: longitudeRight
+        in: query
+        required: false
+        schema:
+          type: number
+          format: double
+          default: 180.0
+      - name: latitudeUpper
+        in: query
+        required: false
+        schema:
+          type: number
+          format: double
+          default: 90.0
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 100
+      - name: mode
+        in: query
+        required: false
+        schema:
+          type: string
+          default: persistableReference
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CTResults'
+  /v2/search/crs:
+    post:
+      tags:
+      - crs-catalog-api
+      operationId: searchCRSes
+      parameters:
+      - name: longitudeLeft
+        in: query
+        required: false
+        schema:
+          type: number
+          format: double
+          default: -180.0
+      - name: latitudeLower
+        in: query
+        required: false
+        schema:
+          type: number
+          format: double
+          default: -90.0
+      - name: longitudeRight
+        in: query
+        required: false
+        schema:
+          type: number
+          format: double
+          default: 180.0
+      - name: latitudeUpper
+        in: query
+        required: false
+        schema:
+          type: number
+          format: double
+          default: 90.0
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 100
+      - name: mode
+        in: query
+        required: false
+        schema:
+          type: string
+          default: persistableReference
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CRSResults'
+  /v2/search/area:
+    post:
+      tags:
+      - crs-catalog-api
+      operationId: searchAreasOfUse
+      parameters:
+      - name: longitudeLeft
+        in: query
+        required: false
+        schema:
+          type: number
+          format: double
+          default: -180.0
+      - name: latitudeLower
+        in: query
+        required: false
+        schema:
+          type: number
+          format: double
+          default: -90.0
+      - name: longitudeRight
+        in: query
+        required: false
+        schema:
+          type: number
+          format: double
+          default: 180.0
+      - name: latitudeUpper
+        in: query
+        required: false
+        schema:
+          type: number
+          format: double
+          default: 90.0
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 100
+      - name: mode
+        in: query
+        required: false
+        schema:
+          type: string
+          default: persistableReference
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AreaOfUseResults'
+  /v2/lateboundcrs:
+    get:
+      tags:
+      - crs-catalog-api
+      operationId: getLateBoundCRSes
+      parameters:
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 100
+      - name: mode
+        in: query
+        required: false
+        schema:
+          type: string
+          default: persistableReference
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/LateBoundCRSResults'
+    post:
+      tags:
+      - crs-catalog-api
+      operationId: getLateBoundCRS
+      parameters:
+      - name: mode
+        in: query
+        required: false
+        schema:
+          type: string
+          default: persistableReference
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LateBoundCRSRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/LateBoundCRS'
+  /v2/earlyboundcrs:
+    get:
+      tags:
+      - crs-catalog-api
+      operationId: getEarlyBoundCRSes
+      parameters:
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 100
+      - name: mode
+        in: query
+        required: false
+        schema:
+          type: string
+          default: persistableReference
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/EarlyBoundCRSResults'
+    post:
+      tags:
+      - crs-catalog-api
+      operationId: getEarlyBoundCRS
+      parameters:
+      - name: mode
+        in: query
+        required: false
+        schema:
+          type: string
+          default: persistableReference
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EarlyBoundCRSRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/EarlyBoundCRS'
+  /v2/ct:
+    get:
+      tags:
+      - crs-catalog-api
+      operationId: getAllCTs
+      parameters:
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 100
+      - name: mode
+        in: query
+        required: false
+        schema:
+          type: string
+          default: persistableReference
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CTResults'
+    post:
+      tags:
+      - crs-catalog-api
+      operationId: getCT
+      parameters:
+      - name: mode
+        in: query
+        required: false
+        schema:
+          type: string
+          default: persistableReference
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CTRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CT'
+  /v2/crs:
+    get:
+      tags:
+      - crs-catalog-api
+      operationId: getAllCRSes
+      parameters:
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 100
+      - name: mode
+        in: query
+        required: false
+        schema:
+          type: string
+          default: persistableReference
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CRSResults'
+    post:
+      tags:
+      - crs-catalog-api
+      operationId: getCRS
+      parameters:
+      - name: mode
+        in: query
+        required: false
+        schema:
+          type: string
+          default: persistableReference
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CRSRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CRS'
+  /v2/compoundct:
+    get:
+      tags:
+      - crs-catalog-api
+      operationId: getCompoundCTs
+      parameters:
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 100
+      - name: mode
+        in: query
+        required: false
+        schema:
+          type: string
+          default: persistableReference
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CompoundCTResults'
+    post:
+      tags:
+      - crs-catalog-api
+      operationId: getCompoundCT
+      parameters:
+      - name: mode
+        in: query
+        required: false
+        schema:
+          type: string
+          default: persistableReference
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompoundCTRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CompoundCT'
+  /v2/compoundcrs:
+    get:
+      tags:
+      - crs-catalog-api
+      operationId: getCompoundCRSes
+      parameters:
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 100
+      - name: mode
+        in: query
+        required: false
+        schema:
+          type: string
+          default: persistableReference
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CompoundCRSResults'
+    post:
+      tags:
+      - crs-catalog-api
+      operationId: getCompoundCRS
+      parameters:
+      - name: mode
+        in: query
+        required: false
+        schema:
+          type: string
+          default: persistableReference
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompoundCRSRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CompoundCRS'
+  /v2/area:
+    get:
+      tags:
+      - crs-catalog-api
+      operationId: getAreasOfUse
+      parameters:
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 100
+      - name: mode
+        in: query
+        required: false
+        schema:
+          type: string
+          default: persistableReference
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AreaOfUseResults'
+    post:
+      tags:
+      - crs-catalog-api
+      operationId: getAreaOfUse
+      parameters:
+      - name: mode
+        in: query
+        required: false
+        schema:
+          type: string
+          default: persistableReference
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AreaOfUseRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AreaOfUse'
+  /v3/info:
+    get:
+      tags:
+      - info-api-v-3
+      operationId: info
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VersionInfo'
+  /v2/info:
+    get:
+      tags:
+      - info-api
+      operationId: info_1
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VersionInfo'
+  /v2/catalog:
+    get:
+      tags:
+      - crs-catalog-api
+      operationId: getCatalog
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Catalog'
+  /v2/catalog/attributes:
+    get:
+      tags:
+      - crs-catalog-api
+      operationId: getCatalogAttributes
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CatalogAttributes'
+  /_ah/readiness_check:
+    get:
+      tags:
+      - health-check
+      operationId: readinessCheck
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /_ah/liveness_check:
+    get:
+      tags:
+      - health-check
+      operationId: livenessCheck
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+components:
+  schemas:
+    InPolygonQuery:
+      type: object
+      properties:
+        recordId:
+          type: string
+        dataId:
+          type: string
+        points:
+          type: array
+          items:
+            $ref: '#/components/schemas/Point'
+        offset:
+          type: integer
+          format: int32
+        limit:
+          type: integer
+          format: int32
+        returnedFields:
+          type: array
+          items:
+            type: string
+    Point:
+      type: object
+      properties:
+        latitude:
+          maximum: 90
+          minimum: -90
+          type: number
+          format: double
+        longitude:
+          maximum: 180
+          minimum: -180
+          type: number
+          format: double
+    PointsInAouSearchPoint:
+      type: object
+      properties:
+        point:
+          $ref: '#/components/schemas/Point'
+        index:
+          type: integer
+          format: int32
+        approximateKmDistanceOutside:
+          type: integer
+          format: int32
+    PointsInAouSearchResult:
+      type: object
+      properties:
+        bboxFailedPoints:
+          type: array
+          items:
+            $ref: '#/components/schemas/PointsInAouSearchPoint'
+        maxDistKmOutsideBBox:
+          type: integer
+          format: int32
+    CoordinateTransformationsQuery:
+      type: object
+      properties:
+        codeSpace:
+          type: string
+        name:
+          type: string
+        id:
+          type: string
+        code:
+          type: string
+        kind:
+          type: string
+        sourceCRS:
+          type: string
+        targetCRS:
+          type: string
+        latitude:
+          type: number
+          format: double
+        longitude:
+          type: number
+          format: double
+        includeDeprecated:
+          type: boolean
+        offset:
+          type: integer
+          format: int32
+        limit:
+          type: integer
+          format: int32
+        returnAllFields:
+          type: boolean
+        returnedFields:
+          type: array
+          items:
+            type: string
+    AggregationResponse:
+      type: object
+      properties:
+        key:
+          type: string
+        count:
+          type: integer
+          format: int64
+    QueryResponse:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            type: object
+            additionalProperties:
+              type: object
+        aggregations:
+          type: array
+          items:
+            $ref: '#/components/schemas/AggregationResponse'
+        totalCount:
+          type: integer
+          format: int64
+    SearchResponse:
+      type: object
+      properties:
+        searchResults:
+          $ref: '#/components/schemas/QueryResponse'
+        query:
+          type: string
+    BaseCRS:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+    CoordinateReferenceSystemsQuery:
+      type: object
+      properties:
+        codeSpace:
+          type: string
+        code:
+          type: string
+        name:
+          type: string
+        id:
+          type: string
+        kind:
+          type: string
+        coordinateReferenceSystemType:
+          type: string
+        returnBoundProjectedAndProjectedBasedOnWgs84:
+          type: boolean
+        returnBoundGeographic2DAndWgs84:
+          type: boolean
+        baseCRS:
+          $ref: '#/components/schemas/BaseCRS'
+        datum:
+          $ref: '#/components/schemas/Datum'
+        extent:
+          $ref: '#/components/schemas/Extent'
+        persistableReferenceSearch:
+          type: string
+        horizontalAxisUnitId:
+          type: string
+        verticalAxisUnitId:
+          type: string
+        latitude:
+          type: number
+          format: double
+        longitude:
+          type: number
+          format: double
+        includeDeprecated:
+          type: boolean
+        offset:
+          type: integer
+          format: int32
+        limit:
+          type: integer
+          format: int32
+        returnAllFields:
+          type: boolean
+        returnedFields:
+          type: array
+          items:
+            type: string
+    Datum:
+      type: object
+      properties:
+        name:
+          type: string
+        codeSpace:
+          type: string
+        code:
+          type: string
+    Extent:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+    AuthorityCode:
+      type: object
+      properties:
+        code:
+          type: string
+        authority:
+          type: string
+    SingleCTEssenceImpl:
+      type: object
+      properties:
+        authCode:
+          $ref: '#/components/schemas/AuthorityCode'
+        type:
+          type: string
+        ver:
+          type: string
+        name:
+          type: string
+        wkt:
+          type: string
+    SingleCTRequest:
+      type: object
+      properties:
+        essence:
+          $ref: '#/components/schemas/SingleCTEssenceImpl'
+        persistableReference:
+          type: string
+    AreaOfUse:
+      type: object
+      properties:
+        areaOfUseDeprecationInfo:
+          $ref: '#/components/schemas/AreaOfUseDeprecationInfo'
+        areaOfUseEssence:
+          $ref: '#/components/schemas/AreaOfUseEssence'
+        name:
+          type: string
+        namedReference:
+          $ref: '#/components/schemas/NamedReference'
+        aliasNames:
+          type: array
+          items:
+            type: string
+        deprecationInfo:
+          $ref: '#/components/schemas/DeprecationInfo'
+        essence:
+          $ref: '#/components/schemas/Essence'
+        description:
+          type: string
+        lastModified:
+          type: string
+    AreaOfUseDeprecationInfo:
+      type: object
+      properties:
+        supersededByArea:
+          $ref: '#/components/schemas/AreaOfUse'
+        remarks:
+          type: string
+        deprecationState:
+          type: string
+    AreaOfUseEssence:
+      type: object
+      properties:
+        boundingBox:
+          $ref: '#/components/schemas/SphericalBoundingBox'
+        name:
+          type: string
+        authorityCode:
+          $ref: '#/components/schemas/AuthorityCode'
+        type:
+          type: string
+    CT:
+      type: object
+      properties:
+        fromCRSAuthorityCode:
+          $ref: '#/components/schemas/AuthorityCode'
+        toCRSAuthorityCode:
+          $ref: '#/components/schemas/AuthorityCode'
+        ctdeprecationInfo:
+          $ref: '#/components/schemas/CTDeprecationInfo'
+        areaOfUse:
+          $ref: '#/components/schemas/AreaOfUse'
+        source:
+          type: string
+        namedReference:
+          $ref: '#/components/schemas/NamedReference'
+        aliasNames:
+          type: array
+          items:
+            type: string
+        deprecationInfo:
+          $ref: '#/components/schemas/DeprecationInfo'
+        essence:
+          $ref: '#/components/schemas/Essence'
+        description:
+          type: string
+        lastModified:
+          type: string
+    CTDeprecationInfo:
+      type: object
+      properties:
+        supersededByCT:
+          $ref: '#/components/schemas/CT'
+        remarks:
+          type: string
+        deprecationState:
+          type: string
+    DeprecationInfo:
+      type: object
+      properties:
+        remarks:
+          type: string
+        deprecationState:
+          type: string
+    Essence:
+      type: object
+      properties:
+        authorityCode:
+          $ref: '#/components/schemas/AuthorityCode'
+        type:
+          type: string
+    NamedReference:
+      type: object
+      properties:
+        name:
+          type: string
+        persistableReference:
+          type: string
+    SingleCT:
+      type: object
+      properties:
+        singleCTEssence:
+          $ref: '#/components/schemas/SingleCTEssence'
+        fromCRSAuthorityCode:
+          $ref: '#/components/schemas/AuthorityCode'
+        toCRSAuthorityCode:
+          $ref: '#/components/schemas/AuthorityCode'
+        ctdeprecationInfo:
+          $ref: '#/components/schemas/CTDeprecationInfo'
+        areaOfUse:
+          $ref: '#/components/schemas/AreaOfUse'
+        source:
+          type: string
+        namedReference:
+          $ref: '#/components/schemas/NamedReference'
+        aliasNames:
+          type: array
+          items:
+            type: string
+        deprecationInfo:
+          $ref: '#/components/schemas/DeprecationInfo'
+        essence:
+          $ref: '#/components/schemas/Essence'
+        description:
+          type: string
+        lastModified:
+          type: string
+    SingleCTEssence:
+      type: object
+      properties:
+        wellKnownText:
+          type: string
+        engineVersion:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+        authorityCode:
+          $ref: '#/components/schemas/AuthorityCode'
+    SphericalBoundingBox:
+      type: object
+      properties:
+        longitudeRight:
+          type: number
+          format: double
+        longitudeLeft:
+          type: number
+          format: double
+        latitudeLower:
+          type: number
+          format: double
+        latitudeUpper:
+          type: number
+          format: double
+    SearchRequest:
+      type: object
+      properties:
+        query:
+          type: string
+    CTResults:
+      type: object
+      properties:
+        offset:
+          type: integer
+          format: int32
+        count:
+          type: integer
+          format: int32
+        totalCount:
+          type: integer
+          format: int32
+        cts:
+          type: array
+          items:
+            $ref: '#/components/schemas/CT'
+    CRS:
+      type: object
+      properties:
+        transformationReady:
+          type: boolean
+        baseCRSAuthorityCode:
+          $ref: '#/components/schemas/AuthorityCode'
+        crsdeprecationInfo:
+          $ref: '#/components/schemas/CRSDeprecationInfo'
+        numberOfAxes:
+          type: integer
+          format: int32
+        axisUnits:
+          type: array
+          items:
+            type: string
+        crstype:
+          type: string
+        areaOfUse:
+          $ref: '#/components/schemas/AreaOfUse'
+        source:
+          type: string
+        namedReference:
+          $ref: '#/components/schemas/NamedReference'
+        aliasNames:
+          type: array
+          items:
+            type: string
+        deprecationInfo:
+          $ref: '#/components/schemas/DeprecationInfo'
+        essence:
+          $ref: '#/components/schemas/Essence'
+        description:
+          type: string
+        lastModified:
+          type: string
+    CRSDeprecationInfo:
+      type: object
+      properties:
+        supersededByCRS:
+          $ref: '#/components/schemas/CRS'
+        remarks:
+          type: string
+        deprecationState:
+          type: string
+    CRSResults:
+      type: object
+      properties:
+        offset:
+          type: integer
+          format: int32
+        count:
+          type: integer
+          format: int32
+        totalCount:
+          type: integer
+          format: int32
+        crses:
+          type: array
+          items:
+            $ref: '#/components/schemas/CRS'
+    AreaOfUseResults:
+      type: object
+      properties:
+        offset:
+          type: integer
+          format: int32
+        count:
+          type: integer
+          format: int32
+        totalCount:
+          type: integer
+          format: int32
+        areasOfUse:
+          type: array
+          items:
+            $ref: '#/components/schemas/AreaOfUse'
+    LateBoundCRSEssenceImpl:
+      type: object
+      properties:
+        authCode:
+          $ref: '#/components/schemas/AuthorityCode'
+        type:
+          type: string
+        ver:
+          type: string
+        name:
+          type: string
+        wkt:
+          type: string
+    LateBoundCRSRequest:
+      type: object
+      properties:
+        essence:
+          $ref: '#/components/schemas/LateBoundCRSEssenceImpl'
+        persistableReference:
+          type: string
+    LateBoundCRS:
+      type: object
+      properties:
+        lateBoundCRSEssence:
+          $ref: '#/components/schemas/LateBoundCRSEssence'
+        source:
+          type: string
+        transformationReady:
+          type: boolean
+        baseCRSAuthorityCode:
+          $ref: '#/components/schemas/AuthorityCode'
+        crsdeprecationInfo:
+          $ref: '#/components/schemas/CRSDeprecationInfo'
+        numberOfAxes:
+          type: integer
+          format: int32
+        axisUnits:
+          type: array
+          items:
+            type: string
+        crstype:
+          type: string
+        areaOfUse:
+          $ref: '#/components/schemas/AreaOfUse'
+        namedReference:
+          $ref: '#/components/schemas/NamedReference'
+        aliasNames:
+          type: array
+          items:
+            type: string
+        deprecationInfo:
+          $ref: '#/components/schemas/DeprecationInfo'
+        essence:
+          $ref: '#/components/schemas/Essence'
+        description:
+          type: string
+        lastModified:
+          type: string
+    LateBoundCRSEssence:
+      type: object
+      properties:
+        wellKnownText:
+          type: string
+        engineVersion:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+        authorityCode:
+          $ref: '#/components/schemas/AuthorityCode'
+    CTEssence:
+      type: object
+      properties:
+        engineVersion:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+        authorityCode:
+          $ref: '#/components/schemas/AuthorityCode'
+    CompoundCTEssenceImpl:
+      type: object
+      properties:
+        authCode:
+          $ref: '#/components/schemas/AuthorityCode'
+        type:
+          type: string
+        ver:
+          type: string
+        name:
+          type: string
+        policy:
+          type: string
+        cts:
+          type: array
+          items:
+            $ref: '#/components/schemas/CTEssence'
+    EarlyBoundCRSEssenceImpl:
+      type: object
+      properties:
+        authCode:
+          $ref: '#/components/schemas/AuthorityCode'
+        type:
+          type: string
+        ver:
+          type: string
+        name:
+          type: string
+        lateBoundCRS:
+          $ref: '#/components/schemas/LateBoundCRSEssence'
+        singleCT:
+          $ref: '#/components/schemas/SingleCTEssenceImpl'
+        compoundCT:
+          $ref: '#/components/schemas/CompoundCTEssenceImpl'
+    EarlyBoundCRSRequest:
+      type: object
+      properties:
+        essence:
+          $ref: '#/components/schemas/EarlyBoundCRSEssenceImpl'
+        persistableReference:
+          type: string
+    EarlyBoundCRS:
+      type: object
+      properties:
+        earlyBoundCRSEssence:
+          $ref: '#/components/schemas/EarlyBoundCRSEssence'
+        transformationReady:
+          type: boolean
+        baseCRSAuthorityCode:
+          $ref: '#/components/schemas/AuthorityCode'
+        crsdeprecationInfo:
+          $ref: '#/components/schemas/CRSDeprecationInfo'
+        numberOfAxes:
+          type: integer
+          format: int32
+        axisUnits:
+          type: array
+          items:
+            type: string
+        crstype:
+          type: string
+        areaOfUse:
+          $ref: '#/components/schemas/AreaOfUse'
+        source:
+          type: string
+        namedReference:
+          $ref: '#/components/schemas/NamedReference'
+        aliasNames:
+          type: array
+          items:
+            type: string
+        deprecationInfo:
+          $ref: '#/components/schemas/DeprecationInfo'
+        essence:
+          $ref: '#/components/schemas/Essence'
+        description:
+          type: string
+        lastModified:
+          type: string
+    EarlyBoundCRSEssence:
+      type: object
+      properties:
+        lateBoundCRSAuthorityCode:
+          $ref: '#/components/schemas/AuthorityCode'
+        ctauthorityCode:
+          $ref: '#/components/schemas/AuthorityCode'
+        ctessence:
+          $ref: '#/components/schemas/CTEssence'
+        lateBoundCRSEssence:
+          $ref: '#/components/schemas/LateBoundCRSEssence'
+        engineVersion:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+        authorityCode:
+          $ref: '#/components/schemas/AuthorityCode'
+    CTEssenceImpl:
+      type: object
+      properties:
+        authCode:
+          $ref: '#/components/schemas/AuthorityCode'
+        type:
+          type: string
+        ver:
+          type: string
+        name:
+          type: string
+    CTRequest:
+      type: object
+      properties:
+        ctessenceJson:
+          $ref: '#/components/schemas/CTEssenceImpl'
+        essence:
+          $ref: '#/components/schemas/CTEssenceImpl'
+        persistableReference:
+          type: string
+    CRSEssenceImpl:
+      type: object
+      properties:
+        authCode:
+          $ref: '#/components/schemas/AuthorityCode'
+        type:
+          type: string
+        ver:
+          type: string
+        name:
+          type: string
+    CRSRequest:
+      type: object
+      properties:
+        crsessenceJson:
+          $ref: '#/components/schemas/CRSEssenceImpl'
+        essence:
+          $ref: '#/components/schemas/CRSEssenceImpl'
+        persistableReference:
+          type: string
+    CompoundCTRequest:
+      type: object
+      properties:
+        essence:
+          $ref: '#/components/schemas/CompoundCTEssenceImpl'
+        persistableReference:
+          type: string
+    CompoundCT:
+      type: object
+      properties:
+        cts:
+          type: array
+          items:
+            $ref: '#/components/schemas/SingleCT'
+        compoundCTEssence:
+          $ref: '#/components/schemas/CompoundCTEssence'
+        fromCRSAuthorityCode:
+          $ref: '#/components/schemas/AuthorityCode'
+        toCRSAuthorityCode:
+          $ref: '#/components/schemas/AuthorityCode'
+        ctdeprecationInfo:
+          $ref: '#/components/schemas/CTDeprecationInfo'
+        areaOfUse:
+          $ref: '#/components/schemas/AreaOfUse'
+        source:
+          type: string
+        namedReference:
+          $ref: '#/components/schemas/NamedReference'
+        aliasNames:
+          type: array
+          items:
+            type: string
+        deprecationInfo:
+          $ref: '#/components/schemas/DeprecationInfo'
+        essence:
+          $ref: '#/components/schemas/Essence'
+        description:
+          type: string
+        lastModified:
+          type: string
+    CompoundCTEssence:
+      type: object
+      properties:
+        ctauthorityCodes:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuthorityCode'
+        ctessences:
+          type: array
+          items:
+            $ref: '#/components/schemas/CTEssence'
+        policy:
+          type: string
+        engineVersion:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+        authorityCode:
+          $ref: '#/components/schemas/AuthorityCode'
+    CompoundCRSEssenceImpl:
+      type: object
+      properties:
+        horizontalCRS:
+          $ref: '#/components/schemas/Essence'
+        verticalCRS:
+          $ref: '#/components/schemas/Essence'
+        authCode:
+          $ref: '#/components/schemas/AuthorityCode'
+        type:
+          type: string
+        ver:
+          type: string
+        name:
+          type: string
+        horzLateBoundCRS:
+          $ref: '#/components/schemas/LateBoundCRSEssenceImpl'
+        vertLateBoundCRS:
+          $ref: '#/components/schemas/LateBoundCRSEssenceImpl'
+        horzEarlyBoundCRS:
+          $ref: '#/components/schemas/EarlyBoundCRSEssenceImpl'
+        vertEarlyBoundCRS:
+          $ref: '#/components/schemas/EarlyBoundCRSEssenceImpl'
+    CompoundCRSRequest:
+      type: object
+      properties:
+        essence:
+          $ref: '#/components/schemas/CompoundCRSEssenceImpl'
+        persistableReference:
+          type: string
+    CRSEssence:
+      type: object
+      properties:
+        engineVersion:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+        authorityCode:
+          $ref: '#/components/schemas/AuthorityCode'
+    CompoundCRS:
+      type: object
+      properties:
+        compoundCRSEssence:
+          $ref: '#/components/schemas/CompoundCRSEssence'
+        transformationReady:
+          type: boolean
+        baseCRSAuthorityCode:
+          $ref: '#/components/schemas/AuthorityCode'
+        crsdeprecationInfo:
+          $ref: '#/components/schemas/CRSDeprecationInfo'
+        numberOfAxes:
+          type: integer
+          format: int32
+        axisUnits:
+          type: array
+          items:
+            type: string
+        crstype:
+          type: string
+        areaOfUse:
+          $ref: '#/components/schemas/AreaOfUse'
+        source:
+          type: string
+        namedReference:
+          $ref: '#/components/schemas/NamedReference'
+        aliasNames:
+          type: array
+          items:
+            type: string
+        deprecationInfo:
+          $ref: '#/components/schemas/DeprecationInfo'
+        essence:
+          $ref: '#/components/schemas/Essence'
+        description:
+          type: string
+        lastModified:
+          type: string
+    CompoundCRSEssence:
+      type: object
+      properties:
+        horizontalCRSAuthorityCode:
+          $ref: '#/components/schemas/AuthorityCode'
+        verticalCRSAuthorityCode:
+          $ref: '#/components/schemas/AuthorityCode'
+        horizontalCRSEssence:
+          $ref: '#/components/schemas/CRSEssence'
+        verticalCRSEssence:
+          $ref: '#/components/schemas/CRSEssence'
+        engineVersion:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+        authorityCode:
+          $ref: '#/components/schemas/AuthorityCode'
+    AreaOfUseEssenceImpl:
+      type: object
+      properties:
+        name:
+          type: string
+        authCode:
+          $ref: '#/components/schemas/AuthorityCode'
+        type:
+          type: string
+        boundBox:
+          $ref: '#/components/schemas/SphericalBoundingBox'
+    AreaOfUseRequest:
+      type: object
+      properties:
+        essence:
+          $ref: '#/components/schemas/AreaOfUseEssenceImpl'
+        persistableReference:
+          type: string
+    ConnectedOuterService:
+      type: object
+      properties:
+        name:
+          type: string
+        version:
+          type: string
+    VersionInfo:
+      type: object
+      properties:
+        groupId:
+          type: string
+        artifactId:
+          type: string
+        version:
+          type: string
+        buildTime:
+          type: string
+        branch:
+          type: string
+        commitId:
+          type: string
+        commitMessage:
+          type: string
+        connectedOuterServices:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConnectedOuterService'
+    SingleCTResults:
+      type: object
+      properties:
+        offset:
+          type: integer
+          format: int32
+        count:
+          type: integer
+          format: int32
+        totalCount:
+          type: integer
+          format: int32
+        cts:
+          type: array
+          items:
+            $ref: '#/components/schemas/SingleCT'
+    LateBoundCRSResults:
+      type: object
+      properties:
+        offset:
+          type: integer
+          format: int32
+        count:
+          type: integer
+          format: int32
+        totalCount:
+          type: integer
+          format: int32
+        crses:
+          type: array
+          items:
+            $ref: '#/components/schemas/LateBoundCRS'
+    EarlyBoundCRSResults:
+      type: object
+      properties:
+        offset:
+          type: integer
+          format: int32
+        count:
+          type: integer
+          format: int32
+        totalCount:
+          type: integer
+          format: int32
+        crses:
+          type: array
+          items:
+            $ref: '#/components/schemas/EarlyBoundCRS'
+    CompoundCTResults:
+      type: object
+      properties:
+        offset:
+          type: integer
+          format: int32
+        count:
+          type: integer
+          format: int32
+        totalCount:
+          type: integer
+          format: int32
+        cts:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompoundCT'
+    CompoundCRSResults:
+      type: object
+      properties:
+        offset:
+          type: integer
+          format: int32
+        count:
+          type: integer
+          format: int32
+        totalCount:
+          type: integer
+          format: int32
+        crses:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompoundCRS'
+    Catalog:
+      type: object
+      properties:
+        lateBoundCRSesCount:
+          type: integer
+          format: int32
+        earlyBoundCRSesCount:
+          type: integer
+          format: int32
+        compoundCRSesCount:
+          type: integer
+          format: int32
+        singleCTsCount:
+          type: integer
+          format: int32
+        compoundCTsCount:
+          type: integer
+          format: int32
+        areaOfUseCount:
+          type: integer
+          format: int32
+        allCRSes:
+          type: array
+          items:
+            $ref: '#/components/schemas/CRS'
+        areasOfUse:
+          type: array
+          items:
+            $ref: '#/components/schemas/AreaOfUse'
+        lateBoundCRSes:
+          type: array
+          items:
+            $ref: '#/components/schemas/LateBoundCRS'
+        earlyBoundCRSes:
+          type: array
+          items:
+            $ref: '#/components/schemas/EarlyBoundCRS'
+        compoundCRSes:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompoundCRS'
+        allCTs:
+          type: array
+          items:
+            $ref: '#/components/schemas/CT'
+        singleCTs:
+          type: array
+          items:
+            $ref: '#/components/schemas/SingleCT'
+        compoundCTs:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompoundCT'
+        catalogResponse:
+          $ref: '#/components/schemas/Catalog'
+        attributes:
+          $ref: '#/components/schemas/CatalogAttributes'
+    CatalogAttributes:
+      type: object
+      properties:
+        description:
+          type: string
+        lastModified:
+          type: string
+        name:
+          type: string
+  securitySchemes:
+    Authorization:
+      type: http
+      scheme: Bearer
+      bearerFormat: Authorization

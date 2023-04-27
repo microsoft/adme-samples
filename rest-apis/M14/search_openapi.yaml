@@ -1,0 +1,372 @@
+openapi: 3.0.1
+info:
+  title: Search Service
+  description: Search service that provides a set of APIs to search records against
+    Elasticsearch
+  version: '1.0'
+servers:
+- url: /api/search/v2
+security:
+- Authorization: []
+paths:
+  /query_with_cursor:
+    post:
+      tags:
+      - search-api
+      operationId: queryWithCursor
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CursorQueryRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CursorQueryResponse'
+  /query:
+    post:
+      tags:
+      - search-api
+      operationId: queryRecords
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QueryRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/QueryResponse'
+  /whoami:
+    get:
+      tags:
+      - whoami-controller
+      operationId: whoami
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /:
+    get:
+      tags:
+      - whoami-controller
+      operationId: whoami_1
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /info:
+    get:
+      tags:
+      - info-api
+      operationId: info
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VersionInfo'
+  /health/readiness_check:
+    get:
+      tags:
+      - health-check-api
+      operationId: readinessCheck
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /health/liveness_check:
+    get:
+      tags:
+      - health-check-api
+      operationId: livenessCheck
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+components:
+  schemas:
+    ByBoundingBox:
+      required:
+      - bottomRight
+      - topLeft
+      type: object
+      properties:
+        topLeft:
+          $ref: '#/components/schemas/Point'
+        bottomRight:
+          $ref: '#/components/schemas/Point'
+    ByDistance:
+      required:
+      - point
+      type: object
+      properties:
+        distance:
+          maximum: 9223372036854775807
+          type: number
+          format: double
+        point:
+          $ref: '#/components/schemas/Point'
+    ByGeoPolygon:
+      required:
+      - points
+      type: object
+      properties:
+        points:
+          type: array
+          items:
+            $ref: '#/components/schemas/Point'
+    ByIntersection:
+      required:
+      - polygons
+      type: object
+      properties:
+        polygons:
+          type: array
+          items:
+            $ref: '#/components/schemas/Polygon'
+    ByWithinPolygon:
+      required:
+      - points
+      type: object
+      properties:
+        points:
+          type: array
+          items:
+            $ref: '#/components/schemas/Point'
+    CursorQueryRequest:
+      required:
+      - kind
+      type: object
+      properties:
+        kind:
+          type: object
+        limit:
+          minimum: 0
+          type: integer
+          format: int32
+        query:
+          type: string
+        returnedFields:
+          type: array
+          items:
+            type: string
+        sort:
+          $ref: '#/components/schemas/SortQuery'
+        queryAsOwner:
+          type: boolean
+        trackTotalCount:
+          type: boolean
+        spatialFilter:
+          $ref: '#/components/schemas/SpatialFilter'
+        cursor:
+          type: string
+    Point:
+      type: object
+      properties:
+        latitude:
+          maximum: 90
+          minimum: -90
+          type: number
+          format: double
+        longitude:
+          maximum: 180
+          minimum: -180
+          type: number
+          format: double
+    Polygon:
+      type: object
+      properties:
+        points:
+          type: array
+          items:
+            $ref: '#/components/schemas/Point'
+    SortQuery:
+      type: object
+      properties:
+        field:
+          type: array
+          items:
+            type: string
+        order:
+          type: array
+          items:
+            type: string
+            enum:
+            - ASC
+            - DESC
+    SpatialFilter:
+      required:
+      - field
+      type: object
+      properties:
+        field:
+          type: string
+        byBoundingBox:
+          $ref: '#/components/schemas/ByBoundingBox'
+        byDistance:
+          $ref: '#/components/schemas/ByDistance'
+        byGeoPolygon:
+          $ref: '#/components/schemas/ByGeoPolygon'
+        byIntersection:
+          $ref: '#/components/schemas/ByIntersection'
+        byWithinPolygon:
+          $ref: '#/components/schemas/ByWithinPolygon'
+    CursorQueryResponse:
+      type: object
+      properties:
+        cursor:
+          type: string
+        results:
+          type: array
+          items:
+            type: object
+            additionalProperties:
+              type: object
+        totalCount:
+          type: integer
+          format: int64
+    QueryRequest:
+      required:
+      - kind
+      type: object
+      properties:
+        kind:
+          type: object
+        limit:
+          minimum: 0
+          type: integer
+          format: int32
+        query:
+          type: string
+        returnedFields:
+          type: array
+          items:
+            type: string
+        sort:
+          $ref: '#/components/schemas/SortQuery'
+        queryAsOwner:
+          type: boolean
+        trackTotalCount:
+          type: boolean
+        spatialFilter:
+          $ref: '#/components/schemas/SpatialFilter'
+        aggregateBy:
+          type: string
+        offset:
+          minimum: 0
+          type: integer
+          format: int32
+    AggregationResponse:
+      type: object
+      properties:
+        key:
+          type: string
+        count:
+          type: integer
+          format: int64
+    QueryResponse:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            type: object
+            additionalProperties:
+              type: object
+        aggregations:
+          type: array
+          items:
+            $ref: '#/components/schemas/AggregationResponse'
+        totalCount:
+          type: integer
+          format: int64
+    ConnectedOuterService:
+      type: object
+      properties:
+        name:
+          type: string
+        version:
+          type: string
+    VersionInfo:
+      type: object
+      properties:
+        groupId:
+          type: string
+        artifactId:
+          type: string
+        version:
+          type: string
+        buildTime:
+          type: string
+        branch:
+          type: string
+        commitId:
+          type: string
+        commitMessage:
+          type: string
+        connectedOuterServices:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConnectedOuterService'
+  securitySchemes:
+    Authorization:
+      type: http
+      scheme: bearer
+      bearerFormat: Authorization
