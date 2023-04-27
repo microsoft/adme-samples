@@ -1,0 +1,120 @@
+"components:\n  schemas:\n    ConnectedOuterService:\n      properties:\n        name:\n\
+  \          type: string\n        version:\n          type: string\n      type: object\n\
+  \    RecordReindexRequest:\n      properties:\n        cursor:\n          type:\
+  \ string\n        kind:\n          type: string\n      required:\n      - kind\n\
+  \      type: object\n    VersionInfo:\n      properties:\n        artifactId:\n\
+  \          type: string\n        branch:\n          type: string\n        buildTime:\n\
+  \          type: string\n        commitId:\n          type: string\n        commitMessage:\n\
+  \          type: string\n        connectedOuterServices:\n          items:\n   \
+  \         $ref: '#/components/schemas/ConnectedOuterService'\n          type: array\n\
+  \        groupId:\n          type: string\n        version:\n          type: string\n\
+  \      type: object\n  securitySchemes:\n    Authorization:\n      bearerFormat:\
+  \ Authorization\n      scheme: Bearer\n      type: http\ninfo:\n  description: Indexer\
+  \ service that provides a set of APIs to index storage records\n    against Elasticsearch\n\
+  \  title: Indexer Service\n  version: '1.0'\nopenapi: 3.0.1\npaths:\n  /:\n    delete:\n\
+  \      operationId: whoami_11\n      parameters:\n      - description: Tenant Id\n\
+  \        in: header\n        name: data-partition-id\n        required: true\n \
+  \     responses:\n        '200':\n          content:\n            '*/*':\n     \
+  \         schema:\n                type: string\n          description: OK\n   \
+  \   tags:\n      - whoami-controller\n    get:\n      operationId: whoami_7\n  \
+  \    parameters:\n      - description: Tenant Id\n        in: header\n        name:\
+  \ data-partition-id\n        required: true\n      responses:\n        '200':\n\
+  \          content:\n            '*/*':\n              schema:\n               \
+  \ type: string\n          description: OK\n      tags:\n      - whoami-controller\n\
+  \    head:\n      operationId: whoami_10\n      parameters:\n      - description:\
+  \ Tenant Id\n        in: header\n        name: data-partition-id\n        required:\
+  \ true\n      responses:\n        '200':\n          content:\n            '*/*':\n\
+  \              schema:\n                type: string\n          description: OK\n\
+  \      tags:\n      - whoami-controller\n    options:\n      operationId: whoami_12\n\
+  \      parameters:\n      - description: Tenant Id\n        in: header\n       \
+  \ name: data-partition-id\n        required: true\n      responses:\n        '200':\n\
+  \          content:\n            '*/*':\n              schema:\n               \
+  \ type: string\n          description: OK\n      tags:\n      - whoami-controller\n\
+  \    patch:\n      operationId: whoami_8\n      parameters:\n      - description:\
+  \ Tenant Id\n        in: header\n        name: data-partition-id\n        required:\
+  \ true\n      responses:\n        '200':\n          content:\n            '*/*':\n\
+  \              schema:\n                type: string\n          description: OK\n\
+  \      tags:\n      - whoami-controller\n    post:\n      operationId: whoami_13\n\
+  \      parameters:\n      - description: Tenant Id\n        in: header\n       \
+  \ name: data-partition-id\n        required: true\n      responses:\n        '200':\n\
+  \          content:\n            '*/*':\n              schema:\n               \
+  \ type: string\n          description: OK\n      tags:\n      - whoami-controller\n\
+  \    put:\n      operationId: whoami_9\n      parameters:\n      - description:\
+  \ Tenant Id\n        in: header\n        name: data-partition-id\n        required:\
+  \ true\n      responses:\n        '200':\n          content:\n            '*/*':\n\
+  \              schema:\n                type: string\n          description: OK\n\
+  \      tags:\n      - whoami-controller\n  /index:\n    delete:\n      operationId:\
+  \ deleteIndex\n      parameters:\n      - in: query\n        name: kind\n      \
+  \  required: true\n        schema:\n          type: string\n      - description:\
+  \ Tenant Id\n        in: header\n        name: data-partition-id\n        required:\
+  \ true\n      responses:\n        '200':\n          content:\n            application/json:\n\
+  \              schema:\n                type: string\n          description: OK\n\
+  \      tags:\n      - cleanup-indicies-api\n  /info:\n    get:\n      operationId:\
+  \ info\n      parameters:\n      - description: Tenant Id\n        in: header\n\
+  \        name: data-partition-id\n        required: true\n      responses:\n   \
+  \     '200':\n          content:\n            application/json:\n              schema:\n\
+  \                $ref: '#/components/schemas/VersionInfo'\n          description:\
+  \ OK\n      tags:\n      - info-api\n  /liveness_check:\n    get:\n      operationId:\
+  \ livenessCheck\n      parameters:\n      - description: Tenant Id\n        in:\
+  \ header\n        name: data-partition-id\n        required: true\n      responses:\n\
+  \        '200':\n          content:\n            '*/*':\n              schema:\n\
+  \                type: string\n          description: OK\n      tags:\n      - health-check-api\n\
+  \  /partitions/provision:\n    put:\n      operationId: provisionPartition\n   \
+  \   parameters:\n      - in: header\n        name: data-partition-id\n        required:\
+  \ true\n        schema:\n          type: string\n      - description: Tenant Id\n\
+  \        in: header\n        name: data-partition-id\n        required: true\n \
+  \     responses:\n        '200':\n          content:\n            '*/*':\n     \
+  \         schema:\n                type: object\n          description: OK\n   \
+  \   tags:\n      - partition-setup-api\n  /readiness_check:\n    get:\n      operationId:\
+  \ readinessCheck\n      parameters:\n      - description: Tenant Id\n        in:\
+  \ header\n        name: data-partition-id\n        required: true\n      responses:\n\
+  \        '200':\n          content:\n            '*/*':\n              schema:\n\
+  \                type: string\n          description: OK\n      tags:\n      - health-check-api\n\
+  \  /reindex:\n    patch:\n      operationId: fullReindex\n      parameters:\n  \
+  \    - in: query\n        name: force_clean\n        required: false\n        schema:\n\
+  \          default: false\n          type: boolean\n      - description: Tenant\
+  \ Id\n        in: header\n        name: data-partition-id\n        required: true\n\
+  \      responses:\n        '200':\n          content:\n            '*/*':\n    \
+  \          schema:\n                type: string\n          description: OK\n  \
+  \    tags:\n      - reindex-api\n    post:\n      operationId: reindex\n      parameters:\n\
+  \      - in: query\n        name: force_clean\n        required: false\n       \
+  \ schema:\n          default: false\n          type: boolean\n      - description:\
+  \ Tenant Id\n        in: header\n        name: data-partition-id\n        required:\
+  \ true\n      requestBody:\n        content:\n          application/json:\n    \
+  \        schema:\n              $ref: '#/components/schemas/RecordReindexRequest'\n\
+  \        required: true\n      responses:\n        '200':\n          content:\n\
+  \            '*/*':\n              schema:\n                type: object\n     \
+  \     description: OK\n      tags:\n      - reindex-api\n  /whoami:\n    delete:\n\
+  \      operationId: whoami_4\n      parameters:\n      - description: Tenant Id\n\
+  \        in: header\n        name: data-partition-id\n        required: true\n \
+  \     responses:\n        '200':\n          content:\n            '*/*':\n     \
+  \         schema:\n                type: string\n          description: OK\n   \
+  \   tags:\n      - whoami-controller\n    get:\n      operationId: whoami\n    \
+  \  parameters:\n      - description: Tenant Id\n        in: header\n        name:\
+  \ data-partition-id\n        required: true\n      responses:\n        '200':\n\
+  \          content:\n            '*/*':\n              schema:\n               \
+  \ type: string\n          description: OK\n      tags:\n      - whoami-controller\n\
+  \    head:\n      operationId: whoami_3\n      parameters:\n      - description:\
+  \ Tenant Id\n        in: header\n        name: data-partition-id\n        required:\
+  \ true\n      responses:\n        '200':\n          content:\n            '*/*':\n\
+  \              schema:\n                type: string\n          description: OK\n\
+  \      tags:\n      - whoami-controller\n    options:\n      operationId: whoami_5\n\
+  \      parameters:\n      - description: Tenant Id\n        in: header\n       \
+  \ name: data-partition-id\n        required: true\n      responses:\n        '200':\n\
+  \          content:\n            '*/*':\n              schema:\n               \
+  \ type: string\n          description: OK\n      tags:\n      - whoami-controller\n\
+  \    patch:\n      operationId: whoami_1\n      parameters:\n      - description:\
+  \ Tenant Id\n        in: header\n        name: data-partition-id\n        required:\
+  \ true\n      responses:\n        '200':\n          content:\n            '*/*':\n\
+  \              schema:\n                type: string\n          description: OK\n\
+  \      tags:\n      - whoami-controller\n    post:\n      operationId: whoami_6\n\
+  \      parameters:\n      - description: Tenant Id\n        in: header\n       \
+  \ name: data-partition-id\n        required: true\n      responses:\n        '200':\n\
+  \          content:\n            '*/*':\n              schema:\n               \
+  \ type: string\n          description: OK\n      tags:\n      - whoami-controller\n\
+  \    put:\n      operationId: whoami_2\n      parameters:\n      - description:\
+  \ Tenant Id\n        in: header\n        name: data-partition-id\n        required:\
+  \ true\n      responses:\n        '200':\n          content:\n            '*/*':\n\
+  \              schema:\n                type: string\n          description: OK\n\
+  \      tags:\n      - whoami-controller\nsecurity:\n- Authorization: []\nservers:\n\
+  - url: /api/indexer/v2\n"

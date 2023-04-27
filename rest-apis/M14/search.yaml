@@ -1,0 +1,106 @@
+"components:\n  schemas:\n    AggregationResponse:\n      properties:\n        count:\n\
+  \          format: int64\n          type: integer\n        key:\n          type:\
+  \ string\n      type: object\n    ByBoundingBox:\n      properties:\n        bottomRight:\n\
+  \          $ref: '#/components/schemas/Point'\n        topLeft:\n          $ref:\
+  \ '#/components/schemas/Point'\n      required:\n      - bottomRight\n      - topLeft\n\
+  \      type: object\n    ByDistance:\n      properties:\n        distance:\n   \
+  \       format: double\n          maximum: 9223372036854775807\n          type:\
+  \ number\n        point:\n          $ref: '#/components/schemas/Point'\n      required:\n\
+  \      - point\n      type: object\n    ByGeoPolygon:\n      properties:\n     \
+  \   points:\n          items:\n            $ref: '#/components/schemas/Point'\n\
+  \          type: array\n      required:\n      - points\n      type: object\n  \
+  \  ByIntersection:\n      properties:\n        polygons:\n          items:\n   \
+  \         $ref: '#/components/schemas/Polygon'\n          type: array\n      required:\n\
+  \      - polygons\n      type: object\n    ByWithinPolygon:\n      properties:\n\
+  \        points:\n          items:\n            $ref: '#/components/schemas/Point'\n\
+  \          type: array\n      required:\n      - points\n      type: object\n  \
+  \  ConnectedOuterService:\n      properties:\n        name:\n          type: string\n\
+  \        version:\n          type: string\n      type: object\n    CursorQueryRequest:\n\
+  \      properties:\n        cursor:\n          type: string\n        kind:\n   \
+  \       type: object\n        limit:\n          format: int32\n          minimum:\
+  \ 0\n          type: integer\n        query:\n          type: string\n        queryAsOwner:\n\
+  \          type: boolean\n        returnedFields:\n          items:\n          \
+  \  type: string\n          type: array\n        sort:\n          $ref: '#/components/schemas/SortQuery'\n\
+  \        spatialFilter:\n          $ref: '#/components/schemas/SpatialFilter'\n\
+  \        trackTotalCount:\n          type: boolean\n      required:\n      - kind\n\
+  \      type: object\n    CursorQueryResponse:\n      properties:\n        cursor:\n\
+  \          type: string\n        results:\n          items:\n            additionalProperties:\n\
+  \              type: object\n            type: object\n          type: array\n \
+  \       totalCount:\n          format: int64\n          type: integer\n      type:\
+  \ object\n    Point:\n      properties:\n        latitude:\n          format: double\n\
+  \          maximum: 90\n          minimum: -90\n          type: number\n       \
+  \ longitude:\n          format: double\n          maximum: 180\n          minimum:\
+  \ -180\n          type: number\n      type: object\n    Polygon:\n      properties:\n\
+  \        points:\n          items:\n            $ref: '#/components/schemas/Point'\n\
+  \          type: array\n      type: object\n    QueryRequest:\n      properties:\n\
+  \        aggregateBy:\n          type: string\n        kind:\n          type: object\n\
+  \        limit:\n          format: int32\n          minimum: 0\n          type:\
+  \ integer\n        offset:\n          format: int32\n          minimum: 0\n    \
+  \      type: integer\n        query:\n          type: string\n        queryAsOwner:\n\
+  \          type: boolean\n        returnedFields:\n          items:\n          \
+  \  type: string\n          type: array\n        sort:\n          $ref: '#/components/schemas/SortQuery'\n\
+  \        spatialFilter:\n          $ref: '#/components/schemas/SpatialFilter'\n\
+  \        trackTotalCount:\n          type: boolean\n      required:\n      - kind\n\
+  \      type: object\n    QueryResponse:\n      properties:\n        aggregations:\n\
+  \          items:\n            $ref: '#/components/schemas/AggregationResponse'\n\
+  \          type: array\n        results:\n          items:\n            additionalProperties:\n\
+  \              type: object\n            type: object\n          type: array\n \
+  \       totalCount:\n          format: int64\n          type: integer\n      type:\
+  \ object\n    SortQuery:\n      properties:\n        field:\n          items:\n\
+  \            type: string\n          type: array\n        order:\n          items:\n\
+  \            enum:\n            - ASC\n            - DESC\n            type: string\n\
+  \          type: array\n      type: object\n    SpatialFilter:\n      properties:\n\
+  \        byBoundingBox:\n          $ref: '#/components/schemas/ByBoundingBox'\n\
+  \        byDistance:\n          $ref: '#/components/schemas/ByDistance'\n      \
+  \  byGeoPolygon:\n          $ref: '#/components/schemas/ByGeoPolygon'\n        byIntersection:\n\
+  \          $ref: '#/components/schemas/ByIntersection'\n        byWithinPolygon:\n\
+  \          $ref: '#/components/schemas/ByWithinPolygon'\n        field:\n      \
+  \    type: string\n      required:\n      - field\n      type: object\n    VersionInfo:\n\
+  \      properties:\n        artifactId:\n          type: string\n        branch:\n\
+  \          type: string\n        buildTime:\n          type: string\n        commitId:\n\
+  \          type: string\n        commitMessage:\n          type: string\n      \
+  \  connectedOuterServices:\n          items:\n            $ref: '#/components/schemas/ConnectedOuterService'\n\
+  \          type: array\n        groupId:\n          type: string\n        version:\n\
+  \          type: string\n      type: object\n  securitySchemes:\n    Authorization:\n\
+  \      bearerFormat: Authorization\n      scheme: bearer\n      type: http\ninfo:\n\
+  \  description: Search service that provides a set of APIs to search records against\n\
+  \    Elasticsearch\n  title: Search Service\n  version: '1.0'\nopenapi: 3.0.1\n\
+  paths:\n  /:\n    get:\n      operationId: whoami_1\n      parameters:\n      -\
+  \ description: Tenant Id\n        in: header\n        name: data-partition-id\n\
+  \        required: true\n      responses:\n        '200':\n          content:\n\
+  \            '*/*':\n              schema:\n                type: string\n     \
+  \     description: OK\n      tags:\n      - whoami-controller\n  /health/liveness_check:\n\
+  \    get:\n      operationId: livenessCheck\n      parameters:\n      - description:\
+  \ Tenant Id\n        in: header\n        name: data-partition-id\n        required:\
+  \ true\n      responses:\n        '200':\n          content:\n            '*/*':\n\
+  \              schema:\n                type: string\n          description: OK\n\
+  \      tags:\n      - health-check-api\n  /health/readiness_check:\n    get:\n \
+  \     operationId: readinessCheck\n      parameters:\n      - description: Tenant\
+  \ Id\n        in: header\n        name: data-partition-id\n        required: true\n\
+  \      responses:\n        '200':\n          content:\n            '*/*':\n    \
+  \          schema:\n                type: string\n          description: OK\n  \
+  \    tags:\n      - health-check-api\n  /info:\n    get:\n      operationId: info\n\
+  \      parameters:\n      - description: Tenant Id\n        in: header\n       \
+  \ name: data-partition-id\n        required: true\n      responses:\n        '200':\n\
+  \          content:\n            application/json:\n              schema:\n    \
+  \            $ref: '#/components/schemas/VersionInfo'\n          description: OK\n\
+  \      tags:\n      - info-api\n  /query:\n    post:\n      operationId: queryRecords\n\
+  \      parameters:\n      - description: Tenant Id\n        in: header\n       \
+  \ name: data-partition-id\n        required: true\n      requestBody:\n        content:\n\
+  \          application/json:\n            schema:\n              $ref: '#/components/schemas/QueryRequest'\n\
+  \        required: true\n      responses:\n        '200':\n          content:\n\
+  \            '*/*':\n              schema:\n                $ref: '#/components/schemas/QueryResponse'\n\
+  \          description: OK\n      tags:\n      - search-api\n  /query_with_cursor:\n\
+  \    post:\n      operationId: queryWithCursor\n      parameters:\n      - description:\
+  \ Tenant Id\n        in: header\n        name: data-partition-id\n        required:\
+  \ true\n      requestBody:\n        content:\n          application/json:\n    \
+  \        schema:\n              $ref: '#/components/schemas/CursorQueryRequest'\n\
+  \        required: true\n      responses:\n        '200':\n          content:\n\
+  \            '*/*':\n              schema:\n                $ref: '#/components/schemas/CursorQueryResponse'\n\
+  \          description: OK\n      tags:\n      - search-api\n  /whoami:\n    get:\n\
+  \      operationId: whoami\n      parameters:\n      - description: Tenant Id\n\
+  \        in: header\n        name: data-partition-id\n        required: true\n \
+  \     responses:\n        '200':\n          content:\n            '*/*':\n     \
+  \         schema:\n                type: string\n          description: OK\n   \
+  \   tags:\n      - whoami-controller\nsecurity:\n- Authorization: []\nservers:\n\
+  - url: /api/search/v2\n"

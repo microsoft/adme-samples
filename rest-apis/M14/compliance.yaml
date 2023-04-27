@@ -1,0 +1,245 @@
+"components:\n  schemas:\n    ConnectedOuterService:\n      properties:\n        name:\n\
+  \          type: string\n        version:\n          type: string\n      type: object\n\
+  \    InvalidTagWithReason:\n      properties:\n        name:\n          type: string\n\
+  \        reason:\n          type: string\n      type: object\n    InvalidTagsWithReason:\n\
+  \      properties:\n        invalidLegalTags:\n          items:\n            $ref:\
+  \ '#/components/schemas/InvalidTagWithReason'\n          type: array\n      type:\
+  \ object\n    LegalTagDto:\n      properties:\n        description:\n          type:\
+  \ string\n        name:\n          type: string\n        properties:\n         \
+  \ $ref: '#/components/schemas/Properties'\n      type: object\n    LegalTagDtos:\n\
+  \      properties:\n        legalTags:\n          items:\n            $ref: '#/components/schemas/LegalTagDto'\n\
+  \          type: array\n      type: object\n    Properties:\n      properties:\n\
+  \        contractId:\n          type: string\n        countryOfOrigin:\n       \
+  \   items:\n            type: string\n          type: array\n        dataType:\n\
+  \          type: string\n        expirationDate:\n          format: date-time\n\
+  \          type: string\n        exportClassification:\n          type: string\n\
+  \        extensionProperties:\n          additionalProperties:\n            type:\
+  \ object\n          type: object\n        originator:\n          type: string\n\
+  \        personalData:\n          type: string\n        securityClassification:\n\
+  \          type: string\n      type: object\n    ReadablePropertyValues:\n     \
+  \ properties:\n        countriesOfOrigin:\n          additionalProperties:\n   \
+  \         type: string\n          type: object\n        dataTypes:\n          items:\n\
+  \            type: string\n          type: array\n          uniqueItems: true\n\
+  \        exportClassificationControlNumbers:\n          items:\n            type:\
+  \ string\n          type: array\n          uniqueItems: true\n        otherRelevantDataCountries:\n\
+  \          additionalProperties:\n            type: string\n          type: object\n\
+  \        personalDataTypes:\n          items:\n            type: string\n      \
+  \    type: array\n          uniqueItems: true\n        securityClassifications:\n\
+  \          items:\n            type: string\n          type: array\n          uniqueItems:\
+  \ true\n      type: object\n    RequestLegalTags:\n      properties:\n        names:\n\
+  \          items:\n            type: string\n          maxItems: 25\n          minItems:\
+  \ 1\n          type: array\n      required:\n      - names\n      type: object\n\
+  \    UpdateLegalTag:\n      properties:\n        contractId:\n          type: string\n\
+  \        description:\n          type: string\n        expirationDate:\n       \
+  \   format: date-time\n          type: string\n        extensionProperties:\n  \
+  \        additionalProperties:\n            type: object\n          type: object\n\
+  \        name:\n          type: string\n      type: object\n    VersionInfo:\n \
+  \     properties:\n        artifactId:\n          type: string\n        branch:\n\
+  \          type: string\n        buildTime:\n          type: string\n        commitId:\n\
+  \          type: string\n        commitMessage:\n          type: string\n      \
+  \  connectedOuterServices:\n          items:\n            $ref: '#/components/schemas/ConnectedOuterService'\n\
+  \          type: array\n        groupId:\n          type: string\n        version:\n\
+  \          type: string\n      type: object\n  securitySchemes:\n    Authorization:\n\
+  \      bearerFormat: Authorization\n      scheme: Bearer\n      type: http\ninfo:\n\
+  \  title: Legal Service\n  version: '1.0'\nopenapi: 3.0.1\npaths:\n  /_ah/liveness_check:\n\
+  \    get:\n      operationId: livenessCheck\n      parameters:\n      - description:\
+  \ Tenant Id\n        in: header\n        name: data-partition-id\n        required:\
+  \ true\n      responses:\n        '200':\n          content:\n            '*/*':\n\
+  \              schema:\n                type: string\n          description: OK\n\
+  \      tags:\n      - health-check-api\n  /_ah/readiness_check:\n    get:\n    \
+  \  operationId: readinessCheck\n      parameters:\n      - description: Tenant Id\n\
+  \        in: header\n        name: data-partition-id\n        required: true\n \
+  \     responses:\n        '200':\n          content:\n            '*/*':\n     \
+  \         schema:\n                type: string\n          description: OK\n   \
+  \   tags:\n      - health-check-api\n  /error:\n    delete:\n      operationId:\
+  \ handleError_5\n      parameters:\n      - description: Tenant Id\n        in:\
+  \ header\n        name: data-partition-id\n        required: true\n      responses:\n\
+  \        '200':\n          content:\n            '*/*':\n              schema:\n\
+  \                type: object\n          description: OK\n      tags:\n      - global-error-handler\n\
+  \    get:\n      operationId: handleError\n      parameters:\n      - description:\
+  \ Tenant Id\n        in: header\n        name: data-partition-id\n        required:\
+  \ true\n      responses:\n        '200':\n          content:\n            '*/*':\n\
+  \              schema:\n                type: object\n          description: OK\n\
+  \      tags:\n      - global-error-handler\n    head:\n      operationId: handleError_1\n\
+  \      parameters:\n      - description: Tenant Id\n        in: header\n       \
+  \ name: data-partition-id\n        required: true\n      responses:\n        '200':\n\
+  \          content:\n            '*/*':\n              schema:\n               \
+  \ type: object\n          description: OK\n      tags:\n      - global-error-handler\n\
+  \    options:\n      operationId: handleError_6\n      parameters:\n      - description:\
+  \ Tenant Id\n        in: header\n        name: data-partition-id\n        required:\
+  \ true\n      responses:\n        '200':\n          content:\n            '*/*':\n\
+  \              schema:\n                type: object\n          description: OK\n\
+  \      tags:\n      - global-error-handler\n    patch:\n      operationId: handleError_4\n\
+  \      parameters:\n      - description: Tenant Id\n        in: header\n       \
+  \ name: data-partition-id\n        required: true\n      responses:\n        '200':\n\
+  \          content:\n            '*/*':\n              schema:\n               \
+  \ type: object\n          description: OK\n      tags:\n      - global-error-handler\n\
+  \    post:\n      operationId: handleError_2\n      parameters:\n      - description:\
+  \ Tenant Id\n        in: header\n        name: data-partition-id\n        required:\
+  \ true\n      responses:\n        '200':\n          content:\n            '*/*':\n\
+  \              schema:\n                type: object\n          description: OK\n\
+  \      tags:\n      - global-error-handler\n    put:\n      operationId: handleError_3\n\
+  \      parameters:\n      - description: Tenant Id\n        in: header\n       \
+  \ name: data-partition-id\n        required: true\n      responses:\n        '200':\n\
+  \          content:\n            '*/*':\n              schema:\n               \
+  \ type: object\n          description: OK\n      tags:\n      - global-error-handler\n\
+  \  /info:\n    get:\n      operationId: info\n      parameters:\n      - description:\
+  \ Tenant Id\n        in: header\n        name: data-partition-id\n        required:\
+  \ true\n      responses:\n        '200':\n          content:\n            application/json:\n\
+  \              schema:\n                $ref: '#/components/schemas/VersionInfo'\n\
+  \          description: OK\n      tags:\n      - info-api\n  /jobs/updateLegalTagStatus:\n\
+  \    get:\n      operationId: checkLegalTagStatusChanges\n      parameters:\n  \
+  \    - description: Tenant Id\n        in: header\n        name: data-partition-id\n\
+  \        required: true\n      responses:\n        '200':\n          content:\n\
+  \            '*/*':\n              schema:\n                enum:\n            \
+  \    - 100 CONTINUE\n                - 101 SWITCHING_PROTOCOLS\n               \
+  \ - 102 PROCESSING\n                - 103 CHECKPOINT\n                - 200 OK\n\
+  \                - 201 CREATED\n                - 202 ACCEPTED\n               \
+  \ - 203 NON_AUTHORITATIVE_INFORMATION\n                - 204 NO_CONTENT\n      \
+  \          - 205 RESET_CONTENT\n                - 206 PARTIAL_CONTENT\n        \
+  \        - 207 MULTI_STATUS\n                - 208 ALREADY_REPORTED\n          \
+  \      - 226 IM_USED\n                - 300 MULTIPLE_CHOICES\n                -\
+  \ 301 MOVED_PERMANENTLY\n                - 302 FOUND\n                - 302 MOVED_TEMPORARILY\n\
+  \                - 303 SEE_OTHER\n                - 304 NOT_MODIFIED\n         \
+  \       - 305 USE_PROXY\n                - 307 TEMPORARY_REDIRECT\n            \
+  \    - 308 PERMANENT_REDIRECT\n                - 400 BAD_REQUEST\n             \
+  \   - 401 UNAUTHORIZED\n                - 402 PAYMENT_REQUIRED\n               \
+  \ - 403 FORBIDDEN\n                - 404 NOT_FOUND\n                - 405 METHOD_NOT_ALLOWED\n\
+  \                - 406 NOT_ACCEPTABLE\n                - 407 PROXY_AUTHENTICATION_REQUIRED\n\
+  \                - 408 REQUEST_TIMEOUT\n                - 409 CONFLICT\n       \
+  \         - 410 GONE\n                - 411 LENGTH_REQUIRED\n                - 412\
+  \ PRECONDITION_FAILED\n                - 413 PAYLOAD_TOO_LARGE\n               \
+  \ - 413 REQUEST_ENTITY_TOO_LARGE\n                - 414 URI_TOO_LONG\n         \
+  \       - 414 REQUEST_URI_TOO_LONG\n                - 415 UNSUPPORTED_MEDIA_TYPE\n\
+  \                - 416 REQUESTED_RANGE_NOT_SATISFIABLE\n                - 417 EXPECTATION_FAILED\n\
+  \                - 418 I_AM_A_TEAPOT\n                - 419 INSUFFICIENT_SPACE_ON_RESOURCE\n\
+  \                - 420 METHOD_FAILURE\n                - 421 DESTINATION_LOCKED\n\
+  \                - 422 UNPROCESSABLE_ENTITY\n                - 423 LOCKED\n    \
+  \            - 424 FAILED_DEPENDENCY\n                - 425 TOO_EARLY\n        \
+  \        - 426 UPGRADE_REQUIRED\n                - 428 PRECONDITION_REQUIRED\n \
+  \               - 429 TOO_MANY_REQUESTS\n                - 431 REQUEST_HEADER_FIELDS_TOO_LARGE\n\
+  \                - 451 UNAVAILABLE_FOR_LEGAL_REASONS\n                - 500 INTERNAL_SERVER_ERROR\n\
+  \                - 501 NOT_IMPLEMENTED\n                - 502 BAD_GATEWAY\n    \
+  \            - 503 SERVICE_UNAVAILABLE\n                - 504 GATEWAY_TIMEOUT\n\
+  \                - 505 HTTP_VERSION_NOT_SUPPORTED\n                - 506 VARIANT_ALSO_NEGOTIATES\n\
+  \                - 507 INSUFFICIENT_STORAGE\n                - 508 LOOP_DETECTED\n\
+  \                - 509 BANDWIDTH_LIMIT_EXCEEDED\n                - 510 NOT_EXTENDED\n\
+  \                - 511 NETWORK_AUTHENTICATION_REQUIRED\n                type: string\n\
+  \          description: OK\n      tags:\n      - legal-tag-status-job-api\n  /legaltags:\n\
+  \    get:\n      operationId: listLegalTags\n      parameters:\n      - in: query\n\
+  \        name: valid\n        required: false\n        schema:\n          default:\
+  \ true\n          type: boolean\n      - description: Tenant Id\n        in: header\n\
+  \        name: data-partition-id\n        required: true\n      responses:\n   \
+  \     '200':\n          content:\n            '*/*':\n              schema:\n  \
+  \              $ref: '#/components/schemas/LegalTagDtos'\n          description:\
+  \ OK\n      tags:\n      - legal-tag-api\n    post:\n      operationId: createLegalTag\n\
+  \      parameters:\n      - description: Tenant Id\n        in: header\n       \
+  \ name: data-partition-id\n        required: true\n      requestBody:\n        content:\n\
+  \          application/json:\n            schema:\n              $ref: '#/components/schemas/LegalTagDto'\n\
+  \        required: true\n      responses:\n        '200':\n          content:\n\
+  \            '*/*':\n              schema:\n                $ref: '#/components/schemas/LegalTagDto'\n\
+  \          description: OK\n      tags:\n      - legal-tag-api\n    put:\n     \
+  \ operationId: updateLegalTag\n      parameters:\n      - description: Tenant Id\n\
+  \        in: header\n        name: data-partition-id\n        required: true\n \
+  \     requestBody:\n        content:\n          application/json:\n            schema:\n\
+  \              $ref: '#/components/schemas/UpdateLegalTag'\n        required: true\n\
+  \      responses:\n        '200':\n          content:\n            '*/*':\n    \
+  \          schema:\n                $ref: '#/components/schemas/LegalTagDto'\n \
+  \         description: OK\n      tags:\n      - legal-tag-api\n  /legaltags/{name}:\n\
+  \    delete:\n      operationId: deleteLegalTag\n      parameters:\n      - in:\
+  \ path\n        name: name\n        required: true\n        schema:\n          type:\
+  \ string\n      - description: Tenant Id\n        in: header\n        name: data-partition-id\n\
+  \        required: true\n      responses:\n        '200':\n          content:\n\
+  \            '*/*':\n              schema:\n                enum:\n            \
+  \    - 100 CONTINUE\n                - 101 SWITCHING_PROTOCOLS\n               \
+  \ - 102 PROCESSING\n                - 103 CHECKPOINT\n                - 200 OK\n\
+  \                - 201 CREATED\n                - 202 ACCEPTED\n               \
+  \ - 203 NON_AUTHORITATIVE_INFORMATION\n                - 204 NO_CONTENT\n      \
+  \          - 205 RESET_CONTENT\n                - 206 PARTIAL_CONTENT\n        \
+  \        - 207 MULTI_STATUS\n                - 208 ALREADY_REPORTED\n          \
+  \      - 226 IM_USED\n                - 300 MULTIPLE_CHOICES\n                -\
+  \ 301 MOVED_PERMANENTLY\n                - 302 FOUND\n                - 302 MOVED_TEMPORARILY\n\
+  \                - 303 SEE_OTHER\n                - 304 NOT_MODIFIED\n         \
+  \       - 305 USE_PROXY\n                - 307 TEMPORARY_REDIRECT\n            \
+  \    - 308 PERMANENT_REDIRECT\n                - 400 BAD_REQUEST\n             \
+  \   - 401 UNAUTHORIZED\n                - 402 PAYMENT_REQUIRED\n               \
+  \ - 403 FORBIDDEN\n                - 404 NOT_FOUND\n                - 405 METHOD_NOT_ALLOWED\n\
+  \                - 406 NOT_ACCEPTABLE\n                - 407 PROXY_AUTHENTICATION_REQUIRED\n\
+  \                - 408 REQUEST_TIMEOUT\n                - 409 CONFLICT\n       \
+  \         - 410 GONE\n                - 411 LENGTH_REQUIRED\n                - 412\
+  \ PRECONDITION_FAILED\n                - 413 PAYLOAD_TOO_LARGE\n               \
+  \ - 413 REQUEST_ENTITY_TOO_LARGE\n                - 414 URI_TOO_LONG\n         \
+  \       - 414 REQUEST_URI_TOO_LONG\n                - 415 UNSUPPORTED_MEDIA_TYPE\n\
+  \                - 416 REQUESTED_RANGE_NOT_SATISFIABLE\n                - 417 EXPECTATION_FAILED\n\
+  \                - 418 I_AM_A_TEAPOT\n                - 419 INSUFFICIENT_SPACE_ON_RESOURCE\n\
+  \                - 420 METHOD_FAILURE\n                - 421 DESTINATION_LOCKED\n\
+  \                - 422 UNPROCESSABLE_ENTITY\n                - 423 LOCKED\n    \
+  \            - 424 FAILED_DEPENDENCY\n                - 425 TOO_EARLY\n        \
+  \        - 426 UPGRADE_REQUIRED\n                - 428 PRECONDITION_REQUIRED\n \
+  \               - 429 TOO_MANY_REQUESTS\n                - 431 REQUEST_HEADER_FIELDS_TOO_LARGE\n\
+  \                - 451 UNAVAILABLE_FOR_LEGAL_REASONS\n                - 500 INTERNAL_SERVER_ERROR\n\
+  \                - 501 NOT_IMPLEMENTED\n                - 502 BAD_GATEWAY\n    \
+  \            - 503 SERVICE_UNAVAILABLE\n                - 504 GATEWAY_TIMEOUT\n\
+  \                - 505 HTTP_VERSION_NOT_SUPPORTED\n                - 506 VARIANT_ALSO_NEGOTIATES\n\
+  \                - 507 INSUFFICIENT_STORAGE\n                - 508 LOOP_DETECTED\n\
+  \                - 509 BANDWIDTH_LIMIT_EXCEEDED\n                - 510 NOT_EXTENDED\n\
+  \                - 511 NETWORK_AUTHENTICATION_REQUIRED\n                type: string\n\
+  \          description: OK\n      tags:\n      - legal-tag-api\n    get:\n     \
+  \ operationId: getLegalTag\n      parameters:\n      - in: path\n        name: name\n\
+  \        required: true\n        schema:\n          type: string\n      - description:\
+  \ Tenant Id\n        in: header\n        name: data-partition-id\n        required:\
+  \ true\n      responses:\n        '200':\n          content:\n            '*/*':\n\
+  \              schema:\n                type: string\n          description: OK\n\
+  \      tags:\n      - legal-tag-api\n  /legaltags:batchRetrieve:\n    post:\n  \
+  \    operationId: getLegalTags\n      parameters:\n      - description: Tenant Id\n\
+  \        in: header\n        name: data-partition-id\n        required: true\n \
+  \     requestBody:\n        content:\n          application/json:\n            schema:\n\
+  \              $ref: '#/components/schemas/RequestLegalTags'\n        required:\
+  \ true\n      responses:\n        '200':\n          content:\n            '*/*':\n\
+  \              schema:\n                $ref: '#/components/schemas/LegalTagDtos'\n\
+  \          description: OK\n      tags:\n      - legal-tag-api\n  /legaltags:properties:\n\
+  \    get:\n      operationId: getLegalTagProperties\n      parameters:\n      -\
+  \ description: Tenant Id\n        in: header\n        name: data-partition-id\n\
+  \        required: true\n      responses:\n        '200':\n          content:\n\
+  \            '*/*':\n              schema:\n                $ref: '#/components/schemas/ReadablePropertyValues'\n\
+  \          description: OK\n      tags:\n      - legal-tag-api\n  /legaltags:validate:\n\
+  \    post:\n      operationId: validateLegalTags\n      parameters:\n      - description:\
+  \ Tenant Id\n        in: header\n        name: data-partition-id\n        required:\
+  \ true\n      requestBody:\n        content:\n          application/json:\n    \
+  \        schema:\n              $ref: '#/components/schemas/RequestLegalTags'\n\
+  \        required: true\n      responses:\n        '200':\n          content:\n\
+  \            '*/*':\n              schema:\n                $ref: '#/components/schemas/InvalidTagsWithReason'\n\
+  \          description: OK\n      tags:\n      - legal-tag-api\n  /whoami:\n   \
+  \ delete:\n      operationId: whoami_5\n      parameters:\n      - description:\
+  \ Tenant Id\n        in: header\n        name: data-partition-id\n        required:\
+  \ true\n      responses:\n        '200':\n          content:\n            '*/*':\n\
+  \              schema:\n                type: string\n          description: OK\n\
+  \      tags:\n      - whoami-controller\n    get:\n      operationId: whoami\n \
+  \     parameters:\n      - description: Tenant Id\n        in: header\n        name:\
+  \ data-partition-id\n        required: true\n      responses:\n        '200':\n\
+  \          content:\n            '*/*':\n              schema:\n               \
+  \ type: string\n          description: OK\n      tags:\n      - whoami-controller\n\
+  \    head:\n      operationId: whoami_1\n      parameters:\n      - description:\
+  \ Tenant Id\n        in: header\n        name: data-partition-id\n        required:\
+  \ true\n      responses:\n        '200':\n          content:\n            '*/*':\n\
+  \              schema:\n                type: string\n          description: OK\n\
+  \      tags:\n      - whoami-controller\n    options:\n      operationId: whoami_6\n\
+  \      parameters:\n      - description: Tenant Id\n        in: header\n       \
+  \ name: data-partition-id\n        required: true\n      responses:\n        '200':\n\
+  \          content:\n            '*/*':\n              schema:\n               \
+  \ type: string\n          description: OK\n      tags:\n      - whoami-controller\n\
+  \    patch:\n      operationId: whoami_4\n      parameters:\n      - description:\
+  \ Tenant Id\n        in: header\n        name: data-partition-id\n        required:\
+  \ true\n      responses:\n        '200':\n          content:\n            '*/*':\n\
+  \              schema:\n                type: string\n          description: OK\n\
+  \      tags:\n      - whoami-controller\n    post:\n      operationId: whoami_2\n\
+  \      parameters:\n      - description: Tenant Id\n        in: header\n       \
+  \ name: data-partition-id\n        required: true\n      responses:\n        '200':\n\
+  \          content:\n            '*/*':\n              schema:\n               \
+  \ type: string\n          description: OK\n      tags:\n      - whoami-controller\n\
+  \    put:\n      operationId: whoami_3\n      parameters:\n      - description:\
+  \ Tenant Id\n        in: header\n        name: data-partition-id\n        required:\
+  \ true\n      responses:\n        '200':\n          content:\n            '*/*':\n\
+  \              schema:\n                type: string\n          description: OK\n\
+  \      tags:\n      - whoami-controller\nsecurity:\n- Authorization: []\nservers:\n\
+  - url: /api/legal/v1\n"

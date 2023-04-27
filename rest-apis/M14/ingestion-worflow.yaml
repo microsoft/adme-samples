@@ -1,0 +1,211 @@
+"components:\n  schemas:\n    ConnectedOuterService:\n      properties:\n        name:\n\
+  \          type: string\n        version:\n          type: string\n      type: object\n\
+  \    CreateWorkflowRequest:\n      properties:\n        description:\n         \
+  \ type: string\n        registrationInstructions:\n          additionalProperties:\n\
+  \            type: object\n          type: object\n        workflowName:\n     \
+  \     type: string\n      type: object\n    CustomOperator:\n      properties:\n\
+  \        className:\n          type: string\n        createdAt:\n          format:\
+  \ int64\n          type: integer\n        createdBy:\n          type: string\n \
+  \       description:\n          type: string\n        id:\n          type: string\n\
+  \        name:\n          type: string\n        properties:\n          items:\n\
+  \            $ref: '#/components/schemas/CustomOperatorProperty'\n          type:\
+  \ array\n      type: object\n    CustomOperatorProperty:\n      properties:\n  \
+  \      description:\n          type: string\n        mandatory:\n          type:\
+  \ boolean\n        name:\n          type: string\n      required:\n      - description\n\
+  \      - mandatory\n      - name\n      type: object\n    CustomOperatorsPage:\n\
+  \      properties:\n        cursor:\n          type: string\n        items:\n  \
+  \        items:\n            $ref: '#/components/schemas/CustomOperator'\n     \
+  \     type: array\n      type: object\n    GetSignedUrlResponse:\n      properties:\n\
+  \        url:\n          type: string\n      type: object\n    RegisterCustomOperatorRequest:\n\
+  \      properties:\n        className:\n          type: string\n        content:\n\
+  \          type: string\n        description:\n          type: string\n        name:\n\
+  \          type: string\n        properties:\n          items:\n            $ref:\
+  \ '#/components/schemas/CustomOperatorProperty'\n          type: array\n      required:\n\
+  \      - className\n      - content\n      - description\n      - name\n      -\
+  \ properties\n      type: object\n    TriggerWorkflowRequest:\n      properties:\n\
+  \        executionContext:\n          additionalProperties:\n            type: object\n\
+  \          type: object\n        runId:\n          type: string\n      type: object\n\
+  \    UpdateWorkflowRunRequest:\n      properties:\n        status:\n          enum:\n\
+  \          - submitted\n          - running\n          - finished\n          - failed\n\
+  \          - success\n          - queued\n          type: string\n      type: object\n\
+  \    VersionInfo:\n      properties:\n        artifactId:\n          type: string\n\
+  \        branch:\n          type: string\n        buildTime:\n          type: string\n\
+  \        commitId:\n          type: string\n        commitMessage:\n          type:\
+  \ string\n        connectedOuterServices:\n          items:\n            $ref: '#/components/schemas/ConnectedOuterService'\n\
+  \          type: array\n        groupId:\n          type: string\n        version:\n\
+  \          type: string\n      type: object\n    WorkflowMetadata:\n      properties:\n\
+  \        createdBy:\n          type: string\n        creationTimestamp:\n      \
+  \    format: int64\n          type: integer\n        description:\n          type:\
+  \ string\n        isDeployedThroughWorkflowService:\n          type: boolean\n \
+  \         writeOnly: true\n        isSystemWorkflow:\n          type: boolean\n\
+  \          writeOnly: true\n        registrationInstructions:\n          additionalProperties:\n\
+  \            type: object\n          type: object\n        version:\n          format:\
+  \ int64\n          type: integer\n        workflowId:\n          type: string\n\
+  \        workflowName:\n          type: string\n      type: object\n    WorkflowRun:\n\
+  \      properties:\n        endTimeStamp:\n          format: int64\n          type:\
+  \ integer\n        runId:\n          type: string\n        startTimeStamp:\n   \
+  \       format: int64\n          type: integer\n        status:\n          enum:\n\
+  \          - submitted\n          - running\n          - finished\n          - failed\n\
+  \          - success\n          - queued\n          type: string\n        submittedBy:\n\
+  \          type: string\n        workflowEngineExecutionDate:\n          type: string\n\
+  \        workflowId:\n          type: string\n        workflowName:\n          type:\
+  \ string\n      type: object\n    WorkflowRunResponse:\n      properties:\n    \
+  \    endTimeStamp:\n          format: int64\n          type: integer\n        runId:\n\
+  \          type: string\n        startTimeStamp:\n          format: int64\n    \
+  \      type: integer\n        status:\n          enum:\n          - submitted\n\
+  \          - running\n          - finished\n          - failed\n          - success\n\
+  \          - queued\n          type: string\n        submittedBy:\n          type:\
+  \ string\n        workflowId:\n          type: string\n      type: object\n  securitySchemes:\n\
+  \    Authorization:\n      bearerFormat: Authorization\n      scheme: Bearer\n \
+  \     type: http\ninfo:\n  title: Ingestion Workflow Service\n  version: '1.0'\n\
+  openapi: 3.0.1\npaths:\n  /liveness_check:\n    get:\n      operationId: livenessCheck\n\
+  \      parameters:\n      - description: Tenant Id\n        in: header\n       \
+  \ name: data-partition-id\n        required: true\n      responses:\n        '200':\n\
+  \          content:\n            '*/*':\n              schema:\n               \
+  \ type: string\n          description: OK\n      tags:\n      - health-check-api\n\
+  \  /readiness_check:\n    get:\n      operationId: readinessCheck\n      parameters:\n\
+  \      - description: Tenant Id\n        in: header\n        name: data-partition-id\n\
+  \        required: true\n      responses:\n        '200':\n          content:\n\
+  \            '*/*':\n              schema:\n                type: string\n     \
+  \     description: OK\n      tags:\n      - health-check-api\n  /v1/customOperator:\n\
+  \    get:\n      operationId: getAllCustomOperators\n      parameters:\n      -\
+  \ in: query\n        name: limit\n        required: false\n        schema:\n   \
+  \       default: 50\n          format: int32\n          type: integer\n      - in:\
+  \ query\n        name: cursor\n        required: false\n        schema:\n      \
+  \    type: string\n      - description: Tenant Id\n        in: header\n        name:\
+  \ data-partition-id\n        required: true\n      responses:\n        '200':\n\
+  \          content:\n            '*/*':\n              schema:\n               \
+  \ $ref: '#/components/schemas/CustomOperatorsPage'\n          description: OK\n\
+  \      tags:\n      - custom-operator-api\n    post:\n      operationId: registerCustomOperator\n\
+  \      parameters:\n      - description: Tenant Id\n        in: header\n       \
+  \ name: data-partition-id\n        required: true\n      requestBody:\n        content:\n\
+  \          application/json:\n            schema:\n              $ref: '#/components/schemas/RegisterCustomOperatorRequest'\n\
+  \        required: true\n      responses:\n        '200':\n          content:\n\
+  \            '*/*':\n              schema:\n                $ref: '#/components/schemas/CustomOperator'\n\
+  \          description: OK\n      tags:\n      - custom-operator-api\n  /v1/customOperator/{custom_operator_name}:\n\
+  \    get:\n      operationId: getCustomOperatorByName\n      parameters:\n     \
+  \ - in: path\n        name: custom_operator_name\n        required: true\n     \
+  \   schema:\n          type: string\n      - description: Tenant Id\n        in:\
+  \ header\n        name: data-partition-id\n        required: true\n      responses:\n\
+  \        '200':\n          content:\n            '*/*':\n              schema:\n\
+  \                $ref: '#/components/schemas/CustomOperator'\n          description:\
+  \ OK\n      tags:\n      - custom-operator-api\n  /v1/info:\n    get:\n      operationId:\
+  \ info\n      parameters:\n      - description: Tenant Id\n        in: header\n\
+  \        name: data-partition-id\n        required: true\n      responses:\n   \
+  \     '200':\n          content:\n            application/json:\n              schema:\n\
+  \                $ref: '#/components/schemas/VersionInfo'\n          description:\
+  \ OK\n      tags:\n      - info-api\n  /v1/workflow:\n    get:\n      operationId:\
+  \ getAllWorkflowsForTenant\n      parameters:\n      - in: query\n        name:\
+  \ prefix\n        required: false\n        schema:\n          type: string\n   \
+  \   - description: Tenant Id\n        in: header\n        name: data-partition-id\n\
+  \        required: true\n      responses:\n        '200':\n          content:\n\
+  \            '*/*':\n              schema:\n                items:\n           \
+  \       $ref: '#/components/schemas/WorkflowMetadata'\n                type: array\n\
+  \          description: OK\n      tags:\n      - workflow-manager-api\n    post:\n\
+  \      operationId: create\n      parameters:\n      - description: Tenant Id\n\
+  \        in: header\n        name: data-partition-id\n        required: true\n \
+  \     requestBody:\n        content:\n          application/json:\n            schema:\n\
+  \              $ref: '#/components/schemas/CreateWorkflowRequest'\n        required:\
+  \ true\n      responses:\n        '200':\n          content:\n            '*/*':\n\
+  \              schema:\n                $ref: '#/components/schemas/WorkflowMetadata'\n\
+  \          description: OK\n      tags:\n      - workflow-manager-api\n  /v1/workflow/system:\n\
+  \    post:\n      operationId: createSystemWorkflow\n      parameters:\n      -\
+  \ description: Tenant Id\n        in: header\n        name: data-partition-id\n\
+  \        required: true\n      requestBody:\n        content:\n          application/json:\n\
+  \            schema:\n              $ref: '#/components/schemas/CreateWorkflowRequest'\n\
+  \        required: true\n      responses:\n        '200':\n          content:\n\
+  \            '*/*':\n              schema:\n                $ref: '#/components/schemas/WorkflowMetadata'\n\
+  \          description: OK\n      tags:\n      - workflow-system-manager-api\n \
+  \ /v1/workflow/system/{workflow_name}:\n    delete:\n      operationId: deleteSystemWorkflowById\n\
+  \      parameters:\n      - in: path\n        name: workflow_name\n        required:\
+  \ true\n        schema:\n          type: string\n      - description: Tenant Id\n\
+  \        in: header\n        name: data-partition-id\n        required: true\n \
+  \     responses:\n        '204':\n          description: No Content\n      tags:\n\
+  \      - workflow-system-manager-api\n  /v1/workflow/{workflow_name}:\n    delete:\n\
+  \      operationId: deleteWorkflowById\n      parameters:\n      - in: path\n  \
+  \      name: workflow_name\n        required: true\n        schema:\n          type:\
+  \ string\n      - description: Tenant Id\n        in: header\n        name: data-partition-id\n\
+  \        required: true\n      responses:\n        '204':\n          description:\
+  \ No Content\n      tags:\n      - workflow-manager-api\n    get:\n      operationId:\
+  \ getWorkflowByName\n      parameters:\n      - in: path\n        name: workflow_name\n\
+  \        required: true\n        schema:\n          type: string\n      - description:\
+  \ Tenant Id\n        in: header\n        name: data-partition-id\n        required:\
+  \ true\n      responses:\n        '200':\n          content:\n            '*/*':\n\
+  \              schema:\n                $ref: '#/components/schemas/WorkflowMetadata'\n\
+  \          description: OK\n      tags:\n      - workflow-manager-api\n  /v1/workflow/{workflow_name}/workflowRun:\n\
+  \    get:\n      operationId: getAllRunInstances\n      parameters:\n      - in:\
+  \ path\n        name: workflow_name\n        required: true\n        schema:\n \
+  \         type: string\n      - in: query\n        name: params\n        required:\
+  \ true\n        schema:\n          additionalProperties:\n            type: object\n\
+  \          type: object\n      - description: Tenant Id\n        in: header\n  \
+  \      name: data-partition-id\n        required: true\n      responses:\n     \
+  \   '200':\n          content:\n            '*/*':\n              schema:\n    \
+  \            items:\n                  $ref: '#/components/schemas/WorkflowRun'\n\
+  \                type: array\n          description: OK\n      tags:\n      - workflow-run-api\n\
+  \    post:\n      operationId: triggerWorkflow\n      parameters:\n      - in: path\n\
+  \        name: workflow_name\n        required: true\n        schema:\n        \
+  \  type: string\n      - description: Tenant Id\n        in: header\n        name:\
+  \ data-partition-id\n        required: true\n      requestBody:\n        content:\n\
+  \          application/json:\n            schema:\n              $ref: '#/components/schemas/TriggerWorkflowRequest'\n\
+  \        required: true\n      responses:\n        '200':\n          content:\n\
+  \            '*/*':\n              schema:\n                $ref: '#/components/schemas/WorkflowRunResponse'\n\
+  \          description: OK\n      tags:\n      - workflow-run-api\n  /v1/workflow/{workflow_name}/workflowRun/{runId}:\n\
+  \    get:\n      operationId: getWorkflowRunById\n      parameters:\n      - in:\
+  \ path\n        name: workflow_name\n        required: true\n        schema:\n \
+  \         type: string\n      - in: path\n        name: runId\n        required:\
+  \ true\n        schema:\n          type: string\n      - description: Tenant Id\n\
+  \        in: header\n        name: data-partition-id\n        required: true\n \
+  \     responses:\n        '200':\n          content:\n            '*/*':\n     \
+  \         schema:\n                $ref: '#/components/schemas/WorkflowRunResponse'\n\
+  \          description: OK\n      tags:\n      - workflow-run-api\n    put:\n  \
+  \    operationId: updateWorkflowRun\n      parameters:\n      - in: path\n     \
+  \   name: workflow_name\n        required: true\n        schema:\n          type:\
+  \ string\n      - in: path\n        name: runId\n        required: true\n      \
+  \  schema:\n          type: string\n      - description: Tenant Id\n        in:\
+  \ header\n        name: data-partition-id\n        required: true\n      requestBody:\n\
+  \        content:\n          application/json:\n            schema:\n          \
+  \    $ref: '#/components/schemas/UpdateWorkflowRunRequest'\n        required: true\n\
+  \      responses:\n        '200':\n          content:\n            '*/*':\n    \
+  \          schema:\n                $ref: '#/components/schemas/WorkflowRunResponse'\n\
+  \          description: OK\n      tags:\n      - workflow-run-api\n  /v1/workflow/{workflow_name}/workflowRun/{runId}/getSignedUrl:\n\
+  \    get:\n      operationId: create_1\n      parameters:\n      - in: path\n  \
+  \      name: workflow_name\n        required: true\n        schema:\n          type:\
+  \ string\n      - in: path\n        name: runId\n        required: true\n      \
+  \  schema:\n          type: string\n      - description: Tenant Id\n        in:\
+  \ header\n        name: data-partition-id\n        required: true\n      responses:\n\
+  \        '200':\n          content:\n            '*/*':\n              schema:\n\
+  \                $ref: '#/components/schemas/GetSignedUrlResponse'\n          description:\
+  \ OK\n      tags:\n      - workflow-tasks-sharing-api\n  /whoami:\n    delete:\n\
+  \      operationId: whoami_5\n      parameters:\n      - description: Tenant Id\n\
+  \        in: header\n        name: data-partition-id\n        required: true\n \
+  \     responses:\n        '200':\n          content:\n            '*/*':\n     \
+  \         schema:\n                type: string\n          description: OK\n   \
+  \   tags:\n      - whoami-controller\n    get:\n      operationId: whoami\n    \
+  \  parameters:\n      - description: Tenant Id\n        in: header\n        name:\
+  \ data-partition-id\n        required: true\n      responses:\n        '200':\n\
+  \          content:\n            '*/*':\n              schema:\n               \
+  \ type: string\n          description: OK\n      tags:\n      - whoami-controller\n\
+  \    head:\n      operationId: whoami_1\n      parameters:\n      - description:\
+  \ Tenant Id\n        in: header\n        name: data-partition-id\n        required:\
+  \ true\n      responses:\n        '200':\n          content:\n            '*/*':\n\
+  \              schema:\n                type: string\n          description: OK\n\
+  \      tags:\n      - whoami-controller\n    options:\n      operationId: whoami_6\n\
+  \      parameters:\n      - description: Tenant Id\n        in: header\n       \
+  \ name: data-partition-id\n        required: true\n      responses:\n        '200':\n\
+  \          content:\n            '*/*':\n              schema:\n               \
+  \ type: string\n          description: OK\n      tags:\n      - whoami-controller\n\
+  \    patch:\n      operationId: whoami_4\n      parameters:\n      - description:\
+  \ Tenant Id\n        in: header\n        name: data-partition-id\n        required:\
+  \ true\n      responses:\n        '200':\n          content:\n            '*/*':\n\
+  \              schema:\n                type: string\n          description: OK\n\
+  \      tags:\n      - whoami-controller\n    post:\n      operationId: whoami_2\n\
+  \      parameters:\n      - description: Tenant Id\n        in: header\n       \
+  \ name: data-partition-id\n        required: true\n      responses:\n        '200':\n\
+  \          content:\n            '*/*':\n              schema:\n               \
+  \ type: string\n          description: OK\n      tags:\n      - whoami-controller\n\
+  \    put:\n      operationId: whoami_3\n      parameters:\n      - description:\
+  \ Tenant Id\n        in: header\n        name: data-partition-id\n        required:\
+  \ true\n      responses:\n        '200':\n          content:\n            '*/*':\n\
+  \              schema:\n                type: string\n          description: OK\n\
+  \      tags:\n      - whoami-controller\nsecurity:\n- Authorization: []\nservers:\n\
+  - url: /api/workflow\n"

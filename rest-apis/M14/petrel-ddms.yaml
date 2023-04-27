@@ -1,0 +1,214 @@
+"components:\n  schemas:\n    ErrorDetails:\n      additionalProperties: false\n \
+  \     properties:\n        correlationId:\n          nullable: true\n          type:\
+  \ string\n        details:\n          nullable: true\n          type: string\n \
+  \       error:\n          nullable: true\n        errorId:\n          nullable:\
+  \ true\n          type: string\n        message:\n          nullable: true\n   \
+  \       type: string\n        statusCode:\n          format: int32\n          type:\
+  \ integer\n      type: object\n    FieldOperation:\n      additionalProperties:\
+  \ false\n      properties:\n        name:\n          type: string\n        value:\n\
+  \          nullable: true\n      required:\n      - name\n      type: object\n \
+  \   MetadataQueryRequest:\n      additionalProperties: false\n      properties:\n\
+  \        cursor:\n          default: null\n          nullable: true\n          type:\
+  \ string\n        kind:\n          default: slb:petrel:master-data--PetrelProject:1.0.0\n\
+  \          nullable: true\n          type: string\n        limit:\n          default:\
+  \ 25\n          format: int32\n          type: integer\n        query:\n       \
+  \   nullable: true\n          type: string\n        queryAsOwner:\n          default:\
+  \ false\n          type: boolean\n        returnedFields:\n          default: null\n\
+  \          items:\n            type: string\n          nullable: true\n        \
+  \  type: array\n        sort:\n          $ref: '#/components/schemas/SortQueryRequest'\n\
+  \      type: object\n    MetadataQueryResponse:\n      additionalProperties: false\n\
+  \      properties:\n        cursor:\n          nullable: true\n          type: string\n\
+  \        results:\n          items:\n            $ref: '#/components/schemas/OsduRecord'\n\
+  \          nullable: true\n          type: array\n        totalCount:\n        \
+  \  format: int64\n          type: integer\n      type: object\n    OsduAcl:\n  \
+  \    additionalProperties: false\n      properties:\n        owners:\n         \
+  \ items:\n            type: string\n          nullable: true\n          type: array\n\
+  \        viewers:\n          items:\n            type: string\n          nullable:\
+  \ true\n          type: array\n      type: object\n    OsduLegalTag:\n      additionalProperties:\
+  \ false\n      properties:\n        legaltags:\n          items:\n            type:\
+  \ string\n          nullable: true\n          type: array\n        otherRelevantDataCountries:\n\
+  \          items:\n            type: string\n          nullable: true\n        \
+  \  type: array\n      type: object\n    OsduRecord:\n      additionalProperties:\
+  \ false\n      properties:\n        acl:\n          $ref: '#/components/schemas/OsduAcl'\n\
+  \        createTime:\n          default: ''\n          nullable: true\n        \
+  \  type: string\n        createUser:\n          default: ''\n          nullable:\
+  \ true\n          type: string\n        data:\n          default: null\n       \
+  \   nullable: true\n        id:\n          default: ''\n          nullable: true\n\
+  \          type: string\n        kind:\n          default: ''\n          nullable:\
+  \ true\n          type: string\n        legal:\n          $ref: '#/components/schemas/OsduLegalTag'\n\
+  \        meta:\n          items: {}\n          nullable: true\n          type: array\n\
+  \        modifyTime:\n          default: ''\n          nullable: true\n        \
+  \  type: string\n        modifyUser:\n          default: ''\n          nullable:\
+  \ true\n          type: string\n        version:\n          default: ''\n      \
+  \    nullable: true\n          type: string\n      type: object\n    ProjectDownloadResponse:\n\
+  \      additionalProperties: false\n      properties:\n        downloadUrl:\n  \
+  \        nullable: true\n          type: string\n      type: object\n    ProjectPatchRequest:\n\
+  \      additionalProperties: false\n      properties:\n        fields:\n       \
+  \   items:\n            $ref: '#/components/schemas/FieldOperation'\n          type:\
+  \ array\n        id:\n          type: string\n      required:\n      - fields\n\
+  \      - id\n      type: object\n    ProjectUpdateRequest:\n      additionalProperties:\
+  \ false\n      properties:\n        records:\n          items:\n            $ref:\
+  \ '#/components/schemas/OsduRecord'\n          nullable: true\n          type: array\n\
+  \        signedUrl:\n          nullable: true\n          type: string\n      type:\
+  \ object\n    ProjectUploadResponse:\n      additionalProperties: false\n      properties:\n\
+  \        downloadUrl:\n          nullable: true\n          type: string\n      \
+  \  uploadUrl:\n          nullable: true\n          type: string\n      type: object\n\
+  \    SortQueryRequest:\n      additionalProperties: false\n      properties:\n \
+  \       field:\n          items:\n            type: string\n          nullable:\
+  \ true\n          type: array\n        order:\n          items:\n            type:\
+  \ string\n          nullable: true\n          type: array\n      type: object\n\
+  \  securitySchemes:\n    login:\n      description: Put **_ONLY_** your JWT Bearer\
+  \ token on textbox below!\n      flows:\n        authorizationCode:\n          authorizationUrl:\
+  \ https://p4d.csi.cloud.slb-ds.com/v2/auth\n          scopes:\n            963f2cc6915e479fa0fcb73ec2ec90e7:\
+  \ OSDU Client ID\n            openid: User information\n          tokenUrl: https://p4d.csi.cloud.slb-ds.com/v2/token\n\
+  \      type: oauth2\n    manual:\n      bearerFormat: JWT\n      description: Put\
+  \ **_ONLY_** your JWT Bearer token on textbox below!\n      scheme: Bearer\n   \
+  \   type: http\ninfo:\n  description: Petrel DMS OAK Sample Storage API\n  title:\
+  \ Petrel DMS API\n  version: '1.0'\nopenapi: 3.0.1\npaths:\n  /api/petreldms/v1/projects/{projectId}:\n\
+  \    delete:\n      parameters:\n      - description: This value should be the desired\
+  \ data partition id.\n        in: header\n        name: Data-Partition-Id\n    \
+  \    required: true\n        schema:\n          type: string\n      - description:\
+  \ The requested project identifier.\n        in: path\n        name: projectId\n\
+  \        required: true\n        schema:\n          type: string\n      requestBody:\n\
+  \        content:\n          application/json:\n            schema:\n          \
+  \    items:\n                type: string\n              type: array\n        description:\
+  \ Records with identifiers to be deleted\n        required: true\n      responses:\n\
+  \        '200':\n          content:\n            application/json:\n           \
+  \   schema:\n                items:\n                  type: string\n          \
+  \      type: array\n          description: The project was successfully deleted.\n\
+  \        '400':\n          content:\n            application/json:\n           \
+  \   schema:\n                $ref: '#/components/schemas/ErrorDetails'\n       \
+  \   description: The request is invalid\n        '403':\n          content:\n  \
+  \          application/json:\n              schema:\n                $ref: '#/components/schemas/ErrorDetails'\n\
+  \          description: You don't have permission to this project\n        '404':\n\
+  \          description: The project does not exist.\n      summary: Deletes a specific\
+  \ project.\n      tags:\n      - Projects\n    get:\n      parameters:\n      -\
+  \ description: This value should be the desired data partition id.\n        in:\
+  \ header\n        name: Data-Partition-Id\n        required: true\n        schema:\n\
+  \          type: string\n      - description: The requested project identifier.\n\
+  \        in: path\n        name: projectId\n        required: true\n        schema:\n\
+  \          type: string\n      - description: 'Filter attributes to restrict the\
+  \ returned fields of the record.\n          Usage: data.{record-data-field-name}.'\n\
+  \        in: query\n        name: attribute\n        schema:\n          type: string\n\
+  \      responses:\n        '200':\n          content:\n            application/json:\n\
+  \              schema:\n                $ref: '#/components/schemas/OsduRecord'\n\
+  \          description: The project was successfully retrieved.\n        '400':\n\
+  \          content:\n            application/json:\n              schema:\n    \
+  \            $ref: '#/components/schemas/ErrorDetails'\n          description: The\
+  \ request is invalid\n        '403':\n          description: You don't have permission\
+  \ to this project\n        '404':\n          content:\n            application/json:\n\
+  \              schema:\n                $ref: '#/components/schemas/ErrorDetails'\n\
+  \          description: The project does not exist.\n      summary: Gets a single\
+  \ project record.\n      tags:\n      - Projects\n    patch:\n      parameters:\n\
+  \      - description: This value should be the desired data partition id.\n    \
+  \    in: header\n        name: Data-Partition-Id\n        required: true\n     \
+  \   schema:\n          type: string\n      - description: The requested project\
+  \ identifier.\n        in: path\n        name: projectId\n        required: true\n\
+  \        schema:\n          type: string\n      requestBody:\n        content:\n\
+  \          application/json:\n            schema:\n              $ref: '#/components/schemas/ProjectPatchRequest'\n\
+  \        description: The requested update value and parameters.\n        required:\
+  \ true\n      responses:\n        '200':\n          description: The project was\
+  \ successfully updated.\n        '400':\n          content:\n            application/json:\n\
+  \              schema:\n                $ref: '#/components/schemas/ErrorDetails'\n\
+  \          description: The request is invalid\n        '403':\n          description:\
+  \ You don't have permission to this project\n        '404':\n          content:\n\
+  \            application/json:\n              schema:\n                $ref: '#/components/schemas/ErrorDetails'\n\
+  \          description: The project does not exist.\n      summary: Updates a specific\
+  \ project properties.\n      tags:\n      - Projects\n  /api/petreldms/v1/projects/{projectId}/download:\n\
+  \    get:\n      parameters:\n      - description: This value should be the desired\
+  \ data partition id.\n        in: header\n        name: Data-Partition-Id\n    \
+  \    required: true\n        schema:\n          type: string\n      - description:\
+  \ The requested project identifier.\n        in: path\n        name: projectId\n\
+  \        required: true\n        schema:\n          type: string\n      responses:\n\
+  \        '200':\n          content:\n            application/json:\n           \
+  \   schema:\n                $ref: '#/components/schemas/ProjectDownloadResponse'\n\
+  \          description: The project download response was successfully generated.\n\
+  \        '400':\n          content:\n            application/json:\n           \
+  \   schema:\n                $ref: '#/components/schemas/ErrorDetails'\n       \
+  \   description: The request is invalid\n        '403':\n          description:\
+  \ You don't have permission to this project\n        '404':\n          content:\n\
+  \            application/json:\n              schema:\n                $ref: '#/components/schemas/ErrorDetails'\n\
+  \          description: The project does not exist.\n      summary: Get download\
+  \ url of a specific project.\n      tags:\n      - Projects\n  /api/petreldms/v1/projects/{projectId}/update:\n\
+  \    put:\n      parameters:\n      - description: This value should be the desired\
+  \ data partition id.\n        in: header\n        name: Data-Partition-Id\n    \
+  \    required: true\n        schema:\n          type: string\n      - description:\
+  \ The requested project identifier.\n        in: path\n        name: projectId\n\
+  \        required: true\n        schema:\n          type: string\n      requestBody:\n\
+  \        content:\n          application/json:\n            schema:\n          \
+  \    $ref: '#/components/schemas/ProjectUpdateRequest'\n        description: The\
+  \ requested update value and parameters.\n        required: true\n      responses:\n\
+  \        '201':\n          description: The project was successfully updated.\n\
+  \        '400':\n          content:\n            application/json:\n           \
+  \   schema:\n                $ref: '#/components/schemas/ErrorDetails'\n       \
+  \   description: The request is invalid\n        '403':\n          description:\
+  \ You don't have permission to this project\n        '404':\n          content:\n\
+  \            application/json:\n              schema:\n                $ref: '#/components/schemas/ErrorDetails'\n\
+  \          description: The project does not exist.\n      summary: Updates a specific\
+  \ project.\n      tags:\n      - Projects\n  /api/petreldms/v1/projects/{projectId}/upload:\n\
+  \    post:\n      parameters:\n      - description: This value should be the desired\
+  \ data partition id.\n        in: header\n        name: Data-Partition-Id\n    \
+  \    required: true\n        schema:\n          type: string\n      - description:\
+  \ The requested project identifier.\n        in: path\n        name: projectId\n\
+  \        required: true\n        schema:\n          type: string\n      responses:\n\
+  \        '200':\n          content:\n            application/json:\n           \
+  \   schema:\n                $ref: '#/components/schemas/ProjectUploadResponse'\n\
+  \          description: The project upload response was successfully generated.\n\
+  \        '400':\n          content:\n            application/json:\n           \
+  \   schema:\n                $ref: '#/components/schemas/ErrorDetails'\n       \
+  \   description: The request is invalid\n        '403':\n          content:\n  \
+  \          application/json:\n              schema:\n                $ref: '#/components/schemas/ErrorDetails'\n\
+  \          description: You don't have permission to this project\n        '404':\n\
+  \          description: The project does not exist.\n      summary: Uploads a specific\
+  \ project.\n      tags:\n      - Projects\n  /api/petreldms/v1/projects/{projectId}/versions/{versionId}:\n\
+  \    get:\n      parameters:\n      - description: This value should be the desired\
+  \ data partition id.\n        in: header\n        name: Data-Partition-Id\n    \
+  \    required: true\n        schema:\n          type: string\n      - description:\
+  \ The requested project identifier.\n        in: path\n        name: projectId\n\
+  \        required: true\n        schema:\n          type: string\n      - description:\
+  \ The requested version identifier.\n        in: path\n        name: versionId\n\
+  \        required: true\n        schema:\n          type: string\n      - description:\
+  \ 'Filter attributes to restrict the returned fields of the record.\n          Usage:\
+  \ data.{record-data-field-name}.'\n        in: query\n        name: attribute\n\
+  \        schema:\n          type: string\n      responses:\n        '200':\n   \
+  \       content:\n            application/json:\n              schema:\n       \
+  \         $ref: '#/components/schemas/OsduRecord'\n          description: The project\
+  \ version was successfully retrieved.\n        '400':\n          content:\n    \
+  \        application/json:\n              schema:\n                $ref: '#/components/schemas/ErrorDetails'\n\
+  \          description: The request is invalid\n        '403':\n          description:\
+  \ You don't have permission to this project or version\n        '404':\n       \
+  \   content:\n            application/json:\n              schema:\n           \
+  \     $ref: '#/components/schemas/ErrorDetails'\n          description: The project\
+  \ version does not exist.\n      summary: Gets a single version record of a project.\n\
+  \      tags:\n      - Projects\n  /api/petreldms/v1/query:\n    post:\n      description:\
+  \ \"The API supports full text search on string fields, range queries\\\n      \
+  \  \\ on date, numeric or string fields, along with geo-spatial search. Required\\\
+  \n        \\ roles: 'users.datalake.viewers' or 'users.datalake.editors' or 'users.datalake.admins'.\\\
+  \n        \\ In addition, users must be a member of data groups to access the data.\
+  \ It\\\n        \\ can be used to retrieve large numbers of results (or even all\
+  \ results) from\\\n        \\ a single search request, in much the same way as you\
+  \ would use a cursor\\\n        \\ on a traditional database..\\r\\n           \
+  \  Sample request:\\r\\n        \\\n        \\    \\r\\n            {\\r\\n    \
+  \            \\\"kind\\\": \\\"slb:petrel:master-data--PetrelProjectExplorer:1.0.0\\\
+  \"\\\n        ,\\r\\n                \\\"limit\\\": 10,\\r\\n                \\\"\
+  query\\\": \\\"id: \\\\\\\n        \\\"opendes:master-data--PetrelProjectExplorer:3664b600-5f2c-4c6a-b2ae-74a1e584a837\\\
+  \\\\\n        \\\"\\\",\\r\\n                \\\"returnedFields\\\": [],\\r\\n \
+  \               \\\"queryAsOwner\\\"\\\n        : false,\\r\\n                \\\
+  \"cursor\\\": \\\"\\\"\\r\\n            }\"\n      parameters:\n      - description:\
+  \ This value should be the desired data partition id.\n        in: header\n    \
+  \    name: Data-Partition-Id\n        required: true\n        schema:\n        \
+  \  type: string\n      requestBody:\n        content:\n          application/json:\n\
+  \            schema:\n              $ref: '#/components/schemas/MetadataQueryRequest'\n\
+  \        description: The query request body.\n      responses:\n        '200':\n\
+  \          content:\n            application/json:\n              schema:\n    \
+  \            $ref: '#/components/schemas/MetadataQueryResponse'\n          description:\
+  \ The successfully retrieved meta data.\n        '400':\n          content:\n  \
+  \          application/json:\n              schema:\n                $ref: '#/components/schemas/ErrorDetails'\n\
+  \          description: Invalid parameters were given on request\n        '401':\n\
+  \          content:\n            application/json:\n              schema:\n    \
+  \            $ref: '#/components/schemas/ErrorDetails'\n          description: User\
+  \ is not authenticated\n        '403':\n          content:\n            application/json:\n\
+  \              schema:\n                $ref: '#/components/schemas/ErrorDetails'\n\
+  \          description: User not authorized to perform the action\n      summary:\
+  \ Queries metadata using the input request criteria.\n      tags:\n      - Query\n\
+  security:\n- login: []\n- manual: []\n"

@@ -1,0 +1,163 @@
+"components:\n  schemas:\n    AddMemberDto:\n      properties:\n        email:\n \
+  \         type: string\n        role:\n          enum:\n          - MEMBER\n   \
+  \       - OWNER\n          type: string\n      required:\n      - email\n      -\
+  \ role\n      type: object\n    AliasEntity:\n      properties:\n        aliasId:\n\
+  \          type: string\n        userId:\n          type: string\n      type: object\n\
+  \    ConnectedOuterService:\n      properties:\n        name:\n          type: string\n\
+  \        version:\n          type: string\n      type: object\n    CreateGroupDto:\n\
+  \      properties:\n        description:\n          pattern: ^[-A-Za-z0-9 _./,;:'\"\
+  !@&+%#$]{0,255}$\n          type: string\n        name:\n          pattern: ^[A-Za-z0-9{}_.-]{3,128}$\n\
+  \          type: string\n      required:\n      - name\n      type: object\n   \
+  \ GroupDto:\n      properties:\n        description:\n          type: string\n \
+  \       email:\n          type: string\n        name:\n          type: string\n\
+  \      type: object\n    InitServiceDto:\n      properties:\n        aliasMappings:\n\
+  \          items:\n            $ref: '#/components/schemas/AliasEntity'\n      \
+  \    type: array\n      type: object\n    ListGroupResponseDto:\n      properties:\n\
+  \        desId:\n          type: string\n        groups:\n          items:\n   \
+  \         $ref: '#/components/schemas/ParentReference'\n          type: array\n\
+  \        memberEmail:\n          type: string\n      type: object\n    ListGroupsOfPartitionDto:\n\
+  \      properties:\n        cursor:\n          type: string\n        groups:\n \
+  \         items:\n            $ref: '#/components/schemas/ParentReference'\n   \
+  \       type: array\n        totalCount:\n          format: int64\n          type:\
+  \ integer\n      type: object\n    ListMemberResponseDto:\n      properties:\n \
+  \       members:\n          items:\n            $ref: '#/components/schemas/MemberDto'\n\
+  \          type: array\n      type: object\n    MemberDto:\n      properties:\n\
+  \        dataPartitionId:\n          type: string\n        email:\n          type:\
+  \ string\n        memberType:\n          enum:\n          - USER\n          - GROUP\n\
+  \          type: string\n        role:\n          enum:\n          - MEMBER\n  \
+  \        - OWNER\n          type: string\n      type: object\n    ParentReference:\n\
+  \      properties:\n        description:\n          type: string\n        email:\n\
+  \          type: string\n        name:\n          type: string\n      type: object\n\
+  \    UpdateGroupOperation:\n      properties:\n        op:\n          type: string\n\
+  \        path:\n          type: string\n        value:\n          items:\n     \
+  \       type: string\n          type: array\n      type: object\n    UpdateGroupResponseDto:\n\
+  \      properties:\n        appIds:\n          items:\n            type: string\n\
+  \          type: array\n        email:\n          type: string\n        name:\n\
+  \          type: string\n      type: object\n    VersionInfo:\n      properties:\n\
+  \        artifactId:\n          type: string\n        branch:\n          type: string\n\
+  \        buildTime:\n          type: string\n        commitId:\n          type:\
+  \ string\n        commitMessage:\n          type: string\n        connectedOuterServices:\n\
+  \          items:\n            $ref: '#/components/schemas/ConnectedOuterService'\n\
+  \          type: array\n        groupId:\n          type: string\n        version:\n\
+  \          type: string\n      type: object\n  securitySchemes:\n    Authorization:\n\
+  \      bearerFormat: Authorization\n      scheme: Bearer\n      type: http\ninfo:\n\
+  \  title: Entitlements Service\n  version: '1.0'\nopenapi: 3.0.1\npaths:\n  /_ah/liveness_check:\n\
+  \    get:\n      operationId: livenessCheck\n      parameters:\n      - description:\
+  \ Tenant Id\n        in: header\n        name: data-partition-id\n        required:\
+  \ true\n      responses:\n        '200':\n          description: OK\n      tags:\n\
+  \      - health-checks-api\n  /_ah/readiness_check:\n    get:\n      operationId:\
+  \ readinessCheck\n      parameters:\n      - description: Tenant Id\n        in:\
+  \ header\n        name: data-partition-id\n        required: true\n      responses:\n\
+  \        '200':\n          description: OK\n      tags:\n      - health-checks-api\n\
+  \  /error:\n    delete:\n      operationId: handleErrorDelete\n      parameters:\n\
+  \      - description: Tenant Id\n        in: header\n        name: data-partition-id\n\
+  \        required: true\n      responses:\n        '200':\n          content:\n\
+  \            '*/*':\n              schema:\n                type: string\n     \
+  \     description: OK\n      tags:\n      - global-error-controller\n    get:\n\
+  \      operationId: handleErrorGet\n      parameters:\n      - description: Tenant\
+  \ Id\n        in: header\n        name: data-partition-id\n        required: true\n\
+  \      responses:\n        '200':\n          content:\n            '*/*':\n    \
+  \          schema:\n                type: string\n          description: OK\n  \
+  \    tags:\n      - global-error-controller\n    patch:\n      operationId: handleErrorPatch\n\
+  \      parameters:\n      - description: Tenant Id\n        in: header\n       \
+  \ name: data-partition-id\n        required: true\n      responses:\n        '200':\n\
+  \          content:\n            '*/*':\n              schema:\n               \
+  \ type: string\n          description: OK\n      tags:\n      - global-error-controller\n\
+  \    post:\n      operationId: handleErrorPost\n      parameters:\n      - description:\
+  \ Tenant Id\n        in: header\n        name: data-partition-id\n        required:\
+  \ true\n      responses:\n        '200':\n          content:\n            '*/*':\n\
+  \              schema:\n                type: string\n          description: OK\n\
+  \      tags:\n      - global-error-controller\n    put:\n      operationId: handleErrorPut\n\
+  \      parameters:\n      - description: Tenant Id\n        in: header\n       \
+  \ name: data-partition-id\n        required: true\n      responses:\n        '200':\n\
+  \          content:\n            '*/*':\n              schema:\n               \
+  \ type: string\n          description: OK\n      tags:\n      - global-error-controller\n\
+  \  /groups:\n    get:\n      operationId: listGroups\n      parameters:\n      -\
+  \ description: Tenant Id\n        in: header\n        name: data-partition-id\n\
+  \        required: true\n      responses:\n        '200':\n          content:\n\
+  \            '*/*':\n              schema:\n                $ref: '#/components/schemas/ListGroupResponseDto'\n\
+  \          description: OK\n      tags:\n      - list-group-api\n    post:\n   \
+  \   operationId: createGroup\n      parameters:\n      - description: Tenant Id\n\
+  \        in: header\n        name: data-partition-id\n        required: true\n \
+  \     requestBody:\n        content:\n          application/json:\n            schema:\n\
+  \              $ref: '#/components/schemas/CreateGroupDto'\n        required: true\n\
+  \      responses:\n        '200':\n          content:\n            '*/*':\n    \
+  \          schema:\n                $ref: '#/components/schemas/GroupDto'\n    \
+  \      description: OK\n      tags:\n      - create-group-api\n  /groups/all:\n\
+  \    get:\n      operationId: listAllPartitionGroups\n      parameters:\n      -\
+  \ in: query\n        name: type\n        required: true\n        schema:\n     \
+  \     type: string\n      - in: query\n        name: cursor\n        required: false\n\
+  \        schema:\n          type: string\n      - in: query\n        name: limit\n\
+  \        required: false\n        schema:\n          default: 100\n          format:\
+  \ int32\n          minimum: 1\n          type: integer\n      - description: Tenant\
+  \ Id\n        in: header\n        name: data-partition-id\n        required: true\n\
+  \      responses:\n        '200':\n          content:\n            '*/*':\n    \
+  \          schema:\n                $ref: '#/components/schemas/ListGroupsOfPartitionDto'\n\
+  \          description: OK\n      tags:\n      - list-group-on-behalf-of-api\n \
+  \ /groups/{group_email}:\n    delete:\n      operationId: deleteGroup\n      parameters:\n\
+  \      - in: path\n        name: group_email\n        required: true\n        schema:\n\
+  \          type: string\n      - description: Tenant Id\n        in: header\n  \
+  \      name: data-partition-id\n        required: true\n      responses:\n     \
+  \   '200':\n          description: OK\n      tags:\n      - delete-group-api\n \
+  \   patch:\n      operationId: updateGroup\n      parameters:\n      - in: path\n\
+  \        name: group_email\n        required: true\n        schema:\n          type:\
+  \ string\n      - description: Tenant Id\n        in: header\n        name: data-partition-id\n\
+  \        required: true\n      requestBody:\n        content:\n          application/json:\n\
+  \            schema:\n              items:\n                $ref: '#/components/schemas/UpdateGroupOperation'\n\
+  \              type: array\n        required: true\n      responses:\n        '200':\n\
+  \          content:\n            '*/*':\n              schema:\n               \
+  \ $ref: '#/components/schemas/UpdateGroupResponseDto'\n          description: OK\n\
+  \      tags:\n      - update-group-api\n  /groups/{group_email}/members:\n    get:\n\
+  \      operationId: listGroupMembers\n      parameters:\n      - in: path\n    \
+  \    name: group_email\n        required: true\n        schema:\n          type:\
+  \ string\n      - in: query\n        name: role\n        required: false\n     \
+  \   schema:\n          enum:\n          - MEMBER\n          - OWNER\n          type:\
+  \ string\n      - in: query\n        name: includeType\n        required: false\n\
+  \        schema:\n          type: boolean\n      - description: Tenant Id\n    \
+  \    in: header\n        name: data-partition-id\n        required: true\n     \
+  \ responses:\n        '200':\n          content:\n            '*/*':\n         \
+  \     schema:\n                $ref: '#/components/schemas/ListMemberResponseDto'\n\
+  \          description: OK\n      tags:\n      - list-member-api\n    post:\n  \
+  \    operationId: addMember\n      parameters:\n      - in: path\n        name:\
+  \ group_email\n        required: true\n        schema:\n          type: string\n\
+  \      - description: Tenant Id\n        in: header\n        name: data-partition-id\n\
+  \        required: true\n      requestBody:\n        content:\n          application/json:\n\
+  \            schema:\n              $ref: '#/components/schemas/AddMemberDto'\n\
+  \        required: true\n      responses:\n        '200':\n          content:\n\
+  \            '*/*':\n              schema:\n                $ref: '#/components/schemas/AddMemberDto'\n\
+  \          description: OK\n      tags:\n      - add-member-api\n  /groups/{group_email}/members/{member_email}:\n\
+  \    delete:\n      operationId: deleteMember_1\n      parameters:\n      - in:\
+  \ path\n        name: group_email\n        required: true\n        schema:\n   \
+  \       type: string\n      - in: path\n        name: member_email\n        required:\
+  \ true\n        schema:\n          type: string\n      - description: Tenant Id\n\
+  \        in: header\n        name: data-partition-id\n        required: true\n \
+  \     responses:\n        '200':\n          content:\n            '*/*':\n     \
+  \         schema:\n                type: string\n          description: OK\n   \
+  \   tags:\n      - remove-member-api\n  /info:\n    get:\n      operationId: info\n\
+  \      parameters:\n      - description: Tenant Id\n        in: header\n       \
+  \ name: data-partition-id\n        required: true\n      responses:\n        '200':\n\
+  \          content:\n            application/json:\n              schema:\n    \
+  \            $ref: '#/components/schemas/VersionInfo'\n          description: OK\n\
+  \      tags:\n      - info-api\n  /members/{member_email}:\n    delete:\n      operationId:\
+  \ deleteMember\n      parameters:\n      - in: path\n        name: member_email\n\
+  \        required: true\n        schema:\n          type: string\n      - description:\
+  \ Tenant Id\n        in: header\n        name: data-partition-id\n        required:\
+  \ true\n      responses:\n        '200':\n          description: OK\n      tags:\n\
+  \      - delete-member-api\n  /members/{member_email}/groups:\n    get:\n      operationId:\
+  \ listGroupsOnBehalfOf\n      parameters:\n      - in: path\n        name: member_email\n\
+  \        required: true\n        schema:\n          type: string\n      - in: query\n\
+  \        name: type\n        required: true\n        schema:\n          type: string\n\
+  \      - in: query\n        name: appid\n        required: false\n        schema:\n\
+  \          type: string\n      - description: Tenant Id\n        in: header\n  \
+  \      name: data-partition-id\n        required: true\n      responses:\n     \
+  \   '200':\n          content:\n            '*/*':\n              schema:\n    \
+  \            $ref: '#/components/schemas/ListGroupResponseDto'\n          description:\
+  \ OK\n      tags:\n      - list-group-on-behalf-of-api\n  /tenant-provisioning:\n\
+  \    post:\n      operationId: initiateTenant\n      parameters:\n      - description:\
+  \ Tenant Id\n        in: header\n        name: data-partition-id\n        required:\
+  \ true\n      requestBody:\n        content:\n          application/json:\n    \
+  \        schema:\n              $ref: '#/components/schemas/InitServiceDto'\n  \
+  \    responses:\n        '200':\n          content:\n            '*/*':\n      \
+  \        schema:\n                $ref: '#/components/schemas/InitServiceDto'\n\
+  \          description: OK\n      tags:\n      - init-api\nsecurity:\n- Authorization:\
+  \ []\nservers:\n- url: /api/entitlements/v2\n"
