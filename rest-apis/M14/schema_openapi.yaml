@@ -1,0 +1,311 @@
+openapi: 3.0.1
+info:
+  title: Notification Service
+  version: '1.0'
+servers:
+- url: /api/schema-service/v1
+security:
+- Authorization: []
+paths:
+  /schemas/system:
+    put:
+      tags:
+      - system-schema-controller
+      operationId: upsertSystemSchema
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SchemaRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/SchemaInfo'
+  /schema:
+    get:
+      tags:
+      - schema-controller
+      operationId: getSchemaInfoList
+      parameters:
+      - name: authority
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: source
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: entityType
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: schemaVersionMajor
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int64
+      - name: schemaVersionMinor
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int64
+      - name: schemaVersionPatch
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int64
+      - name: status
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: scope
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: latestVersion
+        in: query
+        required: false
+        schema:
+          type: boolean
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 100
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/SchemaInfoResponse'
+    put:
+      tags:
+      - schema-controller
+      operationId: upsertSchema
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SchemaRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/SchemaInfo'
+    post:
+      tags:
+      - schema-controller
+      operationId: createSchema
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SchemaRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/SchemaInfo'
+  /schema/{id}:
+    get:
+      tags:
+      - schema-controller
+      operationId: getSchema
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /info:
+    get:
+      tags:
+      - info-api
+      operationId: info
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VersionInfo'
+components:
+  schemas:
+    SchemaIdentity:
+      required:
+      - authority
+      - entityType
+      - schemaVersionMajor
+      - schemaVersionMinor
+      - schemaVersionPatch
+      - source
+      type: object
+      properties:
+        authority:
+          pattern: ^[\w\-\.]+$
+          type: string
+        source:
+          pattern: ^[\w\-\.]+$
+          type: string
+        entityType:
+          pattern: ^[\w\-\.]+$
+          type: string
+        schemaVersionMajor:
+          type: integer
+          format: int64
+        schemaVersionMinor:
+          type: integer
+          format: int64
+        schemaVersionPatch:
+          type: integer
+          format: int64
+        id:
+          type: string
+    SchemaInfo:
+      required:
+      - schemaIdentity
+      - status
+      type: object
+      properties:
+        schemaIdentity:
+          $ref: '#/components/schemas/SchemaIdentity'
+        createdBy:
+          type: string
+        dateCreated:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum:
+          - PUBLISHED
+          - OBSOLETE
+          - DEVELOPMENT
+        scope:
+          type: string
+          enum:
+          - INTERNAL
+          - SHARED
+        supersededBy:
+          $ref: '#/components/schemas/SchemaIdentity'
+    SchemaRequest:
+      required:
+      - schema
+      - schemaInfo
+      type: object
+      properties:
+        schemaInfo:
+          $ref: '#/components/schemas/SchemaInfo'
+        schema:
+          type: object
+    SchemaInfoResponse:
+      type: object
+      properties:
+        schemaInfos:
+          type: array
+          items:
+            $ref: '#/components/schemas/SchemaInfo'
+        offset:
+          type: integer
+          format: int32
+        count:
+          type: integer
+          format: int32
+        totalCount:
+          type: integer
+          format: int32
+    ConnectedOuterService:
+      type: object
+      properties:
+        name:
+          type: string
+        version:
+          type: string
+    VersionInfo:
+      type: object
+      properties:
+        groupId:
+          type: string
+        artifactId:
+          type: string
+        version:
+          type: string
+        buildTime:
+          type: string
+        branch:
+          type: string
+        commitId:
+          type: string
+        commitMessage:
+          type: string
+        connectedOuterServices:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConnectedOuterService'
+  securitySchemes:
+    Authorization:
+      type: http
+      scheme: Bearer
+      bearerFormat: Authorization

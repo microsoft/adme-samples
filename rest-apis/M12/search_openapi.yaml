@@ -1,0 +1,519 @@
+swagger: '2.0'
+info:
+  version: 1.0.0
+  description: "Search service"
+  title: "Search service"
+tags:
+  - name: info-api
+    description: Info Api
+  - name: search-api
+    description: Search Api
+basePath: /api/search/v2
+paths:  
+  /info:
+    get:
+      tags:
+        - info-api
+      summary: info
+      operationId: infoUsingGET
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: data-partition-id
+          description: tenant. This should be same value as first field in 'kind' field
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/VersionInfo'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - Bearer: []
+  /query:
+    post:
+      tags:
+        - search-api
+      summary: Queries using the input request criteria.
+      description: >-
+        The API supports full text search on string fields, range queries on
+        date, numeric or string fields, along with geo-spatial search. Required
+        roles: 'users.datalake.viewers' or 'users.datalake.editors' or
+        'users.datalake.admins' or 'users.datalake.ops'. In addition, users must
+        be a member of data groups to access the data.
+      operationId: Query
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: data-partition-id
+          description: tenant. This should be same value as first field in 'kind' field
+          required: true
+          type: string
+        - in: body
+          name: queryRequest
+          description: queryRequest
+          required: true
+          schema:
+            $ref: '#/definitions/QueryRequest'
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/QueryResponse'
+        '201':
+          description: Created
+        '400':
+          description: Invalid parameters were given on request
+        '401':
+          description: Unauthorized
+        '403':
+          description: User not authorized to perform the action
+        '404':
+          description: Not Found
+        '502':
+          description: >-
+            Service unavailable. Please try again later.
+      security:
+        - Bearer: []
+  /query_with_cursor:
+    post:
+      tags:
+        - search-api
+      summary: Queries using the input request criteria.
+      description: >-
+        The API supports full text search on string fields, range queries on
+        date, numeric or string fields, along with geo-spatial search. Required
+        roles: 'users.datalake.viewers' or 'users.datalake.editors' or
+        'users.datalake.admins' or 'users.datalake.ops'. In addition, users must
+        be a member of data groups to access the data. It can be used to
+        retrieve large numbers of results (or even all results) from a single
+        search request, in much the same way as you would use a cursor on a
+        traditional database.
+      operationId: Query with cursor
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: data-partition-id
+          description: tenant. This should be same value as first field in 'kind' field
+          required: true    
+          type: string    
+        - in: body
+          name: queryRequest
+          description: queryRequest
+          required: true
+          schema:
+            $ref: '#/definitions/CursorQueryRequest'
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/CursorQueryResponse'
+        '201':
+          description: Created
+        '400':
+          description: Invalid parameters were given on request
+        '401':
+          description: Unauthorized
+        '403':
+          description: User not authorized to perform the action
+        '404':
+          description: Not Found
+        '502':
+          description: >-
+            Service unavailable. Please try again later..
+      security:
+        - Bearer: []
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+definitions:
+  AggregationResponse:
+    type: object
+    properties:
+      count:
+        type: integer
+        format: int64
+      key:
+        type: string
+    title: AggregationResponse
+  AppError:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+      reason:
+        type: string
+    title: AppError
+  ByBoundingBox:
+    type: object
+    properties:
+      bottomRight:
+        description: Bottom right corner of the bounding box.
+        $ref: '#/definitions/Point'
+      topLeft:
+        description: Top left corner of the bounding box.
+        $ref: '#/definitions/Point'
+    title: ByBoundingBox
+  ByDistance:
+    type: object
+    properties:
+      distance:
+        type: number
+        format: double
+        example: 1500
+        description: >-
+          The radius of the circle centered on the specified location. Points
+          which fall into this circle are considered to be matches.
+        maximum: 9223372036854776000
+        exclusiveMaximum: false
+      point:
+        description: Center point of the query.
+        $ref: '#/definitions/Point'
+    title: ByDistance
+  ByGeoPolygon:
+    type: object
+    properties:
+      points:
+        type: array
+        description: Polygon defined by a set of points.
+        items:
+          $ref: '#/definitions/Point'
+    title: ByGeoPolygon
+  ByIntersection:
+    type: object
+    properties:
+      polygons:
+        type: array
+        description: List of polygons each defined by a set of points.
+        items:
+          $ref: '#/definitions/Polygon'
+    title: ByIntersection
+  ByWithinPolygon:
+    type: object
+    properties:
+      points:
+        type: array
+        description: Polygon defined by a set of points.
+        items:
+          $ref: '#/definitions/Point'
+    title: ByWithinPolygon
+  CcsQueryRequest:
+    type: object
+    required:
+      - kind
+    properties:
+      kind:
+        type: string
+        example: >-
+          "common:ihs:well:1.0.0" or
+          "common:ihs:well:1.0.0,common:ihs:well:2.0.0" or
+          ["common:ihs:well:1.0.0", "common:ihs:well:2.0.0"]
+        description: '''kind'' to search'
+      limit:
+        type: integer
+        format: int32
+        example: 30
+        description: >-
+          The maximum number of results to return from the given offset. If no
+          limit is provided, then it will return 10 items. Max number of items
+          which can be fetched by the query is 1000. (If you wish to fetch large
+          set of items, please use query_with_cursor API)
+        minimum: 0
+        exclusiveMinimum: false
+      offset:
+        type: integer
+        format: int32
+        example: 0
+        description: The starting offset from which to return results.
+        minimum: 0
+        exclusiveMinimum: false
+      query:
+        type: string
+        description: The query string in Lucene query string syntax.
+      queryAsOwner:
+        type: boolean
+        example: false
+        description: >-
+          The queryAsOwner switches between viewer and owner to return results
+          that you are entitled to view or results you are the owner of.
+    title: CcsQueryRequest
+  CcsQueryResponse:
+    type: object
+    properties:
+      results:
+        type: array
+        items:
+          type: object
+          additionalProperties:
+            type: object
+      totalCount:
+        type: integer
+        format: int64
+    title: CcsQueryResponse
+  ConnectedOuterService:
+    type: object
+    properties:
+      name:
+        type: string
+      version:
+        type: string
+    title: ConnectedOuterService
+  CursorQueryRequest:
+    type: object
+    required:
+      - kind
+    properties:
+      cursor:
+        type: string
+        description: Search context to retrieve next batch of results.
+      kind:
+        type: object
+        example: >-
+          "common:ihs:well:1.0.0" or
+          "common:ihs:well:1.0.0,common:ihs:well:2.0.0" or
+          ["common:ihs:well:1.0.0", "common:ihs:well:2.0.0"]
+        description: '''kind'' to search'
+      limit:
+        type: integer
+        format: int32
+        example: 30
+        description: >-
+          The maximum number of results to return from the given offset. If no
+          limit is provided, then it will return 10 items. Max number of items
+          which can be fetched by the query is 1000. (If you wish to fetch large
+          set of items, please use query_with_cursor API)
+        minimum: 0
+        exclusiveMinimum: false
+      query:
+        type: string
+        description: The query string in Lucene query string syntax.
+      queryAsOwner:
+        type: boolean
+        example: false
+        description: >-
+          The queryAsOwner switches between viewer and owner to return results
+          that you are entitled to view or results you are the owner of.
+      returnedFields:
+        type: array
+        description: The fields on which to project the results.
+        items:
+          type: string
+      sort:
+        description: The fields and orders to return sorted results.
+        $ref: '#/definitions/SortQuery'
+      spatialFilter:
+        description: A spatial filter to apply.
+        $ref: '#/definitions/SpatialFilter'
+      trackTotalCount:
+        type: boolean
+        example: false
+        description: >-
+          Tracks accurate record count matching the query if 'true', partial
+          count otherwise. Partial count queries are more performant. Default is
+          'false' and returns 10000 if matching records are higher than 10000.
+    title: CursorQueryRequest
+  CursorQueryResponse:
+    type: object
+    properties:
+      cursor:
+        type: string
+      results:
+        type: array
+        items:
+          type: object
+          additionalProperties:
+            type: object
+      totalCount:
+        type: integer
+        format: int64
+    title: CursorQueryResponse
+  Point:
+    type: object
+    properties:
+      latitude:
+        type: number
+        format: double
+        example: 37.450727
+        description: Latitude of point.
+        minimum: -90
+        maximum: 90
+        exclusiveMinimum: false
+        exclusiveMaximum: false
+      longitude:
+        type: number
+        format: double
+        example: -122.174762
+        description: Longitude of point.
+        minimum: -180
+        maximum: 180
+        exclusiveMinimum: false
+        exclusiveMaximum: false
+    title: Point
+  Polygon:
+    type: object
+    properties:
+      points:
+        type: array
+        description: List of points making up a polygon
+        items:
+          $ref: '#/definitions/Point'
+    title: Polygon
+  QueryRequest:
+    type: object
+    required:
+      - kind
+    properties:
+      kind:
+        type: object
+        example: >-
+          "common:ihs:well:1.0.0" or
+          "common:ihs:well:1.0.0,common:ihs:well:2.0.0" or
+          ["common:ihs:well:1.0.0", "common:ihs:well:2.0.0"]
+        description: '''kind'' to search'
+      limit:
+        type: integer
+        format: int32
+        example: 30
+        description: >-
+          The maximum number of results to return from the given offset. If no
+          limit is provided, then it will return 10 items. Max number of items
+          which can be fetched by the query is 1000. (If you wish to fetch large
+          set of items, please use query_with_cursor API)
+        minimum: 0
+        exclusiveMinimum: false
+      offset:
+        type: integer
+        format: int32
+        example: 0
+        description: The starting offset from which to return results.
+        minimum: 0
+        exclusiveMinimum: false
+      query:
+        type: string
+        description: The query string in Lucene query string syntax.
+      queryAsOwner:
+        type: boolean
+        example: false
+        description: >-
+          The queryAsOwner switches between viewer and owner to return results
+          that you are entitled to view or results you are the owner of.
+      returnedFields:
+        type: array
+        description: The fields on which to project the results.
+        items:
+          type: string
+      sort:
+        description: The fields and orders to return sorted results.
+        $ref: '#/definitions/SortQuery'
+      spatialFilter:
+        description: A spatial filter to apply.
+        $ref: '#/definitions/SpatialFilter'
+      trackTotalCount:
+        type: boolean
+        example: false
+        description: >-
+          Tracks accurate record count matching the query if 'true', partial
+          count otherwise. Partial count queries are more performant. Default is
+          'false' and returns 10000 if matching records are higher than 10000.
+    title: QueryRequest
+  QueryResponse:
+    type: object
+    properties:
+      aggregations:
+        type: array
+        items:
+          $ref: '#/definitions/AggregationResponse'
+      results:
+        type: array
+        items:
+          type: object
+          additionalProperties:
+            type: object
+      totalCount:
+        type: integer
+        format: int64
+    title: QueryResponse
+  SortQuery:
+    type: object
+    properties:
+      field:
+        type: array
+        description: The list of fields to sort the results.
+        items:
+          type: string
+      order:
+        type: object
+        description: >-
+          The list of orders to sort the results. The element must be either ASC
+          or DESC.
+    title: SortQuery
+  SpatialFilter:
+    type: object
+    properties:
+      byBoundingBox:
+        description: >-
+          A query allowing to filter hits based on a point location within a
+          bounding box.
+        $ref: '#/definitions/ByBoundingBox'
+      byDistance:
+        description: >-
+          Filters documents that include only hits that exist within a specific
+          distance from a geo point.
+        $ref: '#/definitions/ByDistance'
+      byGeoPolygon:
+        description: >-
+          A query allowing to filter hits that only fall within a polygon of
+          points.
+        $ref: '#/definitions/ByGeoPolygon'
+      byIntersection:
+        description: A query allowing to filter documents by intersecting polygons
+        $ref: '#/definitions/ByIntersection'
+      byWithinPolygon:
+        description: A query allowing to filter documents by intersecting polygons
+        $ref: '#/definitions/ByWithinPolygon'
+      field:
+        type: string
+        description: >-
+          geo-point field in the index on which filtering will be performed. Use
+          GET schema API to find which fields supports spatial search.
+    title: SpatialFilter
+  VersionInfo:
+    type: object
+    properties:
+      artifactId:
+        type: string
+      branch:
+        type: string
+      buildTime:
+        type: string
+      commitId:
+        type: string
+      commitMessage:
+        type: string
+      connectedOuterServices:
+        type: array
+        items:
+          $ref: '#/definitions/ConnectedOuterService'
+      groupId:
+        type: string
+      version:
+        type: string
+    title: VersionInfo

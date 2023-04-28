@@ -1,0 +1,2119 @@
+openapi: 3.0.1
+info:
+  title: Notification Service
+  version: '1.0'
+servers:
+- url: /api/unit
+security:
+- Authorization: []
+paths:
+  /v3/unitsystem:
+    get:
+      tags:
+      - unit-api-v-3
+      operationId: getUnitSystem
+      parameters:
+      - name: name
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 100
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/UnitSystem'
+    post:
+      tags:
+      - unit-api-v-3
+      operationId: postUnitSystem
+      parameters:
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 100
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UnitSystemRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/UnitSystem'
+  /v3/unit:
+    get:
+      tags:
+      - unit-api-v-3
+      operationId: getUnits
+      parameters:
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 100
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/QueryResult'
+    post:
+      tags:
+      - unit-api-v-3
+      operationId: postUnit
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UnitRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Unit'
+  /v3/unit/unitsystem:
+    get:
+      tags:
+      - unit-api-v-3
+      operationId: getUnitBySystemAndMeasurement
+      parameters:
+      - name: unitSystemName
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: ancestry
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Unit'
+    post:
+      tags:
+      - unit-api-v-3
+      operationId: postUnitBySystemAndMeasurement
+      parameters:
+      - name: unitSystemName
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MeasurementRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Unit'
+  /v3/unit/search:
+    post:
+      tags:
+      - unit-api-v-3
+      operationId: postSearchUnits
+      parameters:
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 100
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/QueryResult'
+  /v3/unit/measurement:
+    get:
+      tags:
+      - unit-api-v-3
+      operationId: getUnitsByMeasurement
+      parameters:
+      - name: ancestry
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/QueryResult'
+    post:
+      tags:
+      - unit-api-v-3
+      operationId: postUnitsByMeasurement
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MeasurementRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/QueryResult'
+  /v3/unit/measurement/preferred:
+    get:
+      tags:
+      - unit-api-v-3
+      operationId: getPreferredUnitsByMeasurement
+      parameters:
+      - name: ancestry
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/QueryResult'
+    post:
+      tags:
+      - unit-api-v-3
+      operationId: postPreferredUnitsByMeasurement
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MeasurementRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/QueryResult'
+  /v3/measurement:
+    get:
+      tags:
+      - unit-api-v-3
+      operationId: getMeasurement
+      parameters:
+      - name: ancestry
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Measurement'
+    post:
+      tags:
+      - unit-api-v-3
+      operationId: postMeasurement
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MeasurementRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Measurement'
+  /v3/measurement/search:
+    post:
+      tags:
+      - unit-api-v-3
+      operationId: postSearchMeasurements
+      parameters:
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 100
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/QueryResult'
+  /v3/conversion/scale:
+    get:
+      tags:
+      - unit-api-v-3
+      operationId: getConversionScaleOffsetBySymbols
+      parameters:
+      - name: namespaces
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: fromSymbol
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: toSymbol
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ConversionResult'
+    post:
+      tags:
+      - unit-api-v-3
+      operationId: postConversionScaleOffset
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConversionScaleOffsetRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ConversionResult'
+  /v3/conversion/abcd:
+    get:
+      tags:
+      - unit-api-v-3
+      operationId: getConversionABCDBySymbols
+      parameters:
+      - name: namespaces
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: fromSymbol
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: toSymbol
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ConversionResult'
+    post:
+      tags:
+      - unit-api-v-3
+      operationId: postConversionABCD
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConversionABCDRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ConversionResult'
+  /v3/catalog/search:
+    post:
+      tags:
+      - unit-api-v-3
+      operationId: postSearch
+      parameters:
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 100
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/QueryResult'
+  /v2/unitsystem:
+    post:
+      tags:
+      - unit-api-v-2
+      operationId: postUnitSystem_1
+      parameters:
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 100
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UnitSystemRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/UnitSystem'
+      deprecated: true
+  /v2/unit:
+    get:
+      tags:
+      - unit-api-v-2
+      operationId: getUnits_1
+      parameters:
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 100
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/QueryResult'
+      deprecated: true
+    post:
+      tags:
+      - unit-api-v-2
+      operationId: postUnit_1
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UnitRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Unit'
+      deprecated: true
+  /v2/unit/unitsystem/{unitSystemName}:
+    post:
+      tags:
+      - unit-api-v-2
+      operationId: postUnitBySystemAndMeasurement_1
+      parameters:
+      - name: unitSystemName
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MeasurementRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Unit'
+      deprecated: true
+  /v2/unit/search:
+    post:
+      tags:
+      - unit-api-v-2
+      operationId: postSearchUnits_1
+      parameters:
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 100
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/QueryResult'
+      deprecated: true
+  /v2/unit/measurement:
+    post:
+      tags:
+      - unit-api-v-2
+      operationId: postUnitsByMeasurement_1
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MeasurementRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/QueryResult'
+      deprecated: true
+  /v2/unit/measurement/preferred:
+    post:
+      tags:
+      - unit-api-v-2
+      operationId: postPreferredUnitsByMeasurement_1
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MeasurementRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/QueryResult'
+      deprecated: true
+  /v2/measurement:
+    get:
+      tags:
+      - unit-api-v-2
+      operationId: getMeasurements_1
+      parameters:
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 100
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/QueryResult'
+      deprecated: true
+    post:
+      tags:
+      - unit-api-v-2
+      operationId: postMeasurement_1
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MeasurementRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Measurement'
+      deprecated: true
+  /v2/measurement/search:
+    post:
+      tags:
+      - unit-api-v-2
+      operationId: postSearchMeasurements_1
+      parameters:
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 100
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/QueryResult'
+      deprecated: true
+  /v2/conversion/scale:
+    post:
+      tags:
+      - unit-api-v-2
+      operationId: postConversionScaleOffset_1
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConversionScaleOffsetRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ConversionResult'
+      deprecated: true
+  /v2/conversion/abcd:
+    post:
+      tags:
+      - unit-api-v-2
+      operationId: postConversionABCD_1
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConversionABCDRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ConversionResult'
+      deprecated: true
+  /v2/catalog/search:
+    post:
+      tags:
+      - unit-api-v-2
+      operationId: postSearch_1
+      parameters:
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 100
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/QueryResult'
+      deprecated: true
+  /v3/unitsystem/list:
+    get:
+      tags:
+      - unit-api-v-3
+      operationId: getUnitSystemInfoList
+      parameters:
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 100
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/UnitSystemInfoResponse'
+  /v3/unit/symbols:
+    get:
+      tags:
+      - unit-api-v-3
+      operationId: getUnitsBySymbol
+      parameters:
+      - name: symbol
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/QueryResult'
+  /v3/unit/symbol:
+    get:
+      tags:
+      - unit-api-v-3
+      operationId: getUnitBySymbol
+      parameters:
+      - name: namespaces
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: symbol
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Unit'
+  /v3/unit/maps:
+    get:
+      tags:
+      - unit-api-v-3
+      operationId: getUnitMaps
+      parameters:
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 100
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/QueryResult'
+  /v3/measurement/maps:
+    get:
+      tags:
+      - unit-api-v-3
+      operationId: getMeasurementMaps
+      parameters:
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 100
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/QueryResult'
+  /v3/measurement/list:
+    get:
+      tags:
+      - unit-api-v-3
+      operationId: getMeasurements
+      parameters:
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 100
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/QueryResult'
+  /v3/info:
+    get:
+      tags:
+      - info-api
+      operationId: info
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VersionInfo'
+  /v3/catalog:
+    get:
+      tags:
+      - unit-api-v-3
+      operationId: getCatalog
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Catalog'
+  /v3/catalog/mapstates:
+    get:
+      tags:
+      - unit-api-v-3
+      operationId: getMapStates
+      parameters:
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 100
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/QueryResult'
+  /v3/catalog/lastmodified:
+    get:
+      tags:
+      - unit-api-v-3
+      operationId: getLastModified
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CatalogLastModified'
+  /v2/unitsystem/{name}:
+    get:
+      tags:
+      - unit-api-v-2
+      operationId: getUnitSystem_1
+      parameters:
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 100
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/UnitSystem'
+      deprecated: true
+  /v2/unitsystem/list:
+    get:
+      tags:
+      - unit-api-v-2
+      operationId: getUnitSystemInfoList_1
+      parameters:
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 100
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/UnitSystemInfoResponse'
+      deprecated: true
+  /v2/unit/unitsystem/{unitSystemName}/{ancestry}:
+    get:
+      tags:
+      - unit-api-v-2
+      operationId: getUnitBySystemAndMeasurement_1
+      parameters:
+      - name: unitSystemName
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: ancestry
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Unit'
+      deprecated: true
+  /v2/unit/symbol/{symbol}:
+    get:
+      tags:
+      - unit-api-v-2
+      operationId: getUnitsBySymbol_1
+      parameters:
+      - name: symbol
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/QueryResult'
+      deprecated: true
+  /v2/unit/symbol/{namespaces}/{symbol}:
+    get:
+      tags:
+      - unit-api-v-2
+      operationId: getUnitBySymbol_1
+      parameters:
+      - name: namespaces
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: symbol
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Unit'
+      deprecated: true
+  /v2/unit/measurement/{ancestry}:
+    get:
+      tags:
+      - unit-api-v-2
+      operationId: getUnitsByMeasurement_1
+      parameters:
+      - name: ancestry
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/QueryResult'
+      deprecated: true
+  /v2/unit/measurement/preferred/{ancestry}:
+    get:
+      tags:
+      - unit-api-v-2
+      operationId: getPreferredUnitsByMeasurement_1
+      parameters:
+      - name: ancestry
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/QueryResult'
+      deprecated: true
+  /v2/unit/maps:
+    get:
+      tags:
+      - unit-api-v-2
+      operationId: getUnitMaps_1
+      parameters:
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 100
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/QueryResult'
+      deprecated: true
+  /v2/measurement/{ancestry}:
+    get:
+      tags:
+      - unit-api-v-2
+      operationId: getMeasurement_1
+      parameters:
+      - name: ancestry
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Measurement'
+      deprecated: true
+  /v2/measurement/maps:
+    get:
+      tags:
+      - unit-api-v-2
+      operationId: getMeasurementMaps_1
+      parameters:
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 100
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/QueryResult'
+      deprecated: true
+  /v2/conversion/scale/{namespaces}/{fromSymbol}/{toSymbol}:
+    get:
+      tags:
+      - unit-api-v-2
+      operationId: getConversionScaleOffsetBySymbols_1
+      parameters:
+      - name: namespaces
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: fromSymbol
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: toSymbol
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ConversionResult'
+      deprecated: true
+  /v2/conversion/abcd/{namespaces}/{fromSymbol}/{toSymbol}:
+    get:
+      tags:
+      - unit-api-v-2
+      operationId: getConversionABCDBySymbols_1
+      parameters:
+      - name: namespaces
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: fromSymbol
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: toSymbol
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ConversionResult'
+      deprecated: true
+  /v2/catalog:
+    get:
+      tags:
+      - unit-api-v-2
+      operationId: getCatalog_1
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Catalog'
+      deprecated: true
+  /v2/catalog/mapstates:
+    get:
+      tags:
+      - unit-api-v-2
+      operationId: getMapStates_1
+      parameters:
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 100
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/QueryResult'
+      deprecated: true
+  /v2/catalog/lastmodified:
+    get:
+      tags:
+      - unit-api-v-2
+      operationId: getLastModified_1
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CatalogLastModified'
+      deprecated: true
+  /_ah/readiness_check:
+    get:
+      tags:
+      - health-check
+      operationId: readinessCheck
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /_ah/liveness_check:
+    get:
+      tags:
+      - health-check
+      operationId: livenessCheck
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+components:
+  schemas:
+    UnitSystemEssenceImpl:
+      type: object
+      properties:
+        ancestry:
+          type: string
+    UnitSystemRequest:
+      type: object
+      properties:
+        essence:
+          $ref: '#/components/schemas/UnitSystemEssenceImpl'
+        persistableReference:
+          type: string
+    ABCD:
+      type: object
+      properties:
+        c:
+          type: number
+          format: double
+        d:
+          type: number
+          format: double
+        a:
+          type: number
+          format: double
+        b:
+          type: number
+          format: double
+    Measurement:
+      type: object
+      properties:
+        unitQuantityCode:
+          type: string
+        childMeasurementEssenceJsons:
+          type: array
+          items:
+            type: string
+        unitEssenceJsons:
+          type: array
+          items:
+            type: string
+        preferredUnitEssenceJsons:
+          type: array
+          items:
+            type: string
+        parentEssenceJson:
+          type: string
+        essenceJson:
+          type: string
+        dimensionAnalysis:
+          type: string
+        dimensionCode:
+          type: string
+        essence:
+          $ref: '#/components/schemas/MeasurementEssence'
+        baseMeasurement:
+          type: boolean
+        baseMeasurementEssenceJson:
+          type: string
+        deprecationInfo:
+          $ref: '#/components/schemas/MeasurementDeprecationInfo'
+        description:
+          type: string
+        namespace:
+          type: string
+        code:
+          type: string
+        lastModified:
+          type: string
+        name:
+          type: string
+    MeasurementDeprecationInfo:
+      type: object
+      properties:
+        remarks:
+          type: string
+        supersededByUnitMeasurement:
+          type: string
+        state:
+          type: string
+    MeasurementEssence:
+      type: object
+      properties:
+        ancestry:
+          type: string
+        type:
+          type: string
+    ScaleOffset:
+      type: object
+      properties:
+        scale:
+          type: number
+          format: double
+        offset:
+          type: number
+          format: double
+    Unit:
+      type: object
+      properties:
+        displaySymbol:
+          type: string
+        essenceJson:
+          type: string
+        essence:
+          $ref: '#/components/schemas/UnitEssence'
+        deprecationInfo:
+          $ref: '#/components/schemas/UnitDeprecationInfo'
+        description:
+          type: string
+        namespace:
+          type: string
+        source:
+          type: string
+        lastModified:
+          type: string
+        name:
+          type: string
+    UnitAssignment:
+      type: object
+      properties:
+        unit:
+          $ref: '#/components/schemas/Unit'
+        measurement:
+          $ref: '#/components/schemas/Measurement'
+        lastModified:
+          type: string
+    UnitDeprecationInfo:
+      type: object
+      properties:
+        remarks:
+          type: string
+        supersededByUnit:
+          type: string
+        state:
+          type: string
+    UnitEssence:
+      type: object
+      properties:
+        abcd:
+          $ref: '#/components/schemas/ABCD'
+        scaleOffset:
+          $ref: '#/components/schemas/ScaleOffset'
+        baseMeasurementEssence:
+          $ref: '#/components/schemas/MeasurementEssence'
+        symbol:
+          type: string
+        type:
+          type: string
+    UnitSystem:
+      type: object
+      properties:
+        unitAssignmentCount:
+          type: integer
+          format: int32
+        referenceUnitSystem:
+          type: string
+        unitAssignments:
+          type: array
+          items:
+            $ref: '#/components/schemas/UnitAssignment'
+        unitAssignmentCountInResponse:
+          type: integer
+          format: int32
+        unitAssignmentCountTotal:
+          type: integer
+          format: int32
+        persistableReference:
+          type: string
+        ancestry:
+          type: string
+        description:
+          type: string
+        source:
+          type: string
+        lastModified:
+          type: string
+        name:
+          type: string
+        offset:
+          type: integer
+          format: int32
+    ABCDImpl:
+      type: object
+      properties:
+        a:
+          type: number
+          format: double
+        b:
+          type: number
+          format: double
+        c:
+          type: number
+          format: double
+        d:
+          type: number
+          format: double
+    ScaleOffsetImpl:
+      type: object
+      properties:
+        scale:
+          type: number
+          format: double
+        offset:
+          type: number
+          format: double
+    UnitEssenceImpl:
+      type: object
+      properties:
+        abcd:
+          $ref: '#/components/schemas/ABCDImpl'
+        scaleOffset:
+          $ref: '#/components/schemas/ScaleOffsetImpl'
+        symbol:
+          type: string
+        baseMeasurement:
+          $ref: '#/components/schemas/MeasurementEssence'
+        type:
+          type: string
+    UnitRequest:
+      type: object
+      properties:
+        persistableReference:
+          type: string
+        essence:
+          $ref: '#/components/schemas/UnitEssenceImpl'
+    MeasurementEssenceImpl:
+      type: object
+      properties:
+        ancestry:
+          type: string
+        type:
+          type: string
+    MeasurementRequest:
+      type: object
+      properties:
+        essence:
+          $ref: '#/components/schemas/MeasurementEssenceImpl'
+        persistableReference:
+          type: string
+    SearchRequest:
+      type: object
+      properties:
+        query:
+          type: string
+    MapState:
+      type: object
+      properties:
+        description:
+          type: string
+        source:
+          type: string
+        state:
+          type: string
+    MeasurementMapItem:
+      type: object
+      properties:
+        note:
+          type: string
+        toMeasurement:
+          $ref: '#/components/schemas/Measurement'
+        fromNamespace:
+          type: string
+        toNamespace:
+          type: string
+        fromMeasurement:
+          $ref: '#/components/schemas/Measurement'
+        state:
+          type: string
+    QueryResult:
+      type: object
+      properties:
+        totalCount:
+          type: integer
+          format: int32
+        measurements:
+          type: array
+          items:
+            $ref: '#/components/schemas/Measurement'
+        mapStates:
+          type: array
+          items:
+            $ref: '#/components/schemas/MapState'
+        unitMapItems:
+          type: array
+          items:
+            $ref: '#/components/schemas/UnitMapItem'
+        measurementMapItems:
+          type: array
+          items:
+            $ref: '#/components/schemas/MeasurementMapItem'
+        units:
+          type: array
+          items:
+            $ref: '#/components/schemas/Unit'
+        count:
+          type: integer
+          format: int32
+        offset:
+          type: integer
+          format: int32
+    UnitMapItem:
+      type: object
+      properties:
+        note:
+          type: string
+        fromNamespace:
+          type: string
+        toNamespace:
+          type: string
+        fromUnit:
+          $ref: '#/components/schemas/Unit'
+        toUnit:
+          $ref: '#/components/schemas/Unit'
+        state:
+          type: string
+    ConversionScaleOffsetRequest:
+      type: object
+      properties:
+        fromUnit:
+          $ref: '#/components/schemas/UnitEssenceImpl'
+        toUnit:
+          $ref: '#/components/schemas/UnitEssenceImpl'
+        fromUnitPersistableReference:
+          type: string
+        toUnitPersistableReference:
+          type: string
+    ConversionResult:
+      type: object
+      properties:
+        abcd:
+          $ref: '#/components/schemas/ABCD'
+        scaleOffset:
+          $ref: '#/components/schemas/ScaleOffset'
+        fromUnit:
+          $ref: '#/components/schemas/Unit'
+        toUnit:
+          $ref: '#/components/schemas/Unit'
+    ConversionABCDRequest:
+      type: object
+      properties:
+        fromUnit:
+          $ref: '#/components/schemas/UnitEssenceImpl'
+        toUnit:
+          $ref: '#/components/schemas/UnitEssenceImpl'
+        fromUnitPersistableReference:
+          type: string
+        toUnitPersistableReference:
+          type: string
+    UnitSystemInfo:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        ancestry:
+          type: string
+        persistableReference:
+          type: string
+    UnitSystemInfoResponse:
+      type: object
+      properties:
+        unitSystemInfoList:
+          type: array
+          items:
+            $ref: '#/components/schemas/UnitSystemInfo'
+        totalCount:
+          type: integer
+          format: int32
+        offset:
+          type: integer
+          format: int32
+        count:
+          type: integer
+          format: int32
+    ConnectedOuterService:
+      type: object
+      properties:
+        name:
+          type: string
+        version:
+          type: string
+    VersionInfo:
+      type: object
+      properties:
+        groupId:
+          type: string
+        artifactId:
+          type: string
+        version:
+          type: string
+        buildTime:
+          type: string
+        branch:
+          type: string
+        commitId:
+          type: string
+        commitMessage:
+          type: string
+        connectedOuterServices:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConnectedOuterService'
+    Catalog:
+      type: object
+      properties:
+        unitSystemInfos:
+          type: array
+          items:
+            $ref: '#/components/schemas/UnitSystemInfo'
+        totalUnitCount:
+          type: integer
+          format: int32
+        totalMeasurementCount:
+          type: integer
+          format: int32
+        totalUnitSystemCount:
+          type: integer
+          format: int32
+        totalUnitMapCount:
+          type: integer
+          format: int32
+        totalMeasurementMapCount:
+          type: integer
+          format: int32
+        totalMapStateCount:
+          type: integer
+          format: int32
+        measurements:
+          type: array
+          items:
+            $ref: '#/components/schemas/Measurement'
+        unitMaps:
+          type: array
+          items:
+            $ref: '#/components/schemas/UnitMap'
+        mapStates:
+          type: array
+          items:
+            $ref: '#/components/schemas/MapState'
+        measurementMaps:
+          type: array
+          items:
+            $ref: '#/components/schemas/MeasurementMap'
+        units:
+          type: array
+          items:
+            $ref: '#/components/schemas/Unit'
+        lastModified:
+          type: string
+    MeasurementMap:
+      type: object
+      properties:
+        fromNamespace:
+          type: string
+        toNamespace:
+          type: string
+        measurementMapItems:
+          type: array
+          items:
+            $ref: '#/components/schemas/MeasurementMapItem'
+        measurementMapItemCount:
+          type: integer
+          format: int32
+    UnitMap:
+      type: object
+      properties:
+        unitMapItemCount:
+          type: integer
+          format: int32
+        fromNamespace:
+          type: string
+        toNamespace:
+          type: string
+        unitMapItems:
+          type: array
+          items:
+            $ref: '#/components/schemas/UnitMapItem'
+    CatalogLastModified:
+      type: object
+      properties:
+        lastModified:
+          type: string
+  securitySchemes:
+    Authorization:
+      type: http
+      scheme: Bearer
+      bearerFormat: Authorization

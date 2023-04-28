@@ -1,0 +1,176 @@
+openapi: 3.0.1
+info:
+  title: Notification Service
+  version: '1.0'
+servers:
+- url: /api/notification/v1
+security:
+- Authorization: []
+paths:
+  /error:
+    get:
+      tags:
+      - global-error-controller
+      operationId: handleErrorGet
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    put:
+      tags:
+      - global-error-controller
+      operationId: handleErrorPut
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    post:
+      tags:
+      - global-error-controller
+      operationId: handleErrorPost
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    delete:
+      tags:
+      - global-error-controller
+      operationId: handleErrorDelete
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    patch:
+      tags:
+      - global-error-controller
+      operationId: handleErrorPatch
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /push-handlers/records-changed:
+    post:
+      tags:
+      - pubsub-endpoint
+      operationId: recordChanged
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /info:
+    get:
+      tags:
+      - info-api
+      operationId: info
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VersionInfo'
+  /_ah/warmup:
+    get:
+      tags:
+      - health-checks-api
+      operationId: warmup
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+components:
+  schemas:
+    ConnectedOuterService:
+      type: object
+      properties:
+        name:
+          type: string
+        version:
+          type: string
+    VersionInfo:
+      type: object
+      properties:
+        groupId:
+          type: string
+        artifactId:
+          type: string
+        version:
+          type: string
+        buildTime:
+          type: string
+        branch:
+          type: string
+        commitId:
+          type: string
+        commitMessage:
+          type: string
+        connectedOuterServices:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConnectedOuterService'
+  securitySchemes:
+    Authorization:
+      type: http
+      scheme: Bearer
+      bearerFormat: Authorization

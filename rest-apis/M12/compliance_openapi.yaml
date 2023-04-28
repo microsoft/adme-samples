@@ -1,0 +1,539 @@
+swagger: '2.0'
+info:
+  description: API documentation for Legal service
+  version: 0.1.0
+  title: Legal Service
+basePath: /api/legal/v1
+security:
+  - Bearer: []
+tags:
+  - name: LegalTag
+    description: ''
+  - name: info
+    description: "Version info endpoint"
+schemes:
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  '/legaltags:properties':
+    get:
+      tags:
+        - LegalTag
+      summary: Gets LegalTag property values.
+      description: This allows for the retrieval of allowed values for LegalTag properties.
+      operationId: getLegalTagProperties
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: OSDU-Account-Id
+          in: header
+          description: Users account e.g. OSDU
+          required: true
+          type: string
+        - name: OSDU-On-Behalf-Of
+          in: header
+          description: User's email or auth token
+          required: false
+          type: string
+      responses:
+        '200':
+          description: Retrieved proeprties successfully.
+          schema:
+            $ref: '#/definitions/ReadablePropertyValues'
+        '401':
+          description: You do not have permissions to access this API.
+      security:
+        - Bearer: []
+  '/legaltags:validate':
+    post:
+      tags:
+        - LegalTag
+      summary: Retrieves the invalid LegalTag names with reasons for the given names.
+      description: This allows for the retrieval of the reason why your LegalTag is not valid. A maximum of 25 can be retrieved at once.
+      operationId: validateLegalTags
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          required: false
+          schema:
+            $ref: '#/definitions/RequestLegalTags'
+        - name: OSDU-Account-Id
+          in: header
+          description: Users account e.g. OSDU
+          required: true
+          type: string
+        - name: OSDU-On-Behalf-Of
+          in: header
+          description: User's email or auth token
+          required: false
+          type: string
+      responses:
+        '200':
+          description: Retrieved LegalTag names with reason successfully.
+          schema:
+            $ref: '#/definitions/InvalidTagsWithReason'
+        '400':
+          description: Invalid parameters were given on request.
+        '401':
+          description: You do not have permissions to access this API.
+        '404':
+          description: LegalTag names were not found.
+      security:
+        - Bearer: []
+  '/legaltags:batchRetrieve':
+    post:
+      tags:
+        - LegalTag
+      summary: Retrieves the LegalTags for the given names.
+      description: This allows for the retrieval of your LegalTags using the 'name' associated with it. A maximum of 25 can be retrieved at once.
+      operationId: getLegalTags
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          required: false
+          schema:
+            $ref: '#/definitions/RequestLegalTags'
+        - name: OSDU-Account-Id
+          in: header
+          description: Users account e.g. OSDU
+          required: true
+          type: string
+        - name: OSDU-On-Behalf-Of
+          in: header
+          description: User's email or auth token
+          required: false
+          type: string
+      responses:
+        '200':
+          description: Retrieved LegalTags successfully.
+          schema:
+            $ref: '#/definitions/LegalTagDtos'
+        '400':
+          description: Invalid parameters were given on request.
+        '401':
+          description: You do not have permissions to access this API.
+        '404':
+          description: One or more requested LegalTags were not found.
+      security:
+        - Bearer: []
+  /legaltags:
+    get:
+      tags:
+        - LegalTag
+      summary: Gets all LegalTags.
+      description: This allows for the retrieval of all LegalTags.
+      operationId: listLegalTags
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: valid
+          in: query
+          description: 'If true returns only valid LegalTags, if false returns only invalid LegalTags.  Default value is true.'
+          required: false
+          type: boolean
+          default: true
+        - name: OSDU-Account-Id
+          in: header
+          description: Users account e.g. OSDU
+          required: true
+          type: string
+        - name: OSDU-On-Behalf-Of
+          in: header
+          description: User's email or auth token
+          required: false
+          type: string
+      responses:
+        '200':
+          description: Retrieved LegalTags successfully.
+          schema:
+            $ref: '#/definitions/LegalTagDtos'
+        '400':
+          description: Invalid parameters were given on request.
+        '401':
+          description: You do not have permissions to access this API.
+      security:
+        - Bearer: []
+    post:
+      tags:
+        - LegalTag
+      summary: Creates the LegalTag for the given 'name'.
+      description: This allows for the creation of your LegalTag. There can only be 1 LegalTag per 'name'. A LegalTag must be created before you can start ingesting data for that name.
+      operationId: createLegalTag
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          required: false
+          schema:
+            $ref: '#/definitions/LegalTagDto'
+        - name: OSDU-Account-Id
+          in: header
+          description: Users account e.g. OSDU
+          required: true
+          type: string
+        - name: OSDU-On-Behalf-Of
+          in: header
+          description: User's email or auth token
+          required: false
+          type: string
+      responses:
+        '201':
+          description: Created LegalTag successfully.
+          schema:
+            $ref: '#/definitions/LegalTagDto'
+        '400':
+          description: Invalid parameters were given on request.
+        '401':
+          description: You do not have permissions to access this API.
+        '409':
+          description: A LegalTag with the given name already exists.
+      security:
+        - Bearer: []
+    put:
+      tags:
+        - LegalTag
+      summary: Updates the LegalTag for the given 'name'.
+      description: This allows to update certain properties of your LegalTag using the 'name' associated with it.
+      operationId: updateLegalTag
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          required: false
+          schema:
+            $ref: '#/definitions/UpdateLegalTag'
+        - name: OSDU-Account-Id
+          in: header
+          description: Users account e.g. OSDU
+          required: true
+          type: string
+        - name: OSDU-On-Behalf-Of
+          in: header
+          description: User's email or auth token
+          required: false
+          type: string
+      responses:
+        '200':
+          description: Updated LegalTag successfully.
+          schema:
+            $ref: '#/definitions/LegalTagDto'
+        '400':
+          description: Invalid parameters were given on request.
+        '401':
+          description: You do not have permissions to access this API.
+        '404':
+          description: Requested LegalTag to update was not found.
+      security:
+        - Bearer: []
+  '/legaltags/{name}':
+    get:
+      tags:
+        - LegalTag
+      summary: Gets a LegalTag for the given 'name'.
+      description: This allows for the retrieval of your LegalTag using the 'name' associated with it.
+      operationId: getLegalTag
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+          x-example: OSDU-Private-USA-EHC
+        - name: OSDU-Account-Id
+          in: header
+          description: Users account e.g. OSDU
+          required: true
+          type: string
+        - name: OSDU-On-Behalf-Of
+          in: header
+          description: User's email or auth token
+          required: false
+          type: string
+      responses:
+        '200':
+          description: Retrieved LegalTag successfully.
+          schema:
+            $ref: '#/definitions/LegalTagDto'
+        '400':
+          description: Invalid parameters were given on request.
+        '401':
+          description: You do not have permissions to access this API.
+        '404':
+          description: Requested LegalTag was not found.
+      security:
+        - Bearer: []
+    delete:
+      tags:
+        - LegalTag
+      summary: Deletes a LegalTag for the given 'name'.
+      description: This allows for the deletion of your LegalTag with the given name. This makes the given legaltags data invalid.
+      operationId: deleteLegalTag
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+          x-example: OSDU-Private-USA-EHC
+        - name: OSDU-Account-Id
+          in: header
+          description: Users account e.g. OSDU
+          required: true
+          type: string
+        - name: OSDU-On-Behalf-Of
+          in: header
+          description: User's email or auth token
+          required: false
+          type: string
+      responses:
+        '200':
+          description: Accepted
+        '400':
+          description: Invalid parameters were given on request.
+        '401':
+          description: You do not have permissions to access this API.
+        '404':
+          description: Requested LegalTag was not found.
+      security:
+        - Bearer: []
+  /info:
+    get:
+      tags:
+        - info
+      summary: "Version info"
+      description: "For deployment available public `/info` endpoint, \
+        \ which provides build and git related information."
+      operationId: "Version info"
+      produces:
+        - "application/json"
+      responses:
+        200:
+          description: "Version info."
+          schema:
+            $ref: "#/definitions/VersionInfo"
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+definitions:
+  ReadablePropertyValues:
+    type: object
+    properties:
+      countriesOfOrigin:
+        type: object
+        description: The values of all the allowed Countries of Origin with the ISO Alpha 2 code and country name.
+        additionalProperties:
+          type: string
+      otherRelevantDataCountries:
+        type: object
+        description: The values of all the allowed Other Relevant Data Countries with the ISO Alpha 2 code and country name.
+        additionalProperties:
+          type: string
+      securityClassifications:
+        type: array
+        description: The values of all the allowed Security Classifications.
+        uniqueItems: true
+        items:
+          type: string
+      exportClassificationControlNumbers:
+        type: array
+        description: The name of all the allowed Export Classifications.
+        uniqueItems: true
+        items:
+          type: string
+      personalDataTypes:
+        type: array
+        description: The name of all the allowed Personal Data Type values.
+        uniqueItems: true
+        items:
+          type: string
+    description: Shows the allowed values of the fields of a LegalTag.
+  InvalidTagWithReason:
+    type: object
+    properties:
+      name:
+        type: string
+        description: The name of the LegalTag.
+      reason:
+        type: string
+        description: The reason the LegalTag is currently invalid.
+    description: Represents a single invalid LegalTag.
+  InvalidTagsWithReason:
+    type: object
+    properties:
+      invalidLegalTags:
+        type: array
+        description: A collection of invalid LegalTags.
+        items:
+          $ref: '#/definitions/InvalidTagWithReason'
+    description: Represents a collection invalid LegalTags.
+  RequestLegalTags:
+    type: object
+    required:
+      - names
+    properties:
+      names:
+        type: array
+        description: The name of all the LegalTags to retrieve.
+        items:
+          type: string
+        maxItems: 25
+        minItems: 1
+    description: The model to retrieve multiple LegalTags in batch.
+  LegalTagDto:
+    type: object
+    properties:
+      name:
+        type: string
+        example: OSDU-Private-EHCData
+        description: The name of the LegalTag.
+      description:
+        type: string
+        description: The description of the LegalTag.
+      properties:
+        $ref: '#/definitions/Properties'
+    description: Represents a single LegalTag.
+  LegalTagDtos:
+    type: object
+    properties:
+      legalTags:
+        type: array
+        description: A collection of complete LegalTags
+        items:
+          $ref: '#/definitions/LegalTagDto'
+    description: Represents a collection of LegalTags.
+  Properties:
+    type: object
+    required:
+      - contractId
+      - countryOfOrigin
+      - dataType
+      - exportClassification
+      - originator
+      - personalData
+      - securityClassification
+    properties:
+      countryOfOrigin:
+        type: array
+        example: US
+        description: The ISO Alpha 2 country code(s) of where the data relates to.
+        items:
+          type: string
+      contractId:
+        type: string
+        example: No Contract Related
+        description: The Id of the physical contract associated with the data being ingested.
+      expirationDate:
+        type: string
+        example: '2025-12-25'
+        description: The optional expiration date of the contract in the format YYYY-MM-DD
+      originator:
+        type: string
+        example: Schlumberger
+        description: The company who owns the data.
+      dataType:
+        type: string
+        example: Third Party Data
+        description: The type of data being ingested.
+      securityClassification:
+        type: string
+        example: Private
+        description: The security classification of the data.
+      personalData:
+        type: string
+        example: No Personal Data
+        description: Whether the data contains any personally identifiable data.
+      exportClassification:
+        type: string
+        example: EAR99
+        description: The ECCN value of the data if one applies.
+    description: LegalTag properties
+  UpdateLegalTag:
+    type: object
+    required:
+      - contractId
+      - name
+    properties:
+      name:
+        type: string
+        description: The name of the LegalTag.
+      contractId:
+        type: string
+        example: No Contract Related
+        description: The Id of the physical contract associated with the data being ingested.
+      description:
+        type: string
+        description: The optional description if the LegalTag to allow for easier discoverability of Legaltags overtime.
+      expirationDate:
+        type: string
+        example: '2025-12-25'
+        description: The optional expiration date of the contract in the format YYYY-MM-DD
+    description: The model to update an existing LegalTag
+  VersionInfo:
+    type: "object"
+    properties:
+      groupId:
+        type: "string"
+        description: "Maven artifact group ID."
+      actifactId:
+        type: "string"
+        description: "Maven artifact ID."
+      version:
+        type: "string"
+        description: "Maven artifact version"
+      buildTime:
+        type: "string"
+        description: "Maven artifact build time"
+      branch:
+        type: "string"
+        description: "Current git branch"
+      commitId:
+        type: "string"
+        description: "Latest commit hash"
+      commitMessage:
+        type: "string"
+        description: "Latest commit message"
+      connectedOuterServices:
+        type: "array"
+        description: "Connected outer services information"
+        items:
+          $ref: "#/definitions/ConnectedOuterService"
+    description: "Version info."
+  ConnectedOuterService:
+    type: "object"
+    properties:
+      name:
+        type: "string"
+        description: "Connected outer service name."
+      version:
+        type: "string"
+        description: "Connected outer service version."
+    description: "Connected outer service information."

@@ -1,0 +1,885 @@
+openapi: 3.0.1
+info:
+  title: Register Service
+  description: API Documetation
+  version: '1.0'
+servers:
+- url: /api/register/v1
+security:
+- Authorization: []
+paths:
+  /subscription/{id}/secret:
+    put:
+      tags:
+      - subscriber-api
+      operationId: updateSecret
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+              - $ref: '#/components/schemas/GsaSecret'
+              - $ref: '#/components/schemas/HmacSecret'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /test/gsa-challenge/{count}:
+    get:
+      tags:
+      - gsa-subscriber-listener-api
+      operationId: testGsa
+      parameters:
+      - name: crc
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ChallengeResponse'
+    post:
+      tags:
+      - gsa-subscriber-listener-api
+      operationId: testPushGsa
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+        required: true
+      responses:
+        '200':
+          description: OK
+  /test/challenge/{count}:
+    get:
+      tags:
+      - subscriber-listener-api
+      operationId: testCrc
+      parameters:
+      - name: crc
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: hmac
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ChallengeResponse'
+    post:
+      tags:
+      - subscriber-listener-api
+      operationId: testPushHmac
+      parameters:
+      - name: hmac
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+        required: true
+      responses:
+        '200':
+          description: OK
+  /subscription:
+    get:
+      tags:
+      - subscriber-api
+      operationId: querySubscription
+      parameters:
+      - name: notificationId
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Subscription'
+    post:
+      tags:
+      - subscriber-api
+      operationId: createSubscription
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Subscription'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Subscription'
+  /ddms:
+    get:
+      tags:
+      - ddms-api
+      operationId: queryDMS
+      parameters:
+      - name: type
+        in: query
+        required: true
+        schema:
+          pattern: ^[A-Za-z0-9]{1,50}
+          type: string
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ddms'
+    post:
+      tags:
+      - ddms-api
+      operationId: postDMS
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Ddms'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Ddms'
+  /action:
+    post:
+      tags:
+      - action-api
+      operationId: createAction
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateActionDto'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Action'
+  /action:test:
+    post:
+      tags:
+      - action-api
+      operationId: testAction
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TestActionRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ParsedAction'
+  /action:retrieve:
+    post:
+      tags:
+      - action-api
+      operationId: retrieveAction
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JsonNode'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Action'
+  /topics:
+    get:
+      tags:
+      - subscriber-api
+      operationId: listMessages
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Topic'
+  /subscription/{id}:
+    get:
+      tags:
+      - subscriber-api
+      operationId: getSubscription
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/SubscriptionInfo'
+    delete:
+      tags:
+      - subscriber-api
+      operationId: deleteSubscription
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /info:
+    get:
+      tags:
+      - info-api
+      operationId: info
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VersionInfo'
+  /ddms/{id}:
+    get:
+      tags:
+      - ddms-api
+      operationId: getDMS
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          pattern: ^[A-Za-z0-9-]{2,50}
+          type: string
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Ddms'
+    delete:
+      tags:
+      - ddms-api
+      operationId: deleteDMS
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          pattern: ^[A-Za-z0-9-]{2,50}
+          type: string
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /ddms/{id}/{type}/{localid}:
+    get:
+      tags:
+      - ddms-api
+      operationId: redirectToDms
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          pattern: ^[A-Za-z0-9-]{2,50}
+          type: string
+      - name: type
+        in: path
+        required: true
+        schema:
+          pattern: ^[A-Za-z]{2,50}
+          type: string
+      - name: localid
+        in: path
+        required: true
+        schema:
+          pattern: ^[A-Za-z0-9-]{2,50}
+          type: string
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /ah/readiness_check:
+    get:
+      tags:
+      - health-checks-api
+      operationId: readinessCheck
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /ah/liveness_check:
+    get:
+      tags:
+      - health-checks-api
+      operationId: livenessCheck
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /action/{id}:
+    get:
+      tags:
+      - action-api
+      operationId: getAction
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          pattern: ^[A-Za-z0-9-]{2,50}
+          type: string
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Action'
+    delete:
+      tags:
+      - action-api
+      operationId: deleteAction
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          pattern: ^[A-Za-z0-9-]{2,50}
+          type: string
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /whoami:
+    get:
+      tags:
+      - whoami-controller
+      operationId: whoami
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    put:
+      tags:
+      - whoami-controller
+      operationId: whoami_3
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    post:
+      tags:
+      - whoami-controller
+      operationId: whoami_2
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    delete:
+      tags:
+      - whoami-controller
+      operationId: whoami_5
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    options:
+      tags:
+      - whoami-controller
+      operationId: whoami_6
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    head:
+      tags:
+      - whoami-controller
+      operationId: whoami_1
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    patch:
+      tags:
+      - whoami-controller
+      operationId: whoami_4
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+components:
+  schemas:
+    GsaSecret:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Secret'
+      - type: object
+        properties:
+          value:
+            $ref: '#/components/schemas/GsaSecretValue'
+    GsaSecretValue:
+      type: object
+      properties:
+        audience:
+          type: string
+        key:
+          type: string
+    HmacSecret:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Secret'
+      - type: object
+        properties:
+          value:
+            type: string
+    Secret:
+      required:
+      - secretType
+      type: object
+      properties:
+        secretType:
+          type: string
+      discriminator:
+        propertyName: secretType
+    Subscription:
+      required:
+      - name
+      - pushEndpoint
+      - topic
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          pattern: ^[A-Za-z0-9- ]{2,50}
+          type: string
+        description:
+          pattern: ^[A-Za-z0-9. ]{0,255}
+          type: string
+        topic:
+          type: string
+        pushEndpoint:
+          type: string
+        createdBy:
+          type: string
+        notificationId:
+          type: string
+        secret:
+          oneOf:
+          - $ref: '#/components/schemas/GsaSecret'
+          - $ref: '#/components/schemas/HmacSecret'
+    Ddms:
+      required:
+      - id
+      - name
+      type: object
+      properties:
+        id:
+          pattern: ^[A-Za-z0-9-]{2,50}
+          type: string
+        name:
+          pattern: ^[A-Za-z0-9- ]{2,50}
+          type: string
+        description:
+          pattern: ^[A-Za-z0-9. ]{0,255}
+          type: string
+        contactEmail:
+          type: string
+        createdDateTimeEpoch:
+          type: string
+          format: date-time
+        interfaces:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/RegisteredInterface'
+    RegisteredInterface:
+      required:
+      - entityType
+      - schema
+      type: object
+      properties:
+        entityType:
+          pattern: ^[A-Za-z0-9 ]{2,50}
+          type: string
+        schema:
+          type: object
+          additionalProperties:
+            type: object
+    CreateActionDto:
+      required:
+      - name
+      type: object
+      properties:
+        id:
+          pattern: ^[A-Za-z0-9-]{2,50}
+          type: string
+        name:
+          pattern: ^[A-Za-z0-9- ]{2,50}
+          type: string
+        description:
+          pattern: ^[A-Za-z0-9. ]{0,255}
+          type: string
+        img:
+          type: string
+        url:
+          type: string
+        contactEmail:
+          type: string
+        filter:
+          $ref: '#/components/schemas/Filter'
+    Filter:
+      type: object
+      properties:
+        entityType:
+          type: array
+          items:
+            type: string
+        source:
+          type: array
+          items:
+            type: string
+        version:
+          type: array
+          items:
+            type: string
+    Action:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        img:
+          type: string
+        url:
+          type: string
+        contactEmail:
+          type: string
+        createdOnEpoch:
+          type: string
+          format: date-time
+        filter:
+          $ref: '#/components/schemas/Filter'
+    JsonNode:
+      type: object
+    TestActionRequest:
+      required:
+      - testPayload
+      type: object
+      properties:
+        action:
+          $ref: '#/components/schemas/CreateActionDto'
+        testPayload:
+          $ref: '#/components/schemas/JsonNode'
+    ParsedAction:
+      type: object
+      properties:
+        url:
+          type: string
+        errors:
+          type: string
+    Topic:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        state:
+          type: string
+        example:
+          type: object
+    ChallengeResponse:
+      type: object
+      properties:
+        responseHash:
+          type: string
+    SubscriptionInfo:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        topic:
+          type: string
+        pushEndpoint:
+          type: string
+        createdBy:
+          type: string
+        notificationId:
+          type: string
+    ConnectedOuterService:
+      type: object
+      properties:
+        name:
+          type: string
+        version:
+          type: string
+    VersionInfo:
+      type: object
+      properties:
+        groupId:
+          type: string
+        artifactId:
+          type: string
+        version:
+          type: string
+        buildTime:
+          type: string
+        branch:
+          type: string
+        commitId:
+          type: string
+        commitMessage:
+          type: string
+        connectedOuterServices:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConnectedOuterService'
+  securitySchemes:
+    Authorization:
+      type: http
+      scheme: bearer
+      bearerFormat: Authorization

@@ -1,0 +1,847 @@
+openapi: 3.0.1
+info:
+  title: Storage Service
+  version: '1.0'
+servers:
+- url: /api/storage/v2
+security:
+- Authorization: []
+paths:
+  /records:
+    put:
+      tags:
+      - record-api
+      operationId: createOrUpdateRecords
+      parameters:
+      - name: skipdupes
+        in: query
+        required: false
+        schema:
+          type: boolean
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              maxItems: 500
+              minItems: 0
+              type: array
+              items:
+                $ref: '#/components/schemas/Record'
+        required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateUpdateRecordsResponse'
+    patch:
+      tags:
+      - patch-api
+      operationId: updateRecordsMetadata
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecordBulkUpdateParam'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BulkUpdateRecordsResponse'
+  /schemas:
+    post:
+      tags:
+      - schema-api
+      operationId: createSchema
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Schema'
+        required: true
+      responses:
+        '200':
+          description: OK
+      deprecated: true
+  /records/{id}:delete:
+    post:
+      tags:
+      - record-api
+      operationId: deleteRecord
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          pattern: ^[\w\-\.]+:[\w-\.]+:[\w\-\.\:\%]+$
+          type: string
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+  /records/delete:
+    post:
+      tags:
+      - record-api
+      operationId: bulkDeleteRecords
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              maxItems: 500
+              minItems: 0
+              type: array
+              items:
+                type: string
+        required: true
+      responses:
+        '200':
+          description: OK
+  /query/records:
+    get:
+      tags:
+      - query-api
+      operationId: getAllRecords
+      parameters:
+      - name: cursor
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: kind
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatastoreQueryResult'
+    post:
+      tags:
+      - query-api
+      operationId: getRecords
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MultiRecordIds'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MultiRecordInfo'
+  /query/records:batch:
+    post:
+      tags:
+      - query-api
+      operationId: fetchRecords
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MultiRecordRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MultiRecordResponse'
+  /push-handlers/legaltag-changed:
+    post:
+      tags:
+      - pubsub-endpoints
+      operationId: legaltagChanged
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /schemas/{kind}:
+    get:
+      tags:
+      - schema-api
+      operationId: getSchema
+      parameters:
+      - name: kind
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Schema'
+      deprecated: true
+    delete:
+      tags:
+      - schema-api
+      operationId: deleteSchema
+      parameters:
+      - name: kind
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+      deprecated: true
+  /records/{id}:
+    get:
+      tags:
+      - record-api
+      operationId: getLatestRecordVersion
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          pattern: ^[\w\-\.]+:[\w-\.]+:[\w\-\.\:\%]+$
+          type: string
+      - name: attribute
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+    delete:
+      tags:
+      - record-api
+      operationId: purgeRecord
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          pattern: ^[\w\-\.]+:[\w-\.]+:[\w\-\.\:\%]+$
+          type: string
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+  /records/{id}/{version}:
+    get:
+      tags:
+      - record-api
+      operationId: getSpecificRecordVersion
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          pattern: ^[\w\-\.]+:[\w-\.]+:[\w\-\.\:\%]+$
+          type: string
+      - name: version
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: attribute
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+  /records/versions/{id}:
+    get:
+      tags:
+      - record-api
+      operationId: getRecordVersions
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          pattern: ^[\w\-\.]+:[\w-\.]+:[\w\-\.\:\%]+$
+          type: string
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecordVersions'
+  /query/kinds:
+    get:
+      tags:
+      - query-api
+      operationId: getKinds
+      parameters:
+      - name: cursor
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatastoreQueryResult'
+  /info:
+    get:
+      tags:
+      - info-api
+      operationId: info
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VersionInfo'
+  /health:
+    get:
+      tags:
+      - health-check-api
+      operationId: healthMessage
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /whoami:
+    get:
+      tags:
+      - whoami-controller
+      operationId: whoami
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    put:
+      tags:
+      - whoami-controller
+      operationId: whoami_3
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    post:
+      tags:
+      - whoami-controller
+      operationId: whoami_2
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    delete:
+      tags:
+      - whoami-controller
+      operationId: whoami_5
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    options:
+      tags:
+      - whoami-controller
+      operationId: whoami_6
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    head:
+      tags:
+      - whoami-controller
+      operationId: whoami_1
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    patch:
+      tags:
+      - whoami-controller
+      operationId: whoami_4
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+components:
+  schemas:
+    Acl:
+      type: object
+      properties:
+        viewers:
+          type: array
+          items:
+            type: string
+        owners:
+          type: array
+          items:
+            type: string
+    Legal:
+      required:
+      - otherRelevantDataCountries
+      type: object
+      properties:
+        legaltags:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        otherRelevantDataCountries:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        status:
+          type: string
+          enum:
+          - compliant
+          - incompliant
+    Record:
+      required:
+      - acl
+      - data
+      type: object
+      properties:
+        id:
+          pattern: ^[\w\-\.]+:[\w-\.]+:[\w\-\.\:\%]+$
+          type: string
+        version:
+          type: integer
+          format: int64
+        kind:
+          type: string
+        acl:
+          $ref: '#/components/schemas/Acl'
+        legal:
+          $ref: '#/components/schemas/Legal'
+        data:
+          type: object
+          additionalProperties:
+            type: object
+        ancestry:
+          $ref: '#/components/schemas/RecordAncestry'
+        meta:
+          type: array
+          items:
+            type: object
+            additionalProperties:
+              type: object
+        tags:
+          type: object
+          additionalProperties:
+            type: string
+    RecordAncestry:
+      type: object
+      properties:
+        parents:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+    CreateUpdateRecordsResponse:
+      type: object
+      properties:
+        recordCount:
+          type: integer
+          format: int32
+        recordIds:
+          type: array
+          items:
+            type: string
+        skippedRecordIds:
+          type: array
+          items:
+            type: string
+        recordIdVersions:
+          type: array
+          items:
+            type: string
+    Schema:
+      required:
+      - kind
+      - schema
+      type: object
+      properties:
+        kind:
+          type: string
+        schema:
+          type: array
+          items:
+            $ref: '#/components/schemas/SchemaItem'
+        ext:
+          type: object
+          additionalProperties:
+            type: object
+    SchemaItem:
+      required:
+      - kind
+      - path
+      type: object
+      properties:
+        path:
+          type: string
+        kind:
+          type: string
+        ext:
+          type: object
+          additionalProperties:
+            type: object
+        properties:
+          type: array
+          items:
+            $ref: '#/components/schemas/SchemaItem'
+    MultiRecordIds:
+      required:
+      - records
+      type: object
+      properties:
+        records:
+          maxItems: 100
+          minItems: 0
+          type: array
+          items:
+            type: string
+        attributes:
+          type: array
+          items:
+            type: string
+    MultiRecordInfo:
+      type: object
+      properties:
+        records:
+          type: array
+          items:
+            $ref: '#/components/schemas/Record'
+        invalidRecords:
+          type: array
+          items:
+            type: string
+        retryRecords:
+          type: array
+          items:
+            type: string
+    MultiRecordRequest:
+      required:
+      - records
+      type: object
+      properties:
+        records:
+          maxItems: 20
+          minItems: 1
+          type: array
+          items:
+            type: string
+    ConversionStatus:
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+        errors:
+          type: array
+          items:
+            type: string
+    MultiRecordResponse:
+      type: object
+      properties:
+        records:
+          type: array
+          items:
+            type: string
+        notFound:
+          type: array
+          items:
+            type: string
+        conversionStatuses:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConversionStatus'
+    PatchOperation:
+      required:
+      - value
+      type: object
+      properties:
+        op:
+          type: string
+        path:
+          type: string
+        value:
+          type: array
+          items:
+            type: string
+    RecordBulkUpdateParam:
+      required:
+      - ops
+      - query
+      type: object
+      properties:
+        query:
+          $ref: '#/components/schemas/RecordQuery'
+        ops:
+          type: array
+          items:
+            $ref: '#/components/schemas/PatchOperation'
+    RecordQuery:
+      required:
+      - ids
+      type: object
+      properties:
+        ids:
+          maxItems: 500
+          minItems: 1
+          type: array
+          items:
+            type: string
+    BulkUpdateRecordsResponse:
+      type: object
+      properties:
+        recordCount:
+          type: integer
+          format: int32
+        recordIds:
+          type: array
+          items:
+            type: string
+        notFoundRecordIds:
+          type: array
+          items:
+            type: string
+        unAuthorizedRecordIds:
+          type: array
+          items:
+            type: string
+        lockedRecordIds:
+          type: array
+          items:
+            type: string
+    RecordVersions:
+      type: object
+      properties:
+        recordId:
+          type: string
+        versions:
+          type: array
+          items:
+            type: integer
+            format: int64
+    DatastoreQueryResult:
+      type: object
+      properties:
+        cursor:
+          type: string
+        results:
+          type: array
+          items:
+            type: string
+    ConnectedOuterService:
+      type: object
+      properties:
+        name:
+          type: string
+        version:
+          type: string
+    VersionInfo:
+      type: object
+      properties:
+        groupId:
+          type: string
+        artifactId:
+          type: string
+        version:
+          type: string
+        buildTime:
+          type: string
+        branch:
+          type: string
+        commitId:
+          type: string
+        commitMessage:
+          type: string
+        connectedOuterServices:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConnectedOuterService'
+  securitySchemes:
+    Authorization:
+      type: http
+      scheme: Bearer
+      bearerFormat: Authorization

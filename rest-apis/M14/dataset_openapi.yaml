@@ -1,0 +1,372 @@
+openapi: 3.0.1
+info:
+  title: Dataset Service
+  description: API Documetation
+  version: '1.0'
+servers:
+- url: /api/dataset/v1
+security:
+- Authorization: []
+paths:
+  /registerDataset:
+    put:
+      tags:
+      - dataset-registry-api
+      operationId: createOrUpdateDatasetRegistry
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateDatasetRegistryRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/GetCreateUpdateDatasetRegistryResponse'
+  /storageInstructions:
+    post:
+      tags:
+      - dataset-dms-api
+      operationId: storageInstructions
+      parameters:
+      - name: kindSubType
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/GetDatasetStorageInstructionsResponse'
+  /retrievalInstructions:
+    get:
+      tags:
+      - dataset-dms-api
+      operationId: retrievalInstructions_1
+      parameters:
+      - name: id
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+    post:
+      tags:
+      - dataset-dms-api
+      operationId: retrievalInstructions
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetDatasetRegistryRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /getRetrievalInstructions:
+    get:
+      tags:
+      - dataset-dms-api
+      operationId: getRetrievalInstructions_1
+      parameters:
+      - name: id
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+    post:
+      tags:
+      - dataset-dms-api
+      operationId: getRetrievalInstructions
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetDatasetRegistryRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /getDatasetRegistry:
+    get:
+      tags:
+      - dataset-registry-api
+      operationId: getDatasetRegistry_1
+      parameters:
+      - name: id
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/GetCreateUpdateDatasetRegistryResponse'
+    post:
+      tags:
+      - dataset-registry-api
+      operationId: getDatasetRegistry
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetDatasetRegistryRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/GetCreateUpdateDatasetRegistryResponse'
+  /info:
+    get:
+      tags:
+      - info-api
+      operationId: info
+      parameters:
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VersionInfo'
+  /getStorageInstructions:
+    get:
+      tags:
+      - dataset-dms-api
+      operationId: getStorageInstructions
+      parameters:
+      - name: kindSubType
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: data-partition-id
+        in: header
+        description: Tenant Id
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/GetDatasetStorageInstructionsResponse'
+components:
+  schemas:
+    Acl:
+      type: object
+      properties:
+        viewers:
+          type: array
+          items:
+            type: string
+        owners:
+          type: array
+          items:
+            type: string
+    CreateDatasetRegistryRequest:
+      required:
+      - datasetRegistries
+      type: object
+      properties:
+        datasetRegistries:
+          maxItems: 20
+          minItems: 1
+          type: array
+          items:
+            $ref: '#/components/schemas/Record'
+    Legal:
+      required:
+      - otherRelevantDataCountries
+      type: object
+      properties:
+        legaltags:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        otherRelevantDataCountries:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        status:
+          type: string
+          enum:
+          - compliant
+          - incompliant
+    Record:
+      required:
+      - acl
+      - data
+      type: object
+      properties:
+        id:
+          pattern: ^[\w\-\.]+:[\w-\.]+:[\w\-\.\:\%]+$
+          type: string
+        version:
+          type: integer
+          format: int64
+        kind:
+          type: string
+        acl:
+          $ref: '#/components/schemas/Acl'
+        legal:
+          $ref: '#/components/schemas/Legal'
+        data:
+          type: object
+          additionalProperties:
+            type: object
+        ancestry:
+          $ref: '#/components/schemas/RecordAncestry'
+        meta:
+          type: array
+          items:
+            type: object
+            additionalProperties:
+              type: object
+        tags:
+          type: object
+          additionalProperties:
+            type: string
+    RecordAncestry:
+      type: object
+      properties:
+        parents:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+    GetCreateUpdateDatasetRegistryResponse:
+      type: object
+      properties:
+        datasetRegistries:
+          type: array
+          items:
+            $ref: '#/components/schemas/Record'
+    GetDatasetStorageInstructionsResponse:
+      type: object
+      properties:
+        storageLocation:
+          type: object
+          additionalProperties:
+            type: object
+        providerKey:
+          type: string
+    GetDatasetRegistryRequest:
+      required:
+      - datasetRegistryIds
+      type: object
+      properties:
+        datasetRegistryIds:
+          maxItems: 20
+          minItems: 1
+          type: array
+          items:
+            type: string
+    ConnectedOuterService:
+      type: object
+      properties:
+        name:
+          type: string
+        version:
+          type: string
+    VersionInfo:
+      type: object
+      properties:
+        groupId:
+          type: string
+        artifactId:
+          type: string
+        version:
+          type: string
+        buildTime:
+          type: string
+        branch:
+          type: string
+        commitId:
+          type: string
+        commitMessage:
+          type: string
+        connectedOuterServices:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConnectedOuterService'
+  securitySchemes:
+    Authorization:
+      type: http
+      scheme: bearer
+      bearerFormat: Authorization
