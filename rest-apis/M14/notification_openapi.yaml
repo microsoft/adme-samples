@@ -17,6 +17,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           description: OK
@@ -33,6 +35,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           description: OK
@@ -49,6 +53,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           description: OK
@@ -65,6 +71,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           description: OK
@@ -81,6 +89,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           description: OK
@@ -98,6 +108,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           description: OK
@@ -115,6 +127,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           description: OK
@@ -132,6 +146,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           description: OK
@@ -172,5 +188,5 @@ components:
   securitySchemes:
     Authorization:
       type: http
-      scheme: Bearer
+      scheme: bearer
       bearerFormat: Authorization
