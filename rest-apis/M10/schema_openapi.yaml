@@ -1,0 +1,602 @@
+swagger: '2.0'
+info:
+  version: '1.0.0'
+  title: Schema APIs
+  description: These API takes care of schema management in the Data Ecosystem and offers an implementation of our schema standard.
+  contact: {}
+basePath: /api/schema-service/v1
+securityDefinitions:
+  bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+schemes: []
+consumes:
+- application/json
+produces:
+- application/json
+paths:
+  /schema:
+    post:
+      description: Adds a schema to the schema repository. The schemaIdentity must be unique. The `authority`, `source` and `entityType` will be registered if not present. If lower minor versions are registered the service validates the new schema against breaking changes; if breaking changes are discovered the request fails. **Note:** The schema must not reference other schemas with status `DEVELOPMENT`. Scope to a schema will be set by system based on partition id (`SHARED` for common tenant and `INTERNAL` for private tenant). Required roles 'users.datalake.editors' or 'users.datalake.admins' groups to create schema.
+      summary: Create Schema
+      tags:
+      - Schema
+      operationId: CreateSchema
+      deprecated: false
+      produces:
+      - application/json
+      consumes:
+      - application/json
+      parameters:
+      - name: data-partition-id
+        in: header
+        required: true
+        type: string
+        description: Specifies the data partition to use. This should be either the partition name or crm account ID associated with the partition.
+      - name: Content-Type
+        in: header
+        required: false
+        enum:
+        - application/json
+        type: string
+        description: ''
+      - name: body
+        in: body
+        required: true
+        description: Schema description and schema to add
+        schema:
+          $ref: '#/definitions/SchemaRequest'
+      responses:
+        '201':
+          description: Schema created
+          schema:
+            $ref: '#/definitions/SchemaInfo'
+          headers: {}
+        '400':
+          description: Bad user input. Mandatory fields missing or unacceptable value passed to API
+          schema:
+            $ref: '#/definitions/ErrorResponseFormat'
+          headers: {}
+        '401':
+          description: Unknown or invalid user.
+          schema:
+            $ref: '#/definitions/ErrorResponseFormat'
+          headers: {}
+        '403':
+          description: User not authorised to access the API
+          schema:
+            $ref: '#/definitions/ErrorResponseFormat'
+          headers: {}
+      security:
+      - bearer: []
+    put:
+      description: Creates a new schema or updates an already existing schema with status `DEVELOPMENT` in the schema repository. If a user tries to create/update a schema with status other then `DEVELOPMENT`, API will throw an exception. Any schema instance with the same schemaIdentity is replaced (in contrast to the immutability of `PUBLISHED` or `OBSOLETE` schemas). A schema state can also be changed from `DEVELOPMENT` to `PUBLISHED` or `OBSOLETE` while updating schema content or by providing the same schema content. **Note:** The schema may refer to other schema definitions in `DEVELOPMENT` state. If those schemas are updated themselves, it is the developer's responsibility to PUT the dependent schemas again to update the schemas. Scope for a schema can't be updated, its a system defined value. Required roles  'users.datalake.editors' or 'users.datalake.admins' groups to update schema.
+      summary: Update Schema
+      tags:
+      - Schema
+      operationId: UpdateSchema
+      deprecated: false
+      produces:
+      - application/json
+      consumes:
+      - application/json
+      parameters:
+      - name: data-partition-id
+        in: header
+        required: true
+        type: string
+        description: Specifies the data partition to use. This should be either the partition name or crm account ID associated with the partition.
+      - name: Content-Type
+        in: header
+        required: false
+        enum:
+        - application/json
+        type: string
+        description: ''
+      - name: body
+        in: body
+        required: true
+        description: SchemaRequest
+        schema:
+          $ref: '#/definitions/SchemaRequest'
+      responses:
+        '201':
+          description: Schema created
+          schema:
+            $ref: '#/definitions/SchemaInfo'
+          headers: {}
+        '200':
+          description: Schema updated
+          schema:
+            $ref: '#/definitions/SchemaInfo'
+          headers: {}
+        '400':
+          description: Bad user input. Mandatory fields missing or unacceptable value passed to API
+          schema:
+            $ref: '#/definitions/ErrorResponseFormat'
+          headers: {}
+        '401':
+          description: Unknown or invalid user.
+          schema:
+            $ref: '#/definitions/ErrorResponseFormat'
+          headers: {}
+        '403':
+          description: User not authorised to access the API
+          schema:
+            $ref: '#/definitions/ErrorResponseFormat'
+          headers: {}
+      security:
+      - bearer: []
+    get:
+      description: Searches for information of available schema (SchemInfo) in schema repository. Supports options to filter out the search contents. Required roles 'users.datalake.viewers' or 'users.datalake.editors' or 'users.datalake.admins' groups to get the schema.
+      summary: searchSchemaInfoRepository
+      tags:
+      - Schema
+      operationId: searchSchemaInfoRepository
+      deprecated: false
+      produces:
+      - application/json
+      parameters:
+      - name: data-partition-id
+        in: header
+        required: true
+        type: string
+        description: Specifies the data partition to use. This should be either the partition name or crm account ID associated with the partition.
+      - name: authority
+        in: query
+        required: false
+        default: '*'
+        type: string
+        description: pass an optional string to search for a specific authority
+      - name: source
+        in: query
+        required: false
+        default: '*'
+        type: string
+        description: pass an optional string to search for a specific source
+      - name: entityType
+        in: query
+        required: false
+        default: '*'
+        type: string
+        description: pass an optional string to search for a specific entityType
+      - name: schemaVersionMajor
+        in: query
+        required: false
+        default: '*'
+        type: string
+        description: pass an optional string to search for a specific schemaVersionMajor
+      - name: schemaVersionMinor
+        in: query
+        required: false
+        default: '*'
+        type: string
+        description: pass an optional string to search for a specific schemaVersionMinor
+      - name: status
+        in: query
+        required: false
+        enum:
+        - PUBLISHED
+        - DEVELOPMENT
+        - OBSOLETE
+        default: PUBLISHED
+        type: string
+        description: The schema status specification
+      - name: scope
+        in: query
+        required: false
+        enum:
+        - SHARED
+        - INTERNAL
+        default: INTERNAL
+        type: string
+        description: The scope or schema visibility specification
+      - name: latestVersion
+        in: query
+        required: false
+        default: false
+        type: boolean
+        description: if True, only return the latest version
+      - name: limit
+        in: query
+        required: false
+        type: integer
+        format: int32
+        minimum: 0
+        maximum: 100
+        exclusiveMaximum: false
+        exclusiveMinimum: false
+        description: maximum number of schema records to return
+      - name: offset
+        in: query
+        required: false
+        type: integer
+        format: int32
+        minimum: 0
+        exclusiveMinimum: false
+        description: number of records to skip for pagination
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            $ref: '#/definitions/SchemaInfoResponse'
+          headers: {}
+        '400':
+          description: Bad user input. Mandatory fields missing or unacceptable value passed to API
+          schema:
+            $ref: '#/definitions/ErrorResponseFormat'
+          headers: {}
+        '401':
+          description: Unknown or invalid user.
+          schema:
+            $ref: '#/definitions/ErrorResponseFormat'
+          headers: {}
+        '403':
+          description: User not authorised to access the API
+          schema:
+            $ref: '#/definitions/ErrorResponseFormat'
+          headers: {}
+      security:
+      - bearer: []
+  /schema/{id}:
+    get:
+      description: Retrieve a schema using its system defined id. Required roles 'users.datalake.viewers' or 'users.datalake.editors' or 'users.datalake.admins' groups to get the schema.
+      summary: Get Schema
+      tags:
+      - Schema
+      operationId: GetSchema
+      deprecated: false
+      produces:
+      - application/json
+      parameters:
+      - name: data-partition-id
+        in: header
+        required: true
+        type: string
+        description: Specifies the data partition to use. This should be either the partition name or crm account ID associated with the partition.
+      - name: id
+        in: path
+        required: true
+        type: string
+        description: the system id of the schema
+      responses:
+        '200':
+          description: search results matching criteria
+          schema:
+            type: object
+            default: ''
+          examples:
+            application/json:
+              $schema: http://json-schema.org/draft-07/schema#
+              description: The entity shapefile.
+              title: ShapeFile
+              type: object
+              definitions: {}
+              properties: {}
+          headers: {}
+        '400':
+          description: Bad user input. Mandatory fields missing or unacceptable value passed to API
+          schema:
+            $ref: '#/definitions/ErrorResponseFormat'
+          headers: {}
+        '401':
+          description: Unknown or invalid user.
+          schema:
+            $ref: '#/definitions/ErrorResponseFormat'
+          headers: {}
+        '403':
+          description: User not authorised to access the API
+          schema:
+            $ref: '#/definitions/ErrorResponseFormat'
+          headers: {}
+        '404':
+          description: Requested Schema not found in repository
+          schema:
+            $ref: '#/definitions/ErrorResponseFormat'
+          headers: {}
+      security:
+      - bearer: []
+  /schemas/system:
+    put:
+      tags:
+        - schemas/system
+      summary: Creates/Updates a schema in development status
+      description: Creates a new schema or updates an already existing schema with status `DEVELOPMENT` in the schema repository. If a user tries to create a schema with status other then `DEVELOPMENT`, API will not throw an exception. The update
+        of schema without `DEVELOPMENT` status would cause error.Any schema instance with the same schemaIdentity is replaced. A schema state can also be changed from `DEVELOPMENT` to `PUBLISHED` or `OBSOLETE` while updating schema content or by providing the same schema content. **Note:** The
+        schema may refer to other schema definitions in `DEVELOPMENT` state. If those schemas are updated themselves, it is the developer's
+        responsibility to PUT the dependent schemas again to update the schema. Scope for a schema will be SHARED for all the schemas created using this API. Service principal
+        authorization is required to call thi API.
+      operationId: UpdateSystemSchema
+      deprecated: false
+      produces:
+      - application/json
+      consumes:
+      - application/json
+      parameters:
+      - name: data-partition-id
+        in: header
+        required: true
+        type: string
+        description: Specifies the data partition to use. This should be either the partition name or crm account ID associated with the partition.
+      - name: Content-Type
+        in: header
+        required: false
+        enum:
+        - application/json
+        type: string
+        description: ''
+      - name: body
+        in: body
+        required: true
+        description: SchemaRequest
+        schema:
+          $ref: '#/definitions/SchemaRequest'
+      responses:
+        '201':
+          description: Schema created
+          schema:
+            $ref: '#/definitions/SchemaInfo'
+          headers: {}
+        '400':
+          description: Bad user input. Mandatory fields missing or unacceptable value passed to API
+          schema:
+            $ref: '#/definitions/ErrorResponseFormat'
+          headers: {}
+        '401':
+          description: Unknown or invalid user.
+          schema:
+            $ref: '#/definitions/ErrorResponseFormat'
+          headers: {}
+        '403':
+          description: User not authorised to access the API
+          schema:
+            $ref: '#/definitions/ErrorResponseFormat'
+          headers: {}
+      security:
+      - bearer: []
+  /info:
+    get:
+      description: For deployment available public `/info` endpoint,  which provides build and git related information.
+      summary: Version info
+      tags:
+      - info
+      operationId: Versioninfo
+      deprecated: false
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        '200':
+          description: Version info.
+          schema:
+            $ref: '#/definitions/VersionInfo'
+          headers: {}
+definitions:
+  Error:
+    title: Error
+    type: object
+    properties:
+      message:
+        type: string
+      reason:
+        type: string
+      domain:
+        type: string
+  ErrorModel:
+    title: ErrorModel
+    type: object
+    properties:
+      errors:
+        type: array
+        items:
+          $ref: '#/definitions/Error'
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+  ErrorResponseFormat:
+    title: ErrorResponseFormat
+    description: An error that occurs during normal application logic
+    type: object
+    properties:
+      error:
+        $ref: '#/definitions/ErrorModel'
+  SchemaInfoResponse:
+    title: SchemaInfoResponse
+    description: The response for a GET schema request
+    type: object
+    properties:
+      schemaInfos:
+        type: array
+        items:
+          $ref: '#/definitions/SchemaInfo'
+      offset:
+        description: The offset for the next query
+        type: integer
+        minimum: 0
+        format: int32
+      count:
+        description: The number of schema versions in this response
+        type: integer
+        minimum: 0
+        format: int32
+      totalCount:
+        description: The total number of entity type codes in the repositories
+        type: integer
+        minimum: 0
+        format: int32
+  SchemaInfo:
+    title: SchemaInfo
+    description: Schema info including status, creation and schemaIdentity
+    type: object
+    properties:
+      createdBy:
+        description: The user who created the schema. This value is taken from API caller token.
+        example: user@opendes.com
+        type: string
+      dateCreated:
+        description: The UTC date time of the entity creation
+        example: 2019-05-23T11:16:03Z
+        type: string
+        format: date-time
+      schemaIdentity:
+        $ref: '#/definitions/SchemaIdentity'
+      scope:
+        $ref: '#/definitions/Scope'
+      status:
+        $ref: '#/definitions/Status'
+      supersededBy:
+        $ref: '#/definitions/SchemaIdentity'
+    required:
+    - schemaIdentity
+    - status
+  SchemaIdentity:
+    title: SchemaIdentity
+    description: Schema authority source and type description
+    type: object
+    properties:
+      authority:
+        description: Entity authority
+        example: osdu
+        type: string
+      entityType:
+        description: EntityType Code
+        example: wellbore
+        type: string
+      id:
+        description: A read-only system defined id used for referencing of a schema.
+        example: osdu:wks:wellbore:1.0.0
+        type: string
+      schemaVersionMajor:
+        description: Major Schema Version Number
+        example: 1
+        type: integer
+        format: int32
+      schemaVersionMinor:
+        description: Minor Schema Version Number
+        example: 1
+        type: integer
+        format: int32
+      schemaVersionPatch:
+        description: Patch Schema Version Number
+        example: 0
+        type: integer
+        format: int32
+      source:
+        description: Entity source
+        example: wks
+        type: string
+    required:
+    - authority
+    - entityType
+    - schemaVersionMajor
+    - schemaVersionMinor
+    - schemaVersionPatch
+    - source
+  SchemaRequest:
+    title: SchemaRequest
+    example:
+      schemaInfo:
+        schemaIdentity:
+          authority: osdu
+          source: wks
+          entityType: wellbore
+          schemaVersionMajor: 1
+          schemaVersionMinor: 0
+          schemaVersionPatch: 0
+        status: PUBLISHED
+      schema: {}
+    type: object
+    properties:
+      schema:
+        type: object
+      schemaInfo:
+        $ref: '#/definitions/SchemaInfo'
+    required:
+    - schema
+    - schemaInfo
+  VersionInfo:
+    title: VersionInfo
+    description: Version info.
+    type: object
+    properties:
+      groupId:
+        description: Maven artifact group ID.
+        type: string
+      actifactId:
+        description: Maven artifact ID.
+        type: string
+      version:
+        description: Maven artifact version
+        type: string
+      buildTime:
+        description: Maven artifact build time
+        type: string
+      branch:
+        description: Current git branch
+        type: string
+      commitId:
+        description: Latest commit hash
+        type: string
+      commitMessage:
+        description: Latest commit message
+        type: string
+      connectedOuterServices:
+        description: Connected outer services information
+        type: array
+        items:
+          $ref: '#/definitions/ConnectedOuterService'
+  ConnectedOuterService:
+    title: ConnectedOuterService
+    description: Connected outer service information.
+    type: object
+    properties:
+      name:
+        description: Connected outer service name.
+        type: string
+      version:
+        description: Connected outer service version.
+        type: string
+  SchemaStatus:
+    title: SchemaStatus
+    example: PUBLISHED
+    type: string
+    enum:
+    - PUBLISHED
+    - DEVELOPMENT
+    - OBSOLETE
+  Scope:
+    title: Scope
+    description: Schema Scope - is it internal or shared. This is a system defined attribute based on partition-id passed.
+    example: INTERNAL
+    type: string
+    enum:
+    - INTERNAL
+    - SHARED
+  Scope1:
+    title: Scope1
+    example: INTERNAL
+    type: string
+    enum:
+    - SHARED
+    - INTERNAL
+  Status:
+    title: Status
+    description: Schema lifecycle status
+    example: PUBLISHED
+    type: string
+    enum:
+    - PUBLISHED
+    - OBSOLETE
+    - DEVELOPMENT
+security:
+- bearer: []
+tags:
+- name: Schema
+  description: Core Schema Service related methods
+- name: info
+  description: Version info endpoint
+- name: schemas/system
+  description: Core System Schema Service related methods

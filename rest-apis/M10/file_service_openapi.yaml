@@ -1,0 +1,1674 @@
+swagger: '2.0'
+info:
+  version: '1.0.0'
+  title: File Service
+  description: >
+    # Key Concepts
+
+
+    This service allows users to manage files on the  Data Platform. File Management includes uploads, downloads and creation of metadata record for the file.
+  contact: {}
+basePath: /api/file/v1
+securityDefinitions:
+  bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+  appkey:
+    type: apiKey
+    name: appkey
+    in: header
+schemes:
+- https
+consumes:
+- application/json
+produces:
+- application/json
+paths:
+  /v2/getLocation:
+    post:
+      description: >
+        Create a new location in the landing zone to upload a file.
+
+
+        **Required roles**: 'users.datalake.editors' or 'users.datalake.admins' or 'users.datalake.ops'.
+      summary: Get a location in Landing Zone to upload a file.
+      tags:
+      - File Service
+      operationId: GetalocationinLandingZonetouploadafile.
+      deprecated: false
+      produces:
+      - application/json
+      consumes:
+      - application/json
+      parameters:
+      - name: data-partition-id
+        in: header
+        required: true
+        type: string
+        description: Specifies the data partition to use. This should either be the partition name or crm account ID associated with the partition.
+      - name: Content-Type
+        in: header
+        required: false
+        enum:
+        - application/json
+        type: string
+        description: ''
+      - name: body
+        in: body
+        required: false
+        description: ''
+        schema:
+          $ref: '#/definitions/LocationRequest'
+      responses:
+        '200':
+          description: Created location
+          schema:
+            $ref: '#/definitions/LocationResponse'
+          headers: {}
+        '400':
+          description: Bad user input. Mandatory fields missing or unacceptable value passed to API
+          schema:
+            $ref: '#/definitions/ApplicationError'
+          headers: {}
+        '401':
+          description: Invalid/Expired Credential
+          schema:
+            $ref: '#/definitions/ApplicationError'
+          headers: {}
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/ApplicationError'
+          headers: {}
+        '404':
+          description: Record Not Found
+          schema:
+            $ref: '#/definitions/ApplicationError'
+          headers: {}
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ApplicationError'
+          headers: {}
+      security:
+      - bearer: []
+      - appkey: []
+  /v2/files/UploadURL:
+    get:
+      description: >-
+        Gets a temporary signed URL to upload a file.The generated URL is time bound and expires after 24 hours.
+
+
+        User will receive a FileSource in the response.This is the relative path where the uploaded file will persist.
+
+        Once the file is uploaded, FileSource can then be used to post metadata of the file. The uploaded file gets automatically deleted, if the metadata is not posted within 24 hours of uploading the file.
+
+
+
+        **Required roles**: 'users.datalake.viewers' or 'users.datalake.editors' or 'users.datalake.admins' or 'users.datalake.ops'.
+      summary: Get the location to upload a file
+      tags:
+      - File Service
+      operationId: Getthelocationtouploadafile
+      deprecated: false
+      produces:
+      - application/json
+      parameters:
+      - name: data-partition-id
+        in: header
+        required: true
+        type: string
+        description: Specifies the data partition to use. This should either be the partition name or crm account ID associated with the partition.
+      responses:
+        '200':
+          description: Created location
+          schema:
+            $ref: '#/definitions/SourceLocationResponse'
+          headers: {}
+        '400':
+          description: Bad user input. Mandatory fields missing or unacceptable value passed to API
+          schema:
+            $ref: '#/definitions/ApplicationError'
+          headers: {}
+        '401':
+          description: Invalid/Expired Credential
+          schema:
+            $ref: '#/definitions/ApplicationError'
+          headers: {}
+        '403':
+          description: Forbidden.
+          schema:
+            $ref: '#/definitions/ApplicationError'
+          headers: {}
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ApplicationError'
+          headers: {}
+      security:
+      - bearer: []
+      - appkey: []
+  /v2/files/metadata:
+    post:
+      description: >-
+        This API creates a metadata record for a file that is already uploaded. The Metadata is linked to the file via `FileSource` provided in the request body.
+
+
+        If `FileSource` attribute is missing in the request body or there is no file present, then the request fails with an error.
+
+
+        When metadata is successfully updated in the system, it returns the `Id` of the file metadata record.
+
+
+        **Required roles**: 'users.datalake.viewers' or 'users.datalake.editors' or 'users.datalake.admins' or 'users.datalake.ops'.
+      summary: Publish file metadata for a file.
+      tags:
+      - File Service
+      operationId: Publishfilemetadataforafile.
+      deprecated: false
+      produces:
+      - application/json
+      consumes:
+      - application/json
+      parameters:
+      - name: data-partition-id
+        in: header
+        required: true
+        type: string
+        description: Specifies the data partition to use. This should either be the partition name or crm account ID associated with the partition.
+      - name: Content-Type
+        in: header
+        required: false
+        enum:
+        - application/json
+        type: string
+        description: ''
+      - name: body
+        in: body
+        required: false
+        description: File metadata content
+        schema:
+          $ref: '#/definitions/Record'
+      responses:
+        '201':
+          description: Metadata created
+          schema:
+            $ref: '#/definitions/FileMetadataresponse'
+          headers: {}
+        '400':
+          description: Bad user input. Mandatory fields missing or unacceptable value passed to API
+          schema:
+            $ref: '#/definitions/ApplicationError'
+          headers: {}
+        '401':
+          description: Invalid/Expired Credential
+          schema:
+            $ref: '#/definitions/ApplicationError'
+          headers: {}
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/ApplicationError'
+          headers: {}
+        '404':
+          description: Record Not Found
+          schema:
+            $ref: '#/definitions/ApplicationError'
+          headers: {}
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ApplicationError'
+          headers: {}
+      security:
+      - bearer: []
+      - appkey: []
+  /v2/files/{Id}/metadata:
+    get:
+      description: >-
+        Gets the latest version of File metadata record identified by the given id.
+
+
+        **Required roles**: 'users.datalake.viewers' or 'users.datalake.editors' or 'users.datalake.admins' or 'users.datalake.ops'.
+      summary: Gets metadata record for the given id
+      tags:
+      - File Service
+      operationId: Getsmetadatarecordforthegivenid
+      deprecated: false
+      produces:
+      - application/json
+      parameters:
+      - name: data-partition-id
+        in: header
+        required: true
+        type: string
+        description: Specifies the data partition to use. This should either be the partition name or crm account ID associated with the partition.
+      - name: Id
+        in: path
+        required: true
+        type: string
+        description: File metadata record Id.
+      responses:
+        '200':
+          description: A successful response
+          schema:
+            $ref: '#/definitions/RecordVersion'
+          headers: {}
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ApplicationError'
+          headers: {}
+        '401':
+          description: Invalid/Expired Credential
+          schema:
+            $ref: '#/definitions/ApplicationError'
+          headers: {}
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/ApplicationError'
+          headers: {}
+        '404':
+          description: Record Not Found
+          schema:
+            $ref: '#/definitions/ApplicationError'
+          headers: {}
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ApplicationError'
+          headers: {}
+      security:
+      - bearer: []
+      - appkey: []
+    delete:
+      description: >-
+        Deletes the File metadata record identified by the given id and file associated with that metadata record.
+
+          **Required roles**: 'users.datalake.editors'  or 'users.datalake.admins'.
+      summary: Deletes metadata record & File for the given id
+      tags:
+      - File Service
+      operationId: Deletesmetadatarecord&Fileforthegivenid
+      deprecated: false
+      produces:
+      - application/json
+      parameters:
+      - name: data-partition-id
+        in: header
+        required: true
+        type: string
+        description: Specifies the data partition to use. This should either be the partition name or crm account ID associated with the partition.
+      - name: Id
+        in: path
+        required: true
+        type: string
+        description: File metadata record Id.
+      responses:
+        '204':
+          description: Record deleted successfully.
+          headers: {}
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ApplicationError'
+          headers: {}
+        '401':
+          description: Invalid/Expired Credential
+          schema:
+            $ref: '#/definitions/ApplicationError'
+          headers: {}
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/ApplicationError'
+          headers: {}
+        '404':
+          description: Record Not Found
+          schema:
+            $ref: '#/definitions/ApplicationError'
+          headers: {}
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ApplicationError'
+          headers: {}
+      security:
+      - bearer: []
+      - appkey: []
+  /v2/files/{Id}/DownloadURL:
+    get:
+      description: >-
+        Gets a URL for downloading the file associated with the unique `id`.
+
+
+        **Required roles**: 'users.datalake.viewers' or 'users.datalake.editors' or 'users.datalake.admins' or 'users.datalake.ops'.
+      summary: Gets URL to download the file associated with the given id.
+      tags:
+      - File Service
+      operationId: GetsURLtodownloadthefileassociatedwiththegivenid.
+      deprecated: false
+      produces:
+      - application/json
+      parameters:
+      - name: data-partition-id
+        in: header
+        required: true
+        type: string
+        description: Specifies the data partition to use. This should either be the partition name or crm account ID associated with the partition.
+      - name: Id
+        in: path
+        required: true
+        type: string
+        description: File Metadata record Id.
+      - name: expiryTime
+        in: query
+        required: false
+        type: string
+        description: The Time for which Signed URL to be valid. Accepted Regex patterns are "^[0-9]+M$", "^[0-9]+H$", "^[0-9]+D$" denoting Integer values in Minutes, Hours, Days respectively. In absence of this parameter the URL would be valid for 7 Days.
+      responses:
+        '200':
+          description: A successful response
+          schema:
+            $ref: '#/definitions/DownloadURLresponse'
+          headers: {}
+        '400':
+          description: Bad user input. Mandatory fields missing or unacceptable value passed to API
+          schema:
+            $ref: '#/definitions/ApplicationError'
+          headers: {}
+        '401':
+          description: Invalid/Expired Credential
+          schema:
+            $ref: '#/definitions/ApplicationError'
+          headers: {}
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/ApplicationError'
+          headers: {}
+        '404':
+          description: Record Not Found
+          schema:
+            $ref: '#/definitions/ApplicationError'
+          headers: {}
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ApplicationError'
+          headers: {}
+      security:
+      - bearer: []
+      - appkey: []
+  /v2/getFileLocation:
+    post:
+      description: >
+        Returns file `Location` and `Driver`.
+      summary: GetFileLocation_POST
+      tags:
+      - File Service (Internal)
+      operationId: GetFileLocation_POST
+      deprecated: false
+      produces:
+      - application/json
+      consumes:
+      - application/json
+      parameters:
+      - name: data-partition-id
+        in: header
+        required: true
+        type: string
+        description: Specifies the data partition to use. This should either be the partition name or crm account ID associated with the partition.
+      - name: Content-Type
+        in: header
+        required: false
+        enum:
+        - application/json
+        type: string
+        description: ''
+      - name: body
+        in: body
+        required: false
+        description: ''
+        schema:
+          $ref: '#/definitions/FileLocationRequest'
+      responses:
+        '200':
+          description: File location
+          schema:
+            $ref: '#/definitions/FileLocationResponse'
+          headers: {}
+        '400':
+          description: Bad user input. Mandatory fields missing or unacceptable value passed to API
+          schema:
+            $ref: '#/definitions/ApplicationError'
+          headers: {}
+        '401':
+          description: Invalid/Expired Credential
+          schema:
+            $ref: '#/definitions/ApplicationError'
+          headers: {}
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ApplicationError'
+          headers: {}
+      security:
+      - bearer: []
+      - appkey: []
+  /v2/getFileList:
+    post:
+      description: >
+        Allows the application to audit the attempted file uploads. The method is internal and isn't available for third-party applications.
+      summary: GetFileList_POST
+      tags:
+      - File Service (Internal)
+      operationId: GetFileList_POST
+      deprecated: false
+      produces:
+      - application/json
+      consumes:
+      - application/json
+      parameters:
+      - name: data-partition-id
+        in: header
+        required: true
+        type: string
+        description: Specifies the data partition to use. This should either be the partition name or crm account ID associated with the partition.
+      - name: Content-Type
+        in: header
+        required: false
+        enum:
+        - application/json
+        type: string
+        description: ''
+      - name: body
+        in: body
+        required: false
+        description: ''
+        schema:
+          $ref: '#/definitions/FileListRequest'
+      responses:
+        '200':
+          description: File list page
+          schema:
+            $ref: '#/definitions/FileListResponse'
+          headers: {}
+        '400':
+          description: Bad user input. Mandatory fields missing or unacceptable value passed to API
+          schema:
+            $ref: '#/definitions/ApplicationError'
+          headers: {}
+        '401':
+          description: Invalid/Expired Credential
+          schema:
+            $ref: '#/definitions/ApplicationError'
+          headers: {}
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ApplicationError'
+          headers: {}
+  /v2/delivery/getFileSignedUrl:
+    post:
+      description: >
+        Returns delivery instructions for File(s) using SRNs
+      summary: DeliveryGetFileSignedUrl_POST
+      tags:
+      - Delivery API
+      operationId: DeliveryGetFileSignedUrl_POST
+      deprecated: false
+      produces:
+      - application/json
+      consumes:
+      - application/json
+      parameters:
+      - name: data-partition-id
+        in: header
+        required: true
+        type: string
+        description: Specifies the data partition to use. This should either be the partition name or crm account ID associated with the partition.
+      - name: Content-Type
+        in: header
+        required: false
+        enum:
+        - application/json
+        type: string
+        description: ''
+      - name: body
+        in: body
+        required: false
+        description: ''
+        schema:
+          $ref: '#/definitions/deliveryGetFileSignedURLRequest'
+      responses:
+        '200':
+          description: File location
+          schema:
+            $ref: '#/definitions/deliveryGetFileSignedURLResponse'
+          headers: {}
+        '400':
+          description: Bad user input. Mandatory fields missing or unacceptable value passed to API
+          schema:
+            $ref: '#/definitions/ApplicationError'
+          headers: {}
+        '401':
+          description: Invalid/Expired Credential
+          schema:
+            $ref: '#/definitions/ApplicationError'
+          headers: {}
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ApplicationError'
+          headers: {}
+      security:
+      - bearer: []
+      - appkey: []
+  /v2/info:
+    get:
+      description: For deployment available public `/info` endpoint,  which provides build and git related information.
+      summary: Version info
+      tags:
+      - Info
+      operationId: Versioninfo
+      deprecated: false
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        '200':
+          description: Version info.
+          schema:
+            $ref: '#/definitions/VersionInfo'
+          headers: {}
+  /v2/files/storageInstructions:
+    post:
+      description: get storage/upload location file datasets
+      summary: FilesStorageInstructions_POST
+      tags:
+      - File DMS
+      operationId: FilesStorageInstructions_POST
+      deprecated: false
+      produces:
+      - application/json
+      parameters:
+      - name: data-partition-id
+        in: header
+        required: true
+        type: string
+        description: Specifies the data partition to use. This should either be the partition name or crm account ID associated with the partition.
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/StorageInstructionsResponse'
+          headers: {}
+        '401':
+          description: Unauthorized
+          headers: {}
+        '403':
+          description: Forbidden
+          headers: {}
+        '404':
+          description: Not Found
+          headers: {}
+        '500':
+          description: Internal Server Error
+          headers: {}
+  /v2/files/retrievalInstructions:
+    post:
+      description: Generate retrieval instructions (Eg - Signed URLs) for datasets
+      summary: FilesRetrievalInstructions_POST
+      tags:
+      - File DMS
+      operationId: FilesRetrievalInstructions_POST
+      deprecated: false
+      produces:
+      - application/json
+      consumes:
+      - application/json
+      parameters:
+      - name: data-partition-id
+        in: header
+        required: true
+        type: string
+        description: Specifies the data partition to use. This should either be the partition name or crm account ID associated with the partition.
+      - name: Content-Type
+        in: header
+        required: false
+        enum:
+        - application/json
+        type: string
+        description: ''
+      - name: body
+        in: body
+        required: true
+        description: ''
+        schema:
+          $ref: '#/definitions/FilesRetrievalInstructionsRequest'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/RetrievalInstructionsResponse'
+          headers: {}
+        '401':
+          description: Unauthorized
+          headers: {}
+        '403':
+          description: Forbidden
+          headers: {}
+        '404':
+          description: Not Found
+          headers: {}
+        '500':
+          description: Internal Server Error
+          headers: {}
+  /v2/files/copy:
+    post:
+      description: Copy file from staging location to persistant location
+      summary: FilesCopy_POST
+      tags:
+      - File DMS
+      operationId: FilesCopy_POST
+      deprecated: false
+      produces:
+      - application/json
+      consumes:
+      - application/json
+      parameters:
+      - name: Content-Type
+        in: header
+        required: false
+        enum:
+        - application/json
+        type: string
+        description: ''
+      - name: body
+        in: body
+        required: true
+        description: ''
+        schema:
+          $ref: '#/definitions/FilesCopyRequest'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            default: ''
+            items:
+              $ref: '#/definitions/CopyDmsResponse'
+          headers: {}
+        '401':
+          description: Unauthorized
+          headers: {}
+        '403':
+          description: Forbidden
+          headers: {}
+        '404':
+          description: Not Found
+          headers: {}
+        '500':
+          description: Internal Server Error
+          headers: {}
+  /v2/file-collections/storageInstructions:
+    post:
+      description: get storage/upload location file-collection datasets
+      summary: FileCollectionsStorageInstructions_POST
+      tags:
+      - File-Collection DMS
+      operationId: FileCollectionsStorageInstructions_POST
+      deprecated: false
+      produces:
+      - application/json
+      parameters:
+      - name: data-partition-id
+        in: header
+        required: true
+        type: string
+        description: Specifies the data partition to use. This should either be the partition name or crm account ID associated with the partition.
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/StorageInstructionsResponse'
+          headers: {}
+        '401':
+          description: Unauthorized
+          headers: {}
+        '403':
+          description: Forbidden
+          headers: {}
+        '404':
+          description: Not Found
+          headers: {}
+        '500':
+          description: Internal Server Error
+          headers: {}
+  /v2/file-collections/retrievalInstructions:
+    post:
+      description: Generate retrieval instructions (Eg - Signed URLs) for datasets
+      summary: FileCollectionsRetrievalInstructions_POST
+      tags:
+      - File-Collection DMS
+      operationId: FileCollectionsRetrievalInstructions_POST
+      deprecated: false
+      produces:
+      - application/json
+      consumes:
+      - application/json
+      parameters:
+      - name: data-partition-id
+        in: header
+        required: true
+        type: string
+        description: Specifies the data partition to use. This should either be the partition name or crm account ID associated with the partition.
+      - name: Content-Type
+        in: header
+        required: false
+        enum:
+        - application/json
+        type: string
+        description: ''
+      - name: body
+        in: body
+        required: true
+        description: ''
+        schema:
+          $ref: '#/definitions/FileCollectionsRetrievalInstructionsRequest'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/RetrievalInstructionsResponse'
+          headers: {}
+        '401':
+          description: Unauthorized
+          headers: {}
+        '403':
+          description: Forbidden
+          headers: {}
+        '404':
+          description: Not Found
+          headers: {}
+        '500':
+          description: Internal Server Error
+          headers: {}
+  /v2/file-collections/copy:
+    post:
+      description: 'Copy file collection from '
+      summary: FileCollectionsCopy_POST
+      tags:
+      - File-Collection DMS
+      operationId: FileCollectionsCopy_POST
+      deprecated: false
+      produces:
+      - application/json
+      consumes:
+      - application/json
+      parameters:
+      - name: Content-Type
+        in: header
+        required: false
+        enum:
+        - application/json
+        type: string
+        description: ''
+      - name: body
+        in: body
+        required: true
+        description: ''
+        schema:
+          $ref: '#/definitions/FileCollectionsCopyRequest'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            default: ''
+            items:
+              $ref: '#/definitions/CopyDmsResponse'
+          headers: {}
+        '401':
+          description: Unauthorized
+          headers: {}
+        '403':
+          description: Forbidden
+          headers: {}
+        '404':
+          description: Not Found
+          headers: {}
+        '500':
+          description: Internal Server Error
+          headers: {}
+definitions:
+  LocationRequest:
+    title: LocationRequest
+    type: object
+    properties:
+      FileID:
+        type: string
+        pattern: ^[\w,\s-]+(\.\w+)?$
+  LocationResponse:
+    title: LocationResponse
+    type: object
+    properties:
+      FileID:
+        type: string
+        pattern: ^[\w,\s-]+(\.\w+)?$
+      Location:
+        example:
+          SignedURL: GCS signed URL
+        type: object
+        additionalProperties:
+          type: string
+  SourceLocationResponse:
+    title: SourceLocationResponse
+    type: object
+    properties:
+      FileID:
+        type: string
+        pattern: ^[\w,\s-]+(\.\w+)?$
+      Location:
+        $ref: '#/definitions/Location'
+  FileMetadata:
+    title: FileMetadata
+    description: The file data container containing all necessary details of the file record
+    type: object
+    properties:
+      Name:
+        description: An optional name of the dataset, e.g. a user friendly file or file collection name.
+        type: string
+      Description:
+        description: An optional, textual description of the dataset.
+        type: string
+      TotalSize:
+        description: Total size of the dataset in bytes; for files it is the same as declared in FileSourceInfo.FileSize or the sum of all individual files. Implemented as string. The value must be convertible to a long integer (sizes can become very large).
+        type: string
+        pattern: ^[0-9]+$
+      EncodingFormatTypeID:
+        description: Encoding Format Type ID
+        type: string
+        pattern: ^srn:<namespace>:reference-data\\/EncodingFormatType:[^:]+:[0-9]*$
+      SchemaFormatTypeID:
+        description: Schema Format Type ID
+        type: string
+        pattern: ^srn:<namespace>:reference-data\\/SchemaFormatType:[^:]+:[0-9]*$
+      Endian:
+        description: Endianness of binary value. Enumeration- \BIG\ \LITTLE\.  If absent applications will need to interpret from context indicators.
+        example: BIG LITTLE
+        type: string
+        default: BIG LITTLE
+      Checksum:
+        description: MD5 checksum of file bytes - a 32 byte hexadecimal number
+        type: string
+        pattern: ^[0-9a-fA-F]32}$
+      DatasetProperties:
+        $ref: '#/definitions/DatasetProperties'
+      ExtensionProperties:
+        $ref: '#/definitions/FileDMSExtensionProperties'
+    required:
+    - Name
+    - Endian
+    - DatasetProperties
+  FileCollectionMetadata:
+    title: FileCollectionMetadata
+    type: object
+    properties:
+      Name:
+        description: An optional name of the dataset, e.g. a user friendly file or file collection name.
+        type: string
+      Description:
+        description: An optional, textual description of the dataset.
+        type: string
+      TotalSize:
+        description: Total size of the dataset in bytes; for files it is the same as declared in FileSourceInfo.FileSize or the sum of all individual files. Implemented as string. The value must be convertible to a long integer (sizes can become very large).
+        type: string
+        pattern: ^[0-9]+$
+      EncodingFormatTypeID:
+        description: Encoding Format Type ID
+        type: string
+        pattern: ^srn:<namespace>:reference-data\\/EncodingFormatType:[^:]+:[0-9]*$
+      SchemaFormatTypeID:
+        description: Schema Format Type ID
+        type: string
+        pattern: ^srn:<namespace>:reference-data\\/SchemaFormatType:[^:]+:[0-9]*$
+      Endian:
+        description: Endianness of binary value. Enumeration- \BIG\ \LITTLE\.  If absent applications will need to interpret from context indicators.
+        example: BIG LITTLE
+        type: string
+        default: BIG LITTLE
+      Checksum:
+        description: MD5 checksum of file bytes - a 32 byte hexadecimal number
+        type: string
+        pattern: ^[0-9a-fA-F]32}$
+      DatasetProperties:
+        $ref: '#/definitions/DatasetProperties1'
+    required:
+    - Name
+    - Endian
+    - DatasetProperties
+  Opaque/GenericFileContentDetails:
+    title: Opaque/GenericFileContentDetails
+    description: Further information about File being uploaded.
+    type: object
+    properties:
+      TargetKind:
+        description: The target kind or schema ID which is to be used by the parser.
+        example: os:npd:wellbore:1:*.*
+        type: string
+      FileType:
+        description: Type of File to decide what kind of ingestion to be triggered
+        example: csv
+        type: string
+      FrameOfReference:
+        description: The list metaItem definitions which maps a named frame of reference symbol or name to the self-contained persistableReference.
+        type: array
+        items:
+          $ref: '#/definitions/FrameofReferenceMetaDataItem%28FoRofFile%29'
+      ExtensionProperties:
+        $ref: '#/definitions/ExtensionProperty'
+      ParentReference:
+        description: The parent reference for this file.
+        example: CSBE0417
+        type: string
+  ExtensionProperty:
+    title: ExtensionProperty
+    description: Useful for providing the user defined attributes to be associated with the file metadata record.
+    type: object
+    properties:
+      kind:
+        description: The schema ID for this schema fragment
+        example: os:npd:csvFileExtDetails:1.0.0
+        type: string
+  DownloadURLresponse:
+    title: DownloadURLresponse
+    type: object
+    properties:
+      SignedURL:
+        type: string
+  FileMetadataresponse:
+    title: FileMetadataresponse
+    type: object
+    properties:
+      Id:
+        type: string
+  deliveryGetFileSignedURLRequest:
+    title: deliveryGetFileSignedURLRequest
+    example:
+      srns:
+      - srn:some-valid-srn
+      - srn:some-invalid-srn
+    type: object
+    properties:
+      srn:
+        description: A list of SRNs to fetch
+        type: array
+        items:
+          type: string
+  deliveryGetFileSignedURLResponse:
+    title: deliveryGetFileSignedURLResponse
+    example:
+      unprocessed:
+      - srn:some-invalid-srn
+      processed:
+        srn:some-valid-srn:
+          signedUrl: https://...
+    type: object
+    properties:
+      unprocessed:
+        description: A list of SRNs which could not be processed
+        type: array
+        items:
+          type: string
+      processed:
+        description: Each key is equal to an SRN that was able to be processed
+        type: object
+        additionalProperties:
+          $ref: '#/definitions/Processed'
+  FileLocationRequest:
+    title: FileLocationRequest
+    type: object
+    properties:
+      FileID:
+        type: string
+        pattern: ^[\w,\s-]+(\.\w+)?$
+  FileLocationResponse:
+    title: FileLocationResponse
+    type: object
+    properties:
+      Driver:
+        $ref: '#/definitions/Driver'
+      Location:
+        type: string
+  FileListRequest:
+    title: FileListRequest
+    type: object
+    properties:
+      TimeFrom:
+        type: string
+        format: date-time
+      TimeTo:
+        type: string
+        format: date-time
+      PageNum:
+        type: integer
+        format: int32
+      Items:
+        type: integer
+        format: int32
+      UserID:
+        type: string
+  FileListResponse:
+    title: FileListResponse
+    type: object
+    properties:
+      content:
+        type: array
+        items:
+          $ref: '#/definitions/FileLocation'
+      number:
+        type: integer
+        format: int32
+      numberOfElements:
+        type: integer
+        format: int32
+      size:
+        type: integer
+        format: int32
+  Record:
+    title: Record
+    description: Metadata record.
+    type: object
+    properties:
+      id:
+        description: Unique identifier generated by the system for the file metadata record.
+        type: string
+      kind:
+        description: Kind of data being ingested. Must follow the naming convention:data-Partition-Id}:dataset-name}:record-type}:version}.
+        example: osdu:wks:dataset--File.Generic:1.0.0
+        type: string
+      acl:
+        $ref: '#/definitions/acl'
+      legal:
+        $ref: '#/definitions/LegalMetaData'
+      data:
+        $ref: '#/definitions/FileMetadata'
+      ancestry:
+        description: A named list of entities in the data lake as a dictionary item.
+        type: object
+        additionalProperties: {}
+    required:
+    - kind
+    - acl
+    - legal
+    - data
+  FileCollectionRecord:
+    title: FileCollectionRecord
+    description: Metadata record.
+    type: object
+    properties:
+      id:
+        description: Unique identifier generated by the system for the directory metadata record.
+        type: string
+      kind:
+        description: Kind of data being ingested. Must follow the naming convention:data-Partition-Id}:dataset-name}:record-type}:version}.
+        example: osdu:wks:dataset--FileCollection.Generic:1.0.0
+        type: string
+      acl:
+        $ref: '#/definitions/acl'
+      legal:
+        $ref: '#/definitions/LegalMetaData'
+      data:
+        $ref: '#/definitions/FileCollectionMetadata'
+      ancestry:
+        description: A named list of entities in the data lake as a dictionary item.
+        type: object
+        additionalProperties: {}
+    required:
+    - kind
+    - acl
+    - legal
+    - data
+  RecordVersion:
+    title: RecordVersion
+    description: Metadata record.
+    type: object
+    properties:
+      id:
+        description: Unique identifier generated by the system for the file metadata record.
+        type: string
+      kind:
+        description: Kind of data being ingested. Must follow the naming convention:data-Partition-Id}:dataset-name}:record-type}:version}.
+        example: osdu:wks:dataset--File.Generic:1.0.0
+        type: string
+      acl:
+        $ref: '#/definitions/acl'
+      legal:
+        $ref: '#/definitions/LegalMetaData'
+      data:
+        $ref: '#/definitions/FileMetadata'
+      ancestry:
+        description: A named list of entities in the data lake as a dictionary item.
+        type: object
+        additionalProperties: {}
+      version:
+        description: The version number of this OSDU resource; set by the framework.
+        example: 1831253916104085
+        type: integer
+        format: int64
+  Driver:
+    title: Driver
+    example: GCP
+    type: string
+    enum:
+    - GCP
+    - AWS
+  FileLocation:
+    title: FileLocation
+    type: object
+    properties:
+      FileID:
+        type: string
+        pattern: ^[\w,\s-]+(\.\w+)?$
+      Driver:
+        $ref: '#/definitions/Driver'
+      Location:
+        type: string
+      CreatedAt:
+        type: string
+        format: date-time
+      CreatedBy:
+        type: string
+  acl:
+    title: acl
+    type: object
+    properties:
+      viewers:
+        description: List of valid groups which will have view/read privileges over the record.
+        type: array
+        items:
+          type: string
+      owners:
+        description: List of valid groups which will have write privileges over the record.
+        type: array
+        items:
+          type: string
+    required:
+    - viewers
+    - owners
+  LegalMetaData:
+    title: LegalMetaData
+    description: Legal meta data like legal tags, relevant other countries, legal status.
+    type: object
+    properties:
+      legaltags:
+        description: The list of legal tags, see compliance API.
+        type: array
+        items:
+          type: string
+      otherRelevantDataCountries:
+        description: The list of other relevant data countries using the ISO 2-letter codes, see compliance API.
+        type: array
+        items:
+          type: string
+      status:
+        description: The legal status.
+        type: string
+  fileSourceInfoObject:
+    title: fileSourceInfoObject
+    type: object
+    properties:
+      Name:
+        description: user-friendly file name.
+        type: string
+      PreLoadFilePath:
+        description: File system path to the data file as it existed before loading to the data platform
+        type: string
+      FileSource:
+        description: Relative file path for the data in the file
+        type: string
+      PreloadFileCreateUser:
+        description: Optional user name or reference, who created the file prior to up-loading to the platform.
+        type: string
+      PreloadFileCreateDate:
+        description: Optional create date and time of the file prior to uploading to the platform.
+        type: string
+      PreloadFileModifyUser:
+        description: Optional user name or reference, who last modified the file prior to up-loading to the platform.
+        type: string
+      PreloadFileModifyDate:
+        description: Optional last modified date and time of the file prior to up-loading to the platform.
+        type: string
+      FileSize:
+        description: Length of file in bytes. Implemented as string. The value must be convertible to a long integer (sizes can become very large).
+        type: string
+      EncodingFormatTypeID:
+        description: Encoding Format Type ID
+        type: string
+        pattern: ^srn:<namespace>:reference-data\\/EncodingFormatType:[^:]+:[0-9]*$
+      Checksum:
+        description: Checksum of file bytes - a hexadecimal number with even number of bytes.
+        type: string
+        pattern: ^([0-9a-fA-F]{2})+$
+      ChecksumAlgorithm:
+        description: The name of the checksum algorithm e.g. MD5, SHA-256.
+        type: string
+  FrameofReferenceMetaDataItem(FoRofFile):
+    title: FrameofReferenceMetaDataItem(FoRofFile)
+    description: A meta data item, which allows the association of named properties or property values to a Unit/Measurement/CRS/Azimuth/Time context.
+    type: object
+    properties:
+      kind:
+        $ref: '#/definitions/ReferenceKind'
+      name:
+        description: The name of the CRS or the symbol/name of the unit
+        example:
+        - NAD27 * OGP-Usa Conus / North Dakota South [32021,15851]
+        - ft
+        type: string
+      persistableReference:
+        description: The persistable reference string uniquely identifying the CRS or Unit
+        example:
+          scaleOffset:
+            scale: 0.304800609601219
+            offset: 0
+          symbol: ftUS
+          baseMeasurement:
+            ancestry: Length
+            type: UM
+          type: USO
+        type: string
+      propertyNames:
+        description: The list of property names, to which this meta data item provides Unit/CRS context to. Data structures, which come in a single frame of reference, can register the property name, others require a full path like "data.structureA.propertyB" to define a unique context.
+        example:
+        - elevationFromMsl
+        - '"totalDepthMdDriller'
+        - wellHeadProjected
+        type: array
+        items:
+          type: string
+      propertyValues:
+        description: The list of property values, to which this meta data item provides Unit/CRS context to. Typically a unit symbol is a value to a data structure; this symbol is then registered in this propertyValues array and the persistableReference provides the absolute reference.
+        example:
+        - F
+        - ftUS
+        - deg
+        type: array
+        items:
+          type: string
+      uncertainty:
+        description: The uncertainty of the values measured given the unit or CRS unit.
+        type: number
+        format: double
+    required:
+    - kind
+    - persistableReference
+  Relationships:
+    title: Relationships
+    description: All relationships from this entity.
+    type: object
+    properties:
+      parentEntity:
+        $ref: '#/definitions/ToOneRelationship'
+      relatedItems:
+        $ref: '#/definitions/toManyRelationship'
+  toManyRelationship:
+    title: toManyRelationship
+    description: A relationship from this entity to many other entities either by natural key (name) or explicit id, optionally classified by confidence level.
+    type: object
+    properties:
+      confidences:
+        description: The confidences of the relationships. Keep all the arrays ordered and aligned.
+        type: array
+        items:
+          type: number
+          format: double
+      ids:
+        description: The ids of the related objects. It is populated for an explicit relationship where the target entity is present as a record in the data ecosystem. Keep all the arrays ordered and aligned.
+        type: array
+        items:
+          type: string
+      names:
+        description: The names or natural keys of the related objects. Keep all the arrays ordered and aligned.
+        type: array
+        items:
+          type: string
+      versions:
+        description: The specific version numbers of the related instances. This is only specified if a specific version is required. If not populated the last version is implied. Keep all the arrays ordered and aligned.
+        type: array
+        items:
+          type: integer
+          format: int64
+  ToOneRelationship:
+    title: ToOneRelationship
+    description: A relationship from this entity to one other entity either by natural key (name) or id, optionally classified by confidence level
+    type: object
+    properties:
+      confidence:
+        description: The confidence of the relationship. If the property is absent a well-known relation is implied.
+        example: 1
+        type: number
+        format: double
+      id:
+        description: The id of the related object in the Data Ecosystem. If set, the id has priority over the natural key in the name property.
+        example: data_partition:namespace:entity_845934c40e8d922bc57b678990d55722
+        type: string
+      name:
+        description: The name or natural key of the related object. This property is required if the target object id could not (yet) be identified.
+        example: Survey ST2016
+        type: string
+      version:
+        description: The version number of the related entity. If no version number is specified, the last version is implied.
+        type: integer
+        format: int64
+  ApplicationError:
+    title: ApplicationError
+    description: An error that occurs during normal application logic.
+    type: object
+    properties:
+      error:
+        $ref: '#/definitions/ErrorModel'
+  ErrorModel:
+    title: ErrorModel
+    type: object
+    properties:
+      errors:
+        type: array
+        items:
+          $ref: '#/definitions/Error'
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+  Error:
+    title: Error
+    type: object
+    properties:
+      message:
+        type: string
+      reason:
+        type: string
+      domain:
+        type: string
+  VersionInfo:
+    title: VersionInfo
+    description: Version info.
+    type: object
+    properties:
+      groupId:
+        description: Maven artifact group ID.
+        type: string
+      actifactId:
+        description: Maven artifact ID.
+        type: string
+      version:
+        description: Maven artifact version
+        type: string
+      buildTime:
+        description: Maven artifact build time
+        type: string
+      branch:
+        description: Current git branch
+        type: string
+      commitId:
+        description: Latest commit hash
+        type: string
+      commitMessage:
+        description: Latest commit message
+        type: string
+      connectedOuterServices:
+        description: Connected outer services information
+        type: array
+        items:
+          $ref: '#/definitions/ConnectedOuterService'
+  ConnectedOuterService:
+    title: ConnectedOuterService
+    description: Connected outer service information.
+    type: object
+    properties:
+      name:
+        description: Connected outer service name.
+        type: string
+      version:
+        description: Connected outer service version.
+        type: string
+  StorageInstructionsResponse:
+    title: StorageInstructionsResponse
+    type: object
+    properties:
+      providerKey:
+        example: AZURE
+        type: string
+      storageLocation:
+        $ref: '#/definitions/StorageLocation'
+  RetrievalInstructionsResponse:
+    title: RetrievalInstructionsResponse
+    type: object
+    properties:
+      providerKey:
+        example: AZURE
+        type: string
+      datasets:
+        type: array
+        items:
+          $ref: '#/definitions/Dataset'
+  CopyDmsResponse:
+    title: CopyDmsResponse
+    type: object
+    properties:
+      success:
+        type: boolean
+      datasetBlobStoragePath:
+        type: string
+  Dataset:
+    title: Dataset
+    type: object
+    properties:
+      datasetRegistryId:
+        example: opendes:dataset--FileCollection.Generic:8118591ee2a24eada7152e54b369e99a
+        type: string
+      retrievalProperties:
+        $ref: '#/definitions/RetrievalProperties'
+  DatasetProperties:
+    title: DatasetProperties
+    type: object
+    properties:
+      FileSourceInfo:
+        $ref: '#/definitions/FileSourceInfo'
+    required:
+    - FileSourceInfo
+  DatasetProperties1:
+    title: DatasetProperties1
+    type: object
+    properties:
+      FileCollectionPath:
+        description: The mandatory path to the file collection. A FileCollectionPath should represent folder level access to a set of files.
+        type: string
+      IndexFilePath:
+        description: An optional path to an index file.
+        type: string
+      FileSourceInfo:
+        type: array
+        items:
+          $ref: '#/definitions/fileSourceInfoObject'
+    required:
+    - FileCollectionPath
+  FileDMSExtensionProperties:
+    title: FileDMSExtensionProperties
+    type: object
+    properties:
+      Name:
+        description: The name of the file. Note- this is an additional property, which is not part of OSDU File.1.0.0
+        example: File
+        type: string
+      Classification:
+        description: The well-known entity classification code.
+        example: Raw File
+        type: string
+      Description:
+        description: A text describing the entity.
+        example: An text further describing this file example.
+        type: string
+      ExternalIds:
+        description: An array of identities (e.g. some kind if URL to be resolved in an external data store) which links to external realizations of the same entity.
+        type: array
+        items:
+          type: string
+      FileDateCreated:
+        description: The UTC date time of the file creation
+        example: 2013-03-22T11:16:03Z
+        type: string
+        format: date-time
+      FileDateModified:
+        description: The UTC date time of the last file modification
+        example: 2013-03-22T11:16:03Z
+        type: string
+        format: date-time
+      FileContentsDetails:
+        $ref: '#/definitions/Opaque~1GenericFileContentDetails'
+      relationships:
+        $ref: '#/definitions/Relationships'
+  FileSourceInfo:
+    title: FileSourceInfo
+    type: object
+    properties:
+      Name:
+        description: user-friendly file name.
+        type: string
+      PreLoadFilePath:
+        description: File system path to the data file as it existed before loading to the data platform
+        type: string
+      FileSource:
+        description: Relative file path for the data in the file
+        type: string
+      PreloadFileCreateUser:
+        description: Optional user name or reference, who created the file prior to up-loading to the platform.
+        type: string
+      PreloadFileCreateDate:
+        description: Optional create date and time of the file prior to uploading to the platform.
+        type: string
+      PreloadFileModifyUser:
+        description: Optional user name or reference, who last modified the file prior to up-loading to the platform.
+        type: string
+      PreloadFileModifyDate:
+        description: Optional last modified date and time of the file prior to up-loading to the platform.
+        type: string
+      FileSize:
+        description: Length of file in bytes. Implemented as string. The value must be convertible to a long integer (sizes can become very large).
+        type: string
+      EncodingFormatTypeID:
+        description: Encoding Format Type ID
+        type: string
+        pattern: ^srn:<namespace>:reference-data\\/EncodingFormatType:[^:]+:[0-9]*$
+    required:
+    - FileSource
+  Location:
+    title: Location
+    type: object
+    properties:
+      SignedURL:
+        example: GCS signed URL
+        type: string
+      FileSource:
+        description: Relative location of file
+        example: AXB564XVCY\SHVCU7632
+        type: string
+  Processed:
+    title: Processed
+    description: Signed URL and/or related properties for the processed SRN
+    type: object
+    properties:
+      signedUrl:
+        type: string
+  ReferenceKind:
+    title: ReferenceKind
+    description: The kind of reference, unit, measurement, CRS or azimuth reference.
+    example: CRS
+    type: string
+    enum:
+    - CRS
+    - Unit
+    - Measurement
+    - AzimuthReference
+    - DateTime
+  RetrievalProperties:
+    title: RetrievalProperties
+    type: object
+    properties:
+      CSP_SPECIFIC_PROPERTY_1:
+        type: string
+      CSP_SPECIFIC_PROPERTY_2:
+        type: string
+      CSP_SPECIFIC_PROPERTY_3:
+        type: string
+  StorageLocation:
+    title: StorageLocation
+    type: object
+    properties:
+      CSP_SPECIFIC_PROPERTY_1:
+        type: string
+      CSP_SPECIFIC_PROPERTY_2:
+        type: string
+      CSP_SPECIFIC_PROPERTY_3:
+        type: string
+  FileCollectionsCopyRequest:
+    title: FileCollectionsCopyRequest
+    type: object
+    properties:
+      datasetSources:
+        description: Array of Dataset Registeries
+        type: array
+        items:
+          $ref: '#/definitions/FileCollectionRecord'
+  FileCollectionsRetrievalInstructionsRequest:
+    title: FileCollectionsRetrievalInstructionsRequest
+    type: object
+    properties:
+      datasetRegistryIds:
+        description: array of Dataset registry ids
+        example:
+        - opendes:dataset--FileCollection.Generic:7fcadc9b0944422ba5b56b51548b5a15
+        - opendes:dataset--FileCollection.Generic:7fcadc9b09444223vb2bb3bbb1bb4bb2
+        type: array
+        items:
+          type: string
+  FilesCopyRequest:
+    title: FilesCopyRequest
+    type: object
+    properties:
+      datasetSources:
+        description: Array of Dataset Registeries
+        type: array
+        items:
+          $ref: '#/definitions/Record'
+  FilesRetrievalInstructionsRequest:
+    title: FilesRetrievalInstructionsRequest
+    type: object
+    properties:
+      datasetRegistryIds:
+        description: array of Dataset registry ids
+        example:
+        - opendes:dataset--File.Generic:7fcadc9b0944422ba5b56b51548b5a15
+        - opendes:dataset--File.Generic:7fcadc9b09444223vb2bb3bbb1bb4bb2
+        type: array
+        items:
+          type: string
+security: []
+tags:
+- name: File Service
+  description: ''
+- name: File Service (Internal)
+  description: ''
+- name: Delivery API
+  description: ''
+- name: Info
+  description: ''
+- name: File DMS
+  description: ''
+- name: File-Collection DMS
+  description: ''

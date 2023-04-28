@@ -1,0 +1,2534 @@
+swagger: '2.0'
+info:
+  version: 2.0.0
+  title: CRS Catalog Service API
+  description: API documentation for Coordinate Reference System (CRS) Catalog Service
+basePath: "/api/crs/catalog/v2"
+tags:
+  - name: CRS catalog
+  - name: Cartographic Transformations
+  - name: Areas of Use
+  - name: Coordinate Reference Systems
+  - name: Info Api
+security:
+  - Bearer: []
+schemes:
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  "/info":
+    get:
+      tags:
+        - Info Api
+      summary: Get Version Info
+      description: This API provides which provides build and git related information.
+      operationId: infoUsingGET
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: data-partition-id
+          in: header
+          description: tenant
+          required: true
+          type: string
+          default: opendes
+      responses:
+        '200':
+          description: OK
+          schema:
+            "$ref": "#/definitions/VersionInfo"
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - Bearer Authorization: []
+  "/catalog":
+    get:
+      tags:
+        - CRS catalog
+      operationId: Get Catalog Summary
+      summary: Get the Catalog summary (without lists)
+      description: Get the catalog structure with populated number of items per list
+        but empty lists ('lateBoundCRSes',...). It is expected that the lists are
+        individually populated on demand via the specific methods ('CRSV2GetLateBoundCRSes',...).
+      parameters:
+        - in: header
+          name: data-partition-id
+          type: string
+          required: true
+      responses:
+        '200':
+          description: A successful response
+          schema:
+            "$ref": "#/definitions/Catalog"
+      security:
+        - Bearer: []
+  "/catalog/attributes":
+    get:
+      tags:
+        - CRS catalog
+      operationId: Get Catalog Attributes
+      summary: Get Catalog Name and Update Dates
+      description: Get the catalog name and last update date
+      parameters:
+        - in: header
+          name: data-partition-id
+          type: string
+          required: true
+      responses:
+        '200':
+          description: A successful response
+          schema:
+            "$ref": "#/definitions/CatalogAttributes"
+      security:
+        - Bearer: []
+  "/area":
+    get:
+      tags:
+        - Areas of Use
+      operationId: Get all Areas Of Use
+      summary: Get Areas of Use
+      description: Get Area of Use records - returning named bounding box definitions
+        in latitude and longitude.
+      parameters:
+        - name: offset
+          in: query
+          required: false
+          type: integer
+          format: int32
+          description: The offset of the first item in the list of all AreaOfUse. It
+            is optional and is 0 by default.
+        - name: limit
+          in: query
+          required: false
+          type: integer
+          format: int32
+          description: The maximum number of the AreaOfUse returned. It is optional
+            and is 100 by default.
+        - name: mode
+          in: query
+          required: false
+          type: string
+          description: 'The mode of return: ''persistable_reference'' (default) string
+          or ''essence'' structure or both ''persistable_reference_essence''.'
+          default: persistable_reference
+        - in: header
+          name: data-partition-id
+          type: string
+          required: true
+      responses:
+        '200':
+          description: A successful response
+          schema:
+            "$ref": "#/definitions/AreaOfUseResults"
+      security:
+        - Bearer: []
+    post:
+      tags:
+        - Areas of Use
+      operationId: Get one Area Of Use
+      summary: Get one Area of Use
+      description: Get one Area of Use record by essence - returning a named bounding
+        box definition in latitude and longitude.
+      parameters:
+        - name: body
+          in: body
+          required: true
+          description: A unique description of an AreaOfUse, either as persistable reference
+            string or essence JSON.
+          schema:
+            "$ref": "#/definitions/AreaOfUseRequest"
+        - name: mode
+          in: query
+          required: false
+          type: string
+          description: 'The mode of return: ''persistable_reference'' (default) string
+          or ''essence'' structure or both ''persistable_reference_essence''.'
+          default: persistable_reference
+        - in: header
+          name: data-partition-id
+          type: string
+          required: true
+      responses:
+        '200':
+          description: A successful response
+          schema:
+            "$ref": "#/definitions/AreaOfUse"
+        '400':
+          description: Bad input format
+          schema:
+            "$ref": "#/definitions/ErrorResponse"
+      security:
+        - Bearer: []
+  "/crs":
+    get:
+      tags:
+        - Coordinate Reference Systems
+      operationId: Get all CRS
+      summary: Get all CRSes
+      description: Get all the CRSes (any sub-type) defined in the catalog.
+      parameters:
+        - name: offset
+          in: query
+          required: false
+          type: integer
+          format: int32
+          description: The offset of the first item in the list of all CRSes. It is
+            optional and is 0 by default.
+        - name: limit
+          in: query
+          required: false
+          type: integer
+          format: int32
+          description: The maximum number of the CRSes returned. It is optional and
+            is 100 by default.
+        - name: mode
+          in: query
+          required: false
+          type: string
+          description: 'The mode of return: ''persistable_reference'' (default) string
+          or ''essence'' structure or both ''persistable_reference_essence''.'
+          default: persistable_reference
+        - in: header
+          name: data-partition-id
+          type: string
+          required: true
+      responses:
+        '200':
+          description: A successful response
+          schema:
+            "$ref": "#/definitions/CRSResults"
+      security:
+        - Bearer: []
+    post:
+      tags:
+        - Coordinate Reference Systems
+      operationId: Get one CRS
+      summary: Get one CRS
+      description: Get one CRS (any sub-type) given its essence
+      parameters:
+        - name: body
+          in: body
+          required: true
+          description: A unique description of a coordinate reference system (CRS),
+            either as persistable reference string or essence JSON.
+          schema:
+            "$ref": "#/definitions/CRSRequest"
+        - name: mode
+          in: query
+          required: false
+          type: string
+          description: 'The mode of return: ''persistable_reference'' (default) string
+          or ''essence'' structure or both ''persistable_reference_essence''.'
+          default: persistable_reference
+        - in: header
+          name: data-partition-id
+          type: string
+          required: true
+      responses:
+        '200':
+          description: A successful response
+          schema:
+            "$ref": "#/definitions/CRS"
+        '400':
+          description: Bad input format
+          schema:
+            "$ref": "#/definitions/ErrorResponse"
+      security:
+        - Bearer: []
+  "/compoundcrs":
+    get:
+      tags:
+        - Coordinate Reference Systems
+      operationId: Get all CompoundCRS
+      summary: Get all CompoundCRSes
+      description: Get all the CompoundCRSes defined in the catalog.
+      parameters:
+        - name: offset
+          in: query
+          required: false
+          type: integer
+          format: int32
+          description: The offset of the first item in the list of all CompoundCRSes.
+            It is optional and is 0 by default.
+        - name: limit
+          in: query
+          required: false
+          type: integer
+          format: int32
+          description: The maximum number of the CompoundCRSes returned. It is optional
+            and is 100 by default.
+        - name: mode
+          in: query
+          required: false
+          type: string
+          description: 'The mode of return: ''persistable_reference'' (default) string
+          or ''essence'' structure or both ''persistable_reference_essence''.'
+          default: persistable_reference
+        - in: header
+          name: data-partition-id
+          type: string
+          required: true
+      responses:
+        '200':
+          description: A successful response
+          schema:
+            "$ref": "#/definitions/CompoundCRSResults"
+      security:
+        - Bearer: []
+    post:
+      tags:
+        - Coordinate Reference Systems
+      operationId: Get one CompoundCRS
+      summary: Get one CompoundCRS
+      description: Get one the CompoundCRS given its essence.
+      parameters:
+        - name: body
+          in: body
+          required: true
+          description: A unique description of a compound coordinate reference system
+            (CompoundCRS), either as persistable reference string or essence JSON.
+          schema:
+            "$ref": "#/definitions/CompoundCRSRequest"
+        - name: mode
+          in: query
+          required: false
+          type: string
+          description: 'The mode of return: ''persistable_reference'' (default) string
+          or ''essence'' structure or both ''persistable_reference_essence''.'
+          default: persistable_reference
+        - in: header
+          name: data-partition-id
+          type: string
+          required: true
+      responses:
+        '200':
+          description: A successful response
+          schema:
+            "$ref": "#/definitions/CompoundCRS"
+        '400':
+          description: Bad input format
+          schema:
+            "$ref": "#/definitions/ErrorResponse"
+      security:
+        - Bearer: []
+  "/earlyboundcrs":
+    get:
+      tags:
+        - Coordinate Reference Systems
+      operationId: Get all EarlyBoundCRS
+      summary: Get all EarlyBoundCRSes
+      description: Get all the EarlyBoundCRSes defined in the catalog.
+      parameters:
+        - name: offset
+          in: query
+          required: false
+          type: integer
+          format: int32
+          description: The offset of the first item in the list of all EarlyBoundCRSes.
+            It is optional and is 0 by default.
+        - name: limit
+          in: query
+          required: false
+          type: integer
+          format: int32
+          description: The maximum number of the EarlyBoundCRSes returned. It is optional
+            and is 100 by default.
+        - name: mode
+          in: query
+          required: false
+          type: string
+          description: 'The mode of return: ''persistable_reference'' (default) string
+          or ''essence'' structure or both ''persistable_reference_essence''.'
+          default: persistable_reference
+        - in: header
+          name: data-partition-id
+          type: string
+          required: true
+      responses:
+        '200':
+          description: A successful response
+          schema:
+            "$ref": "#/definitions/EarlyBoundCRSResults"
+      security:
+        - Bearer: []
+    post:
+      tags:
+        - Coordinate Reference Systems
+      operationId: Get one EarlyBoundCRS
+      summary: Get one EarlyBoundCRS
+      description: Get one EarlyBoundCRS given its essence
+      parameters:
+        - name: body
+          in: body
+          required: true
+          description: A unique description of a early-bound coordinate reference system
+            (EarlyBoundCRS), either as persistable reference string or essence JSON.
+          schema:
+            "$ref": "#/definitions/EarlyBoundCRSRequest"
+        - name: mode
+          in: query
+          required: false
+          type: string
+          description: 'The mode of return: ''persistable_reference'' (default) string
+          or ''essence'' structure or both ''persistable_reference_essence''.'
+          default: persistable_reference
+        - in: header
+          name: data-partition-id
+          type: string
+          required: true
+      responses:
+        '200':
+          description: A successful response
+          schema:
+            "$ref": "#/definitions/EarlyBoundCRS"
+        '400':
+          description: Bad input format
+          schema:
+            "$ref": "#/definitions/ErrorResponse"
+      security:
+        - Bearer: []
+  "/lateboundcrs":
+    get:
+      tags:
+        - Coordinate Reference Systems
+      operationId: Get all LateBoundCRS
+      summary: Get all LateBoundCRSes
+      description: Get all the LateBoundCRSes defined in the catalog.
+      parameters:
+        - name: offset
+          in: query
+          required: false
+          type: integer
+          format: int32
+          description: The offset of the first item in the list of all LateBoundCRSes.
+            It is optional and is 0 by default.
+        - name: limit
+          in: query
+          required: false
+          type: integer
+          format: int32
+          description: The maximum number of the LateBoundCRSes returned. It is optional
+            and is 100 by default.
+        - name: mode
+          in: query
+          required: false
+          type: string
+          description: 'The mode of return: ''persistable_reference'' (default) string
+          or ''essence'' structure or both ''persistable_reference_essence''.'
+          default: persistable_reference
+        - in: header
+          name: data-partition-id
+          type: string
+          required: true
+      responses:
+        '200':
+          description: A successful response
+          schema:
+            "$ref": "#/definitions/LateBoundCRSResults"
+      security:
+        - Bearer: []
+    post:
+      tags:
+        - Coordinate Reference Systems
+      operationId: Get one LateBoundCRS
+      summary: Get one LateBoundCRS
+      description: Get one LateBoundCRS given its persistable reference string or
+        essence structure.
+      parameters:
+        - name: body
+          in: body
+          required: true
+          description: A unique description of a late-bound coordinate reference system
+            (LateBoundCRS), either as persistable reference string or essence JSON.
+          schema:
+            "$ref": "#/definitions/LateBoundCRSRequest"
+        - name: mode
+          in: query
+          required: false
+          type: string
+          description: 'The mode of return: ''persistable_reference'' (default) string
+          or ''essence'' structure or both ''persistable_reference_essence''.'
+          default: persistable_reference
+        - in: header
+          name: data-partition-id
+          type: string
+          required: true
+      responses:
+        '200':
+          description: A successful response
+          schema:
+            "$ref": "#/definitions/LateBoundCRS"
+        '400':
+          description: Bad input format
+          schema:
+            "$ref": "#/definitions/ErrorResponse"
+      security:
+        - Bearer: []
+  "/ct":
+    get:
+      tags:
+        - Cartographic Transformations
+      operationId: Get all CT
+      summary: Get all Cartographic Transformations
+      description: Get all cartographic transformations declared in the catalog.
+      parameters:
+        - name: offset
+          in: query
+          required: false
+          type: integer
+          format: int32
+          description: The offset of the first item in the list of all CT. It is optional
+            and is 0 by default.
+        - name: limit
+          in: query
+          required: false
+          type: integer
+          format: int32
+          description: The maximum number of the CT returned. It is optional and is
+            100 by default.
+        - name: mode
+          in: query
+          required: false
+          type: string
+          description: 'The mode of return: ''persistable_reference'' (default) string
+          or ''essence'' structure or both ''persistable_reference_essence''.'
+          default: persistable_reference
+        - in: header
+          name: data-partition-id
+          type: string
+          required: true
+      responses:
+        '200':
+          description: A successful response
+          schema:
+            "$ref": "#/definitions/CTResults"
+      security:
+        - Bearer: []
+    post:
+      tags:
+        - Cartographic Transformations
+      operationId: Get one CT
+      summary: Get one Cartographic Transformation
+      description: Get one cartographic transformation given its essence
+      parameters:
+        - name: body
+          in: body
+          required: true
+          description: A unique description of a cartographic transform (CT), either
+            as persistable reference string or essence JSON.
+          schema:
+            "$ref": "#/definitions/CTRequest"
+        - name: mode
+          in: query
+          required: false
+          type: string
+          description: 'The mode of return: ''persistable_reference'' (default) string
+          or ''essence'' structure or both ''persistable_reference_essence''.'
+          default: persistable_reference
+        - in: header
+          name: data-partition-id
+          type: string
+          required: true
+      responses:
+        '200':
+          description: A successful response
+          schema:
+            "$ref": "#/definitions/CT"
+        '400':
+          description: Bad input format
+          schema:
+            "$ref": "#/definitions/ErrorResponse"
+      security:
+        - Bearer: []
+  "/compoundct":
+    get:
+      tags:
+        - Cartographic Transformations
+      operationId: Get all CompoundCT
+      summary: Get all CompoundCTs
+      description: Get all the CompoundCTs defined in the catalog.
+      parameters:
+        - name: offset
+          in: query
+          required: false
+          type: integer
+          format: int32
+          description: The offset of the first item in the list of all CompoundCTs.
+            It is optional and is 0 by default.
+        - name: limit
+          in: query
+          required: false
+          type: integer
+          format: int32
+          description: The maximum number of the CompoundCTs returned. It is optional
+            and is 100 by default.
+        - name: mode
+          in: query
+          required: false
+          type: string
+          description: 'The mode of return: ''persistable_reference'' (default) string
+          or ''essence'' structure or both ''persistable_reference_essence''.'
+          default: persistable_reference
+        - in: header
+          name: data-partition-id
+          type: string
+          required: true
+      responses:
+        '200':
+          description: A successful response
+          schema:
+            "$ref": "#/definitions/CompoundCTResults"
+      security:
+        - Bearer: []
+    post:
+      tags:
+        - Cartographic Transformations
+      operationId: Get one CompoundCT
+      summary: Get one CompoundCT
+      description: Get one CompoundCT by its essence.
+      parameters:
+        - name: body
+          in: body
+          required: true
+          description: A unique description of a compound cartographic transform (CompoundCT),
+            either as persistable reference string or essence JSON.
+          schema:
+            "$ref": "#/definitions/CompoundCTRequest"
+        - name: mode
+          in: query
+          required: false
+          type: string
+          description: 'The mode of return: ''persistable_reference'' (default) string
+          or ''essence'' structure or both ''persistable_reference_essence''.'
+          default: persistable_reference
+        - in: header
+          name: data-partition-id
+          type: string
+          required: true
+      responses:
+        '200':
+          description: A successful response
+          schema:
+            "$ref": "#/definitions/CompoundCT"
+        '400':
+          description: Bad input format
+          schema:
+            "$ref": "#/definitions/ErrorResponse"
+      security:
+        - Bearer: []
+  "/singlect":
+    get:
+      tags:
+        - Cartographic Transformations
+      operationId: Get all SingleCT
+      summary: Get all SingleCTs
+      description: Get all the SingleCTs defined in the catalog.
+      parameters:
+        - name: offset
+          in: query
+          required: false
+          type: integer
+          format: int32
+          description: The offset of the first item in the list of all SingleCTs. It
+            is optional and is 0 by default.
+        - name: limit
+          in: query
+          required: false
+          type: integer
+          format: int32
+          description: The maximum number of the SingleCTs returned. It is optional
+            and is 100 by default.
+        - name: mode
+          in: query
+          required: false
+          type: string
+          description: 'The mode of return: ''persistable_reference'' (default) string
+          or ''essence'' structure or both ''persistable_reference_essence''.'
+          default: persistable_reference
+        - in: header
+          name: data-partition-id
+          type: string
+          required: true
+      responses:
+        '200':
+          description: A successful response
+          schema:
+            "$ref": "#/definitions/SingleCTResults"
+      security:
+        - Bearer: []
+    post:
+      tags:
+        - Cartographic Transformations
+      operationId: Get one SingleCT
+      summary: Get one SingleCT
+      description: Get one SingleCT given its essence.
+      parameters:
+        - name: body
+          in: body
+          required: true
+          description: A unique description of a single cartographic transform (SingleCT),
+            either as persistable reference string or essence JSON.
+          schema:
+            "$ref": "#/definitions/SingleCTRequest"
+        - name: mode
+          in: query
+          required: false
+          type: string
+          description: 'The mode of return: ''persistable_reference'' (default) string
+          or ''essence'' structure or both ''persistable_reference_essence''.'
+          default: persistable_reference
+        - in: header
+          name: data-partition-id
+          type: string
+          required: true
+      responses:
+        '200':
+          description: A successful response
+          schema:
+            "$ref": "#/definitions/SingleCT"
+        '400':
+          description: Bad input format
+          schema:
+            "$ref": "#/definitions/ErrorResponse"
+      security:
+        - Bearer: []
+  "/search/area":
+    post:
+      tags:
+        - Areas of Use
+      operationId: Search Area Of Use
+      summary: Search Areas of Use
+      description: 'Search Area of Use records by keywords and/or geographic area
+        - returning named bounding box definitions in latitude and longitude. Geographical
+        constraints are passed (optionally) as parameters via the query URL, search
+        keywords are passed via the request body. Query syntax follows Lucene style,
+        default operator for multiple expressions is AND. The following keywords are
+        supported: ''name:'', ''description:'', ''authority:'', ''code:'', ''deprecationState:'',
+        ''remarks:'' (deprecationState remarks), ''lastModified:''. Example ''name:*America*''.'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          description: 'A Lucene style keyword query. One of the following keywords:
+          ''name:'', ''description:'', ''authority:'', ''code:'', ''deprecationState:'',
+          ''remarks:'' (deprecationState remarks), ''lastModified:''. Example ''name:*America*''.'
+          schema:
+            "$ref": "#/definitions/SearchAreaOfUseRequest"
+        - name: longitudeLeft
+          in: query
+          required: false
+          type: number
+          format: double
+          description: 'The left WGS 84 longitude limit of the search box. Value range:
+          [-180,180]'
+        - name: latitudeLower
+          in: query
+          required: false
+          type: number
+          format: double
+          description: 'The lower WGS 84 latitude limit of the search box. Value range:
+          [-90,90]'
+        - name: longitudeRight
+          in: query
+          required: false
+          type: number
+          format: double
+          description: 'The right WGS 84 longitude limit of the search box. Value range:
+          [-180,180]'
+        - name: latitudeUpper
+          in: query
+          required: false
+          type: number
+          format: double
+          description: 'The lower WGS 84 latitude limit of the search box. Value range:
+          [-90,90]'
+        - name: offset
+          in: query
+          required: false
+          type: integer
+          format: int32
+          description: The offset of the first item in the list of all AreasOfUse. It
+            is optional and is 0 by default.
+        - name: limit
+          in: query
+          required: false
+          type: integer
+          format: int32
+          description: The maximum number of the AreasOfUse returned. It is optional
+            and is 100 by default.
+        - name: mode
+          in: query
+          required: false
+          type: string
+          description: 'The mode of return: ''persistable_reference'' (default) string
+          or ''essence'' structure or both ''persistable_reference_essence''.'
+          default: persistable_reference
+        - in: header
+          name: data-partition-id
+          type: string
+          required: true
+      responses:
+        '200':
+          description: A successful response
+          schema:
+            "$ref": "#/definitions/AreaOfUseResults"
+      security:
+        - Bearer: []
+  "/search/ct":
+    post:
+      tags:
+        - Cartographic Transformations
+      operationId: Search CT
+      summary: Search Cartographic Transformations
+      description: 'Search cartographic transform records (any sub-type) by keywords
+        and/or geographic area. Geographical constraints are passed (optionally) as
+        parameters via the query URL, search keywords are passed via the request body.
+        Query syntax follows Lucene style, default operator for multiple expressions
+        is AND. The following keywords are supported: ''name:'',''description:'',
+        ''type:'', ''authority:'', ''code:'', ''deprecationState:'', ''remarks:'',
+        ''lastModified:'', ''source:'', ''wellKnownText:'', ''fromCRS.authority:'',
+        ''fromCRS.code:'', ''toCRS.authority:'', toCRS.code:'', ''policy:''. followed
+        by a value. Example: ''fromCRS.code:4267''.'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          description: 'A Lucene style keyword query. One of the following keywords
+          ''name:'',''description:'', ''type:'', ''authority:'', ''code:'', ''deprecationState:'',
+          ''remarks:'', ''lastModified:'', ''source:'', ''wellKnownText:'', ''fromCRS.authority:'',
+          ''fromCRS.code:'', ''toCRS.authority:'', toCRS.code:'', ''policy:''. followed
+          by a value. Example: ''fromCRS.code:4267''.'
+          schema:
+            "$ref": "#/definitions/SearchCTRequest"
+        - name: longitudeLeft
+          in: query
+          required: false
+          type: number
+          format: double
+          description: 'The left WGS 84 longitude limit of the search box. Value range:
+          [-180,180]'
+        - name: latitudeLower
+          in: query
+          required: false
+          type: number
+          format: double
+          description: 'The lower WGS 84 latitude limit of the search box. Value range:
+          [-90,90]'
+        - name: longitudeRight
+          in: query
+          required: false
+          type: number
+          format: double
+          description: 'The right WGS 84 longitude limit of the search box. Value range:
+          [-180,180]'
+        - name: latitudeUpper
+          in: query
+          required: false
+          type: number
+          format: double
+          description: 'The lower WGS 84 latitude limit of the search box. Value range:
+          [-90,90]'
+        - name: offset
+          in: query
+          required: false
+          type: integer
+          format: int32
+          description: The offset of the first item in the list of all CT. It is optional
+            and is 0 by default.
+        - name: limit
+          in: query
+          required: false
+          type: integer
+          format: int32
+          description: The maximum number of the CT returned. It is optional and is
+            100 by default.
+        - name: mode
+          in: query
+          required: false
+          type: string
+          description: 'The mode of return: ''persistable_reference'' (default) string
+          or ''essence'' structure or both ''persistable_reference_essence''.'
+          default: persistable_reference
+        - in: header
+          name: data-partition-id
+          type: string
+          required: true
+      responses:
+        '200':
+          description: A successful response
+          schema:
+            "$ref": "#/definitions/CTResults"
+      security:
+        - Bearer: []
+  "/search/crs":
+    post:
+      tags:
+        - Coordinate Reference Systems
+      operationId: Search CRS
+      summary: Search CRSes
+      description: 'Search CRS records (any sub-type) by keywords and/or geographic
+        area. Geographical constraints are passed (optionally) as parameters via the
+        query URL, search keywords are passed via the request body. Query syntax follows
+        Lucene style, default operator for multiple expressions is AND. The following
+        keywords are supported: ''name:'', ''description:'', ''type:'', ''authority:'',
+        ''code:'', ''deprecationState:'', ''remarks:'', ''lastModified:'', ''source:'',
+        ''wellKnownText:'', ''crsType:'', ''baseCRS.authority:'', ''baseCRS.code:'',
+        ''horizontalCRS.authority:'', ''horizontalCRS.code:'', ''verticalCRS.authority:'',
+        ''verticalCRS.code:'', ''lateBoundCRS.authority:'', ''lateBoundCRS.code:'',
+        ''ct.authority:'', ''ct.code:'', ''transformationReady:''. followed by a value.
+        Example: ''transformationReady:true''.'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          description: 'A Lucene style keyword query. One of the following keywords
+          ''name:'', ''description:'', ''type:'', ''authority:'', ''code:'', ''deprecationState:'',
+          ''remarks:'', ''lastModified:'', ''source:'', ''wellKnownText:'', ''crsType:'',
+          ''baseCRS.authority:'', ''baseCRS.code:'', ''horizontalCRS.authority:'',
+          ''horizontalCRS.code:'', ''verticalCRS.authority:'', ''verticalCRS.code:'',
+          ''lateBoundCRS.authority:'', ''lateBoundCRS.code:'', ''ct.authority:'',
+          ''ct.code:'', ''transformationReady:''. followed by a value. Example: ''transformationReady:true''.'
+          schema:
+            "$ref": "#/definitions/SearchCRSRequest"
+        - name: longitudeLeft
+          in: query
+          required: false
+          type: number
+          format: double
+          description: 'The left WGS 84 longitude limit of the search box. Value range:
+          [-180,180]'
+        - name: latitudeLower
+          in: query
+          required: false
+          type: number
+          format: double
+          description: 'The lower WGS 84 latitude limit of the search box. Value range:
+          [-90,90]'
+        - name: longitudeRight
+          in: query
+          required: false
+          type: number
+          format: double
+          description: 'The right WGS 84 longitude limit of the search box. Value range:
+          [-180,180]'
+        - name: latitudeUpper
+          in: query
+          required: false
+          type: number
+          format: double
+          description: 'The lower WGS 84 latitude limit of the search box. Value range:
+          [-90,90]'
+        - name: offset
+          in: query
+          required: false
+          type: integer
+          format: int32
+          description: The offset of the first item in the list of all CRS. It is optional
+            and is 0 by default.
+        - name: limit
+          in: query
+          required: false
+          type: integer
+          format: int32
+          description: The maximum number of the CRS returned. It is optional and is
+            100 by default.
+        - name: mode
+          in: query
+          required: false
+          type: string
+          description: 'The mode of return: ''persistable_reference'' (default) string
+          or ''essence'' structure or both ''persistable_reference_essence''.'
+          default: persistable_reference
+        - in: header
+          name: data-partition-id
+          type: string
+          required: true
+      responses:
+        '200':
+          description: A successful response
+          schema:
+            "$ref": "#/definitions/CRSResults"
+      security:
+        - Bearer: []
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+definitions:
+  Catalog:
+    description: The Spatial Reference Catalog except arrays.
+    properties:
+      areaOfUseCount:
+        type: integer
+        title: Number of areaOfUses
+        description: The total number of Area Of Uses in the catalog.
+        format: int32
+      areaOfUses:
+        type: array
+        description: The complete list of areas of use.
+        items:
+          "$ref": "#/definitions/AreaOfUse"
+      attributes:
+        "$ref": "#/definitions/CatalogAttributes"
+        description: The name and last modification time of the catalog.
+      compoundCTsCount:
+        type: integer
+        title: Number of compoundCTs
+        description: The total number of compoundCTs in the catalog.
+        format: int32
+      compoundCTs:
+        type: array
+        description: The complete list of compound cartographic transforms
+        items:
+          "$ref": "#/definitions/CompoundCT"
+      compoundCRSesCount:
+        type: integer
+        title: Number of compoundCRSes
+        description: The total number of compoundCRSes in the catalog.
+        format: int32
+      compoundCRSes:
+        type: array
+        description: The complete list of compound coordinate reference systems.
+        items:
+          "$ref": "#/definitions/CompoundCRS"
+      earlyBoundCRSesCount:
+        type: integer
+        title: Number of earlyBoundCRSes
+        description: The total number of earlyBoundCRSes in the catalog.
+        format: int32
+      earlyBoundCRSes:
+        type: array
+        description: The complete list of early-bound coordinate reference systems.
+        items:
+          "$ref": "#/definitions/EarlyBoundCRS"
+      lateBoundCRSesCount:
+        type: integer
+        title: Number of lateBoundCRSes
+        description: The total number of lateBoundCRSes in the catalog.
+        format: int32
+      lateBoundCRSes:
+        type: array
+        description: The complete list of late-bound coordinate reference systems.
+        items:
+          "$ref": "#/definitions/LateBoundCRS"
+      singleCTsCount:
+        type: integer
+        title: Number of singleCTs
+        description: The total number of singleCTs in the catalog.
+        format: int32
+      singleCTs:
+        type: array
+        description: The complete list of single cartographic transforms
+        items:
+          "$ref": "#/definitions/SingleCT"
+  CatalogAttributes:
+    description: The name and last modification time of the catalog.
+    properties:
+      description:
+        type: string
+      lastModified:
+        type: string
+        description: The last modification date and time (UTC) of this catalog.
+        example: '2016-09-28T12:28:47.1281329Z'
+      name:
+        type: string
+        description: Name of the catalog
+        example: SLB standard catalog
+  AuthCode:
+    type: object
+    title: Authority Code
+    description: The AuthorityCode for this item.
+    required:
+      - auth
+      - code
+    properties:
+      auth:
+        type: string
+        title: Authority
+        description: The name of the authority issuing the code. Usually a string
+          but it can be NULL for transient items.
+        example: EPSG
+        default: 'NULL'
+      code:
+        type: string
+        example: '4326'
+        title: Code
+        description: The code issued by the authority. Usually a number but it can
+          be NULL for transient items.
+        default: 'NULL'
+  BoundBox:
+    type: object
+    title: WGS 84 Bounding Box
+    description: WGS 84 bounding box in latitude longitude.
+    properties:
+      lonMin:
+        type: number
+        title: Longitude Left
+        description: The left longitude limit in degrees; the longitude can wrap around
+          the datum line.
+      lonMax:
+        type: number
+        title: Longitude Right
+        description: The right longitude limit in degrees; the longitude can wrap
+          around the datum line.
+      latMin:
+        type: number
+        title: Longitude Upper
+        description: The upper latitude limit in degrees.
+      latMax:
+        type: number
+        title: Latitude Lower
+        description: The lower latitude limit in degrees.
+    required:
+      - lonMin
+      - lonMax
+      - latMin
+      - latMax
+  AreaOfUseEssence:
+    type: object
+    title: Area of Use Essence
+    description: Area of use consisting of a bounding box in latitude and longitude
+      WGS 84.
+    required:
+      - type
+      - boundBox
+    properties:
+      type:
+        type: string
+        title: Item Type.
+        enum:
+          - AOU
+        default: AOU
+        example: AOU
+        description: The type identifier, fixed to 'AOU'.
+      boundBox:
+        "$ref": "#/definitions/BoundBox"
+        title: Bounding Box
+        description: The bounding box in latitude and longitude WGS 84 based.
+      authCode:
+        "$ref": "#/definitions/AuthCode"
+        title: Authority Code
+        description: The authority code for this item.
+  AnyCRSEssence:
+    type: object
+    title: Any CRS Essence
+    description: Any coordinate reference system essence carrying all possible properties
+      for LateBoundCRSEssence, EarlyBoundCRSEssence and CompoundCRSEssence.
+    required:
+      - type
+      - name
+    properties:
+      type:
+        type: string
+        title: Item Type.
+        enum:
+          - LBC
+          - EBC
+          - CC
+        example: LBC
+        description: The type identifier.
+      name:
+        type: string
+        title: CRS Name
+        description: The name of the coordinate reference system.
+        example: GCS_WGS_1984
+      ver:
+        type: string
+        title: Version
+        description: The engine version issuing the definition.
+        example: PE_10_3_1
+      wkt:
+        type: string
+        title: Late-bound CRS WKT
+        description: Well-known text (Esri style) of the late-bound coordinate reference
+          system.
+        example: GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433],AUTHORITY["EPSG",4326]]
+      lateBoundCRS:
+        "$ref": "#/definitions/LateBoundCRSEssence"
+        title: Late-bound CRS Essence
+        description: Late-bound CRS, which is bound to a single (st) or compound (ct)
+          transformation to WGS 84.
+      singleCT:
+        "$ref": "#/definitions/SingleCTEssence"
+        title: Single Transformation Essence
+        description: Single Transformation, which binds the late-bound CRS (lb) to
+          WGS 84. If absent, a compound transformation (ct) must be present.
+      compoundCT:
+        "$ref": "#/definitions/CompoundCTEssence"
+        title: Compound Transformation Essence
+        description: Compound transformation, which binds the late-bound CRS (lb)
+          to WGS 84. If absent, a single transformation (st) must be present.
+      horzLateBoundCRS:
+        "$ref": "#/definitions/LateBoundCRSEssence"
+        title: Horizontal late-bound CRS Essence
+        description: The horizontal CRS of a Compound CRS as late-bound CRS. If 'horzLateBoundCRS'
+          is non-null, 'horzEarlyBoundCRS' must be null.
+      horzEarlyBoundCRS:
+        "$ref": "#/definitions/EarlyBoundCRSEssence"
+        title: Horizontal early-bound CRS Essence
+        description: The horizontal CRS of a Compound CRS as early-bound CRS. If 'horzEarlyBoundCRS'
+          is non-null, 'horzLateBoundCRS' must be null.
+      vertLateBoundCRS:
+        "$ref": "#/definitions/LateBoundCRSEssence"
+        title: Vertical late-bound CRS Essence
+        description: The vertical CRS of the Compound CRS as late-bound CRS. If 'vertLateBoundCRS'
+          is non-null, 'vertEarlyBoundCRS' must be null.
+      vertEarlyBoundCRS:
+        "$ref": "#/definitions/EarlyBoundCRSEssence"
+        title: Vertical early-bound CRS Essence
+        description: The vertical CRS of the Compound CRS as early-bound CRS. If 'vertEarlyBoundCRS'
+          is non-null, 'vertLateBoundCRS' must be null.
+      authCode:
+        "$ref": "#/definitions/AuthCode"
+        title: Authority Code
+        description: The authority code for this item.
+  LateBoundCRSEssence:
+    type: object
+    title: Late-bound CRS Essence
+    description: Late-bound coordinate reference system, i.e. a CRS without a transformation
+      binding to WGS 84.
+    required:
+      - type
+      - name
+      - wkt
+    properties:
+      type:
+        type: string
+        title: Item Type.
+        enum:
+          - LBC
+        default: LBC
+        example: LBC
+        description: The type identifier, fixed to 'LBC'.
+      name:
+        type: string
+        title: CRS Name
+        description: The name of the late-bound coordinate reference system.
+        example: GCS_WGS_1984
+      ver:
+        type: string
+        title: Version
+        description: The engine version issuing the definition.
+        example: PE_10_3_1
+      wkt:
+        type: string
+        title: Late-bound CRS WKT
+        description: Well-known text (Esri style) of the late-bound coordinate reference
+          system.
+        example: GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433],AUTHORITY["EPSG",4326]]
+      authCode:
+        "$ref": "#/definitions/AuthCode"
+        title: Authority Code
+        description: The authority code for this item.
+  EarlyBoundCRSEssence:
+    type: object
+    title: Early-bound CRS Essence
+    description: Early-bound coordinate reference system, i.e. a CRS with a transformation
+      binding to WGS 84
+    required:
+      - type
+      - name
+      - lateBoundCRS
+    properties:
+      type:
+        type: string
+        title: Item Type.
+        enum:
+          - EBC
+        example: EBC
+        default: EBC
+        description: The type identifier, fixed to 'EBC'.
+      name:
+        type: string
+        title: CRS Name
+        description: The name of the early-bound coordinate reference system.
+        example: ED50 * EPSG-Nor N62 2001 / UTM zone 31N [23031,1612]
+      ver:
+        type: string
+        title: Version
+        description: The engine version issuing the definition.
+        example: PE_10_3_1
+      lateBoundCRS:
+        "$ref": "#/definitions/LateBoundCRSEssence"
+        title: Late-bound CRS Essence
+        description: Late-bound CRS, which is bound to a single (st) or compound (ct)
+          transformation to WGS 84.
+      singleCT:
+        "$ref": "#/definitions/SingleCTEssence"
+        title: Single Transformation Essence
+        description: Single Transformation, which binds the late-bound CRS (lb) to
+          WGS 84. If absent, a compound transformation (ct) must be present.
+      compoundCT:
+        "$ref": "#/definitions/CompoundCTEssence"
+        title: Compound Transformation Essence
+        description: Compound transformation, which binds the late-bound CRS (lb)
+          to WGS 84. If absent, a single transformation (st) must be present.
+      authCode:
+        "$ref": "#/definitions/AuthCode"
+        title: Authority Code
+        description: The authority code for this item.
+  CompoundCRSEssence:
+    type: object
+    title: Compound CRS Essence
+    description: Compound coordinate reference system aggregating a horizontal to
+      a vertical CRS.
+    required:
+      - type
+      - name
+    properties:
+      type:
+        type: string
+        title: Item Type.
+        enum:
+          - CC
+        example: CC
+        default: CC
+        description: The type identifier. fixed to 'CC'.
+      name:
+        type: string
+        title: CRS Name
+        description: The name of the compound coordinate reference system.
+        example: WGS 84 / UTM zone 35N + EGM96 height
+      ver:
+        type: string
+        title: Version
+        description: The engine version issuing the definition.
+        example: PE_10_3_1
+      horzLateBoundCRS:
+        "$ref": "#/definitions/LateBoundCRSEssence"
+        title: Horizontal late-bound CRS Essence
+        description: The horizontal CRS of a Compound CRS as late-bound CRS. If 'horzLateBoundCRS'
+          is non-null, 'horzEarlyBoundCRS' must be null.
+      horzEarlyBoundCRS:
+        "$ref": "#/definitions/EarlyBoundCRSEssence"
+        title: Horizontal early-bound CRS Essence
+        description: The horizontal CRS of a Compound CRS as early-bound CRS. If 'horzEarlyBoundCRS'
+          is non-null, 'horzLateBoundCRS' must be null.
+      vertLateBoundCRS:
+        "$ref": "#/definitions/LateBoundCRSEssence"
+        title: Vertical late-bound CRS Essence
+        description: The vertical CRS of the Compound CRS as late-bound CRS. If 'vertLateBoundCRS'
+          is non-null, 'vertEarlyBoundCRS' must be null.
+      vertEarlyBoundCRS:
+        "$ref": "#/definitions/EarlyBoundCRSEssence"
+        title: Vertical early-bound CRS Essence
+        description: The vertical CRS of the Compound CRS as early-bound CRS. If 'vertEarlyBoundCRS'
+          is non-null, 'vertLateBoundCRS' must be null.
+      authCode:
+        "$ref": "#/definitions/AuthCode"
+        title: Authority Code
+        description: The authority code for this item.
+  AnyCTEssence:
+    type: object
+    title: Any CT Essence
+    description: Any sub-type of cartographic transformation.
+    required:
+      - type
+      - name
+    properties:
+      type:
+        type: string
+        title: Item Type.
+        enum:
+          - ST
+          - CT
+        example: ST
+        description: The type identifier, either 'ST' or 'CT'.
+      name:
+        type: string
+        title: CT Name
+        description: The name of the simple cartographic transformation.
+        example: ED_1950_UTM_Zone_31N
+      ver:
+        type: string
+        title: Version
+        description: The engine version issuing the definition.
+        example: PE_10_3_1
+      wkt:
+        type: string
+        title: Well-known Text
+        description: The well-known text (Esri style) defining this transformation.
+        example: GEOGTRAN["ED_1950_To_WGS_1984_23",GEOGCS["GCS_European_1950",DATUM["D_European_1950",SPHEROID["International_1924",6378388.0,297.0]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],METHOD["Position_Vector"],PARAMETER["X_Axis_Translation",-116.641],PARAMETER["Y_Axis_Translation",-56.931],PARAMETER["Z_Axis_Translation",-110.559],PARAMETER["X_Axis_Rotation",0.893],PARAMETER["Y_Axis_Rotation",0.921],PARAMETER["Z_Axis_Rotation",-0.917],PARAMETER["Scale_Difference",-3.52],AUTHORITY["EPSG",1612]]
+      policy:
+        type: string
+        title: Policy
+        description: The transformation policy - concatenated or fallback.
+        example:
+          - Fallback
+          - Concatenated
+        enum:
+          - Fallback
+          - Concatenated
+      cts:
+        type: array
+        items:
+          "$ref": "#/definitions/SingleCTEssence"
+          title: Transformation List
+          description: The ordered list of cartographic transformations.
+        title: 'Transformation List '
+        description: The ordered list of cartographic transformations.
+      authCode:
+        "$ref": "#/definitions/AuthCode"
+        title: Authority Code
+        description: The authority code for this item.
+  SingleCTEssence:
+    type: object
+    title: Single CT Essence
+    description: Single cartographic transformation.
+    required:
+      - type
+      - name
+      - wkt
+    properties:
+      type:
+        type: string
+        title: Item Type.
+        enum:
+          - ST
+        default: ST
+        example: ST
+        description: The type identifier, fixed to 'ST'.
+      name:
+        type: string
+        title: CT Name
+        description: The name of the simple cartographic transformation.
+        example: ED_1950_UTM_Zone_31N
+      ver:
+        type: string
+        title: Version
+        description: The engine version issuing the definition.
+        example: PE_10_3_1
+      wkt:
+        type: string
+        title: Well-known Text
+        description: The well-known text (Esri style) defining this transformation.
+        example: GEOGTRAN["ED_1950_To_WGS_1984_23",GEOGCS["GCS_European_1950",DATUM["D_European_1950",SPHEROID["International_1924",6378388.0,297.0]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],METHOD["Position_Vector"],PARAMETER["X_Axis_Translation",-116.641],PARAMETER["Y_Axis_Translation",-56.931],PARAMETER["Z_Axis_Translation",-110.559],PARAMETER["X_Axis_Rotation",0.893],PARAMETER["Y_Axis_Rotation",0.921],PARAMETER["Z_Axis_Rotation",-0.917],PARAMETER["Scale_Difference",-3.52],AUTHORITY["EPSG",1612]]
+      authCode:
+        "$ref": "#/definitions/AuthCode"
+        title: Authority Code
+        description: The authority code for this item.
+  CompoundCTEssence:
+    type: object
+    title: Compound CT Essence
+    description: Compound cartographic transformation.
+    required:
+      - type
+      - name
+      - policy
+      - cts
+    properties:
+      type:
+        type: string
+        title: Item Type.
+        enum:
+          - CT
+        default: CT
+        example: CT
+        description: The type identifier, fixed to 'CT'.
+      name:
+        type: string
+        title: CT Name
+        description: The name of the compound cartographic transformation.
+        example: Fallback NAD27 to WGS 84 (79)/NAD27 to WGS 84 (33)
+      ver:
+        type: string
+        title: Version
+        description: The engine version issuing the definition.
+        example: PE_10_3_1
+      policy:
+        type: string
+        title: Policy
+        description: The transformation policy - concatenated or fallback.
+        example:
+          - Fallback
+          - Concatenated
+        enum:
+          - Fallback
+          - Concatenated
+      cts:
+        type: array
+        items:
+          "$ref": "#/definitions/SingleCTEssence"
+          title: Transformation List
+          description: The ordered list of cartographic transformations.
+        title: 'Transformation List '
+        description: The ordered list of cartographic transformations.
+      authCode:
+        "$ref": "#/definitions/AuthCode"
+        title: Authority Code
+        description: The authority code for this item.
+  CRS:
+    type: object
+    title: Generic CRS
+    description: Generic coordinate reference system, either a late-bound, early-bound
+      CRS or compound CRS.
+    required:
+      - type
+    properties:
+      essence:
+        "$ref": "#/definitions/AnyCRSEssence"
+        title: Generic CRS Essence
+        description: The CRS's essence either a LateBoundCRSEssence, EarlyBoundCRSEssence
+          or CompoundCRSEssence.
+      crstype:
+        type: string
+        title: CRS-Type
+        description: The type of ths CRS.
+      source:
+        type: string
+        title: Source
+        description: The source of ths CRS.
+      transformationReady:
+        type: boolean
+        title: Transformation Ready
+        description: The Transformation readiness of this CRS.
+      baseCRSAuthorityCode:
+        "$ref": "#/definitions/AuthCode"
+        title: BaseCRS Authority Code
+        description: The base authority code of this CRS.
+      aliasNames:
+        type: array
+        items:
+          type: string
+        title: Alias Names
+        description: Alias names for this CRS.
+      axisUnits:
+        type: array
+        items:
+          type: string
+        title: Axis Units
+        description: Axis Unit Essences.
+      numberOfAxes:
+        type: integer
+        title: Number of Axes
+        description: The NumberOfAxes of this CRS.
+      description:
+        type: string
+        title: Description
+        description: The description of this CRS.
+      lastModified:
+        type: string
+        title: LastModified
+        description: The LastModified of this CRS.
+      areaOfUse:
+        "$ref": "#/definitions/AreaOfUse"
+        title: Area of Use Id
+        description: The Area of Use for this CRS.
+      deprecationInfo:
+        "$ref": "#/definitions/CRSDeprecationInfo"
+        title: CRS Deprecation Info
+        description: Only if deprecated - additional information and potentially a
+          recommended replacement CRS.
+      namedReference:
+        "$ref": "#/definitions/NamedReference"
+        title: Name and Persistable Reference
+        description: A structure containing the item Name and the persistable Reference
+          string; populated if the request mode='persistable_reference'.
+  CT:
+    type: object
+    title: Generic CT
+    description: Generic cartographic transformation.
+    required:
+      - type
+    properties:
+      source:
+        type: string
+        title: Source
+        description: The source of the cartographic transformation.
+      aliasNames:
+        type: array
+        items:
+          type: string
+        title: Alias Names
+        description: Alias names for this cartographic transformation.
+      description:
+        type: string
+        title: Description
+        description: The description of the cartographic transformation.
+      fromCRSAuthorityCode:
+        "$ref": "#/definitions/AuthCode"
+        title: From CRS Authority Code
+        description: The 'from CRS' authority code of this cartographic transformation.
+      toCRSAuthorityCode:
+        "$ref": "#/definitions/AuthCode"
+        title: To CRS Authority Code
+        description: The 'to CRS' authority code of this cartographic transformation.
+      lastModified:
+        type: string
+        title: LastModified
+        description: The LastModified of the cartographic transformation.
+      areaOfUse:
+        "$ref": "#/definitions/AreaOfUse"
+        title: Area of Use
+        description: The Area of Use for this cartographic transformation.
+      deprecationInfo:
+        "$ref": "#/definitions/CTDeprecationInfo"
+        title: CT Deprecation Info
+        description: Only if deprecated - additional information and potentially a
+          recommended replacement cartographic transformation.
+      namedReference:
+        "$ref": "#/definitions/NamedReference"
+        title: Name and Persistable Reference
+        description: A structure containing the item Name and the persistable Reference
+          string; populated if the request mode='persistable_reference'.
+      essence:
+        "$ref": "#/definitions/AnyCTEssence"
+        title: CT Essence
+        description: The Essence of the cartographic transformation.
+  AreaOfUse:
+    type: object
+    title: AreaOfUse
+    description: The AreaOfUse class.
+    properties:
+      id:
+        type: string
+        title: Internal Id
+        description: The Internal Id of the AreaOfUse.
+      name:
+        type: string
+        title: Name
+        description: The name of the AreaOfUse.
+      description:
+        type: string
+        title: Description
+        description: The description of the AreaOfUse.
+      lastModified:
+        type: string
+        title: LastModified
+        description: The LastModified of the AreaOfUse.
+      namedReference:
+        "$ref": "#/definitions/NamedReference"
+        title: Name and Persistable Reference
+        description: A structure containing the item Name and the persistable Reference
+          string; populated if the request mode='persistable_reference'.
+      essence:
+        "$ref": "#/definitions/AreaOfUseEssence"
+        title: AreaOfUse Essence
+        description: The Essence of the AreaOfUse.
+  LateBoundCRS:
+    type: object
+    title: LateBoundCRS
+    description: The LateBoundCRS class.
+    properties:
+      crstype:
+        type: string
+        title: CRS-Type
+        description: The type of the LateBoundCRS.
+      source:
+        type: string
+        title: Source
+        description: The source of the LateBoundCRS.
+      transformationReady:
+        type: boolean
+        title: Transformation Ready
+        description: The Transformation readiness of the LateBoundCRS.
+      baseCRSAuthorityCode:
+        "$ref": "#/definitions/AuthCode"
+        title: BaseCRS Authority Code
+        description: The base authority code of the LateBoundCRS.
+      aliasNames:
+        type: array
+        items:
+          type: string
+        title: Alias Names
+        description: Alias names for this LateBoundCRS.
+      axisUnits:
+        type: array
+        items:
+          type: string
+        title: Axis Units
+        description: Axis Unit Essences.
+      numberOfAxes:
+        type: integer
+        title: Number of Axes
+        description: The NumberOfAxes of the LateBoundCRS.
+      description:
+        type: string
+        title: Description
+        description: The description of the LateBoundCRS.
+      lastModified:
+        type: string
+        title: LastModified
+        description: The LastModified of the LateBoundCRS.
+      areaOfUse:
+        "$ref": "#/definitions/AreaOfUse"
+        title: Area of Use Id
+        description: The Area of Use for this CRS.
+      deprecationInfo:
+        "$ref": "#/definitions/CRSDeprecationInfo"
+        title: CRS Deprecation Info
+        description: Only if deprecated - additional information and potentially a
+          recommended replacement CRS.
+      namedReference:
+        "$ref": "#/definitions/NamedReference"
+        title: Name and Persistable Reference
+        description: A structure containing the item Name and the persistable Reference
+          string; populated if the request mode='persistable_reference'.
+      essence:
+        "$ref": "#/definitions/LateBoundCRSEssence"
+        title: LateBoundCRS Essence
+        description: The Essence of the LateBoundCRS; populated if the request mode='essence'.
+  EarlyBoundCRS:
+    type: object
+    title: EarlyBoundCRS
+    description: The EarlyBoundCRS class.
+    properties:
+      crstype:
+        type: string
+        title: CRS-Type
+        description: The type of the EarlyBoundCRS.
+      source:
+        type: string
+        title: Source
+        description: The source of the EarlyBoundCRS.
+      transformationReady:
+        type: boolean
+        title: Transformation Ready
+        description: The TransformationReadyness of the EarlyBoundCRS.
+      baseCRSAuthorityCode:
+        "$ref": "#/definitions/AuthCode"
+        title: BaseCRS Authority Code
+        description: The base authority code of the LateBoundCRS.
+      aliasNames:
+        type: array
+        items:
+          type: string
+        title: Alias Names
+        description: Alias names for this EarlyBoundCRS.
+      axisUnits:
+        type: array
+        items:
+          type: string
+        title: Axis Units
+        description: Axis Unit Essences.
+      numberOfAxes:
+        type: integer
+        title: Number of Axes
+        description: The NumberOfAxes of the EarlyBoundCRS.
+      description:
+        type: string
+        title: Description
+        description: The description of the EarlyBoundCRS.
+      lastModified:
+        type: string
+        title: LastModified
+        description: The LastModified of the EarlyBoundCRS.
+      areaOfUse:
+        "$ref": "#/definitions/AreaOfUse"
+        title: Area of Use Id
+        description: The Area of Use for this CRS.
+      deprecationInfo:
+        "$ref": "#/definitions/CRSDeprecationInfo"
+        title: CRS Deprecation Info
+        description: Only if deprecated - additional information and potentially a
+          recommended replacement CRS.
+      namedReference:
+        "$ref": "#/definitions/NamedReference"
+        title: Name and Persistable Reference
+        description: A structure containing the item Name and the persistable Reference
+          string; populated if the request mode='persistable_reference'.
+      essence:
+        "$ref": "#/definitions/EarlyBoundCRSEssence"
+        title: EarlyBoundCRS Essence
+        description: The Essence of the EarlyBoundCRS.
+  CompoundCRS:
+    type: object
+    title: CompoundCRS
+    description: The CompoundCRS class.
+    properties:
+      crstype:
+        type: string
+        title: CRS-Type
+        description: The type of the CompoundCRS.
+      source:
+        type: string
+        title: Source
+        description: The source of the CompoundCRS.
+      transformationReady:
+        type: boolean
+        title: Transformation Ready
+        description: The TransformationReadyness of the CompoundCRS.
+      baseCRSAuthorityCode:
+        "$ref": "#/definitions/AuthCode"
+        title: BaseCRS Authority Code
+        description: The base authority code of the LateBoundCRS.
+      aliasNames:
+        type: array
+        items:
+          type: string
+        title: Alias Names
+        description: Alias names for this CompoundCRS.
+      axisUnits:
+        type: array
+        items:
+          type: string
+        title: Axis Units
+        description: Axis Unit Essences.
+      numberOfAxes:
+        type: integer
+        title: Number of Axes
+        description: The NumberOfAxes of the CompoundCRS.
+      description:
+        type: string
+        title: Description
+        description: The description of the CompoundCRS.
+      lastModified:
+        type: string
+        title: LastModified
+        description: The LastModified of the CompoundCRS.
+      areaOfUse:
+        "$ref": "#/definitions/AreaOfUse"
+        title: Area of Use Id
+        description: The Area of Use for this CRS.
+      deprecationInfo:
+        "$ref": "#/definitions/CRSDeprecationInfo"
+        title: CRS Deprecation Info
+        description: Only if deprecated - additional information and potentially a
+          recommended replacement CRS.
+      namedReference:
+        "$ref": "#/definitions/NamedReference"
+        title: Name and Persistable Reference
+        description: A structure containing the item Name and the persistable Reference
+          string; populated if the request mode='persistable_reference'.
+      essence:
+        "$ref": "#/definitions/CompoundCRSEssence"
+        title: CompoundCRS Essence
+        description: The Essence of the CompoundCRS.
+  SingleCT:
+    type: object
+    title: SingleCT
+    description: The SingleCT class.
+    properties:
+      source:
+        type: string
+        title: Source
+        description: The source of the SingleCT.
+      aliasNames:
+        type: array
+        items:
+          type: string
+        title: Alias Names
+        description: Alias names for this SingleCT.
+      description:
+        type: string
+        title: Description
+        description: The description of the SingleCT.
+      fromCRSAuthorityCode:
+        "$ref": "#/definitions/AuthCode"
+        title: From CRS Authority Code
+        description: The 'from CRS' authority code of this SingleCT.
+      toCRSAuthorityCode:
+        "$ref": "#/definitions/AuthCode"
+        title: To CRS Authority Code
+        description: The 'to CRS' authority code of this SingleCT.
+      lastModified:
+        type: string
+        title: LastModified
+        description: The LastModified of the SingleCT.
+      areaOfUse:
+        "$ref": "#/definitions/AreaOfUse"
+        title: Area of Use Id
+        description: The Area of Use for this SingleCT.
+      deprecationInfo:
+        "$ref": "#/definitions/CTDeprecationInfo"
+        title: CT Deprecation Info
+        description: Only if deprecated - additional information and potentially a
+          recommended replacement CT.
+      namedReference:
+        "$ref": "#/definitions/NamedReference"
+        title: Name and Persistable Reference
+        description: A structure containing the item Name and the persistable Reference
+          string; populated if the request mode='persistable_reference'.
+      essence:
+        "$ref": "#/definitions/SingleCTEssence"
+        title: SingleCT Essence
+        description: The Essence of the SingleCT.
+  CompoundCT:
+    type: object
+    title: CompoundCT
+    description: The CompoundCT class.
+    properties:
+      source:
+        type: string
+        title: Source
+        description: The source of the CompoundCT.
+      aliasNames:
+        type: array
+        items:
+          type: string
+        title: Alias Names
+        description: Alias names for this CompoundCT.
+      description:
+        type: string
+        title: Description
+        description: The description of the CompoundCT.
+      fromCRSAuthorityCode:
+        "$ref": "#/definitions/AuthCode"
+        title: From CRS Authority Code
+        description: The 'from CRS' authority code of this CompoundCT.
+      toCRSAuthorityCode:
+        "$ref": "#/definitions/AuthCode"
+        title: To CRS Authority Code
+        description: The 'to CRS' authority code of this CompoundCT.
+      lastModified:
+        type: string
+        title: LastModified
+        description: The LastModified of the CompoundCT.
+      areaOfUse:
+        "$ref": "#/definitions/AreaOfUse"
+        title: Area of Use Id
+        description: The Area of Use for this CompoundCT.
+      deprecationInfo:
+        "$ref": "#/definitions/CTDeprecationInfo"
+        title: CT Deprecation Info
+        description: Only if deprecated - additional information and potentially a
+          recommended replacement CT.
+      namedReference:
+        "$ref": "#/definitions/NamedReference"
+        title: Name and Persistable Reference
+        description: A structure containing the item Name and the persistable Reference
+          string; populated if the request mode='persistable_reference'.
+      essence:
+        "$ref": "#/definitions/CompoundCTEssence"
+        title: CompoundCT Essence
+        description: The Essence of the CompoundCT.
+  AreaOfUseDeprecationInfo:
+    title: AreaOfUse Deprecation Info
+    description: Deprecation information for an AreaOfUse.
+    properties:
+      deprecationState:
+        type: string
+        description: State - one of {identical, corrected, unresolved}
+      remarks:
+        type: string
+        description: Further explanation of the deprecation.
+      supersededByArea:
+        "$ref": "#/definitions/AreaOfUse"
+        description: The AreaOfUse to be used instead - if any is recommended.
+  CRSDeprecationInfo:
+    title: CRS Deprecation Info
+    description: Deprecation information for a coordinate reference system.
+    properties:
+      deprecationState:
+        type: string
+        description: State - one of {identical, corrected, unresolved}
+      remarks:
+        type: string
+        description: Further explanation of the deprecation.
+      supersededByCRS:
+        "$ref": "#/definitions/CRS"
+        description: The coordinate reference system to be used instead - if any is
+          recommended.
+  CTDeprecationInfo:
+    title: CT Deprecation Info
+    description: Deprecation information for a cartographic transform.
+    properties:
+      deprecationState:
+        type: string
+        description: State - one of {identical, corrected, unresolved}
+      remarks:
+        type: string
+        description: Further explanation of the deprecation.
+      supersededByCT:
+        description: The cartographic transform to be used instead - if any is recommended.
+        "$ref": "#/definitions/CT"
+  AreaOfUseRequest:
+    type: object
+    description: Request to get area of use
+    properties:
+      persistableReference:
+        type: string
+        description: The persistable reference string, either the essence of the AreaOfUse
+          serialized into a JSON string or an encoded string (version 1).
+      essence:
+        description: Area of use essence. Either the essence or persistableReference
+          must be non-null.
+        "$ref": "#/definitions/AreaOfUseEssence"
+        example:
+          authCode:
+            auth: EPSG
+            code: '3958'
+          boundBox:
+            latMin: 7.75
+            latMax: 9.32
+            lonMin: 116.89
+            lonMax: 118
+          type: AOU
+    example:
+      persistableReference: '{"boundBox":{"lonMin":116.89,"latMin":7.75,"lonMax":118.0,"latMax":9.32},"authCode":{"auth":"EPSG","code":"3958"},"type":"AOU"}'
+      essence:
+        authCode:
+          auth: EPSG
+          code: '3958'
+        boundBox:
+          latMin: 7.75
+          latMax: 9.32
+          lonMin: 116.89
+          lonMax: 118
+        type: AOU
+  CRSRequest:
+    type: object
+    description: Request to get one CRS (any sub-type) given its 'persistableReference'
+      (serialized essence) or 'essence' structure. Only one, persistableReference
+      or essence must be provided. If both are provided, essence takes precedence.
+      If both are provided, essence takes precedence.
+    properties:
+      persistableReference:
+        type: string
+        description: The persistable reference string, either the essence of the CRS
+          serialized into a JSON string or an encoded string (version 1).
+      essence:
+        type: object
+        "$ref": "#/definitions/AnyCRSEssence"
+        description: The essence Json for the CRS. Either the essence or persistableReference
+          must be non-null.
+        example: "{\r\n    \"authCode\": {\r\n     \"auth\": \"EPSG\", \r\n     \"code\":
+          \"4267\"\r\n    }, \r\n    \"name\": \"GCS_North_American_1927\", \r\n    \"type\":
+          \"LBC\", \r\n    \"ver\": \"PE_10_3_1\", \r\n    \"wkt\": \"GEOGCS[\\\"GCS_North_American_1927\\\",DATUM[\\\"D_North_American_1927\\\",SPHEROID[\\\"Clarke_1866\\\",6378206.4,294.9786982]],PRIMEM[\\\"Greenwich\\\",0.0],UNIT[\\\"Degree\\\",0.0174532925199433],AUTHORITY[\\\"EPSG\\\",4267]]\"\r\n}"
+    example:
+      persistableReference: '{"wkt":"GEOGCS[\"GCS_North_American_1927\",DATUM[\"D_North_American_1927\",SPHEROID[\"Clarke_1866\",6378206.4,294.9786982]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433],AUTHORITY[\"EPSG\",4267]]","ver":"PE_10_3_1","name":"GCS_North_American_1927","authCode":{"auth":"EPSG","code":"4267"},"type":"LBC"}'
+      essence:
+        authCode:
+          auth: EPSG
+          code: '4267'
+        type: LBC
+        ver: PE_10_3_1
+        name: GCS_North_American_1927
+        wkt: GEOGCS["GCS_North_American_1927",DATUM["D_North_American_1927",SPHEROID["Clarke_1866",6378206.4,294.9786982]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433],AUTHORITY["EPSG",4267]]
+  EarlyBoundCRSRequest:
+    type: object
+    description: Request to get one EarlyBoundCRS given its 'persistableReference'
+      (serialized essence) or 'essence' structure. Only one, persistableReference
+      or essence must be provided. If both are provided, essence takes precedence.
+    properties:
+      persistableReference:
+        type: string
+        description: The persistable reference string, either the essence of the EarlyBoundCRS
+          serialized into a JSON string or an encoded string (version 1).
+      essence:
+        description: The essence for the EarlyBoundCRS. Either the essence or persistableReference
+          must be non-null.
+        "$ref": "#/definitions/EarlyBoundCRSEssence"
+        example:
+          authCode:
+            auth: SLB
+            code: '23031024'
+          lateBoundCRS:
+            authCode:
+              auth: EPSG
+              code: '23031'
+            name: ED_1950_UTM_Zone_31N
+            type: LBC
+            ver: PE_10_3_1
+            wkt: PROJCS["ED_1950_UTM_Zone_31N",GEOGCS["GCS_European_1950",DATUM["D_European_1950",SPHEROID["International_1924",6378388.0,297.0]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],PROJECTION["Transverse_Mercator"],PARAMETER["False_Easting",500000.0],PARAMETER["False_Northing",0.0],PARAMETER["Central_Meridian",3.0],PARAMETER["Scale_Factor",0.9996],PARAMETER["Latitude_Of_Origin",0.0],UNIT["Meter",1.0],AUTHORITY["EPSG",23031]]
+          name: ED50 * EPSG-Nor S62 2001 / UTM zone 31N [23031,1613]
+          singleCT:
+            authCode:
+              auth: EPSG
+              code: '1613'
+            name: ED_1950_To_WGS_1984_24
+            type: ST
+            ver: PE_10_3_1
+            wkt: GEOGTRAN["ED_1950_To_WGS_1984_24",GEOGCS["GCS_European_1950",DATUM["D_European_1950",SPHEROID["International_1924",6378388.0,297.0]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],METHOD["Position_Vector"],PARAMETER["X_Axis_Translation",-90.365],PARAMETER["Y_Axis_Translation",-101.13],PARAMETER["Z_Axis_Translation",-123.384],PARAMETER["X_Axis_Rotation",0.333],PARAMETER["Y_Axis_Rotation",0.077],PARAMETER["Z_Axis_Rotation",0.894],PARAMETER["Scale_Difference",1.994],AUTHORITY["EPSG",1613]]
+          type: EBC
+          ver: PE_10_3_1
+    example:
+      persistableReference: '{"lateBoundCRS":{"wkt":"PROJCS[\"ED_1950_UTM_Zone_31N\",GEOGCS[\"GCS_European_1950\",DATUM[\"D_European_1950\",SPHEROID[\"International_1924\",6378388.0,297.0]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"False_Easting\",500000.0],PARAMETER[\"False_Northing\",0.0],PARAMETER[\"Central_Meridian\",3.0],PARAMETER[\"Scale_Factor\",0.9996],PARAMETER[\"Latitude_Of_Origin\",0.0],UNIT[\"Meter\",1.0],AUTHORITY[\"EPSG\",23031]]","ver":"PE_10_3_1","name":"ED_1950_UTM_Zone_31N","authCode":{"auth":"EPSG","code":"23031"},"type":"LBC"},"singleCT":{"wkt":"GEOGTRAN[\"ED_1950_To_WGS_1984_24\",GEOGCS[\"GCS_European_1950\",DATUM[\"D_European_1950\",SPHEROID[\"International_1924\",6378388.0,297.0]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],GEOGCS[\"GCS_WGS_1984\",DATUM[\"D_WGS_1984\",SPHEROID[\"WGS_1984\",6378137.0,298.257223563]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],METHOD[\"Position_Vector\"],PARAMETER[\"X_Axis_Translation\",-90.365],PARAMETER[\"Y_Axis_Translation\",-101.13],PARAMETER[\"Z_Axis_Translation\",-123.384],PARAMETER[\"X_Axis_Rotation\",0.333],PARAMETER[\"Y_Axis_Rotation\",0.077],PARAMETER[\"Z_Axis_Rotation\",0.894],PARAMETER[\"Scale_Difference\",1.994],AUTHORITY[\"EPSG\",1613]]","ver":"PE_10_3_1","name":"ED_1950_To_WGS_1984_24","authCode":{"auth":"EPSG","code":"1613"},"type":"ST"},"ver":"PE_10_3_1","name":"ED50
+        * EPSG-Nor S62 2001 / UTM zone 31N [23031,1613]","authCode":{"auth":"SLB","code":"23031024"},"type":"EBC"}'
+      essence:
+        authCode:
+          auth: SLB
+          code: '23031024'
+        lateBoundCRS:
+          authCode:
+            auth: EPSG
+            code: '23031'
+          name: ED_1950_UTM_Zone_31N
+          type: LBC
+          ver: PE_10_3_1
+          wkt: PROJCS["ED_1950_UTM_Zone_31N",GEOGCS["GCS_European_1950",DATUM["D_European_1950",SPHEROID["International_1924",6378388.0,297.0]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],PROJECTION["Transverse_Mercator"],PARAMETER["False_Easting",500000.0],PARAMETER["False_Northing",0.0],PARAMETER["Central_Meridian",3.0],PARAMETER["Scale_Factor",0.9996],PARAMETER["Latitude_Of_Origin",0.0],UNIT["Meter",1.0],AUTHORITY["EPSG",23031]]
+        name: ED50 * EPSG-Nor S62 2001 / UTM zone 31N [23031,1613]
+        singleCT:
+          authCode:
+            auth: EPSG
+            code: '1613'
+          name: ED_1950_To_WGS_1984_24
+          type: ST
+          ver: PE_10_3_1
+          wkt: GEOGTRAN["ED_1950_To_WGS_1984_24",GEOGCS["GCS_European_1950",DATUM["D_European_1950",SPHEROID["International_1924",6378388.0,297.0]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],METHOD["Position_Vector"],PARAMETER["X_Axis_Translation",-90.365],PARAMETER["Y_Axis_Translation",-101.13],PARAMETER["Z_Axis_Translation",-123.384],PARAMETER["X_Axis_Rotation",0.333],PARAMETER["Y_Axis_Rotation",0.077],PARAMETER["Z_Axis_Rotation",0.894],PARAMETER["Scale_Difference",1.994],AUTHORITY["EPSG",1613]]
+        type: EBC
+        ver: PE_10_3_1
+  LateBoundCRSRequest:
+    type: object
+    description: Request to get one LateBoundCRS given its 'persistableReference'
+      (serialized essence) or 'essence' structure. Only one, persistableReference
+      or essence must be provided. If both are provided, essence takes precedence.
+    properties:
+      persistableReference:
+        type: string
+        description: The persistable reference string, either the essence of the LateBoundCRS
+          serialized into a JSON string or an encoded string (version 1).
+      essence:
+        description: The essence for the LateBoundCRS. Either the essence or persistableReference
+          must be non-null.
+        "$ref": "#/definitions/LateBoundCRSEssence"
+        example:
+          authCode:
+            auth: EPSG
+            code: '4267'
+          name: GCS_North_American_1927
+          type: LBC
+          ver: PE_10_3_1
+          wkt: GEOGCS["GCS_North_American_1927",DATUM["D_North_American_1927",SPHEROID["Clarke_1866",6378206.4,294.9786982]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433],AUTHORITY["EPSG",4267]]
+    example:
+      persistableReference: '{"wkt":"GEOGCS[\"GCS_North_American_1927\",DATUM[\"D_North_American_1927\",SPHEROID[\"Clarke_1866\",6378206.4,294.9786982]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433],AUTHORITY[\"EPSG\",4267]]","ver":"PE_10_3_1","name":"GCS_North_American_1927","authCode":{"auth":"EPSG","code":"4267"},"type":"LBC"}'
+      essence:
+        authCode:
+          auth: EPSG
+          code: '4267'
+        name: GCS_North_American_1927
+        type: LBC
+        ver: PE_10_3_1
+        wkt: GEOGCS["GCS_North_American_1927",DATUM["D_North_American_1927",SPHEROID["Clarke_1866",6378206.4,294.9786982]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433],AUTHORITY["EPSG",4267]]
+  CompoundCRSRequest:
+    type: object
+    description: Request to get one CompoundCRS given its 'persistableReference' (serialized
+      essence) or 'essence' structure. Only one, persistableReference or essence must
+      be provided. If both are provided, essence takes precedence.
+    properties:
+      persistableReference:
+        type: string
+        description: The persistable reference string, either the essence of the CompoundCRS
+          serialized into a JSON string or an encoded string (version 1).
+      essence:
+        description: The essence for the CompoundCRS. Either the essence or persistableReference
+          must be non-null.
+        "$ref": "#/definitions/CompoundCRSEssence"
+        example:
+          authCode:
+            auth: SLB
+            code: '326355773'
+          type: CC
+          ver: PE_10_3_1
+          name: WGS 84 / UTM zone 35N + EGM96 height
+          horzLateBoundCRS:
+            authCode:
+              auth: EPSG
+              code: '32635'
+            type: LBC
+            ver: PE_10_3_1
+            name: WGS_1984_UTM_Zone_35N
+            wkt: PROJCS["WGS_1984_UTM_Zone_35N",GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],PROJECTION["Transverse_Mercator"],PARAMETER["False_Easting",500000.0],PARAMETER["False_Northing",0.0],PARAMETER["Central_Meridian",27.0],PARAMETER["Scale_Factor",0.9996],PARAMETER["Latitude_Of_Origin",0.0],UNIT["Meter",1.0],AUTHORITY["EPSG",32635]]
+          vertLateBoundCRS:
+            authCode:
+              auth: EPSG
+              code: '5773'
+            type: LBC
+            ver: PE_10_3_1
+            name: EGM96_Geoid
+            wkt: VERTCS["EGM96_Geoid",VDATUM["EGM96_Geoid"],PARAMETER["Vertical_Shift",0.0],PARAMETER["Direction",1.0],UNIT["Meter",1.0],AUTHORITY["EPSG",5773]]
+    example:
+      persistableReference: '{"horzLateBoundCRS":{"wkt":"PROJCS[\"WGS_1984_UTM_Zone_35N\",GEOGCS[\"GCS_WGS_1984\",DATUM[\"D_WGS_1984\",SPHEROID[\"WGS_1984\",6378137.0,298.257223563]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"False_Easting\",500000.0],PARAMETER[\"False_Northing\",0.0],PARAMETER[\"Central_Meridian\",27.0],PARAMETER[\"Scale_Factor\",0.9996],PARAMETER[\"Latitude_Of_Origin\",0.0],UNIT[\"Meter\",1.0],AUTHORITY[\"EPSG\",32635]]","ver":"PE_10_3_1","name":"WGS_1984_UTM_Zone_35N","authCode":{"auth":"EPSG","code":"32635"},"type":"LBC"},"vertLateBoundCRS":{"wkt":"VERTCS[\"EGM96_Geoid\",VDATUM[\"EGM96_Geoid\"],PARAMETER[\"Vertical_Shift\",0.0],PARAMETER[\"Direction\",1.0],UNIT[\"Meter\",1.0],AUTHORITY[\"EPSG\",5773]]","ver":"PE_10_3_1","name":"EGM96_Geoid","authCode":{"auth":"EPSG","code":"5773"},"type":"LBC"},"ver":"PE_10_3_1","name":"WGS
+        84 / UTM zone 35N + EGM96 height","authCode":{"auth":"SLB","code":"326355773"},"type":"CC"}'
+      essence:
+        authCode:
+          auth: SLB
+          code: '326355773'
+        type: CC
+        ver: PE_10_3_1
+        name: WGS 84 / UTM zone 35N + EGM96 height
+        horzLateBoundCRS:
+          authCode:
+            auth: EPSG
+            code: '32635'
+          type: LBC
+          ver: PE_10_3_1
+          name: WGS_1984_UTM_Zone_35N
+          wkt: PROJCS["WGS_1984_UTM_Zone_35N",GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],PROJECTION["Transverse_Mercator"],PARAMETER["False_Easting",500000.0],PARAMETER["False_Northing",0.0],PARAMETER["Central_Meridian",27.0],PARAMETER["Scale_Factor",0.9996],PARAMETER["Latitude_Of_Origin",0.0],UNIT["Meter",1.0],AUTHORITY["EPSG",32635]]
+        vertLateBoundCRS:
+          authCode:
+            auth: EPSG
+            code: '5773'
+          type: LBC
+          ver: PE_10_3_1
+          name: EGM96_Geoid
+          wkt: VERTCS["EGM96_Geoid",VDATUM["EGM96_Geoid"],PARAMETER["Vertical_Shift",0.0],PARAMETER["Direction",1.0],UNIT["Meter",1.0],AUTHORITY["EPSG",5773]]
+  CTRequest:
+    type: object
+    description: Request to get one cartographic transformation given its 'persistableReference'
+      (serialized essence) or 'essence' structure. Only one, persistableReference
+      or essence must be provided. If both are provided, essence takes precedence.
+    properties:
+      persistableReference:
+        type: string
+        description: The persistable reference string, either the essence of the cartographic
+          transform (CT) serialized into a JSON string or an encoded string (version
+          1).
+      essence:
+        type: object
+        "$ref": "#/definitions/AnyCTEssence"
+        description: The essence Json for the CT. Either the essence or persistableReference
+          must be non-null.
+        example: "{\r\n    \"authCode\": {\r\n     \"auth\": \"EPSG\", \r\n     \"code\":
+          \"1133\"\r\n    }, \r\n    \"name\": \"ED_1950_To_WGS_1984_1\", \r\n    \"type\":
+          \"ST\", \r\n    \"ver\": \"PE_10_3_1\", \r\n    \"wkt\": \"GEOGTRAN[\\\"ED_1950_To_WGS_1984_1\\\",GEOGCS[\\\"GCS_European_1950\\\",DATUM[\\\"D_European_1950\\\",SPHEROID[\\\"International_1924\\\",6378388.0,297.0]],PRIMEM[\\\"Greenwich\\\",0.0],UNIT[\\\"Degree\\\",0.0174532925199433]],GEOGCS[\\\"GCS_WGS_1984\\\",DATUM[\\\"D_WGS_1984\\\",SPHEROID[\\\"WGS_1984\\\",6378137.0,298.257223563]],PRIMEM[\\\"Greenwich\\\",0.0],UNIT[\\\"Degree\\\",0.0174532925199433]],METHOD[\\\"Geocentric_Translation\\\"],PARAMETER[\\\"X_Axis_Translation\\\",-87.0],PARAMETER[\\\"Y_Axis_Translation\\\",-98.0],PARAMETER[\\\"Z_Axis_Translation\\\",-121.0],AUTHORITY[\\\"EPSG\\\",1133]]\"\r\n}"
+    example:
+      persistableReference: '{"wkt":"GEOGTRAN[\"ED_1950_To_WGS_1984_1\",GEOGCS[\"GCS_European_1950\",DATUM[\"D_European_1950\",SPHEROID[\"International_1924\",6378388.0,297.0]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],GEOGCS[\"GCS_WGS_1984\",DATUM[\"D_WGS_1984\",SPHEROID[\"WGS_1984\",6378137.0,298.257223563]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],METHOD[\"Geocentric_Translation\"],PARAMETER[\"X_Axis_Translation\",-87.0],PARAMETER[\"Y_Axis_Translation\",-98.0],PARAMETER[\"Z_Axis_Translation\",-121.0],AUTHORITY[\"EPSG\",1133]]","ver":"PE_10_3_1","name":"ED_1950_To_WGS_1984_1","authCode":{"auth":"EPSG","code":"1133"},"type":"ST"}'
+      essence:
+        authCode:
+          auth: EPSG
+          code: '1133'
+        type: ST
+        ver: PE_10_3_1
+        name: ED_1950_To_WGS_1984_1
+        wkt: GEOGTRAN["ED_1950_To_WGS_1984_1",GEOGCS["GCS_European_1950",DATUM["D_European_1950",SPHEROID["International_1924",6378388.0,297.0]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],METHOD["Geocentric_Translation"],PARAMETER["X_Axis_Translation",-87.0],PARAMETER["Y_Axis_Translation",-98.0],PARAMETER["Z_Axis_Translation",-121.0],AUTHORITY["EPSG",1133]]
+  SingleCTRequest:
+    type: object
+    description: Request to get one SingleCT given its 'persistableReference' (serialized
+      essence) or 'essence' structure. Only one, persistableReference or essence must
+      be provided. If both are provided, essence takes precedence.
+    properties:
+      persistableReference:
+        type: string
+        description: The persistable reference string, either the essence of the SingleCT
+          serialized into a JSON string or an encoded string (version 1).
+      essence:
+        description: The essence for the SingleCT. Either the essence or persistableReference
+          must be non-null.
+        "$ref": "#/definitions/SingleCTEssence"
+        example:
+          authCode:
+            auth: EPSG
+            code: '1133'
+          name: ED_1950_To_WGS_1984_1
+          type: ST
+          ver: PE_10_3_1
+          wkt: GEOGTRAN["ED_1950_To_WGS_1984_1",GEOGCS["GCS_European_1950",DATUM["D_European_1950",SPHEROID["International_1924",6378388.0,297.0]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],METHOD["Geocentric_Translation"],PARAMETER["X_Axis_Translation",-87.0],PARAMETER["Y_Axis_Translation",-98.0],PARAMETER["Z_Axis_Translation",-121.0],AUTHORITY["EPSG",1133]]
+    example:
+      persistableReference: '{"wkt":"GEOGTRAN[\"ED_1950_To_WGS_1984_1\",GEOGCS[\"GCS_European_1950\",DATUM[\"D_European_1950\",SPHEROID[\"International_1924\",6378388.0,297.0]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],GEOGCS[\"GCS_WGS_1984\",DATUM[\"D_WGS_1984\",SPHEROID[\"WGS_1984\",6378137.0,298.257223563]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],METHOD[\"Geocentric_Translation\"],PARAMETER[\"X_Axis_Translation\",-87.0],PARAMETER[\"Y_Axis_Translation\",-98.0],PARAMETER[\"Z_Axis_Translation\",-121.0],AUTHORITY[\"EPSG\",1133]]","ver":"PE_10_3_1","name":"ED_1950_To_WGS_1984_1","authCode":{"auth":"EPSG","code":"1133"},"type":"ST"}'
+      essence:
+        authCode:
+          auth: EPSG
+          code: '1133'
+        name: ED_1950_To_WGS_1984_1
+        type: ST
+        ver: PE_10_3_1
+        wkt: GEOGTRAN["ED_1950_To_WGS_1984_1",GEOGCS["GCS_European_1950",DATUM["D_European_1950",SPHEROID["International_1924",6378388.0,297.0]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],METHOD["Geocentric_Translation"],PARAMETER["X_Axis_Translation",-87.0],PARAMETER["Y_Axis_Translation",-98.0],PARAMETER["Z_Axis_Translation",-121.0],AUTHORITY["EPSG",1133]]
+  CompoundCTRequest:
+    type: object
+    description: Request to get one CompoundCT given its 'persistableReference' (serialized
+      essence) or 'essence' structure. Only one, persistableReference or essence must
+      be provided. If both are provided, essence takes precedence.
+    properties:
+      persistableReference:
+        type: string
+        description: The persistable reference string, either the essence of the CompoundCT
+          serialized into a JSON string or an encoded string (version 1).
+      essence:
+        description: The essence for the CompoundCT. Either the essence or persistableReference
+          must be non-null.
+        "$ref": "#/definitions/CompoundCTEssence"
+        example:
+          authCode:
+            auth: SLB
+            code: '158511693'
+          name: Fallback NAD27 to WGS 84 (79)/NAD27 to WGS 84 (33)
+          policy: Fallback
+          type: CT
+          cts:
+            - authCode:
+                auth: EPSG
+                code: '15851'
+              name: NAD_1927_To_WGS_1984_79_CONUS
+              type: ST
+              ver: PE_10_3_1
+              wkt: GEOGTRAN["NAD_1927_To_WGS_1984_79_CONUS",GEOGCS["GCS_North_American_1927",DATUM["D_North_American_1927",SPHEROID["Clarke_1866",6378206.4,294.9786982]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],METHOD["NADCON"],PARAMETER["Dataset_conus",0.0],AUTHORITY["EPSG",15851]]
+            - authCode:
+                auth: EPSG
+                code: '1693'
+              name: NAD_1927_To_WGS_1984_33
+              type: ST
+              ver: PE_10_3_1
+              wkt: GEOGTRAN["NAD_1927_To_WGS_1984_33",GEOGCS["GCS_North_American_1927",DATUM["D_North_American_1927",SPHEROID["Clarke_1866",6378206.4,294.9786982]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],METHOD["NTv2"],PARAMETER["Dataset_canada/Ntv2_0",0.0],AUTHORITY["EPSG",1693]]
+          ver: PE_10_3_1
+    example:
+      persistableReference: '{"policy":"Fallback","cts":[{"wkt":"GEOGTRAN[\"NAD_1927_To_WGS_1984_79_CONUS\",GEOGCS[\"GCS_North_American_1927\",DATUM[\"D_North_American_1927\",SPHEROID[\"Clarke_1866\",6378206.4,294.9786982]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],GEOGCS[\"GCS_WGS_1984\",DATUM[\"D_WGS_1984\",SPHEROID[\"WGS_1984\",6378137.0,298.257223563]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],METHOD[\"NADCON\"],PARAMETER[\"Dataset_conus\",0.0],AUTHORITY[\"EPSG\",15851]]","ver":"PE_10_3_1","name":"NAD_1927_To_WGS_1984_79_CONUS","authCode":{"auth":"EPSG","code":"15851"},"type":"ST"},{"wkt":"GEOGTRAN[\"NAD_1927_To_WGS_1984_33\",GEOGCS[\"GCS_North_American_1927\",DATUM[\"D_North_American_1927\",SPHEROID[\"Clarke_1866\",6378206.4,294.9786982]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],GEOGCS[\"GCS_WGS_1984\",DATUM[\"D_WGS_1984\",SPHEROID[\"WGS_1984\",6378137.0,298.257223563]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],METHOD[\"NTv2\"],PARAMETER[\"Dataset_canada/Ntv2_0\",0.0],AUTHORITY[\"EPSG\",1693]]","ver":"PE_10_3_1","name":"NAD_1927_To_WGS_1984_33","authCode":{"auth":"EPSG","code":"1693"},"type":"ST"}],"ver":"PE_10_3_1","name":"Fallback
+        NAD27 to WGS 84 (79)/NAD27 to WGS 84 (33)","authCode":{"auth":"SLB","code":"158511693"},"type":"CT"}'
+      essence:
+        authCode:
+          auth: SLB
+          code: '158511693'
+        name: Fallback NAD27 to WGS 84 (79)/NAD27 to WGS 84 (33)
+        policy: Fallback
+        type: CT
+        cts:
+          - authCode:
+              auth: EPSG
+              code: '15851'
+            name: NAD_1927_To_WGS_1984_79_CONUS
+            type: ST
+            ver: PE_10_3_1
+            wkt: GEOGTRAN["NAD_1927_To_WGS_1984_79_CONUS",GEOGCS["GCS_North_American_1927",DATUM["D_North_American_1927",SPHEROID["Clarke_1866",6378206.4,294.9786982]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],METHOD["NADCON"],PARAMETER["Dataset_conus",0.0],AUTHORITY["EPSG",15851]]
+          - authCode:
+              auth: EPSG
+              code: '1693'
+            name: NAD_1927_To_WGS_1984_33
+            type: ST
+            ver: PE_10_3_1
+            wkt: GEOGTRAN["NAD_1927_To_WGS_1984_33",GEOGCS["GCS_North_American_1927",DATUM["D_North_American_1927",SPHEROID["Clarke_1866",6378206.4,294.9786982]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],METHOD["NTv2"],PARAMETER["Dataset_canada/Ntv2_0",0.0],AUTHORITY["EPSG",1693]]
+        ver: PE_10_3_1
+  AreaOfUseResults:
+    description: A response containing a list of areas of use.
+    properties:
+      areasOfUse:
+        type: array
+        description: An array of AreaOfUse
+        items:
+          "$ref": "#/definitions/AreaOfUse"
+      count:
+        type: integer
+        format: int32
+        description: Number of elements in the response.
+      offset:
+        type: integer
+        format: int32
+        description: Offset to the first catalog item in the response, as set in the
+          request.
+      totalCount:
+        type: integer
+        format: int32
+        description: Number of elements in the catalog.
+  CRSResults:
+    description: A response containing a list of CRSes.
+    properties:
+      crses:
+        type: array
+        description: An array of (any sub-type of) CRS
+        items:
+          "$ref": "#/definitions/CRS"
+      count:
+        type: integer
+        format: int32
+        description: Number of elements in the response.
+      offset:
+        type: integer
+        format: int32
+        description: Offset to the first catalog item in the response, as set in the
+          request.
+      totalCount:
+        type: integer
+        format: int32
+        description: Number of elements in the catalog.
+  LateBoundCRSResults:
+    description: A response containing a list of late-bound CRSes.
+    properties:
+      crses:
+        type: array
+        description: An array of LateBoundCRS
+        items:
+          "$ref": "#/definitions/LateBoundCRS"
+      count:
+        type: integer
+        format: int32
+        description: Number of elements in the response.
+      offset:
+        type: integer
+        format: int32
+        description: Offset to the first catalog item in the response, as set in the
+          request.
+      totalCount:
+        type: integer
+        format: int32
+        description: Number of elements in the catalog.
+  EarlyBoundCRSResults:
+    description: A response containing a list of early-bound CRSes.
+    properties:
+      crses:
+        type: array
+        description: An array of EarlyBoundCRS
+        items:
+          "$ref": "#/definitions/EarlyBoundCRS"
+      count:
+        type: integer
+        format: int32
+        description: Number of elements in the response.
+      offset:
+        type: integer
+        format: int32
+        description: Offset to the first catalog item in the response, as set in the
+          request.
+      totalCount:
+        type: integer
+        format: int32
+        description: Number of elements in the catalog.
+  CompoundCRSResults:
+    description: A response containing a list of compound CRSes.
+    properties:
+      crses:
+        type: array
+        description: An array of CompoundCRS
+        items:
+          "$ref": "#/definitions/CompoundCRS"
+      count:
+        type: integer
+        format: int32
+        description: Number of elements in the response.
+      offset:
+        type: integer
+        format: int32
+        description: Offset to the first catalog item in the response, as set in the
+          request.
+      totalCount:
+        type: integer
+        format: int32
+        description: Number of elements in the catalog.
+  CTResults:
+    description: A response containing a list of cartographic transformations.
+    properties:
+      cts:
+        type: array
+        description: An array of (any sub-type of) cartographic transforms
+        items:
+          "$ref": "#/definitions/CT"
+      count:
+        type: integer
+        format: int32
+        description: Number of elements in the response.
+      offset:
+        type: integer
+        format: int32
+        description: Offset to the first catalog item in the response, as set in the
+          request.
+      totalCount:
+        type: integer
+        format: int32
+        description: Number of elements in the catalog.
+  SingleCTResults:
+    description: A response containing a list of single cartographic transformations.
+    properties:
+      cts:
+        type: array
+        description: An array of SingleCTs
+        items:
+          "$ref": "#/definitions/SingleCT"
+      count:
+        type: integer
+        format: int32
+        description: Number of elements in the response.
+      offset:
+        type: integer
+        format: int32
+        description: Offset to the first catalog item in the response, as set in the
+          request.
+      totalCount:
+        type: integer
+        format: int32
+        description: Number of elements in the catalog.
+  CompoundCTResults:
+    description: A response containing a list of compound cartographic transformations.
+    properties:
+      cts:
+        type: array
+        description: An array of CompoundCTs
+        items:
+          "$ref": "#/definitions/CompoundCT"
+      count:
+        type: integer
+        format: int32
+        description: Number of items returned in this response.
+      offset:
+        type: integer
+        format: int32
+        description: Offset to the first catalog item in the response, as set in the
+          request.
+      totalCount:
+        type: integer
+        format: int32
+        description: Total number of items in the catalog.
+  NamedReference:
+    description: Name and Persistable Reference (the essence converted to a JSON string).
+    properties:
+      name:
+        type: string
+        description: The name of the item.
+      persistableReference:
+        type: string
+        description: The item 'essence' serialized into a JSON string.
+  ErrorResponse:
+    type: object
+    properties:
+      error:
+        type: string
+        description: Error message
+    description: Error response from a failed CRS catalog operation
+  SearchCTRequest:
+    type: object
+    description: Request to containing a Lucene style query string.
+    properties:
+      query:
+        type: string
+        description: The Lucene style query string with keywords.
+        example: namespace:Energistics_UoM
+    example:
+      query: code:15851
+  SearchCRSRequest:
+    type: object
+    description: Request to containing a Lucene style query string.
+    properties:
+      query:
+        type: string
+        description: The Lucene style query string with keywords.
+        example: baseCRS.code:4267 transformationReady:true
+    example:
+      query: baseCRS.code:4267 transformationReady:true
+  SearchAreaOfUseRequest:
+    type: object
+    description: Request to containing a Lucene style query string.
+    properties:
+      query:
+        type: string
+        description: The Lucene style query string with keywords.
+        example: description:*America*
+    example:
+      query: description:*America*
+  VersionInfo:
+    type: object
+    properties:
+      artifactId:
+        type: string
+      branch:
+        type: string
+      buildTime:
+        type: string
+      commitId:
+        type: string
+      commitMessage:
+        type: string
+      connectedOuterServices:
+        type: array
+        items:
+          "$ref": "#/definitions/ConnectedOuterService"
+      groupId:
+        type: string
+      version:
+        type: string
+  ConnectedOuterService:
+    type: object
+    description: Connected outer service information.
+    properties:
+      name:
+        type: string
+        description: Connected outer service name.
+      version:
+        type: string
+        description: Connected outer service version.

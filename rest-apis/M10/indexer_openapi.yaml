@@ -1,0 +1,426 @@
+swagger: '2.0'
+info:
+  description: Indexer Service
+  version: '1.0'
+  title: Indexer Service  
+tags:
+  - name: cleanup-indicies-api
+    description: Cleanup Indicies Api
+  - name: info-api
+    description: Info Api
+  - name: partition-setup-api
+    description: Partition Setup Api
+  - name: record-indexer-api
+    description: Record Indexer Api
+  - name: reindex-api
+    description: Reindex Api
+  - name: health-check-api
+    description: Health check A
+paths:
+  /api/indexer/v2/index:
+    delete:
+      tags:
+        - cleanup-indicies-api
+      summary: deleteIndex
+      operationId: deleteIndexUsingDELETE
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: data-partition-id
+          description: data partition id
+          required: true
+          type: string
+        - name: kind
+          in: query
+          description: kind
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ResponseEntity'
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+        - Bearer: []
+  /api/indexer/v2/info:
+    get:
+      tags:
+        - info-api
+      summary: info
+      operationId: infoUsingGET
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: data-partition-id
+          description: data partition id
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/VersionInfo'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - Bearer: []
+  /api/indexer/v2/partitions/provision:
+    put:
+      tags:
+        - partition-setup-api
+      summary: provisionPartition
+      operationId: provisionPartitionUsingPUT
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - name: data-partition-id
+          in: header
+          description: data-partition-id
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - Bearer: []
+  /api/indexer/v2/readiness_check:
+    get:
+      tags:
+        - health-check-api
+      summary: readinessCheck
+      operationId: readinessCheckUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - in: header
+          name: data-partition-id
+          description: data partition id
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - Authorization:
+            - global
+  /api/indexer/v2/reindex:
+    post:
+      tags:
+        - reindex-api
+      summary: reindex
+      operationId: reindexUsingPOST_1
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - in: header
+          name: data-partition-id
+          description: data partition id
+          required: true
+          type: string
+        - name: force_clean
+          in: query
+          description: force_clean
+          required: false
+          type: boolean
+          default: false
+        - in: body
+          name: recordReindexRequest
+          description: recordReindexRequest
+          required: true
+          schema:
+            $ref: '#/definitions/RecordReindexRequest'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - Authorization:
+            - global
+    patch:
+      tags:
+        - reindex-api
+      summary: fullReindex
+      operationId: fullReindexUsingPATCH
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - in: header
+          name: data-partition-id
+          description: data partition id
+          required: true
+          type: string
+        - name: force_clean
+          in: query
+          description: force_clean
+          required: false
+          type: boolean
+          default: false
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+        - Authorization:
+            - global
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+definitions:
+  ConnectedOuterService:
+    type: object
+    properties:
+      name:
+        type: string
+      version:
+        type: string
+    title: ConnectedOuterService
+  IndexProgress:
+    type: object
+    properties:
+      lastUpdateTime:
+        type: string
+      statusCode:
+        type: integer
+        format: int32
+      trace:
+        type: array
+        items:
+          type: string
+    title: IndexProgress
+  JaxRsDpsLog:
+    type: object
+    title: JaxRsDpsLog
+  JobStatus:
+    type: object
+    properties:
+      debugInfos:
+        type: array
+        items:
+          type: string
+      idsByValidUpsertIndexingStatus:
+        type: array
+        items:
+          type: string
+      jaxRsDpsLog:
+        $ref: '#/definitions/JaxRsDpsLog'
+      statusesList:
+        type: array
+        items:
+          $ref: '#/definitions/RecordStatus'
+    title: JobStatus
+  RecordChangedMessages:
+    type: object
+    properties:
+      attributes:
+        type: object
+        additionalProperties:
+          type: string
+      data:
+        type: string
+      messageId:
+        type: string
+      publishTime:
+        type: string
+    title: RecordChangedMessages
+  RecordReindexRequest:
+    type: object
+    required:
+      - kind
+    properties:
+      cursor:
+        type: string
+      kind:
+        type: string
+    title: RecordReindexRequest
+  RecordStatus:
+    type: object
+    properties:
+      id:
+        type: string
+      indexProgress:
+        $ref: '#/definitions/IndexProgress'
+      kind:
+        type: string
+      latestTrace:
+        type: string
+      operationType:
+        type: string
+      status:
+        type: string
+        enum:
+          - FAIL
+          - PROCESSING
+          - SKIP
+          - SUCCESS
+          - WARN
+    title: RecordStatus
+  ResponseEntity:
+    type: object
+    properties:
+      body:
+        type: object
+      statusCode:
+        type: string
+        enum:
+          - ACCEPTED
+          - ALREADY_REPORTED
+          - BAD_GATEWAY
+          - BAD_REQUEST
+          - BANDWIDTH_LIMIT_EXCEEDED
+          - CHECKPOINT
+          - CONFLICT
+          - CONTINUE
+          - CREATED
+          - DESTINATION_LOCKED
+          - EXPECTATION_FAILED
+          - FAILED_DEPENDENCY
+          - FORBIDDEN
+          - FOUND
+          - GATEWAY_TIMEOUT
+          - GONE
+          - HTTP_VERSION_NOT_SUPPORTED
+          - IM_USED
+          - INSUFFICIENT_SPACE_ON_RESOURCE
+          - INSUFFICIENT_STORAGE
+          - INTERNAL_SERVER_ERROR
+          - I_AM_A_TEAPOT
+          - LENGTH_REQUIRED
+          - LOCKED
+          - LOOP_DETECTED
+          - METHOD_FAILURE
+          - METHOD_NOT_ALLOWED
+          - MOVED_PERMANENTLY
+          - MOVED_TEMPORARILY
+          - MULTIPLE_CHOICES
+          - MULTI_STATUS
+          - NETWORK_AUTHENTICATION_REQUIRED
+          - NON_AUTHORITATIVE_INFORMATION
+          - NOT_ACCEPTABLE
+          - NOT_EXTENDED
+          - NOT_FOUND
+          - NOT_IMPLEMENTED
+          - NOT_MODIFIED
+          - NO_CONTENT
+          - OK
+          - PARTIAL_CONTENT
+          - PAYLOAD_TOO_LARGE
+          - PAYMENT_REQUIRED
+          - PERMANENT_REDIRECT
+          - PRECONDITION_FAILED
+          - PRECONDITION_REQUIRED
+          - PROCESSING
+          - PROXY_AUTHENTICATION_REQUIRED
+          - REQUESTED_RANGE_NOT_SATISFIABLE
+          - REQUEST_ENTITY_TOO_LARGE
+          - REQUEST_HEADER_FIELDS_TOO_LARGE
+          - REQUEST_TIMEOUT
+          - REQUEST_URI_TOO_LONG
+          - RESET_CONTENT
+          - SEE_OTHER
+          - SERVICE_UNAVAILABLE
+          - SWITCHING_PROTOCOLS
+          - TEMPORARY_REDIRECT
+          - TOO_EARLY
+          - TOO_MANY_REQUESTS
+          - UNAUTHORIZED
+          - UNAVAILABLE_FOR_LEGAL_REASONS
+          - UNPROCESSABLE_ENTITY
+          - UNSUPPORTED_MEDIA_TYPE
+          - UPGRADE_REQUIRED
+          - URI_TOO_LONG
+          - USE_PROXY
+          - VARIANT_ALSO_NEGOTIATES
+      statusCodeValue:
+        type: integer
+        format: int32
+    title: ResponseEntity
+  SchemaChangedMessages:
+    type: object
+    properties:
+      attributes:
+        type: object
+        additionalProperties:
+          type: string
+      data:
+        type: string
+      messageId:
+        type: string
+      publishTime:
+        type: string
+    title: SchemaChangedMessages
+  VersionInfo:
+    type: object
+    properties:
+      artifactId:
+        type: string
+      branch:
+        type: string
+      buildTime:
+        type: string
+      commitId:
+        type: string
+      commitMessage:
+        type: string
+      connectedOuterServices:
+        type: array
+        items:
+          $ref: '#/definitions/ConnectedOuterService'
+      groupId:
+        type: string
+      version:
+        type: string
+    title: VersionInfo

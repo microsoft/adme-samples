@@ -1,0 +1,1244 @@
+swagger: '2.0'
+info:
+  version: '1.0.0'
+  description: Register Service
+  title: Register Service
+tags:
+  - name: action-api
+    description: Action Api
+  - name: ddms-api
+    description: Ddms Api
+  - name: gsa-subscriber-listener-api
+    description: Gsa Subscriber Listener Api
+  - name: health-checks-api
+    description: Health Checks Api
+  - name: info-api
+    description: Info Api
+  - name: subscriber-api
+    description: Subscriber Api
+  - name: subscriber-listener-api
+    description: Subscriber Listener Api
+paths:
+  /api/register/v1/action:
+    post:
+      tags:
+        - action-api
+      summary: createAction
+      operationId: createActionUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: createActionDto
+          description: createActionDto
+          required: true
+          schema:
+            $ref: '#/definitions/CreateActionDto'
+        - in: header
+          name: data-partition-id
+          description: tenant
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Action'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - bearer: []
+  '/api/register/v1/action/{id}':
+    get:
+      tags:
+        - action-api
+      summary: getAction
+      operationId: getActionUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - in: header
+          name: data-partition-id
+          description: tenant
+          required: true
+          type: string
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: string
+          pattern: '^[A-Za-z0-9-]{2,50}'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Action'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - bearer: []
+    delete:
+      tags:
+        - action-api
+      summary: deleteAction
+      operationId: deleteActionUsingDELETE
+      produces:
+        - '*/*'
+      parameters:
+        - in: header
+          name: data-partition-id
+          description: tenant
+          required: true
+          type: string
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: string
+          pattern: '^[A-Za-z0-9-]{2,50}'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ResponseEntity'
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+        - bearer: []
+  '/api/register/v1/action:retrieve':
+    post:
+      tags:
+        - action-api
+      summary: retrieveAction
+      operationId: retrieveActionUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - in: header
+          name: data-partition-id
+          description: tenant
+          required: true
+          type: string
+        - in: body
+          name: jsonObject
+          description: jsonObject
+          required: true
+          schema:
+            $ref: '#/definitions/JsonNode'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Action'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - bearer: []
+  '/api/register/v1/action:test':
+    post:
+      tags:
+        - action-api
+      summary: testAction
+      operationId: testActionUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - in: header
+          name: data-partition-id
+          description: tenant
+          required: true
+          type: string
+        - in: body
+          name: testActionRequest
+          description: testActionRequest
+          required: true
+          schema:
+            $ref: '#/definitions/TestActionRequest'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ParsedAction'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - bearer: []
+  /api/register/v1/ah/liveness_check:
+    get:
+      tags:
+        - health-checks-api
+      summary: livenessCheck
+      operationId: livenessCheckUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - in: header
+          name: data-partition-id
+          description: tenant
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ResponseEntity'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - bearer: []
+  /api/register/v1/ah/readiness_check:
+    get:
+      tags:
+        - health-checks-api
+      summary: readinessCheck
+      operationId: readinessCheckUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - in: header
+          name: data-partition-id
+          description: tenant
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ResponseEntity'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - bearer: []
+  /api/register/v1/ddms:
+    get:
+      tags:
+        - ddms-api
+      summary: queryDMS
+      operationId: queryDMSUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - in: header
+          name: data-partition-id
+          description: tenant
+          required: true
+          type: string
+        - name: type
+          in: query
+          description: type
+          required: true
+          type: string
+          pattern: '^[A-Za-z0-9]{1,50}'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/DdmsRes'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - bearer: []
+    post:
+      tags:
+        - ddms-api
+      summary: postDMS
+      operationId: postDMSUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - in: header
+          name: data-partition-id
+          description: tenant
+          required: true
+          type: string
+        - in: body
+          name: spec
+          description: spec
+          required: true
+          schema:
+            $ref: '#/definitions/DdmsReq'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/DdmsRes'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - bearer: []
+  '/api/register/v1/ddms/{id}':
+    get:
+      tags:
+        - ddms-api
+      summary: getDMS
+      operationId: getDMSUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - in: header
+          name: data-partition-id
+          description: tenant
+          required: true
+          type: string
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: string
+          pattern: '^[A-Za-z0-9-]{2,50}'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/DdmsRes'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - bearer: []
+    delete:
+      tags:
+        - ddms-api
+      summary: deleteDMS
+      operationId: deleteDMSUsingDELETE
+      produces:
+        - '*/*'
+      parameters:
+        - in: header
+          name: data-partition-id
+          description: tenant
+          required: true
+          type: string
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: string
+          pattern: '^[A-Za-z0-9-]{2,50}'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ResponseEntity'
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+        - bearer: []
+  '/api/register/v1/ddms/{id}/{type}/{localid}':
+    get:
+      tags:
+        - ddms-api
+      summary: redirectToDms
+      operationId: redirectToDmsUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - in: header
+          name: data-partition-id
+          description: tenant
+          required: true
+          type: string
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: string
+          pattern: '^[A-Za-z0-9-]{2,50}'
+        - name: localid
+          in: path
+          description: localid
+          required: true
+          type: string
+          pattern: '^[A-Za-z0-9-]{2,50}'
+        - name: type
+          in: path
+          description: type
+          required: true
+          type: string
+          pattern: '^[A-Za-z]{2,50}'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ResponseEntity'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - bearer: []
+  /api/register/v1/info:
+    get:
+      tags:
+        - info-api
+      summary: info
+      operationId: infoUsingGET
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: data-partition-id
+          description: tenant
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/VersionInfo'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - bearer: []
+  /api/register/v1/subscription:
+    get:
+      tags:
+        - subscriber-api
+      summary: querySubscription
+      operationId: querySubscriptionUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - in: header
+          name: data-partition-id
+          description: tenant
+          required: true
+          type: string
+        - name: notificationId
+          in: query
+          description: notificationId
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Subscription'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - bearer: []
+    post:
+      tags:
+        - subscriber-api
+      summary: createSubscription
+      operationId: createSubscriptionUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - in: header
+          name: data-partition-id
+          description: tenant
+          required: true
+          type: string
+        - in: body
+          name: input
+          description: input
+          required: true
+          schema:
+            $ref: '#/definitions/Subscription'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Subscription'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - bearer: []
+  '/api/register/v1/subscription/{id}':
+    get:
+      tags:
+        - subscriber-api
+      summary: getSubscription
+      operationId: getSubscriptionUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - in: header
+          name: data-partition-id
+          description: tenant
+          required: true
+          type: string
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/SubscriptionInfo'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - bearer: []
+    delete:
+      tags:
+        - subscriber-api
+      summary: deleteSubscription
+      operationId: deleteSubscriptionUsingDELETE
+      produces:
+        - '*/*'
+      parameters:
+        - in: header
+          name: data-partition-id
+          description: tenant
+          required: true
+          type: string
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ResponseEntity'
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+        - bearer: []
+  '/api/register/v1/subscription/{id}/secret':
+    put:
+      tags:
+        - subscriber-api
+      summary: updateSecret
+      operationId: updateSecretUsingPUT
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - in: header
+          name: data-partition-id
+          description: tenant
+          required: true
+          type: string
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: string
+        - in: body
+          name: input
+          description: input
+          required: true
+          schema:
+            $ref: '#/definitions/Secret'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ResponseEntity'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - bearer: []
+  '/api/register/v1/test/challenge/{count}':
+    get:
+      tags:
+        - subscriber-listener-api
+      summary: testCrc
+      operationId: testCrcUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - name: crc
+          in: query
+          description: crc
+          required: true
+          type: string
+        - in: header
+          name: data-partition-id
+          description: tenant
+          required: true
+          type: string
+        - name: hmac
+          in: query
+          description: hmac
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ChallengeResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - bearer: []
+    post:
+      tags:
+        - subscriber-listener-api
+      summary: testPushHmac
+      operationId: testPushHmacUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - in: header
+          name: data-partition-id
+          description: tenant
+          required: true
+          type: string
+        - name: hmac
+          in: query
+          description: hmac
+          required: true
+          type: string
+        - in: body
+          name: o
+          description: o
+          required: true
+          schema:
+            type: object
+      responses:
+        '200':
+          description: OK
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - bearer: []
+  '/api/register/v1/test/gsa-challenge/{count}':
+    get:
+      tags:
+        - gsa-subscriber-listener-api
+      summary: testGsa
+      operationId: testGsaUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - name: crc
+          in: query
+          description: crc
+          required: true
+          type: string
+        - in: header
+          name: data-partition-id
+          description: tenant
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ChallengeResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - bearer: []
+    post:
+      tags:
+        - gsa-subscriber-listener-api
+      summary: testPushGsa
+      operationId: testPushGsaUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - in: header
+          name: data-partition-id
+          description: tenant
+          required: true
+          type: string
+        - in: body
+          name: o
+          description: o
+          required: true
+          schema:
+            type: object
+      responses:
+        '200':
+          description: OK
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - bearer: []
+  /api/register/v1/topics:
+    get:
+      tags:
+        - subscriber-api
+      summary: listMessages
+      operationId: listMessagesUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - in: header
+          name: data-partition-id
+          description: tenant
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Topic'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - bearer: []
+securityDefinitions:
+  bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+definitions:
+  Action:
+    type: object
+    properties:
+      contactEmail:
+        type: string
+      createdOnEpoch:
+        $ref: '#/definitions/Timestamp'
+      description:
+        type: string
+      filter:
+        $ref: '#/definitions/Filter'
+      id:
+        type: string
+      img:
+        type: string
+      name:
+        type: string
+      url:
+        type: string
+    title: Action
+  ChallengeResponse:
+    type: object
+    properties:
+      responseHash:
+        type: string
+    title: ChallengeResponse
+  ConnectedOuterService:
+    type: object
+    properties:
+      name:
+        type: string
+      version:
+        type: string
+    title: ConnectedOuterService
+  CreateActionDto:
+    type: object
+    properties:
+      contactEmail:
+        type: string
+      description:
+        type: string
+        pattern: '^[A-Za-z0-9. ]{0,255}'
+      filter:
+        $ref: '#/definitions/Filter'
+      id:
+        type: string
+        pattern: '^[A-Za-z0-9-]{2,50}'
+      img:
+        type: string
+      name:
+        type: string
+        pattern: '^[A-Za-z0-9- ]{2,50}'
+      url:
+        type: string
+    title: CreateActionDto
+  DdmsReq:
+    type: object
+    required:
+      - id
+      - name
+    properties:
+      contactEmail:
+        type: string
+      createdDateTimeEpoch:
+        $ref: '#/definitions/TimestampReq'
+      description:
+        type: string
+        pattern: '^[A-Za-z0-9. ]{0,255}'
+      id:
+        type: string
+        pattern: '^[A-Za-z0-9-]{2,50}'
+      interfaces:
+        type: array
+        uniqueItems: true
+        items:
+          $ref: '#/definitions/RegisteredInterface'
+      name:
+        type: string
+        pattern: '^[A-Za-z0-9- ]{2,50}'
+    title: DdmsReq
+  DdmsRes:
+    type: object
+    required:
+      - id
+      - name
+    properties:
+      contactEmail:
+        type: string
+      createdDateTimeEpoch:
+        $ref: '#/definitions/TimestampRes'
+      description:
+        type: string
+        pattern: '^[A-Za-z0-9. ]{0,255}'
+      id:
+        type: string
+        pattern: '^[A-Za-z0-9-]{2,50}'
+      interfaces:
+        type: array
+        uniqueItems: true
+        items:
+          $ref: '#/definitions/RegisteredInterface'
+      name:
+        type: string
+        pattern: '^[A-Za-z0-9- ]{2,50}'
+    title: DdmsRes
+  Filter:
+    type: object
+    properties:
+      entityType:
+        type: array
+        items:
+          type: string
+      source:
+        type: array
+        items:
+          type: string
+      version:
+        type: array
+        items:
+          type: string
+    title: Filter
+  GsaSecret:
+    type: object
+    properties:
+      value:
+        $ref: '#/definitions/GsaSecretValue'
+    title: GsaSecret
+  GsaSecretValue:
+    type: object
+    properties:
+      audience:
+        type: string
+      key:
+        type: string
+    title: GsaSecretValue
+  HmacSecret:
+    type: object
+    properties:
+      value:
+        type: string
+    title: HmacSecret
+  JsonNode:
+    type: object
+    title: JsonNode
+  ParsedAction:
+    type: object
+    properties:
+      errors:
+        type: string
+      url:
+        type: string
+    title: ParsedAction
+  RegisteredInterface:
+    type: object
+    required:
+      - entityType
+    properties:
+      entityType:
+        type: string
+        pattern: '^[A-Za-z0-9 ]{2,50}'
+      schema:
+        type: object
+    title: RegisteredInterface
+  ResponseEntity:
+    type: object
+    properties:
+      body:
+        type: object
+      statusCode:
+        type: string
+        enum:
+          - ACCEPTED
+          - ALREADY_REPORTED
+          - BAD_GATEWAY
+          - BAD_REQUEST
+          - BANDWIDTH_LIMIT_EXCEEDED
+          - CHECKPOINT
+          - CONFLICT
+          - CONTINUE
+          - CREATED
+          - DESTINATION_LOCKED
+          - EXPECTATION_FAILED
+          - FAILED_DEPENDENCY
+          - FORBIDDEN
+          - FOUND
+          - GATEWAY_TIMEOUT
+          - GONE
+          - HTTP_VERSION_NOT_SUPPORTED
+          - IM_USED
+          - INSUFFICIENT_SPACE_ON_RESOURCE
+          - INSUFFICIENT_STORAGE
+          - INTERNAL_SERVER_ERROR
+          - I_AM_A_TEAPOT
+          - LENGTH_REQUIRED
+          - LOCKED
+          - LOOP_DETECTED
+          - METHOD_FAILURE
+          - METHOD_NOT_ALLOWED
+          - MOVED_PERMANENTLY
+          - MOVED_TEMPORARILY
+          - MULTIPLE_CHOICES
+          - MULTI_STATUS
+          - NETWORK_AUTHENTICATION_REQUIRED
+          - NON_AUTHORITATIVE_INFORMATION
+          - NOT_ACCEPTABLE
+          - NOT_EXTENDED
+          - NOT_FOUND
+          - NOT_IMPLEMENTED
+          - NOT_MODIFIED
+          - NO_CONTENT
+          - OK
+          - PARTIAL_CONTENT
+          - PAYLOAD_TOO_LARGE
+          - PAYMENT_REQUIRED
+          - PERMANENT_REDIRECT
+          - PRECONDITION_FAILED
+          - PRECONDITION_REQUIRED
+          - PROCESSING
+          - PROXY_AUTHENTICATION_REQUIRED
+          - REQUESTED_RANGE_NOT_SATISFIABLE
+          - REQUEST_ENTITY_TOO_LARGE
+          - REQUEST_HEADER_FIELDS_TOO_LARGE
+          - REQUEST_TIMEOUT
+          - REQUEST_URI_TOO_LONG
+          - RESET_CONTENT
+          - SEE_OTHER
+          - SERVICE_UNAVAILABLE
+          - SWITCHING_PROTOCOLS
+          - TEMPORARY_REDIRECT
+          - TOO_EARLY
+          - TOO_MANY_REQUESTS
+          - UNAUTHORIZED
+          - UNAVAILABLE_FOR_LEGAL_REASONS
+          - UNPROCESSABLE_ENTITY
+          - UNSUPPORTED_MEDIA_TYPE
+          - UPGRADE_REQUIRED
+          - URI_TOO_LONG
+          - USE_PROXY
+          - VARIANT_ALSO_NEGOTIATES
+      statusCodeValue:
+        type: integer
+        format: int32
+    title: ResponseEntity
+  Secret:
+    type: object
+    discriminator: secretType
+    title: Secret
+  Subscription:
+    type: object
+    required:
+      - name
+      - pushEndpoint
+      - topic
+    properties:
+      createdBy:
+        type: string
+      description:
+        type: string
+        pattern: '^[A-Za-z0-9. ]{0,255}'
+      id:
+        type: string
+      name:
+        type: string
+        pattern: '^[A-Za-z0-9- ]{2,50}'
+      notificationId:
+        type: string
+      pushEndpoint:
+        type: string
+      secret:
+        $ref: '#/definitions/Secret'
+      topic:
+        type: string
+    title: Subscription
+  SubscriptionInfo:
+    type: object
+    properties:
+      createdBy:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      notificationId:
+        type: string
+      pushEndpoint:
+        type: string
+      topic:
+        type: string
+    title: SubscriptionInfo
+  TestActionRequest:
+    type: object
+    required:
+      - testPayload
+    properties:
+      action:
+        $ref: '#/definitions/CreateActionDto'
+      testPayload:
+        $ref: '#/definitions/JsonNode'
+    title: TestActionRequest
+  Timestamp:
+    type: object
+    properties:
+      date:
+        type: integer
+        format: int32
+      day:
+        type: integer
+        format: int32
+      hours:
+        type: integer
+        format: int32
+      minutes:
+        type: integer
+        format: int32
+      month:
+        type: integer
+        format: int32
+      nanos:
+        type: integer
+        format: int32
+      seconds:
+        type: integer
+        format: int32
+      time:
+        type: integer
+        format: int64
+      timezoneOffset:
+        type: integer
+        format: int32
+      year:
+        type: integer
+        format: int32
+    title: Timestamp
+  TimestampReq:
+    type: object
+    properties:
+      date:
+        type: integer
+        format: int32
+      hours:
+        type: integer
+        format: int32
+      minutes:
+        type: integer
+        format: int32
+      month:
+        type: integer
+        format: int32
+      nanos:
+        type: integer
+        format: int32
+      seconds:
+        type: integer
+        format: int32
+      time:
+        type: integer
+        format: int64
+      year:
+        type: integer
+        format: int32
+    title: TimestampReq
+  TimestampRes:
+    type: object
+    properties:
+      date:
+        type: integer
+        format: int32
+      day:
+        type: integer
+        format: int32
+      hours:
+        type: integer
+        format: int32
+      minutes:
+        type: integer
+        format: int32
+      month:
+        type: integer
+        format: int32
+      nanos:
+        type: integer
+        format: int32
+      seconds:
+        type: integer
+        format: int32
+      time:
+        type: integer
+        format: int64
+      timezoneOffset:
+        type: integer
+        format: int32
+      year:
+        type: integer
+        format: int32
+    title: TimestampRes
+  Topic:
+    type: object
+    properties:
+      description:
+        type: string
+      example:
+        type: object
+      name:
+        type: string
+      state:
+        type: string
+    title: Topic
+  VersionInfo:
+    type: object
+    properties:
+      artifactId:
+        type: string
+      branch:
+        type: string
+      buildTime:
+        type: string
+      commitId:
+        type: string
+      commitMessage:
+        type: string
+      connectedOuterServices:
+        type: array
+        items:
+          $ref: '#/definitions/ConnectedOuterService'
+      groupId:
+        type: string
+      version:
+        type: string
+    title: VersionInfo
