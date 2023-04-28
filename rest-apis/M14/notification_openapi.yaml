@@ -188,5 +188,5 @@ components:
   securitySchemes:
     Authorization:
       type: http
-      scheme: Bearer
+      scheme: bearer
       bearerFormat: Authorization
