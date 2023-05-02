@@ -46,6 +46,11 @@ paths:
       - gsa-subscriber-listener-api
       operationId: testGsa
       parameters:
+      - name: count
+        in: path
+        required: true
+        schema:
+          type: integer
       - name: crc
         in: query
         required: true
@@ -69,6 +74,11 @@ paths:
       - gsa-subscriber-listener-api
       operationId: testPushGsa
       parameters:
+      - name: count
+        in: path
+        required: true
+        schema:
+          type: integer
       - name: data-partition-id
         in: header
         description: Tenant Id
@@ -90,6 +100,11 @@ paths:
       - subscriber-listener-api
       operationId: testCrc
       parameters:
+      - name: count
+        in: path
+        required: true
+        schema:
+          type: integer
       - name: crc
         in: query
         required: true
@@ -118,6 +133,11 @@ paths:
       - subscriber-listener-api
       operationId: testPushHmac
       parameters:
+      - name: count
+        in: path
+        required: true
+        schema:
+          type: integer
       - name: hmac
         in: query
         required: true
