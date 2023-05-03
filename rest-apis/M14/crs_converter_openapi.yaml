@@ -16,6 +16,8 @@ paths:
       - name: data-partition-id
         in: header
         description: Tenant Id
+        schema:
+          type: string
         required: true
       requestBody:
         content:
@@ -39,6 +41,8 @@ paths:
       - name: data-partition-id
         in: header
         description: Tenant Id
+        schema:
+          type: string
         required: true
       requestBody:
         content:
@@ -62,6 +66,8 @@ paths:
       - name: data-partition-id
         in: header
         description: Tenant Id
+        schema:
+          type: string
         required: true
       requestBody:
         content:
@@ -85,6 +91,8 @@ paths:
       - name: data-partition-id
         in: header
         description: Tenant Id
+        schema:
+          type: string
         required: true
       requestBody:
         content:
@@ -108,6 +116,8 @@ paths:
       - name: data-partition-id
         in: header
         description: Tenant Id
+        schema:
+          type: string
         required: true
       requestBody:
         content:
@@ -131,6 +141,8 @@ paths:
       - name: data-partition-id
         in: header
         description: Tenant Id
+        schema:
+          type: string
         required: true
       requestBody:
         content:
@@ -154,6 +166,8 @@ paths:
       - name: data-partition-id
         in: header
         description: Tenant Id
+        schema:
+          type: string
         required: true
       responses:
         '200':
@@ -171,6 +185,8 @@ paths:
       - name: data-partition-id
         in: header
         description: Tenant Id
+        schema:
+          type: string
         required: true
       responses:
         '200':
@@ -188,6 +204,8 @@ paths:
       - name: data-partition-id
         in: header
         description: Tenant Id
+        schema:
+          type: string
         required: true
       responses:
         '200':
@@ -205,6 +223,8 @@ paths:
       - name: data-partition-id
         in: header
         description: Tenant Id
+        schema:
+          type: string
         required: true
       responses:
         '200':
@@ -633,5 +653,5 @@ components:
   securitySchemes:
     Authorization:
       type: http
-      scheme: Bearer
+      scheme: bearer
       bearerFormat: Authorization
