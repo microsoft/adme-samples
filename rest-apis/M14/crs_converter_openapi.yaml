@@ -1,6 +1,6 @@
 openapi: 3.0.1
 info:
-  title: File Service
+  title: CRS Conversion Service
   version: '1.0'
 servers:
 - url: /api/crs/converter
