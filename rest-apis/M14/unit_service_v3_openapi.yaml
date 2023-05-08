@@ -1,6 +1,6 @@
 openapi: 3.0.1
 info:
-  title: Notification Service
+  title: Unit Service
   version: '1.0'
 servers:
 - url: /api/unit
@@ -36,6 +36,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           description: OK
@@ -66,6 +68,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -103,6 +107,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           description: OK
@@ -119,6 +125,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -152,6 +160,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           description: OK
@@ -173,6 +183,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -210,6 +222,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -238,6 +252,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           description: OK
@@ -254,6 +270,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -282,6 +300,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           description: OK
@@ -298,6 +318,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -326,6 +348,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           description: OK
@@ -342,6 +366,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -379,6 +405,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -417,6 +445,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           description: OK
@@ -433,6 +463,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -471,6 +503,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           description: OK
@@ -487,6 +521,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -524,6 +560,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -561,6 +599,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -599,6 +639,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           description: OK
@@ -616,6 +658,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -645,6 +689,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -683,6 +729,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -707,6 +755,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -731,6 +781,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -769,6 +821,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           description: OK
@@ -786,6 +840,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -824,6 +880,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -848,6 +906,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -872,6 +932,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -910,6 +972,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -948,6 +1012,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           description: OK
@@ -970,6 +1036,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           description: OK
@@ -997,6 +1065,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           description: OK
@@ -1028,6 +1098,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           description: OK
@@ -1059,6 +1131,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           description: OK
@@ -1090,6 +1164,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           description: OK
@@ -1107,6 +1183,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           description: OK
@@ -1124,6 +1202,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           description: OK
@@ -1155,6 +1235,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           description: OK
@@ -1172,6 +1254,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           description: OK
@@ -1208,6 +1292,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           description: OK
@@ -1240,6 +1326,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           description: OK
@@ -1268,6 +1356,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           description: OK
@@ -1291,6 +1381,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           description: OK
@@ -1319,6 +1411,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           description: OK
@@ -1342,6 +1436,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           description: OK
@@ -1365,6 +1461,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           description: OK
@@ -1397,6 +1495,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           description: OK
@@ -1420,6 +1520,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           description: OK
@@ -1452,6 +1554,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           description: OK
@@ -1485,6 +1589,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           description: OK
@@ -1518,6 +1624,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           description: OK
@@ -1536,6 +1644,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           description: OK
@@ -1568,6 +1678,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           description: OK
@@ -1586,6 +1698,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           description: OK
@@ -1604,6 +1718,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           description: OK
@@ -1621,6 +1737,8 @@ paths:
         in: header
         description: Tenant Id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           description: OK
@@ -2115,5 +2233,5 @@ components:
   securitySchemes:
     Authorization:
       type: http
-      scheme: Bearer
+      scheme: bearer
       bearerFormat: Authorization
