@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: Api Documentation
+  title: Well delivery DDMS
   description: Api Documentation
   termsOfService: urn:tos
   contact: {}
