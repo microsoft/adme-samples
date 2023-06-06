@@ -90,7 +90,7 @@ paths:
                 $ref: '#/components/schemas/ErrorDetails'
         '403':
           description: You don't have permission to this project
-    delete:
+    post:
       tags:
       - Projects
       summary: Deletes a specific project.
@@ -584,7 +584,7 @@ components:
     manual:
       type: http
       description: Put **_ONLY_** your JWT Bearer token on textbox below!
-      scheme: Bearer
+      scheme: bearer
       bearerFormat: JWT
 security:
 - login: []
