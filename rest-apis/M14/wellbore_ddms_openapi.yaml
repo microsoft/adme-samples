@@ -10035,7 +10035,7 @@ components:
           - $ref: '#/components/schemas/GeoJsonMultiLineString'
           - $ref: '#/components/schemas/Polygon'
           - $ref: '#/components/schemas/GeoJsonMultiPolygon'
-          - $ref: '#/components/schemas/geometryItem'
+          - $ref: '#/components/schemas/geometryItem14'
         properties:
           title: Properties
           type: object
@@ -14206,8 +14206,8 @@ components:
       additionalProperties: false
       description: The base model forbids fields which are not declared initially
         in the pydantic model
-    geometryItem:
-      title: geometryItem
+    geometryItem14:
+      title: geometryItem14
       required:
       - geometries
       - type
@@ -14232,7 +14232,7 @@ components:
         type:
           $ref: '#/components/schemas/app__model__model_curated__Type'
       additionalProperties: false
-      description: 'geometryItem
+      description: 'geometryItem14
 
         https://datatracker.ietf.org/doc/html/rfc7946#section-3.1.8'
     historyRecord:
