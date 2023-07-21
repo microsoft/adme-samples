@@ -157,7 +157,7 @@
                 "value": "application/json"
               },
               {
-                "key": "data_partition_id",
+                "key": "data-partition-id",
                 "type": "text",
                 "value": "{{data_partition_id}}"
               }
@@ -259,7 +259,7 @@
             "method": "POST",
             "header": [
               {
-                "key": "data_partition_id",
+                "key": "data-partition-id",
                 "type": "text",
                 "value": "{{data_partition_id}}"
               }
@@ -286,7 +286,7 @@
               ],
               "query": [
                 {
-                  "key": "data_partition_id",
+                  "key": "data-partition-id",
                   "value": "{{data_partition_id}}",
                   "disabled": true
                 }
@@ -332,7 +332,7 @@
             "method": "GET",
             "header": [
               {
-                "key": "data_partition_id",
+                "key": "data-partition-id",
                 "type": "text",
                 "value": "{{data_partition_id}}"
               }
@@ -351,7 +351,7 @@
               ],
               "query": [
                 {
-                  "key": "data_partition_id",
+                  "key": "data-partition-id",
                   "value": "{{data_partition_id}}",
                   "disabled": true
                 }
@@ -400,7 +400,7 @@
             "method": "GET",
             "header": [
               {
-                "key": "data_partition_id",
+                "key": "data-partition-id",
                 "type": "text",
                 "value": "{{data_partition_id}}"
               }
@@ -420,7 +420,7 @@
               ],
               "query": [
                 {
-                  "key": "data_partition_id",
+                  "key": "data-partition-id",
                   "value": "{{data_partition_id}}",
                   "disabled": true
                 }
@@ -430,7 +430,7 @@
           "response": []
         },
         {
-          "name": "Well Specific version",
+          "name": "Well by version",
           "event": [
             {
               "listen": "test",
@@ -467,7 +467,7 @@
             "method": "GET",
             "header": [
               {
-                "key": "data_partition_id",
+                "key": "data-partition-id",
                 "type": "text",
                 "value": "{{data_partition_id}}"
               }
@@ -488,7 +488,7 @@
               ],
               "query": [
                 {
-                  "key": "data_partition_id",
+                  "key": "data-partition-id",
                   "value": "{{data_partition_id}}",
                   "disabled": true
                 }
@@ -551,7 +551,7 @@
             "method": "POST",
             "header": [
               {
-                "key": "data_partition_id",
+                "key": "data-partition-id",
                 "type": "text",
                 "value": "{{data_partition_id}}"
               }
@@ -606,7 +606,7 @@
             "method": "GET",
             "header": [
               {
-                "key": "data_partition_id",
+                "key": "data-partition-id",
                 "type": "text",
                 "value": "{{data_partition_id}}"
               }
@@ -655,7 +655,7 @@
             "method": "GET",
             "header": [
               {
-                "key": "data_partition_id",
+                "key": "data-partition-id",
                 "type": "text",
                 "value": "{{data_partition_id}}"
               }
@@ -701,7 +701,7 @@
             "method": "GET",
             "header": [
               {
-                "key": "data_partition_id",
+                "key": "data-partition-id",
                 "type": "text",
                 "value": "{{data_partition_id}}"
               }
@@ -764,7 +764,7 @@
             "method": "POST",
             "header": [
               {
-                "key": "data_partition_id",
+                "key": "data-partition-id",
                 "type": "text",
                 "value": "{{data_partition_id}}"
               }
@@ -791,7 +791,7 @@
               ],
               "query": [
                 {
-                  "key": "data_partition_id",
+                  "key": "data-partition-id",
                   "value": "{{data_partition_id}}",
                   "disabled": true
                 }
@@ -838,14 +838,14 @@
             "method": "POST",
             "header": [
               {
-                "key": "data_partition_id",
+                "key": "data-partition-id",
                 "type": "text",
                 "value": "{{data_partition_id}}"
               }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"columns\": [\r\n    \"Ref\",\r\n    \"col_1\",\r\n    \"col_2\"\r\n  ],\r\n  \"index\": [\r\n    0,\r\n    1,\r\n    2,\r\n    3,\r\n    4\r\n  ],\r\n  \"data\": [\r\n    [\r\n      0,\r\n      1111.1,\r\n      2222.1\r\n    ],\r\n    [\r\n      0.5,\r\n      1111.2,\r\n      2222.2\r\n    ],\r\n    [\r\n      1,\r\n      1111.3,\r\n      2222.3\r\n    ],\r\n    [\r\n      1.5,\r\n      1111.4,\r\n      2222.4\r\n    ],\r\n    [\r\n      2,\r\n      1111.5,\r\n      2222.5\r\n    ]\r\n  ]\r\n}",
+              "raw": "{\r\n  \"columns\": [\r\n    \"GR_ID\",\r\n    \"POR_ID\",\r\n    \"Bulk Density\"\r\n  ],\r\n  \"index\": [\r\n    0,\r\n    1,\r\n    2,\r\n    3,\r\n    4\r\n  ],\r\n  \"data\": [\r\n    [\r\n      0,\r\n      1111.1,\r\n      2222.1\r\n    ],\r\n    [\r\n      0.5,\r\n      1111.2,\r\n      2222.2\r\n    ],\r\n    [\r\n      1,\r\n      1111.3,\r\n      2222.3\r\n    ],\r\n    [\r\n      1.5,\r\n      1111.4,\r\n      2222.4\r\n    ],\r\n    [\r\n      2,\r\n      1111.5,\r\n      2222.5\r\n    ]\r\n  ]\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -867,7 +867,7 @@
               ],
               "query": [
                 {
-                  "key": "data_partition_id",
+                  "key": "data-partition-id",
                   "value": "{{data_partition_id}}",
                   "disabled": true
                 },
@@ -918,7 +918,7 @@
             "method": "GET",
             "header": [
               {
-                "key": "data_partition_id",
+                "key": "data-partition-id",
                 "value": "{{data_partition_id}}",
                 "type": "text"
               }
@@ -960,7 +960,7 @@
             "method": "GET",
             "header": [
               {
-                "key": "data_partition_id",
+                "key": "data-partition-id",
                 "value": "{{data_partition_id}}",
                 "type": "text"
               },
@@ -1038,7 +1038,7 @@
             "method": "POST",
             "header": [
               {
-                "key": "data_partition_id",
+                "key": "data-partition-id",
                 "value": "{{data_partition_id}}",
                 "type": "text"
               }
@@ -1067,7 +1067,7 @@
               ],
               "query": [
                 {
-                  "key": "data_partition_id",
+                  "key": "data-partition-id",
                   "value": "{{data_partition_id}}",
                   "disabled": true
                 }
@@ -1113,7 +1113,7 @@
             "method": "GET",
             "header": [
               {
-                "key": "data_partition_id",
+                "key": "data-partition-id",
                 "value": "{{data_partition_id}}",
                 "type": "text"
               }
@@ -1133,7 +1133,7 @@
               ],
               "query": [
                 {
-                  "key": "data_partition_id",
+                  "key": "data-partition-id",
                   "value": "{{data_partition_id}}",
                   "disabled": true
                 }
@@ -1179,7 +1179,7 @@
             "method": "GET",
             "header": [
               {
-                "key": "data_partition_id",
+                "key": "data-partition-id",
                 "value": "{{data_partition_id}}",
                 "type": "text"
               }
@@ -1200,7 +1200,7 @@
               ],
               "query": [
                 {
-                  "key": "data_partition_id",
+                  "key": "data-partition-id",
                   "value": "{{data_partition_id}}",
                   "disabled": true
                 }
@@ -1238,7 +1238,7 @@
             "method": "POST",
             "header": [
               {
-                "key": "data_partition_id",
+                "key": "data-partition-id",
                 "type": "text",
                 "value": "{{data_partition_id}}"
               }
@@ -1269,7 +1269,7 @@
               ],
               "query": [
                 {
-                  "key": "data_partition_id",
+                  "key": "data-partition-id",
                   "value": "{{data_partition_id}}",
                   "disabled": true
                 },
@@ -1323,7 +1323,7 @@
             "method": "PATCH",
             "header": [
               {
-                "key": "data_partition_id",
+                "key": "data-partition-id",
                 "value": "{{data_partition_id}}",
                 "type": "text"
               }
@@ -1353,7 +1353,7 @@
               ],
               "query": [
                 {
-                  "key": "data_partition_id",
+                  "key": "data-partition-id",
                   "value": "{{data_partition_id}}",
                   "disabled": true
                 }
@@ -1398,7 +1398,7 @@
             "method": "GET",
             "header": [
               {
-                "key": "data_partition_id",
+                "key": "data-partition-id",
                 "value": "{{data_partition_id}}",
                 "type": "text"
               }
@@ -1440,7 +1440,7 @@
             "method": "GET",
             "header": [
               {
-                "key": "data_partition_id",
+                "key": "data-partition-id",
                 "value": "{{data_partition_id}}",
                 "type": "text"
               }
@@ -1504,7 +1504,7 @@
             "method": "POST",
             "header": [
               {
-                "key": "data_partition_id",
+                "key": "data-partition-id",
                 "type": "text",
                 "value": "{{data_partition_id}}"
               }
@@ -1559,7 +1559,7 @@
             "method": "GET",
             "header": [
               {
-                "key": "data_partition_id",
+                "key": "data-partition-id",
                 "type": "text",
                 "value": "{{data_partition_id}}"
               }
@@ -1607,7 +1607,7 @@
             "method": "GET",
             "header": [
               {
-                "key": "data_partition_id",
+                "key": "data-partition-id",
                 "type": "text",
                 "value": "{{data_partition_id}}"
               }
@@ -1653,7 +1653,7 @@
             "method": "GET",
             "header": [
               {
-                "key": "data_partition_id",
+                "key": "data-partition-id",
                 "type": "text",
                 "value": "{{data_partition_id}}"
               }
@@ -1693,7 +1693,7 @@
             "method": "POST",
             "header": [
               {
-                "key": "data_partition_id",
+                "key": "data-partition-id",
                 "type": "text",
                 "value": "{{data_partition_id}}"
               }
@@ -1742,7 +1742,7 @@
             "method": "POST",
             "header": [
               {
-                "key": "data_partition_id",
+                "key": "data-partition-id",
                 "type": "text",
                 "value": "{{data_partition_id}}"
               }
@@ -1809,7 +1809,7 @@
                 "value": "application/json"
               },
               {
-                "key": "data_partition_id",
+                "key": "data-partition-id",
                 "type": "text",
                 "value": "{{data_partition_id}}"
               },
@@ -1886,7 +1886,7 @@
                 "value": "application/json"
               },
               {
-                "key": "data_partition_id",
+                "key": "data-partition-id",
                 "type": "text",
                 "value": "{{data_partition_id}}"
               },
@@ -1963,7 +1963,7 @@
                 "value": "application/json"
               },
               {
-                "key": "data_partition_id",
+                "key": "data-partition-id",
                 "type": "text",
                 "value": "{{data_partition_id}}"
               },
@@ -2040,7 +2040,7 @@
                 "value": "application/json"
               },
               {
-                "key": "data_partition_id",
+                "key": "data-partition-id",
                 "type": "text",
                 "value": "{{data_partition_id}}"
               },
@@ -2101,7 +2101,7 @@
             "header": [
               {
                 "description": "This value should be the desired data partition id.",
-                "key": "data_partition_id",
+                "key": "data-partition-id",
                 "type": "text",
                 "value": "{{data_partition_id}}"
               }
