@@ -1245,7 +1245,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"columns\": [\r\n    \"Ref\",\r\n    \"col_1\",\r\n    \"col_2\"\r\n  ],\r\n  \"index\": [\r\n    0,\r\n    5,\r\n    6\r\n  ],\r\n  \"data\": [\r\n    [\r\n      0,\r\n      1010.1,\r\n      2020.1\r\n    ],\r\n    [\r\n      10,\r\n      9999,\r\n      8888\r\n    ],\r\n    [\r\n      100,\r\n      7777.77,\r\n      66.6666\r\n    ]\r\n  ]\r\n}",
+              "raw": "{\r\n  \"columns\": [\r\n    \"GR_ID\",\r\n    \"POR_ID\",\r\n    \"Bulk Density\"\r\n  ],\r\n  \"index\": [\r\n    0,\r\n    5,\r\n    6\r\n  ],\r\n  \"data\": [\r\n    [\r\n      0,\r\n      1010.1,\r\n      2020.1\r\n    ],\r\n    [\r\n      10,\r\n      9999,\r\n      8888\r\n    ],\r\n    [\r\n      100,\r\n      7777.77,\r\n      66.6666\r\n    ]\r\n  ]\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1706,7 +1706,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"columns\": [\r\n    \"GR_ID\",\r\n    \"POR_ID\",\r\n    \"Bulk Density\"\r\n  ],\r\n  \"index\": [\r\n    0,\r\n    1,\r\n    2,\r\n    3,\r\n    4\r\n  ],\r\n  \"data\": [\r\n    [\r\n      0,\r\n      1111.1,\r\n      2222.1\r\n    ],\r\n    [\r\n      0.5,\r\n      1111.2,\r\n      2222.2\r\n    ],\r\n    [\r\n      1,\r\n      1111.3,\r\n      2222.3\r\n    ],\r\n    [\r\n      1.5,\r\n      1111.4,\r\n      2222.4\r\n    ],\r\n    [\r\n      2,\r\n      1111.5,\r\n      2222.5\r\n    ]\r\n  ]\r\n}",
+              "raw": "{\r\n    \"columns\": [\r\n        \"AzimuthTN\"\r\n    ],\r\n    \"index\": [\r\n        0, \r\n        1, \r\n        2\r\n    ],\r\n    \"data\": [\r\n        [\r\n            1\r\n        ],\r\n        [\r\n            2\r\n        ],\r\n        [\r\n            3\r\n        ]\r\n    ]\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1778,7 +1778,7 @@
       "name": "Clean up",
       "item": [
         {
-          "name": "Wellbore trajectory record",
+          "name": "Wellbore Trajectory Record",
           "event": [
             {
               "listen": "test",
@@ -1855,7 +1855,7 @@
           "response": []
         },
         {
-          "name": "WellLog record",
+          "name": "Well Log Record",
           "event": [
             {
               "listen": "test",
@@ -1932,7 +1932,7 @@
           "response": []
         },
         {
-          "name": "Wellbore",
+          "name": "Wellbore Record",
           "event": [
             {
               "listen": "test",
