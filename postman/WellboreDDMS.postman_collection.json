@@ -2232,15 +2232,9 @@
     }
   ],
   "auth": {
-    "type": "oauth2",
-    "oauth2": {
-      "scope": "{{OIDC_SCOPE}}",
-      "clientId": "{{OIDC_CLIENT_ID}}",
-      "clientSecret": "{{OIDC_CLIENT_SECRET}}",
-      "accessTokenUrl": "{{OIDC_TOKEN_URL}}",
-      "grant_type": "client_credentials",
-      "tokenName": "oauth_client_credentials",
-      "addTokenTo": "header"
+    "type": "bearer",
+    "bearer": {
+      "token": "{{access_token}}"
     }
   },
   "event": [
