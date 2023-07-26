@@ -1,6 +1,6 @@
 {
   "info": {
-    "_postman_id": "fd8eaa29-5bec-49b0-be26-60b6a13e7aa3",
+    "_postman_id": "c532190a-5a81-40c0-a050-4c187a0e8835",
     "name": "Wellbore DDMS",
     "schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
   },
@@ -296,7 +296,7 @@
           "response": []
         },
         {
-          "name": "Well",
+          "name": "Well by ID",
           "event": [
             {
               "listen": "test",
@@ -361,7 +361,7 @@
           "response": []
         },
         {
-          "name": "Well versions",
+          "name": "Well Versions",
           "event": [
             {
               "listen": "test",
@@ -430,7 +430,7 @@
           "response": []
         },
         {
-          "name": "Well by version",
+          "name": "Well Specific Version",
           "event": [
             {
               "listen": "test",
@@ -570,7 +570,7 @@
           "response": []
         },
         {
-          "name": "Wellbore",
+          "name": "Wellbore by ID",
           "event": [
             {
               "listen": "test",
@@ -882,7 +882,7 @@
           "response": []
         },
         {
-          "name": "Well Log",
+          "name": "Well Log by ID",
           "event": [
             {
               "listen": "test",
@@ -1523,7 +1523,7 @@
           "response": []
         },
         {
-          "name": "Trajectory",
+          "name": "Trajectory by ID",
           "event": [
             {
               "listen": "test",
