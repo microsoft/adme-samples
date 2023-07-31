@@ -10141,116 +10141,8 @@
   ],
   "variable": [
     {
-      "key": "access_token",
-      "value": "{{TOKEN}}"
-    },
-    {
-      "key": "id_token",
-      "value": "{{access_token}}"
-    },
-    {
-      "key": "legal_host",
-      "value": "{{HOSTNAME}}/api/legal/v1"
-    },
-    {
-      "key": "indexer_host",
-      "value": "{{HOSTNAME}}/api/indexer/v2"
-    },
-    {
-      "key": "storage_host",
-      "value": "{{HOSTNAME}}/api/storage/v2"
-    },
-    {
-      "key": "search_host",
-      "value": "{{HOSTNAME}}/api/search/v2"
-    },
-    {
-      "key": "entitlements_host",
-      "value": "{{HOSTNAME}}/api/entitlements/v2"
-    },
-    {
-      "key": "schema_host",
-      "value": "{{HOSTNAME}}"
-    },
-    {
-      "key": "delivery_host",
-      "value": "{{HOSTNAME}}/api/delivery/v2"
-    },
-    {
-      "key": "partition_host",
-      "value": "{{HOSTNAME}}/api/partition/v1"
-    },
-    {
-      "key": "notification_host",
-      "value": "{{HOSTNAME}}/api/notification/v1"
-    },
-    {
-      "key": "registration_host",
-      "value": "{{HOSTNAME}}/api/register/v1"
-    },
-    {
-      "key": "crs_conversion_host",
-      "value": "{{HOSTNAME}}/api/crs/converter/v2"
-    },
-    {
-      "key": "file_host",
-      "value": "{{HOSTNAME}}/api/file/v2"
-    },
-    {
-      "key": "unit_host",
-      "value": "{{HOSTNAME}}/api/unit/v3"
-    },
-    {
-      "key": "workflow_host",
-      "value": "{{HOSTNAME}}/api/workflow/v1"
-    },
-    {
-      "key": "seismic_ddms_host",
-      "value": "{{HOSTNAME}}/seistore-svc/api/v3"
-    },
-    {
-      "key": "seismic_file_metadata_host",
-      "value": "{{HOSTNAME}}/seismic-file-metadata/api/v1",
-      "type": "string"
-    },
-    {
-      "key": "wellbore_ddms_host",
-      "value": "{{HOSTNAME}}/api/os-wellbore-ddms"
-    },
-    {
-      "key": "policy_host",
-      "value": "{{HOSTNAME}}/api/policy/v1"
-    },
-    {
-      "key": "well_delivery_ddms_host",
-      "value": "{{HOSTNAME}}/api/well-delivery",
-      "type": "string"
-    },
-    {
       "key": "osdu_release",
       "value": "0.11.0"
-    },
-    {
-      "key": "entitlement_user",
-      "value": "{{OIDC_CLIENT_ID}}"
-    },
-    {
-      "key": "entitlement_domain",
-      "value": "{{DATA_PARTITION_ID}}.{{test_domain}}"
-    },
-    {
-      "key": "entitlement_adminGroupName",
-      "value": "users.datalake.admins",
-      "type": "string"
-    },
-    {
-      "key": "legal_dafault_tag",
-      "value": "{{DATA_PARTITION_ID}}-default"
-    },
-    {
-      "key": "testEmail",
-      "value": "testing-converters@{{test_domain}}",
-      "type": "string"
     },
     {
       "key": "vdsTestSubprojectName",
@@ -10260,11 +10152,6 @@
     {
       "key": "zgyTestSubprojectName",
       "value": "zgytestsubproject",
-      "type": "string"
-    },
-    {
-      "key": "fileMetadataTestSubprojectName",
-      "value": "filemetadatatestsubproject",
       "type": "string"
     },
     {
@@ -10295,11 +10182,6 @@
     {
       "key": "zgy_iteration",
       "value": "0",
-      "type": "string"
-    },
-    {
-      "key": "test_domain",
-      "value": "{{INSTANCE_DOMAIN}}",
       "type": "string"
     }
   ]
