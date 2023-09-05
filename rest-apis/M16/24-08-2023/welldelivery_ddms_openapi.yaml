@@ -1,0 +1,911 @@
+components:
+  schemas:
+    ConnectedOuterService:
+      properties:
+        name:
+          type: string
+        version:
+          type: string
+      type: object
+    VersionInfo:
+      properties:
+        artifactId:
+          type: string
+        branch:
+          type: string
+        buildTime:
+          type: string
+        commitId:
+          type: string
+        commitMessage:
+          type: string
+        connectedOuterServices:
+          items:
+            $ref: '#/components/schemas/ConnectedOuterService'
+          type: array
+        groupId:
+          type: string
+        version:
+          type: string
+      type: object
+  securitySchemes:
+    Authorization:
+      bearerFormat: Authorization
+      scheme: bearer
+      type: http
+info:
+  description: API Documetation
+  title: Well Delivery Service
+  version: '1.0'
+openapi: 3.0.1
+paths:
+  /_ah/warmup:
+    get:
+      operationId: warmup
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+      tags:
+      - health-check-api
+  /activityPlans/v1/by_well/{well_id}:
+    get:
+      operationId: getLatestActivityPlanByWell
+      parameters:
+      - in: path
+        name: well_id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+      tags:
+      - activity-plan-api
+  /bhaRuns/v1/by_holeSection/{hole_section_id}:
+    get:
+      operationId: getBHARunsBySegment
+      parameters:
+      - in: path
+        name: hole_section_id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+      tags:
+      - bha-run-api
+  /bhaRuns/v1/by_wellbore/{wellbore_id}:actual:
+    get:
+      operationId: getBHARunsByWellbore_actual
+      parameters:
+      - in: path
+        name: wellbore_id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+      tags:
+      - bha-run-api
+  /bhaRuns/v1/by_wells/{well_ids}:planned:
+    get:
+      operationId: getBHARunsByWells_planned
+      parameters:
+      - in: path
+        name: well_ids
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+      tags:
+      - bha-run-api
+  /fluidsPrograms/v1/by_wellbore/{wellbore_id}:
+    get:
+      operationId: getFluidsProgramsByWellbore_planned
+      parameters:
+      - in: path
+        name: wellbore_id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+      tags:
+      - fluids-program-api
+  /fluidsReports/v1/by_wellbore/{wellbore_id}:
+    get:
+      operationId: getFluidsReportsByWellbore
+      parameters:
+      - in: path
+        name: wellbore_id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+      tags:
+      - fluids-report-api
+  /holeSections/v1/by_wellbore/{wellbore_id}:
+    get:
+      operationId: getSectionsByWellbore_planned
+      parameters:
+      - in: path
+        name: wellbore_id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+      tags:
+      - hole-section-api
+  /info:
+    get:
+      operationId: info
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VersionInfo'
+          description: OK
+      tags:
+      - info-api
+  /operationsReports/v1/by_timeRange/{start_time}/{end_time}:
+    get:
+      operationId: getOperationsReportsByTimeRange
+      parameters:
+      - in: path
+        name: start_time
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: end_time
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+      tags:
+      - operations-report-api
+  /operationsReports/v1/by_wellbore/{wellbore_id}:
+    get:
+      operationId: getOperationsReportsByWellbore
+      parameters:
+      - in: path
+        name: wellbore_id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+      tags:
+      - operations-report-api
+  /operationsReports/v1/latest/by_wellbore/{wellbore_id}:
+    get:
+      operationId: getLatestOperationsReportByWellbore
+      parameters:
+      - in: path
+        name: wellbore_id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+      tags:
+      - operations-report-api
+  /operationsReports/v1/reference_tree/by_operationsReport/{operations_report_id}:
+    get:
+      operationId: getLatestOperationsReportRefTree
+      parameters:
+      - in: path
+        name: operations_report_id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+      tags:
+      - operations-report-api
+  /query/v1/by_well/{type}:batch:
+    post:
+      operationId: getEntitiesByWells_planned
+      parameters:
+      - in: path
+        name: type
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              items:
+                type: string
+              type: array
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+      tags:
+      - query-api
+  /query/v1/{type}/by_wellbore/{wellbore_id}:actual:
+    get:
+      operationId: getObjectsByWellbore_actual
+      parameters:
+      - in: path
+        name: type
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: wellbore_id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+      tags:
+      - query-api
+  /query/v1/{type}/by_wellbore/{wellbore_id}:planned:
+    get:
+      operationId: getObjectsByWellbore_planned
+      parameters:
+      - in: path
+        name: type
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: wellbore_id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+      tags:
+      - query-api
+  /storage/v1/{type}:
+    put:
+      operationId: createOrUpdateEntities
+      parameters:
+      - in: path
+        name: type
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+      tags:
+      - entity-api
+  /storage/v1/{type}/versions/{id}:
+    get:
+      operationId: getEntityVersionNumbers
+      parameters:
+      - in: path
+        name: type
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+      tags:
+      - entity-api
+  /storage/v1/{type}/{id}:
+    delete:
+      operationId: deleteEntity
+      parameters:
+      - in: path
+        name: type
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+      tags:
+      - entity-api
+    get:
+      operationId: getLatestEntityVersion
+      parameters:
+      - in: path
+        name: type
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+      tags:
+      - entity-api
+  /storage/v1/{type}/{id}/{version}:
+    delete:
+      operationId: deleteEntityVersion
+      parameters:
+      - in: path
+        name: type
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: version
+        required: true
+        schema:
+          format: int64
+          type: integer
+      responses:
+        '200':
+          description: OK
+      tags:
+      - entity-api
+    get:
+      operationId: getSpecificEntityVersion
+      parameters:
+      - in: path
+        name: type
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: version
+        required: true
+        schema:
+          format: int64
+          type: integer
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+      tags:
+      - entity-api
+  /storage/v1/{type}/{id}/{version}:purge:
+    delete:
+      operationId: purgeEntityVersion
+      parameters:
+      - in: path
+        name: type
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: version
+        required: true
+        schema:
+          format: int64
+          type: integer
+      responses:
+        '200':
+          description: OK
+      tags:
+      - entity-api
+  /storage/v1/{type}/{id}:purge:
+    delete:
+      operationId: purgeEntity
+      parameters:
+      - in: path
+        name: type
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+      tags:
+      - entity-api
+  /wellActivityPrograms/v1/by_well/{well_id}:
+    get:
+      operationId: getLatestWellActivityProgramVersion
+      parameters:
+      - in: path
+        name: well_id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+      tags:
+      - well-activity-program-api
+  /wellActivityPrograms/v1/by_well/{well_id}/{wap_version}:
+    get:
+      operationId: getSpecificWellActivityProgramVersion
+      parameters:
+      - in: path
+        name: well_id
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: wap_version
+        required: true
+        schema:
+          format: int64
+          type: integer
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+      tags:
+      - well-activity-program-api
+  /wellActivityPrograms/v1/full_content/by_well/{well_id}:
+    get:
+      operationId: getLatestWellActivityProgramChildrenList
+      parameters:
+      - in: path
+        name: well_id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+      tags:
+      - well-activity-program-api
+  /wellActivityPrograms/v1/reference_tree/by_well/{well_id}:
+    get:
+      operationId: getLatestWellActivityProgramRefTree
+      parameters:
+      - in: path
+        name: well_id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+      tags:
+      - well-activity-program-api
+  /wellActivityPrograms/v1/reference_tree/by_well/{well_id}/{wap_version}:
+    get:
+      operationId: getSpecificWellActivityProgramRefTree
+      parameters:
+      - in: path
+        name: well_id
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: wap_version
+        required: true
+        schema:
+          format: int64
+          type: integer
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+      tags:
+      - well-activity-program-api
+  /wellActivityPrograms/v1/versions/by_well/{well_id}:
+    get:
+      operationId: getWellActivityProgramVersionNumbers
+      parameters:
+      - in: path
+        name: well_id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+      tags:
+      - well-activity-program-api
+  /wellboreTrajectories/v1/by_wells/{well_ids}:planned:
+    get:
+      operationId: getTrajectoriesByWells_planned
+      parameters:
+      - in: path
+        name: well_ids
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+      tags:
+      - wellbore-trajectory-api
+  /wellbores/v1/by_well/{well_id}/{wellbore_version}:actual:
+    get:
+      operationId: getSpecificWellboreVersion_actual_1
+      parameters:
+      - in: path
+        name: well_id
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: wellbore_version
+        required: true
+        schema:
+          format: int64
+          type: integer
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+      tags:
+      - wellbore-api
+  /wellbores/v1/by_well/{well_id}/{wellbore_version}:planned:
+    get:
+      operationId: getSpecificWellboreVersion_planned
+      parameters:
+      - in: path
+        name: well_id
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: wellbore_version
+        required: true
+        schema:
+          format: int64
+          type: integer
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+      tags:
+      - wellbore-api
+  /wellbores/v1/by_well/{well_id}:actual:
+    get:
+      operationId: getLatestWellboreVersion_actual
+      parameters:
+      - in: path
+        name: well_id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+      tags:
+      - wellbore-api
+  /wellbores/v1/by_well/{well_id}:planned:
+    get:
+      operationId: getLatestWellboreVersion_planned
+      parameters:
+      - in: path
+        name: well_id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+      tags:
+      - wellbore-api
+  /wellbores/v1/versions/by_well/{well_id}:actual:
+    get:
+      operationId: getWellboreVersionNumbers_actual
+      parameters:
+      - in: path
+        name: well_id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+      tags:
+      - wellbore-api
+  /wellbores/v1/versions/by_well/{well_id}:planned:
+    get:
+      operationId: getWellboreVersionNumbers_planned
+      parameters:
+      - in: path
+        name: well_id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+      tags:
+      - wellbore-api
+  /wells/v1/by_name/{name}/{version}:actual:
+    get:
+      operationId: getSpecificWellboreVersion_actual
+      parameters:
+      - in: path
+        name: name
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: version
+        required: true
+        schema:
+          format: int64
+          type: integer
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+      tags:
+      - well-api
+  /wells/v1/by_name/{name}/{version}:planned:
+    get:
+      operationId: getSpecificWellVersion_planned
+      parameters:
+      - in: path
+        name: name
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: version
+        required: true
+        schema:
+          format: int64
+          type: integer
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+      tags:
+      - well-api
+  /wells/v1/by_name/{name}:actual:
+    get:
+      operationId: getLatestWellVersion_actual
+      parameters:
+      - in: path
+        name: name
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+      tags:
+      - well-api
+  /wells/v1/by_name/{name}:planned:
+    get:
+      operationId: getLatestWellVersion_planned
+      parameters:
+      - in: path
+        name: name
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+      tags:
+      - well-api
+  /wells/v1/versions/by_name/{name}:actual:
+    get:
+      operationId: getWellVersionNumbers_actual
+      parameters:
+      - in: path
+        name: name
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+      tags:
+      - well-api
+  /wells/v1/versions/by_name/{name}:planned:
+    get:
+      operationId: getWellVersionNumbers_planned
+      parameters:
+      - in: path
+        name: name
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+      tags:
+      - well-api
+security:
+- Authorization: []
+servers:
+- url: /api/well-delivery
