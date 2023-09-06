@@ -161,8 +161,6 @@ paths:
           type: string
       - description: Tenant Id
         in: header
-        schema:
-          type: string
         name: data-partition-id
         required: true
       responses:
@@ -179,8 +177,6 @@ paths:
       parameters:
       - description: Tenant Id
         in: header
-        schema:
-          type: string
         name: data-partition-id
         required: true
       requestBody:
@@ -209,8 +205,6 @@ paths:
           type: string
       - description: Tenant Id
         in: header
-        schema:
-          type: string
         name: data-partition-id
         required: true
       responses:
@@ -227,8 +221,6 @@ paths:
       parameters:
       - description: Tenant Id
         in: header
-        schema:
-          type: string
         name: data-partition-id
         required: true
       requestBody:
@@ -257,8 +249,6 @@ paths:
           type: string
       - description: Tenant Id
         in: header
-        schema:
-          type: string
         name: data-partition-id
         required: true
       responses:
@@ -276,8 +266,6 @@ paths:
       parameters:
       - description: Tenant Id
         in: header
-        schema:
-          type: string
         name: data-partition-id
         required: true
       responses:
@@ -296,8 +284,6 @@ paths:
       - description: Tenant Id
         in: header
         name: data-partition-id
-        schema:
-          type: string
         required: true
       requestBody:
         content:
@@ -325,8 +311,6 @@ paths:
           type: string
       - description: Tenant Id
         in: header
-        schema:
-          type: string
         name: data-partition-id
         required: true
       responses:
@@ -343,8 +327,6 @@ paths:
       parameters:
       - description: Tenant Id
         in: header
-        schema:
-          type: string
         name: data-partition-id
         required: true
       requestBody:
@@ -373,8 +355,6 @@ paths:
           type: string
       - description: Tenant Id
         in: header
-        schema:
-          type: string
         name: data-partition-id
         required: true
       responses:
