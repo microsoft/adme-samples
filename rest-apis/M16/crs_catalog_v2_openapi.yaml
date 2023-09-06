@@ -1051,7 +1051,7 @@ components:
   securitySchemes:
     Authorization:
       bearerFormat: Authorization
-      scheme: bearer
+      scheme: Bearer
       type: http
 info:
   title: CRS Catalog Service
@@ -1064,8 +1064,6 @@ paths:
       parameters:
       - description: Tenant Id
         in: header
-        schema:
-          type: string
         name: data-partition-id
         required: true
       responses:
@@ -1083,8 +1081,6 @@ paths:
       parameters:
       - description: Tenant Id
         in: header
-        schema:
-          type: string
         name: data-partition-id
         required: true
       responses:
@@ -1122,8 +1118,6 @@ paths:
           type: string
       - description: Tenant Id
         in: header
-        schema:
-          type: string
         name: data-partition-id
         required: true
       responses:
@@ -1146,8 +1140,6 @@ paths:
           type: string
       - description: Tenant Id
         in: header
-        schema:
-          type: string
         name: data-partition-id
         required: true
       requestBody:
@@ -1171,8 +1163,6 @@ paths:
       parameters:
       - description: Tenant Id
         in: header
-        schema:
-          type: string
         name: data-partition-id
         required: true
       responses:
@@ -1190,8 +1180,6 @@ paths:
       parameters:
       - description: Tenant Id
         in: header
-        schema:
-          type: string
         name: data-partition-id
         required: true
       responses:
@@ -1229,8 +1217,6 @@ paths:
           type: string
       - description: Tenant Id
         in: header
-        schema:
-          type: string
         name: data-partition-id
         required: true
       responses:
@@ -1253,8 +1239,6 @@ paths:
           type: string
       - description: Tenant Id
         in: header
-        schema:
-          type: string
         name: data-partition-id
         required: true
       requestBody:
@@ -1298,8 +1282,6 @@ paths:
           type: string
       - description: Tenant Id
         in: header
-        schema:
-          type: string
         name: data-partition-id
         required: true
       responses:
@@ -1322,8 +1304,6 @@ paths:
           type: string
       - description: Tenant Id
         in: header
-        schema:
-          type: string
         name: data-partition-id
         required: true
       requestBody:
@@ -1367,8 +1347,6 @@ paths:
           type: string
       - description: Tenant Id
         in: header
-        schema:
-          type: string
         name: data-partition-id
         required: true
       responses:
@@ -1391,8 +1369,6 @@ paths:
           type: string
       - description: Tenant Id
         in: header
-        schema:
-          type: string
         name: data-partition-id
         required: true
       requestBody:
@@ -1436,8 +1412,6 @@ paths:
           type: string
       - description: Tenant Id
         in: header
-        schema:
-          type: string
         name: data-partition-id
         required: true
       responses:
@@ -1460,8 +1434,6 @@ paths:
           type: string
       - description: Tenant Id
         in: header
-        schema:
-          type: string
         name: data-partition-id
         required: true
       requestBody:
@@ -1505,8 +1477,6 @@ paths:
           type: string
       - description: Tenant Id
         in: header
-        schema:
-          type: string
         name: data-partition-id
         required: true
       responses:
@@ -1529,8 +1499,6 @@ paths:
           type: string
       - description: Tenant Id
         in: header
-        schema:
-          type: string
         name: data-partition-id
         required: true
       requestBody:
@@ -1554,8 +1522,6 @@ paths:
       parameters:
       - description: Tenant Id
         in: header
-        schema:
-          type: string
         name: data-partition-id
         required: true
       responses:
@@ -1593,8 +1559,6 @@ paths:
           type: string
       - description: Tenant Id
         in: header
-        schema:
-          type: string
         name: data-partition-id
         required: true
       responses:
@@ -1617,8 +1581,6 @@ paths:
           type: string
       - description: Tenant Id
         in: header
-        schema:
-          type: string
         name: data-partition-id
         required: true
       requestBody:
@@ -1690,8 +1652,6 @@ paths:
           type: string
       - description: Tenant Id
         in: header
-        schema:
-          type: string
         name: data-partition-id
         required: true
       requestBody:
@@ -1763,8 +1723,6 @@ paths:
           type: string
       - description: Tenant Id
         in: header
-        schema:
-          type: string
         name: data-partition-id
         required: true
       requestBody:
@@ -1836,8 +1794,6 @@ paths:
           type: string
       - description: Tenant Id
         in: header
-        schema:
-          type: string
         name: data-partition-id
         required: true
       requestBody:
@@ -1881,8 +1837,6 @@ paths:
           type: string
       - description: Tenant Id
         in: header
-        schema:
-          type: string
         name: data-partition-id
         required: true
       responses:
@@ -1905,8 +1859,6 @@ paths:
           type: string
       - description: Tenant Id
         in: header
-        schema:
-          type: string
         name: data-partition-id
         required: true
       requestBody:
@@ -1940,8 +1892,6 @@ paths:
           type: string
       - description: Tenant Id
         in: header
-        schema:
-          type: string
         name: data-partition-id
         required: true
       responses:
@@ -1958,8 +1908,6 @@ paths:
       parameters:
       - description: Tenant Id
         in: header
-        schema:
-          type: string
         name: data-partition-id
         required: true
       requestBody:
@@ -1992,8 +1940,6 @@ paths:
           type: string
       - description: Tenant Id
         in: header
-        schema:
-          type: string
         name: data-partition-id
         required: true
       responses:
@@ -2010,8 +1956,6 @@ paths:
       parameters:
       - description: Tenant Id
         in: header
-        schema:
-          type: string
         name: data-partition-id
         required: true
       requestBody:
@@ -2034,8 +1978,6 @@ paths:
       parameters:
       - description: Tenant Id
         in: header
-        schema:
-          type: string
         name: data-partition-id
         required: true
       responses:
@@ -2053,8 +1995,6 @@ paths:
       parameters:
       - description: Tenant Id
         in: header
-        schema:
-          type: string
         name: data-partition-id
         required: true
       requestBody:

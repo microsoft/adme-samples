@@ -40,7 +40,7 @@ components:
   securitySchemes:
     Authorization:
       bearerFormat: Authorization
-      scheme: bearer
+      scheme: Bearer
       type: http
 info:
   description: Indexer service that provides a set of APIs to index storage records
@@ -55,8 +55,6 @@ paths:
       parameters:
       - description: Tenant Id
         in: header
-        schema:
-          type: string
         name: data-partition-id
         required: true
       responses:
@@ -69,12 +67,10 @@ paths:
       tags:
       - whoami-controller
     get:
-      operationId: whoami_10
+      operationId: whoami_12
       parameters:
       - description: Tenant Id
         in: header
-        schema:
-          type: string
         name: data-partition-id
         required: true
       responses:
@@ -91,8 +87,6 @@ paths:
       parameters:
       - description: Tenant Id
         in: header
-        schema:
-          type: string
         name: data-partition-id
         required: true
       responses:
@@ -105,12 +99,10 @@ paths:
       tags:
       - whoami-controller
     options:
-      operationId: whoami_12
+      operationId: whoami_8
       parameters:
       - description: Tenant Id
         in: header
-        schema:
-          type: string
         name: data-partition-id
         required: true
       responses:
@@ -123,12 +115,10 @@ paths:
       tags:
       - whoami-controller
     patch:
-      operationId: whoami_7
+      operationId: whoami_10
       parameters:
       - description: Tenant Id
         in: header
-        schema:
-          type: string
         name: data-partition-id
         required: true
       responses:
@@ -141,12 +131,10 @@ paths:
       tags:
       - whoami-controller
     post:
-      operationId: whoami_8
+      operationId: whoami_7
       parameters:
       - description: Tenant Id
         in: header
-        schema:
-          type: string
         name: data-partition-id
         required: true
       responses:
@@ -163,8 +151,6 @@ paths:
       parameters:
       - description: Tenant Id
         in: header
-        schema:
-          type: string
         name: data-partition-id
         required: true
       responses:
@@ -187,8 +173,6 @@ paths:
           type: string
       - description: Tenant Id
         in: header
-        schema:
-          type: string
         name: data-partition-id
         required: true
       responses:
@@ -206,8 +190,6 @@ paths:
       parameters:
       - description: Tenant Id
         in: header
-        schema:
-          type: string
         name: data-partition-id
         required: true
       responses:
@@ -225,8 +207,6 @@ paths:
       parameters:
       - description: Tenant Id
         in: header
-        schema:
-          type: string
         name: data-partition-id
         required: true
       responses:
@@ -242,10 +222,13 @@ paths:
     put:
       operationId: provisionPartition
       parameters:
-      - description: Tenant Id
-        in: header
+      - in: header
+        name: data-partition-id
+        required: true
         schema:
           type: string
+      - description: Tenant Id
+        in: header
         name: data-partition-id
         required: true
       responses:
@@ -263,8 +246,6 @@ paths:
       parameters:
       - description: Tenant Id
         in: header
-        schema:
-          type: string
         name: data-partition-id
         required: true
       responses:
@@ -288,8 +269,6 @@ paths:
           type: boolean
       - description: Tenant Id
         in: header
-        schema:
-          type: string
         name: data-partition-id
         required: true
       responses:
@@ -312,8 +291,6 @@ paths:
           type: boolean
       - description: Tenant Id
         in: header
-        schema:
-          type: string
         name: data-partition-id
         required: true
       requestBody:
@@ -337,8 +314,6 @@ paths:
       parameters:
       - description: Tenant Id
         in: header
-        schema:
-          type: string
         name: data-partition-id
         required: true
       responses:
@@ -351,12 +326,10 @@ paths:
       tags:
       - whoami-controller
     get:
-      operationId: whoami_3
+      operationId: whoami_5
       parameters:
       - description: Tenant Id
         in: header
-        schema:
-          type: string
         name: data-partition-id
         required: true
       responses:
@@ -373,8 +346,6 @@ paths:
       parameters:
       - description: Tenant Id
         in: header
-        schema:
-          type: string
         name: data-partition-id
         required: true
       responses:
@@ -387,12 +358,10 @@ paths:
       tags:
       - whoami-controller
     options:
-      operationId: whoami_5
+      operationId: whoami_1
       parameters:
       - description: Tenant Id
         in: header
-        schema:
-          type: string
         name: data-partition-id
         required: true
       responses:
@@ -405,12 +374,10 @@ paths:
       tags:
       - whoami-controller
     patch:
-      operationId: whoami
+      operationId: whoami_3
       parameters:
       - description: Tenant Id
         in: header
-        schema:
-          type: string
         name: data-partition-id
         required: true
       responses:
@@ -423,12 +390,10 @@ paths:
       tags:
       - whoami-controller
     post:
-      operationId: whoami_1
+      operationId: whoami
       parameters:
       - description: Tenant Id
         in: header
-        schema:
-          type: string
         name: data-partition-id
         required: true
       responses:
@@ -445,8 +410,6 @@ paths:
       parameters:
       - description: Tenant Id
         in: header
-        schema:
-          type: string
         name: data-partition-id
         required: true
       responses:

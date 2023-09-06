@@ -2081,7 +2081,7 @@ components:
           - $ref: '#/components/schemas/GeoJsonMultiLineString'
           - $ref: '#/components/schemas/Polygon'
           - $ref: '#/components/schemas/GeoJsonMultiPolygon'
-          - $ref: '#/components/schemas/geometryItem14'
+          - $ref: '#/components/schemas/geometryItem'
           title: Geometry
         properties:
           title: Properties
@@ -6845,9 +6845,9 @@ components:
       - longitude
       title: geographicPosition
       type: object
-    geometryItem14:
+    geometryItem:
       additionalProperties: false
-      description: 'geometryItem14
+      description: 'geometryItem
 
         https://datatracker.ietf.org/doc/html/rfc7946#section-3.1.8'
       properties:
@@ -6872,7 +6872,7 @@ components:
       required:
       - geometries
       - type
-      title: geometryItem14
+      title: geometryItem
       type: object
     historyRecord:
       additionalProperties: false
