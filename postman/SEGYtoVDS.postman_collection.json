@@ -1,0 +1,2026 @@
+{
+	"info": {
+		"_postman_id": "d73b22e3-d61d-4939-8123-871a3b2b3eed",
+		"name": "SEGYtoVDS",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "19529837"
+	},
+	"item": [
+		{
+			"name": "Generate Token",
+			"item": [
+				{
+					"name": "Get Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+									"});",
+									"",
+									"var body = pm.response.json()",
+									"pm.collectionVariables.set(\"access_token\", body.access_token);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/x-www-form-urlencoded"
+							},
+							{
+								"key": "Ocp-Apim-Subscription-Key",
+								"type": "text",
+								"value": "xxxxxxxx",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "grant_type",
+									"value": "client_credentials",
+									"type": "text"
+								},
+								{
+									"key": "client_id",
+									"value": "{{client_id}}",
+									"description": "Supply your client id as an environment variable",
+									"type": "text"
+								},
+								{
+									"key": "client_secret",
+									"value": "{{client_secret}}",
+									"description": "Supply your client secret as an environment variable",
+									"type": "text"
+								},
+								{
+									"key": "scope",
+									"value": "{{scope}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://login.microsoftonline.com/{{tenant_id}}/oauth2/v2.0/token",
+							"protocol": "https",
+							"host": [
+								"login",
+								"microsoftonline",
+								"com"
+							],
+							"path": [
+								"{{tenant_id}}",
+								"oauth2",
+								"v2.0",
+								"token"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Legal Tag",
+			"item": [
+				{
+					"name": "Create Legal Tag",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var response = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Status code is 201 or 409\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([201, 409]);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Legal Tag is Created\", function() {\r",
+									"    var createdLegaltagId = '';\r",
+									"\r",
+									"    switch(pm.response.code) {\r",
+									"        case 201:\r",
+									"            createdLegaltagId = response.name;\r",
+									"            break;\r",
+									"        case 409:\r",
+									"            var splits = response.message.split(' ');\r",
+									"            createdLegaltagId = splits.pop();\r",
+									"            pm.expect(response.message).contains(\"already exists\");\r",
+									"            break;\r",
+									"        default:\r",
+									"            console.log('Unexpected server code');\r",
+									"    }\r",
+									"    \r",
+									"    pm.expect(createdLegaltagId.length > 1);\r",
+									"   \r",
+									"    if (createdLegaltagId.length > 1) {\r",
+									"        pm.collectionVariables.set(\"vds_legal_tag_id\", createdLegaltagId);\r",
+									"    }\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "data-partition-id",
+								"value": "{{data_partition_id}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n        \"name\": \"{{vds_legal_tag_id}}\",\r\n        \"description\": \"Legal Tag added for Seismic conversion testing\",\r\n        \"properties\": {\r\n            \"contractId\": \"123456\",\r\n            \"countryOfOrigin\": [\r\n                \"US\",\r\n                \"CA\"\r\n            ],\r\n            \"dataType\": \"Public Domain Data\",\r\n            \"exportClassification\": \"EAR99\",\r\n            \"originator\": \"MSFT\",\r\n            \"personalData\": \"No Personal Data\",\r\n            \"securityClassification\": \"Private\",\r\n            \"expirationDate\": \"2025-12-25\"\r\n        }\r\n    }\r\n    ",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{instance_url}}/api/legal/v1/legaltags",
+							"protocol": "https",
+							"host": [
+								"{{instance_url}}"
+							],
+							"path": [
+								"api",
+								"legal",
+								"v1",
+								"legaltags"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Add User to Admin Group",
+			"item": [
+				{
+					"name": "Get User's Groups",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 OK\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    pm.response.to.have.status(\"OK\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "data-partition-id",
+								"value": "{{data_partition_id}}"
+							}
+						],
+						"url": {
+							"raw": "https://{{instance_url}}/api/entitlements/v2/groups",
+							"protocol": "https",
+							"host": [
+								"{{instance_url}}"
+							],
+							"path": [
+								"api",
+								"entitlements",
+								"v2",
+								"groups"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add User to Admin Group",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 or 409\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 409]);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"User was added to admin group\", function () {\r",
+									"    var userGroupEmail = pm.variables.get(\"OIDC_CLIENT_ID\");\r",
+									"\r",
+									"    switch(pm.response.code) {\r",
+									"        case 200:\r",
+									"            pm.expect(pm.response.email).to.equal(userGroupEmail);\r",
+									"            break;\r",
+									"        case 409:\r",
+									"            var response = pm.response.json();\r",
+									"            let adminGroupName = pm.variables.get(\"entitlement_adminGroupName\");\r",
+									"            let dp = pm.variables.get(\"DATA_PARTITION_ID\");\r",
+									"            let domain = pm.variables.get(\"INSTANCE_DOMAIN\");\r",
+									"            let adminEmail = adminGroupName + \"@\" + dp + \".\" + domain;\r",
+									"\r",
+									"            pm.expect(response.message).to.contain(adminEmail);\r",
+									"            break;\r",
+									"        default:\r",
+									"            console.log(\"Unexpected server code\");\r",
+									"    }\r",
+									"\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "data-partition-id",
+								"value": "{{data_partition_id}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\" : \"{{client_id}}\",\r\n    \"role\" : \"OWNER\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{instance_url}}/api/entitlements/v2/groups/users.datalake.admins@{{data_partition_id}}.{{domain}}/members",
+							"protocol": "https",
+							"host": [
+								"{{instance_url}}"
+							],
+							"path": [
+								"api",
+								"entitlements",
+								"v2",
+								"groups",
+								"users.datalake.admins@{{data_partition_id}}.{{domain}}",
+								"members"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Build Verification",
+			"item": [
+				{
+					"name": "Workflow -  Find Workflow",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.have.status(\"OK\");",
+									"});",
+									"",
+									"pm.test(\"Found VDS Conversion DAG ID\", function () {",
+									"    let workflows = pm.response.json();",
+									"    let dag = workflows.find((workflow) => workflow.workflowId.includes(\"segy-to-vds-conversion\"))",
+									"    pm.expect(dag).to.exist;",
+									"",
+									"    pm.collectionVariables.set('vds_dag_id', dag.workflowId);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Data-Partition-Id",
+								"value": "{{data_partition_id}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://{{instance_url}}/api/workflow/v1/workflow",
+							"protocol": "https",
+							"host": [
+								"{{instance_url}}"
+							],
+							"path": [
+								"api",
+								"workflow",
+								"v1",
+								"workflow"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Workflow - Get Workflow Details",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.have.status(\"OK\");",
+									"});",
+									"",
+									"pm.test(\"Have valid body\", function () {",
+									"    let json = pm.response.json();",
+									"    pm.expect(json).to.be.not.empty",
+									"    pm.expect(json.workflowId).to.be.equal(pm.variables.get('vds_dag_id'))",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Data-Partition-Id",
+								"value": "{{data_partition_id}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://{{instance_url}}/api/workflow/v1/workflow/{{vds_dag_id}}",
+							"protocol": "https",
+							"host": [
+								"{{instance_url}}"
+							],
+							"path": [
+								"api",
+								"workflow",
+								"v1",
+								"workflow",
+								"{{vds_dag_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Setup",
+			"item": [
+				{
+					"name": "Register Datapartition in Seismic Store for VDS Conversion",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 or 409\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 409]);",
+									"});",
+									"",
+									"pm.test(\"Data Partition is Registered\", function () {",
+									"    let dataPartitionID = pm.environment.replaceIn('{{DATA_PARTITION_ID}}');",
+									"",
+									"    switch(pm.response.code) {",
+									"        case 200:",
+									"            var response = pm.response.json();",
+									"            pm.expect(response.name).to.equal(dataPartitionID);",
+									"            break;",
+									"        case 409:",
+									"            var response = pm.response.text();",
+									"            pm.expect(response).to.contain(dataPartitionID);",
+									"            break;",
+									"        default:",
+									"            console.log (\"Unexpected server code\");",
+									"    }",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"esd\": \"{{data_partition_id}}.{{domain}}\",\r\n    \"gcpid\": \"{{data_partition_id}}\",\r\n    \"default_acl\": \"users.datalake.admins@{{data_partition_id}}.{{domain}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{instance_url}}/seistore-svc/api/v3/tenant/{{data_partition_id}}",
+							"protocol": "https",
+							"host": [
+								"{{instance_url}}"
+							],
+							"path": [
+								"seistore-svc",
+								"api",
+								"v3",
+								"tenant",
+								"{{data_partition_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Subproject",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let oneMinute = 60000; // in milliseconds\r",
+									"\r",
+									"pm.test(\"Status code is 200 or 409\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 409]);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Subproject is Created\", function() {\r",
+									"    var createdSubprojectName = '';\r",
+									"    let testSubprojectName = pm.variables.get(\"vdsTestSubprojectName\");\r",
+									"\r",
+									"    switch(pm.response.code) {\r",
+									"        case 200:\r",
+									"            var response = pm.response.json();\r",
+									"            createdSubprojectName = response.name;\r",
+									"            break;\r",
+									"        case 409:\r",
+									"            var response = pm.response.text();\r",
+									"            var splits = response.split(' ');\r",
+									"            createdSubprojectName = splits[3];\r",
+									"            pm.expect(response).contains(\"already exists\");\r",
+									"            break;\r",
+									"        default:\r",
+									"            console.log('Unexpected server code');\r",
+									"    }\r",
+									"    \r",
+									"    pm.expect(createdSubprojectName).equals(testSubprojectName);\r",
+									"});\r",
+									"\r",
+									"pauseUntilSubprojectIsCreated();\r",
+									"\r",
+									"function pauseUntilSubprojectIsCreated() {\r",
+									"    setTimeout(function(){}, [oneMinute]);\r",
+									"}\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "ltag",
+								"value": "{{vds_legal_tag_id}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"access_policy\": \"uniform\",\r\n    \"admin\": \"{{client_id}}\",\r\n    \"storage_class\": \"MULTI_REGIONAL\",\r\n    \"storage_location\": \"US\",\r\n    \"acls\": {\r\n        \"admins\": [\r\n            \"users.datalake.admins@{{data_partition_id}}.{{domain}}\"\r\n        ],\r\n        \"owners\": [\r\n            \"data.default.owners@{{data_partition_id}}.{{domain}}\"\r\n        ],\r\n        \"viewers\": [\r\n            \"data.default.viewers@{{data_partition_id}}.{{domain}}\"\r\n        ]\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{instance_url}}/seistore-svc/api/v3/subproject/tenant/{{data_partition_id}}/subproject/{{vdsTestSubprojectName}}",
+							"protocol": "https",
+							"host": [
+								"{{instance_url}}"
+							],
+							"path": [
+								"seistore-svc",
+								"api",
+								"v3",
+								"subproject",
+								"tenant",
+								"{{data_partition_id}}",
+								"subproject",
+								"{{vdsTestSubprojectName}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateVectorHeaderMappingKeys",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var dataPartition = pm.environment.get(\"data_partition_id\");\r",
+									"if (dataPartition === undefined){\r",
+									"    // Postman Scopes don't work in prerequest-scripts \r",
+									"    dataPartition = pm.globals.get(\"DATA_PARTITION_ID\");\r",
+									"}\r",
+									"\r",
+									"var HeaderKeyNameInline = dataPartition + \":reference-data--HeaderKeyName:Inline\";\r",
+									"var HeaderKeyNameCrossline = dataPartition + \":reference-data--HeaderKeyName:Crossline\";\r",
+									"var HeaderKeyNameZSCALAR = dataPartition + \":reference-data--HeaderKeyName:ZSCALAR\";\r",
+									"var HeaderKeyNameXYSCALAR = dataPartition + \":reference-data--HeaderKeyName:XYSCALAR\";\r",
+									"var HeaderKeyNameCMPX = dataPartition + \":reference-data--HeaderKeyName:CMPX\";\r",
+									"var HeaderKeyNameSTARTTIME = dataPartition + \":reference-data--HeaderKeyName:STARTTIME\";\r",
+									"var HeaderKeyNameCMPY = dataPartition + \":reference-data--HeaderKeyName:CMPY\";\r",
+									"\r",
+									"\r",
+									"pm.collectionVariables.set(\"header_key_inline\", HeaderKeyNameInline);\r",
+									"pm.collectionVariables.set(\"header_key_crossline\", HeaderKeyNameCrossline);\r",
+									"pm.collectionVariables.set(\"header_key_zscalar\", HeaderKeyNameZSCALAR);\r",
+									"pm.collectionVariables.set(\"header_key_xyscalar\", HeaderKeyNameXYSCALAR);\r",
+									"pm.collectionVariables.set(\"header_key_cmpx\", HeaderKeyNameCMPX);\r",
+									"pm.collectionVariables.set(\"header_key_starttime\", HeaderKeyNameSTARTTIME);\r",
+									"pm.collectionVariables.set(\"header_key_cmpy\", HeaderKeyNameCMPY);\r",
+									"\r",
+									"\r",
+									"      "
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"No records were skipped\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    //7 records were created",
+									"    pm.expect(jsonData.skippedRecordIds.length).to.equal(0);",
+									"    pm.expect(jsonData.recordCount).to.equal(7);",
+									"    /**",
+									"     * Below records should be created since we're using them in our file record",
+									"     * they're looked up at the time of segy-vds conversion */",
+									"     var requiredRecords = [",
+									"        pm.collectionVariables.get(\"header_key_inline\"),",
+									"        pm.collectionVariables.get(\"header_key_crossline\"),",
+									"        pm.collectionVariables.get(\"header_key_zscalar\"),",
+									"        pm.collectionVariables.get(\"header_key_xyscalar\"),",
+									"        pm.collectionVariables.get(\"header_key_cmpx\"),",
+									"        pm.collectionVariables.get(\"header_key_starttime\"),",
+									"        pm.collectionVariables.get(\"header_key_cmpy\")",
+									"     ];",
+									"     requiredRecords.forEach(rec =>{",
+									"         console.log(rec);",
+									"        pm.expect(jsonData.recordIds).contains(rec);",
+									"        console.log(rec + \" was created.\");   ",
+									"        }",
+									"     );",
+									"    console.log(\"waiting for a minute before proceeding futher, so records become searchable\");",
+									"    setTimeout(function() {}, 30000);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"description": "This value should be the desired data partition id.",
+								"key": "data-partition-id",
+								"type": "text",
+								"value": "{{data_partition_id}}"
+							},
+							{
+								"key": "Accept",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n    {\n      \"id\": \"{{header_key_cmpx}}\",\n      \"kind\": \"{{authority}}:{{schemaSource}}:reference-data--HeaderKeyName:1.0.0\",\n      \"acl\": {\n        \"owners\": [\n          \"data.default.owners@{{data_partition_id}}.{{domain}}\"\n        ],\n        \"viewers\": [\n          \"data.default.viewers@{{data_partition_id}}.{{domain}}\"\n        ]\n      },\n      \"legal\": {\n        \"legaltags\": [\n          \"{{vds_legal_tag_id}}\"\n        ],\n        \"otherRelevantDataCountries\": [\n          \"US\"\n        ]\n      },\n      \"data\": {\n        \"Name\": \"CMPX\",\n        \"Description\": \"X coordinate of bin center\",\n        \"Code\": \"CMPX\",\n        \"Source\": \"Workbook Published/HeaderKeyName.1.0.0.xlsx; commit SHA 38615b34.\",\n        \"CommitDate\": \"2021-02-25T09:18:48-05:00\"\n      }\n    },\n    {\n      \"id\": \"{{header_key_cmpy}}\",\n      \"kind\": \"{{authority}}:{{schemaSource}}:reference-data--HeaderKeyName:1.0.0\",\n      \"acl\": {\n        \"owners\": [\n          \"data.default.owners@{{data_partition_id}}.{{domain}}\"\n        ],\n        \"viewers\": [\n          \"data.default.viewers@{{data_partition_id}}.{{domain}}\"\n        ]\n      },\n      \"legal\": {\n        \"legaltags\": [\n          \"{{vds_legal_tag_id}}\"\n        ],\n        \"otherRelevantDataCountries\": [\n          \"US\"\n        ]\n      },\n      \"data\": {\n        \"Name\": \"CMPY\",\n        \"Description\": \"Y coordinate of bin center\",\n        \"Code\": \"CMPY\",\n        \"Source\": \"Workbook Published/HeaderKeyName.1.0.0.xlsx; commit SHA 38615b34.\",\n        \"CommitDate\": \"2021-02-25T09:18:48-05:00\"\n      }\n    },\n    {\n      \"id\": \"{{header_key_inline}}\",\n      \"kind\": \"{{authority}}:{{schemaSource}}:reference-data--HeaderKeyName:1.0.0\",\n      \"acl\": {\n        \"owners\": [\n          \"data.default.owners@{{data_partition_id}}.{{domain}}\"\n        ],\n        \"viewers\": [\n          \"data.default.viewers@{{data_partition_id}}.{{domain}}\"\n        ]\n      },\n      \"legal\": {\n        \"legaltags\": [\n          \"{{vds_legal_tag_id}}\"\n        ],\n        \"otherRelevantDataCountries\": [\n          \"US\"\n        ]\n      },\n      \"data\": {\n        \"Name\": \"Inline\",\n        \"Description\": \"Inline coordinate of bin center\",\n        \"Code\": \"Inline\",\n        \"Source\": \"Workbook Published/HeaderKeyName.1.0.0.xlsx; commit SHA 38615b34.\",\n        \"CommitDate\": \"2021-02-25T09:18:48-05:00\"\n      }\n    },\n    {\n      \"id\": \"{{header_key_crossline}}\",\n      \"kind\": \"{{authority}}:{{schemaSource}}:reference-data--HeaderKeyName:1.0.0\",\n      \"acl\": {\n        \"owners\": [\n          \"data.default.owners@{{data_partition_id}}.{{domain}}\"\n        ],\n        \"viewers\": [\n          \"data.default.viewers@{{data_partition_id}}.{{domain}}\"\n        ]\n      },\n      \"legal\": {\n        \"legaltags\": [\n          \"{{vds_legal_tag_id}}\"\n        ],\n        \"otherRelevantDataCountries\": [\n          \"US\"\n        ]\n      },\n      \"data\": {\n        \"Name\": \"Crossline\",\n        \"Description\": \"Crossline coordinate of bin center\",\n        \"Code\": \"Crossline\",\n        \"Source\": \"Workbook Published/HeaderKeyName.1.0.0.xlsx; commit SHA 38615b34.\",\n        \"CommitDate\": \"2021-02-25T09:18:48-05:00\"\n      }\n    },\n    {\n      \"id\": \"{{header_key_xyscalar}}\",\n      \"kind\": \"{{authority}}:{{schemaSource}}:reference-data--HeaderKeyName:1.0.0\",\n      \"acl\": {\n        \"owners\": [\n          \"data.default.owners@{{data_partition_id}}.{{domain}}\"\n        ],\n        \"viewers\": [\n          \"data.default.viewers@{{data_partition_id}}.{{domain}}\"\n        ]\n      },\n      \"legal\": {\n        \"legaltags\": [\n          \"{{vds_legal_tag_id}}\"\n        ],\n        \"otherRelevantDataCountries\": [\n          \"US\"\n        ]\n      },\n      \"data\": {\n        \"Name\": \"XY-Scalar\",\n        \"Description\": \"Scalar for position coordinates\",\n        \"Code\": \"XYSCALAR\",\n        \"Source\": \"Workbook Published/HeaderKeyName.1.0.0.xlsx; commit SHA 38615b34.\",\n        \"CommitDate\": \"2021-02-25T09:18:48-05:00\"\n      }\n    },\n    {\n      \"id\": \"{{header_key_zscalar}}\",\n      \"kind\": \"{{authority}}:{{schemaSource}}:reference-data--HeaderKeyName:1.0.0\",\n      \"acl\": {\n        \"owners\": [\n          \"data.default.owners@{{data_partition_id}}.{{domain}}\"\n        ],\n        \"viewers\": [\n          \"data.default.viewers@{{data_partition_id}}.{{domain}}\"\n        ]\n      },\n      \"legal\": {\n        \"legaltags\": [\n          \"{{vds_legal_tag_id}}\"\n        ],\n        \"otherRelevantDataCountries\": [\n          \"US\"\n        ]\n      },\n      \"data\": {\n        \"Name\": \"Z-Scalar\",\n        \"Description\": \"Scalar for elevations\",\n        \"Code\": \"ZSCALAR\",\n        \"Source\": \"Workbook Published/HeaderKeyName.1.0.0.xlsx; commit SHA 38615b34.\",\n        \"CommitDate\": \"2021-02-25T09:18:48-05:00\"\n      }\n    },\n    {\n      \"id\": \"{{header_key_starttime}}\",\n      \"kind\": \"{{authority}}:{{schemaSource}}:reference-data--HeaderKeyName:1.0.0\",\n      \"acl\": {\n        \"owners\": [\n          \"data.default.owners@{{data_partition_id}}.{{domain}}\"\n        ],\n        \"viewers\": [\n          \"data.default.viewers@{{data_partition_id}}.{{domain}}\"\n        ]\n      },\n      \"legal\": {\n        \"legaltags\": [\n          \"{{vds_legal_tag_id}}\"\n        ],\n        \"otherRelevantDataCountries\": [\n          \"US\"\n        ]\n      },\n      \"data\": {\n        \"Name\": \"Start Time\",\n        \"Description\": \"The time associated with the first sample, often the delay recording time.\",\n        \"Code\": \"STARTTIME\",\n        \"Source\": \"Workbook Published/HeaderKeyName.1.0.0.xlsx; commit SHA 38615b34.\",\n        \"CommitDate\": \"2021-02-25T09:18:48-05:00\"\n      }\n    }\n]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{instance_url}}/api/storage/v2/records",
+							"protocol": "https",
+							"host": [
+								"{{instance_url}}"
+							],
+							"path": [
+								"api",
+								"storage",
+								"v2",
+								"records"
+							],
+							"query": [
+								{
+									"key": "skipdupes",
+									"value": "true",
+									"description": "Skip duplicates when updating records with the same value.",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "oVDS - AllStorageRecords",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"\r",
+									"var uuid = require('uuid');\r",
+									"var randomId = uuid.v4();\r",
+									"\r",
+									"var dataPartition = pm.environment.get(\"data_partition_id\");\r",
+									"if (dataPartition === undefined){\r",
+									"    // Postman Scopes don't work in prerequest-scripts \r",
+									"    dataPartition = pm.globals.get(\"DATA_PARTITION_ID\");\r",
+									"}\r",
+									"var workProductId = dataPartition + \":work-product--WorkProduct:\" + randomId;\r",
+									"var seismicTraceDataId = dataPartition + \":work-product-component--SeismicTraceData:\" + randomId;\r",
+									"var fileRecordId = dataPartition + \":dataset--FileCollection.SEGY:\" + randomId;\r",
+									"var binGridId = dataPartition + \":work-product-component--SeismicBinGrid:\" + randomId;\r",
+									"var vdsSubproject = pm.collectionVariables.get(\"vdsTestSubprojectName\");\r",
+									"var vdsFile = pm.collectionVariables.get(\"segyTestFileNameForVds\");\r",
+									"var segyFile = \"sd://\" + dataPartition + \"/\" + vdsSubproject + \"/\" + vdsFile;\r",
+									"\r",
+									"pm.collectionVariables.set(\"work-product-id\", workProductId);\r",
+									"pm.collectionVariables.set(\"work-product-component-id\", seismicTraceDataId);\r",
+									"pm.collectionVariables.set(\"file-record-id\", fileRecordId);\r",
+									"pm.collectionVariables.set(\"bin-grid-id\", binGridId);\r",
+									"pm.collectionVariables.set(\"segy_sd_path\",segyFile);\r",
+									"var recordIds = [\r",
+									"    pm.collectionVariables.get(\"file-record-id\"),\r",
+									"    pm.collectionVariables.get(\"work-product-id\"),\r",
+									"    pm.collectionVariables.get(\"work-product-component-id\"),\r",
+									"    pm.collectionVariables.get(\"bin-grid-id\")\r",
+									"    ];\r",
+									"\r",
+									"console.log(\"Will try to create below records\");\r",
+									"recordIds.forEach(item =>{console.log(item)});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var response = pm.response.json();",
+									"let responseRecordIDs = (response.skippedRecordIds.length == 0) ? response.recordIds : response.skippedRecordIds;",
+									"",
+									"saveRecordIdsToDeleteLater();",
+									"",
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"pm.test(\"No records were skipped\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.skippedRecordIds.length).to.equal(0);",
+									"});",
+									"",
+									"pm.test(\"All four records ingested: \", function () {",
+									"    var recordIds = [",
+									"    pm.collectionVariables.get(\"file-record-id\"),",
+									"    pm.collectionVariables.get(\"work-product-id\"),",
+									"    pm.collectionVariables.get(\"work-product-component-id\"),",
+									"    pm.collectionVariables.get(\"bin-grid-id\")];",
+									"    ",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.recordCount).equal(4);",
+									"    recordIds.forEach(item => {",
+									"        pm.expect(jsonData.recordIds).contains(item);",
+									"        console.log(item);",
+									"    });",
+									"});",
+									"",
+									"",
+									"function saveRecordIdsToDeleteLater() {",
+									"    var recordIDs = [];",
+									"",
+									"    if ((response.recordIds) && (response.recordIds.length > 0)) {",
+									"        var recordIDs = recordIDs.concat(response.recordIds);",
+									"    } ",
+									"",
+									"    if ((response.skippedRecordIds) && (response.skippedRecordIds.length > 0)) {",
+									"        var recordIDs = recordIDs.concat(response.skippedRecordIds);",
+									"    }",
+									"",
+									"    if (recordIDs.length > 0) {",
+									"        pm.collectionVariables.set(\"vds_record_IDs_to_delete\", recordIDs.toString());",
+									"    }",
+									"}",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"description": "This value should be the desired data partition id.",
+								"key": "data-partition-id",
+								"type": "text",
+								"value": "{{data_partition_id}}"
+							},
+							{
+								"key": "Accept",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n    {\n        \"data\": {\n            \"ResourceHomeRegionID\": \"{{data_partition_id}}:reference-data--OSDURegion:SomeUniqueOSDURegionID:\",\n            \"ResourceHostRegionIDs\": [\n                \"{{data_partition_id}}:reference-data--OSDURegion:SomeUniqueOSDURegionID:\"\n            ],\n            \"ResourceCurationStatus\": \"{{data_partition_id}}:reference-data--ResourceCurationStatus:CREATED:\",\n            \"ResourceLifecycleStatus\": \"{{data_partition_id}}:reference-data--ResourceLifecycleStatus:LOADING:\",\n            \"ResourceSecurityClassification\": \"{{data_partition_id}}:reference-data--ResourceSecurityClassification:RESTRICTED:\",\n            \"Source\": \"Example Data Source\",\n            \"ExistenceKind\": \"{{data_partition_id}}:reference-data--ExistenceKind:Prototype:\",\n            \"Components\": [\n                \"{{work-product-component-id}}\",\n                \"{{bin-grid-id}}\"\n            ],\n            \"IsExtendedLoad\": true,\n            \"IsDiscoverable\": true,\n            \"Name\": \"Seismic migration Time  - work product\",\n            \"Description\": \"Seismic migration Time - work product\",\n            \"CreationDateTime\": \"2020-02-13T09:13:15.55Z\",\n            \"Tags\": [\n                \"Example Tags\"\n            ],\n            \"SpatialPoint\": {\n                \"SpatialLocationCoordinatesDate\": \"2020-02-13T09:13:15.55Z\",\n                \"QuantitativeAccuracyBandID\": \"{{data_partition_id}}:reference-data--QuantitativeAccuracyBand:%3C1%20m:\",\n                \"QualitativeSpatialAccuracyTypeID\": \"{{data_partition_id}}:reference-data--QualitativeSpatialAccuracyType:SomeUniqueQualitativeSpatialAccuracyTypeID:\",\n                \"CoordinateQualityCheckPerformedBy\": \"Example CoordinateQualityCheckPerformedBy\",\n                \"CoordinateQualityCheckDateTime\": \"2020-02-13T09:13:15.55Z\",\n                \"CoordinateQualityCheckRemarks\": [\n                    \"Example CoordinateQualityCheckRemarks\"\n                ],\n                \"AsIngestedCoordinates\": {\n                    \"type\": \"AnyCrsFeatureCollection\",\n                    \"CoordinateReferenceSystemID\": \"{{data_partition_id}}:reference-data--CoordinateReferenceSystem:BoundCRS.SLB.32021.15851:\",\n                    \"VerticalCoordinateReferenceSystemID\": \"{{data_partition_id}}:reference-data--CoordinateReferenceSystem:VerticalCRS.EPSG.5773:\",\n                    \"persistableReferenceCrs\": \"{\\\"lateBoundCRS\\\":{\\\"wkt\\\":\\\"PROJCS[\\\\\\\"NAD_1927_StatePlane_Louisiana_South_FIPS_1702\\\\\\\",GEOGCS[\\\\\\\"GCS_North_American_1927\\\\\\\",DATUM[\\\\\\\"D_North_American_1927\\\\\\\",SPHEROID[\\\\\\\"Clarke_1866\\\\\\\",6378206.4,294.9786982]],PRIMEM[\\\\\\\"Greenwich\\\\\\\",0.0],UNIT[\\\\\\\"Degree\\\\\\\",0.0174532925199433]],PROJECTION[\\\\\\\"Lambert_Conformal_Conic\\\\\\\"],PARAMETER[\\\\\\\"False_Easting\\\\\\\",2000000.0],PARAMETER[\\\\\\\"False_Northing\\\\\\\",0.0],PARAMETER[\\\\\\\"Central_Meridian\\\\\\\",-91.3333333333333],PARAMETER[\\\\\\\"Standard_Parallel_1\\\\\\\",29.3],PARAMETER[\\\\\\\"Standard_Parallel_2\\\\\\\",30.7],PARAMETER[\\\\\\\"Latitude_Of_Origin\\\\\\\",28.6666666666667],UNIT[\\\\\\\"Foot_US\\\\\\\",0.304800609601219],AUTHORITY[\\\\\\\"EPSG\\\\\\\",26782]]\\\",\\\"ver\\\":\\\"PE_10_3_1\\\",\\\"name\\\":\\\"NAD_1927_StatePlane_Louisiana_South_FIPS_1702\\\",\\\"authCode\\\":{\\\"auth\\\":\\\"EPSG\\\",\\\"code\\\":\\\"26782\\\"},\\\"type\\\":\\\"LBC\\\"},\\\"singleCT\\\":{\\\"wkt\\\":\\\"GEOGTRAN[\\\\\\\"NAD_1927_To_WGS_1984_79_CONUS\\\\\\\",GEOGCS[\\\\\\\"GCS_North_American_1927\\\\\\\",DATUM[\\\\\\\"D_North_American_1927\\\\\\\",SPHEROID[\\\\\\\"Clarke_1866\\\\\\\",6378206.4,294.9786982]],PRIMEM[\\\\\\\"Greenwich\\\\\\\",0.0],UNIT[\\\\\\\"Degree\\\\\\\",0.0174532925199433]],GEOGCS[\\\\\\\"GCS_WGS_1984\\\\\\\",DATUM[\\\\\\\"D_WGS_1984\\\\\\\",SPHEROID[\\\\\\\"WGS_1984\\\\\\\",6378137.0,298.257223563]],PRIMEM[\\\\\\\"Greenwich\\\\\\\",0.0],UNIT[\\\\\\\"Degree\\\\\\\",0.0174532925199433]],METHOD[\\\\\\\"NADCON\\\\\\\"],PARAMETER[\\\\\\\"Dataset_conus\\\\\\\",0.0],AUTHORITY[\\\\\\\"EPSG\\\\\\\",15851]]\\\",\\\"ver\\\":\\\"PE_10_3_1\\\",\\\"name\\\":\\\"NAD_1927_To_WGS_1984_79_CONUS\\\",\\\"authCode\\\":{\\\"auth\\\":\\\"EPSG\\\",\\\"code\\\":\\\"15851\\\"},\\\"type\\\":\\\"ST\\\"},\\\"ver\\\":\\\"PE_10_3_1\\\",\\\"name\\\":\\\"NAD27 * OGP-Usa Conus / Louisiana South [26782,15851]\\\",\\\"authCode\\\":{\\\"auth\\\":\\\"SLB\\\",\\\"code\\\":\\\"26782079\\\"},\\\"type\\\":\\\"EBC\\\"}\",\n                    \"persistableReferenceVerticalCrs\": \"{\\\"authCode\\\":{\\\"auth\\\":\\\"EPSG\\\",\\\"code\\\":\\\"5773\\\"},\\\"type\\\":\\\"LBC\\\",\\\"ver\\\":\\\"PE_10_3_1\\\",\\\"name\\\":\\\"EGM96_Geoid\\\",\\\"wkt\\\":\\\"VERTCS[\\\\\\\"EGM96_Geoid\\\\\\\",VDATUM[\\\\\\\"EGM96_Geoid\\\\\\\"],PARAMETER[\\\\\\\"Vertical_Shift\\\\\\\",0.0],PARAMETER[\\\\\\\"Direction\\\\\\\",1.0],UNIT[\\\\\\\"Meter\\\\\\\",1.0],AUTHORITY[\\\\\\\"EPSG\\\\\\\",5773]]\\\"}\",\n                    \"persistableReferenceUnitZ\": \"{\\\"scaleOffset\\\":{\\\"scale\\\":1.0,\\\"offset\\\":0.0},\\\"symbol\\\":\\\"m\\\",\\\"baseMeasurement\\\":{\\\"ancestry\\\":\\\"Length\\\",\\\"type\\\":\\\"UM\\\"},\\\"type\\\":\\\"USO\\\"}\",\n                    \"features\": [\n                        {\n                            \"geometry\": {\n                                \"coordinates\": [\n                                    [\n                                        [\n                                            438302.76,\n                                            6475310.75\n                                        ],\n                                        [\n                                            429582.2271600945,\n                                            6477485.023036702\n                                        ],\n                                        [\n                                            430791.8366380928,\n                                            6477485.023036702\n                                        ],\n                                        [\n                                            439512.36947799835,\n                                            6480162.22863138\n                                        ],\n                                        [\n                                            438302.76,\n                                            6475310.75\n                                        ]\n                                    ]\n                                ],\n                                \"type\": \"AnyCrsPolygon\"\n                            },\n                            \"properties\": {\n                                \"ijNumbers\": [\n                                    [\n                                        9961,\n                                        1961\n                                    ],\n                                    [\n                                        10361,\n                                        1961\n                                    ],\n                                    [\n                                        10361,\n                                        2680\n                                    ],\n                                    [\n                                        9961,\n                                        2680\n                                    ],\n                                    [\n                                        9961,\n                                        1961\n                                    ]\n                                ]\n                            },\n                            \"type\": \"AnyCrsFeature\"\n                        }\n                    ]\n                },\n                \"Wgs84Coordinates\": {\n                    \"features\": [\n                        {\n                            \"geometry\": {\n                                \"coordinates\": [\n                                    [\n                                        [\n                                            1.943967222,\n                                            58.414205\n                                        ],\n                                        [\n                                            1.794071944,\n                                            58.43241222\n                                        ],\n                                        [\n                                            1.814781667,\n                                            58.43260528\n                                        ],\n                                        [\n                                            1.9633875,\n                                            58.45794\n                                        ],\n                                        [\n                                            1.943967222,\n                                            58.414205\n                                        ]\n                                    ]\n                                ],\n                                \"type\": \"Polygon\"\n                            },\n                            \"properties\": {\n                                \"ijNumbers\": [\n                                    [\n                                        9961,\n                                        1961\n                                    ],\n                                    [\n                                        10361,\n                                        1961\n                                    ],\n                                    [\n                                        10361,\n                                        2680\n                                    ],\n                                    [\n                                        9961,\n                                        2680\n                                    ],\n                                    [\n                                        9961,\n                                        1961\n                                    ]\n                                ]\n                            },\n                            \"type\": \"Feature\"\n                        }\n                    ],\n                    \"type\": \"FeatureCollection\"\n                },\n                \"AppliedOperations\": [\n                    \"conversion from ED_1950_UTM_Zone_31N to GCS_European_1950; 1 points converted\",\n                    \"transformation GCS_European_1950 to GCS_WGS_1984 using ED_1950_To_WGS_1984_24; 1 points successfully transformed\"\n                ],\n                \"SpatialParameterTypeID\": \"{{data_partition_id}}:reference-data--SpatialParameterType:Outline:\",\n                \"SpatialGeometryTypeID\": \"{{data_partition_id}}:reference-data--SpatialGeometryType:Point:\"\n            },\n            \"SpatialArea\": {\n                \"AsIngestedCoordinates\": {\n                    \"type\": \"AnyCrsFeatureCollection\",\n                    \"CoordinateReferenceSystemID\": \"{{data_partition_id}}:reference-data--CoordinateReferenceSystem:BoundCRS::SLB::23034002:\",\n                    \"persistableReferenceCrs\": \"{\\\"lateBoundCRS\\\":{\\\"wkt\\\":\\\"PROJCS[\\\\\\\"NAD_1927_StatePlane_Louisiana_South_FIPS_1702\\\\\\\",GEOGCS[\\\\\\\"GCS_North_American_1927\\\\\\\",DATUM[\\\\\\\"D_North_American_1927\\\\\\\",SPHEROID[\\\\\\\"Clarke_1866\\\\\\\",6378206.4,294.9786982]],PRIMEM[\\\\\\\"Greenwich\\\\\\\",0.0],UNIT[\\\\\\\"Degree\\\\\\\",0.0174532925199433]],PROJECTION[\\\\\\\"Lambert_Conformal_Conic\\\\\\\"],PARAMETER[\\\\\\\"False_Easting\\\\\\\",2000000.0],PARAMETER[\\\\\\\"False_Northing\\\\\\\",0.0],PARAMETER[\\\\\\\"Central_Meridian\\\\\\\",-91.3333333333333],PARAMETER[\\\\\\\"Standard_Parallel_1\\\\\\\",29.3],PARAMETER[\\\\\\\"Standard_Parallel_2\\\\\\\",30.7],PARAMETER[\\\\\\\"Latitude_Of_Origin\\\\\\\",28.6666666666667],UNIT[\\\\\\\"Foot_US\\\\\\\",0.304800609601219],AUTHORITY[\\\\\\\"EPSG\\\\\\\",26782]]\\\",\\\"ver\\\":\\\"PE_10_3_1\\\",\\\"name\\\":\\\"NAD_1927_StatePlane_Louisiana_South_FIPS_1702\\\",\\\"authCode\\\":{\\\"auth\\\":\\\"EPSG\\\",\\\"code\\\":\\\"26782\\\"},\\\"type\\\":\\\"LBC\\\"},\\\"singleCT\\\":{\\\"wkt\\\":\\\"GEOGTRAN[\\\\\\\"NAD_1927_To_WGS_1984_79_CONUS\\\\\\\",GEOGCS[\\\\\\\"GCS_North_American_1927\\\\\\\",DATUM[\\\\\\\"D_North_American_1927\\\\\\\",SPHEROID[\\\\\\\"Clarke_1866\\\\\\\",6378206.4,294.9786982]],PRIMEM[\\\\\\\"Greenwich\\\\\\\",0.0],UNIT[\\\\\\\"Degree\\\\\\\",0.0174532925199433]],GEOGCS[\\\\\\\"GCS_WGS_1984\\\\\\\",DATUM[\\\\\\\"D_WGS_1984\\\\\\\",SPHEROID[\\\\\\\"WGS_1984\\\\\\\",6378137.0,298.257223563]],PRIMEM[\\\\\\\"Greenwich\\\\\\\",0.0],UNIT[\\\\\\\"Degree\\\\\\\",0.0174532925199433]],METHOD[\\\\\\\"NADCON\\\\\\\"],PARAMETER[\\\\\\\"Dataset_conus\\\\\\\",0.0],AUTHORITY[\\\\\\\"EPSG\\\\\\\",15851]]\\\",\\\"ver\\\":\\\"PE_10_3_1\\\",\\\"name\\\":\\\"NAD_1927_To_WGS_1984_79_CONUS\\\",\\\"authCode\\\":{\\\"auth\\\":\\\"EPSG\\\",\\\"code\\\":\\\"15851\\\"},\\\"type\\\":\\\"ST\\\"},\\\"ver\\\":\\\"PE_10_3_1\\\",\\\"name\\\":\\\"NAD27 * OGP-Usa Conus / Louisiana South [26782,15851]\\\",\\\"authCode\\\":{\\\"auth\\\":\\\"SLB\\\",\\\"code\\\":\\\"26782079\\\"},\\\"type\\\":\\\"EBC\\\"}\",\n                    \"features\": [\n                        {\n                            \"geometry\": {\n                                \"coordinates\": [\n                                    [\n                                        [\n                                            438302.76,\n                                            6475310.75\n                                        ],\n                                        [\n                                            429582.2271600945,\n                                            6477485.023036702\n                                        ],\n                                        [\n                                            430791.8366380928,\n                                            6477485.023036702\n                                        ],\n                                        [\n                                            439512.36947799835,\n                                            6480162.22863138\n                                        ],\n                                        [\n                                            438302.76,\n                                            6475310.75\n                                        ]\n                                    ]\n                                ],\n                                \"type\": \"AnyCrsPolygon\"\n                            },\n                            \"properties\": {\n                                \"ijNumbers\": [\n                                    [\n                                        9961,\n                                        1961\n                                    ],\n                                    [\n                                        10361,\n                                        1961\n                                    ],\n                                    [\n                                        10361,\n                                        2680\n                                    ],\n                                    [\n                                        9961,\n                                        2680\n                                    ],\n                                    [\n                                        9961,\n                                        1961\n                                    ]\n                                ]\n                            },\n                            \"type\": \"AnyCrsFeature\"\n                        }\n                    ]\n                },\n                \"Wgs84Coordinates\": {\n                    \"features\": [\n                        {\n                            \"geometry\": {\n                                \"coordinates\": [\n                                    [\n                                        [\n                                            1.943967222,\n                                            58.414205\n                                        ],\n                                        [\n                                            1.794071944,\n                                            58.43241222\n                                        ],\n                                        [\n                                            1.814781667,\n                                            58.43260528\n                                        ],\n                                        [\n                                            1.9633875,\n                                            58.45794\n                                        ],\n                                        [\n                                            1.943967222,\n                                            58.414205\n                                        ]\n                                    ]\n                                ],\n                                \"type\": \"Polygon\"\n                            },\n                            \"properties\": {\n                                \"ijNumbers\": [\n                                    [\n                                        9961,\n                                        1961\n                                    ],\n                                    [\n                                        10361,\n                                        1961\n                                    ],\n                                    [\n                                        10361,\n                                        2680\n                                    ],\n                                    [\n                                        9961,\n                                        2680\n                                    ],\n                                    [\n                                        9961,\n                                        1961\n                                    ]\n                                ]\n                            },\n                            \"type\": \"Feature\"\n                        }\n                    ],\n                    \"type\": \"FeatureCollection\"\n                },\n                \"AppliedOperations\": [\n                    \"conversion from ED_1950_UTM_Zone_34N to GCS_European_1950; 5 points converted\",\n                    \"transformation GCS_European_1950 to GCS_WGS_1984 using ED_1950_To_WGS_1984_2; 5 points successfully transformed\"\n                ],\n                \"SpatialParameterTypeID\": \"{{data_partition_id}}:reference-data--SpatialParameterType:Outline:\",\n                \"SpatialGeometryTypeID\": \"{{data_partition_id}}:reference-data--SpatialGeometryType:Polygon:\"\n            },\n            \"SubmitterName\": \"Example SubmitterName\",\n            \"BusinessActivities\": [\n                \"Example BusinessActivities\"\n            ],\n            \"AuthorIDs\": [\n                \"Example AuthorIDs\"\n            ],\n            \"LineageAssertions\": [\n                {\n                    \"ID\": \"{{data_partition_id}}:any-group-type--AnyIndividualType:SomeUniqueAnyIndividualTypeID:\",\n                    \"LineageRelationshipType\": \"{{data_partition_id}}:reference-data--LineageRelationshipType:Direct:\"\n                }\n            ],\n            \"Annotations\": [\n                \"Example Annotations\"\n            ],\n            \"ExtensionProperties\": {}\n        },\n        \"meta\": [],\n        \"kind\": \"osdu:wks:work-product--WorkProduct:1.0.0\",\n        \"id\": \"{{work-product-id}}\",\n        \"acl\": {\n            \"owners\": [\n                \"data.default.owners@{{data_partition_id}}.{{domain}}\"\n            ],\n            \"viewers\": [\n                \"data.default.viewers@{{data_partition_id}}.{{domain}}\"\n            ]\n        },\n        \"legal\": {\n            \"legaltags\": [\n                \"{{vds_legal_tag_id}}\"\n            ],\n            \"otherRelevantDataCountries\": [\n                \"NO\"\n            ],\n            \"status\": \"compliant\"\n        }\n    },\n    {\n        \"data\": {\n            \"IsExtendedLoad\": false,\n            \"IsDiscoverable\": true,\n            \"Name\": \"OSDU_SEGY\",\n            \"Description\": \"\",\n            \"CreationDateTime\": \"2021-02-12T13:11:58Z\",\n            \"Datasets\": [\n                \"{{file-record-id}}\"\n            ],\n            \"SpatialArea\": {\n                \"AsIngestedCoordinates\": {\n                    \"type\": \"AnyCrsFeatureCollection\",\n                    \"CoordinateReferenceSystemID\": \"{{data_partition_id}}:reference-data--CoordinateReferenceSystem:BoundCRS::SLB::23034002:\",\n                    \"persistableReferenceCrs\": \"{\\\"lateBoundCRS\\\":{\\\"wkt\\\":\\\"PROJCS[\\\\\\\"NAD_1927_StatePlane_Louisiana_South_FIPS_1702\\\\\\\",GEOGCS[\\\\\\\"GCS_North_American_1927\\\\\\\",DATUM[\\\\\\\"D_North_American_1927\\\\\\\",SPHEROID[\\\\\\\"Clarke_1866\\\\\\\",6378206.4,294.9786982]],PRIMEM[\\\\\\\"Greenwich\\\\\\\",0.0],UNIT[\\\\\\\"Degree\\\\\\\",0.0174532925199433]],PROJECTION[\\\\\\\"Lambert_Conformal_Conic\\\\\\\"],PARAMETER[\\\\\\\"False_Easting\\\\\\\",2000000.0],PARAMETER[\\\\\\\"False_Northing\\\\\\\",0.0],PARAMETER[\\\\\\\"Central_Meridian\\\\\\\",-91.3333333333333],PARAMETER[\\\\\\\"Standard_Parallel_1\\\\\\\",29.3],PARAMETER[\\\\\\\"Standard_Parallel_2\\\\\\\",30.7],PARAMETER[\\\\\\\"Latitude_Of_Origin\\\\\\\",28.6666666666667],UNIT[\\\\\\\"Foot_US\\\\\\\",0.304800609601219],AUTHORITY[\\\\\\\"EPSG\\\\\\\",26782]]\\\",\\\"ver\\\":\\\"PE_10_3_1\\\",\\\"name\\\":\\\"NAD_1927_StatePlane_Louisiana_South_FIPS_1702\\\",\\\"authCode\\\":{\\\"auth\\\":\\\"EPSG\\\",\\\"code\\\":\\\"26782\\\"},\\\"type\\\":\\\"LBC\\\"},\\\"singleCT\\\":{\\\"wkt\\\":\\\"GEOGTRAN[\\\\\\\"NAD_1927_To_WGS_1984_79_CONUS\\\\\\\",GEOGCS[\\\\\\\"GCS_North_American_1927\\\\\\\",DATUM[\\\\\\\"D_North_American_1927\\\\\\\",SPHEROID[\\\\\\\"Clarke_1866\\\\\\\",6378206.4,294.9786982]],PRIMEM[\\\\\\\"Greenwich\\\\\\\",0.0],UNIT[\\\\\\\"Degree\\\\\\\",0.0174532925199433]],GEOGCS[\\\\\\\"GCS_WGS_1984\\\\\\\",DATUM[\\\\\\\"D_WGS_1984\\\\\\\",SPHEROID[\\\\\\\"WGS_1984\\\\\\\",6378137.0,298.257223563]],PRIMEM[\\\\\\\"Greenwich\\\\\\\",0.0],UNIT[\\\\\\\"Degree\\\\\\\",0.0174532925199433]],METHOD[\\\\\\\"NADCON\\\\\\\"],PARAMETER[\\\\\\\"Dataset_conus\\\\\\\",0.0],AUTHORITY[\\\\\\\"EPSG\\\\\\\",15851]]\\\",\\\"ver\\\":\\\"PE_10_3_1\\\",\\\"name\\\":\\\"NAD_1927_To_WGS_1984_79_CONUS\\\",\\\"authCode\\\":{\\\"auth\\\":\\\"EPSG\\\",\\\"code\\\":\\\"15851\\\"},\\\"type\\\":\\\"ST\\\"},\\\"ver\\\":\\\"PE_10_3_1\\\",\\\"name\\\":\\\"NAD27 * OGP-Usa Conus / Louisiana South [26782,15851]\\\",\\\"authCode\\\":{\\\"auth\\\":\\\"SLB\\\",\\\"code\\\":\\\"26782079\\\"},\\\"type\\\":\\\"EBC\\\"}\",\n                    \"features\": [\n                        {\n                            \"geometry\": {\n                                \"coordinates\": [\n                                    [\n                                        [\n                                            438302.76,\n                                            6475310.75\n                                        ],\n                                        [\n                                            429582.2271600945,\n                                            6477485.023036702\n                                        ],\n                                        [\n                                            430791.8366380928,\n                                            6477485.023036702\n                                        ],\n                                        [\n                                            439512.36947799835,\n                                            6480162.22863138\n                                        ]\n                                    ]\n                                ],\n                                \"type\": \"AnyCrsPolygon\"\n                            },\n                            \"properties\": {\n                                \"ijNumbers\": [\n                                    [\n                                        9961,\n                                        1961\n                                    ],\n                                    [\n                                        10361,\n                                        1961\n                                    ],\n                                    [\n                                        10361,\n                                        2680\n                                    ],\n                                    [\n                                        9961,\n                                        2680\n                                    ]\n                                ]\n                            },\n                            \"type\": \"AnyCrsFeature\"\n                        }\n                    ]\n                },\n                \"Wgs84Coordinates\": {\n                    \"features\": [\n                        {\n                            \"geometry\": {\n                                \"coordinates\": [\n                                    [\n                                        [\n                                            1.943967222,\n                                            58.414205\n                                        ],\n                                        [\n                                            1.794071944,\n                                            58.43241222\n                                        ],\n                                        [\n                                            1.814781667,\n                                            58.43260528\n                                        ],\n                                        [\n                                            1.9633875,\n                                            58.45794\n                                        ],\n                                        [\n                                            1.943967222,\n                                            58.414205\n                                        ]\n                                    ]\n                                ],\n                                \"type\": \"Polygon\"\n                            },\n                            \"properties\": {\n                                \"ijNumbers\": [\n                                    [\n                                        9961,\n                                        1961\n                                    ],\n                                    [\n                                        10361,\n                                        1961\n                                    ],\n                                    [\n                                        10361,\n                                        2680\n                                    ],\n                                    [\n                                        9961,\n                                        2680\n                                    ],\n                                    [\n                                        9961,\n                                        1961\n                                    ]\n                                ]\n                            },\n                            \"type\": \"Feature\"\n                        }\n                    ],\n                    \"type\": \"FeatureCollection\"\n                },\n                \"AppliedOperations\": [\n                    \"conversion from ED_1950_UTM_Zone_34N to GCS_European_1950; 5 points converted\",\n                    \"transformation GCS_European_1950 to GCS_WGS_1984 using ED_1950_To_WGS_1984_2; 5 points successfully transformed\"\n                ],\n                \"SpatialParameterTypeID\": \"{{data_partition_id}}:reference-data--SpatialParameterType:Outline:\",\n                \"SpatialGeometryTypeID\": \"{{data_partition_id}}:reference-data--SpatialGeometryType:Polygon:\"\n            },\n            \"Precision\": {\n                \"WordFormat\": \"{{data_partition_id}}:reference-data--WordFormatType:IEEE_FLOAT:\",\n                \"WordWidth\": 4\n            },\n            \"CrosslineMin\": 1,\n            \"CrosslineMax\": 34,\n            \"CrosslineIncrement\": 1,\n            \"InlineMin\": 1,\n            \"InlineMax\": 67,\n            \"InlineIncrement\": 1,\n            \"SeismicDomainTypeID\": \"{{data_partition_id}}:reference-data--SeismicDomainType:Time:\",\n            \"StartTime\": 0,\n            \"EndTime\": 200,\n            \"SampleInterval\": 4,\n            \"SampleCount\": 51,\n            \"RangeAmplitudeMin\": -67.563103,\n            \"RangeAmplitudeMax\": 151.844238,\n            \"SeismicWaveTypeID\": \"{{data_partition_id}}:reference-data--SeismicWaveType:P:\",\n            \"SeismicStackingTypeID\": \"{{data_partition_id}}:reference-data--SeismicStackingType:Stk:\",\n            \"TextualFileHeader\": [\n                \"C01 CLIENT : STATOIL                              PROCESSED BY: WESTERNGECO     C02 AREA   : VOLVE, BLOCK 15/9,  NORTH SEA - ST10010     SURVEY: 3D 4C 0BC      C03 3D FULL AREA POST-STACK FINAL PSDM                       DATE: 2011-10-26   C04 DATA FORMAT: SEGY       DATA TYPE: STACK-FULL ANGLE, 3-41 DEGREES (T)       C05 ---------------------AQUISITION PARAMETRS---------------------------------- C06 DATA SHOT BY VESSEL: M/V SANCO SPIRIT & VIKLAND  CABLE LENGTH:6000 M        C07 NO OF GROUPS: 960/P,X,Y,Z.  NO OF CABLES: 8  ARRAY VOL/SOURCE: 3990 CU IN.  C08 GROUP INTERVAL: 25M  SHOT INTERVAL: 25M (FLIP-FLOP)  RECORD LENGTH: 10000 MSC09 GEODECTIC DATUM:  ED50      SPHEROID: INTERNAT 1924     PROJECTION: UTM     C10  UTM ZONE: 31 N                                                             C11 FIRST SAMPLE: 4 MS     LAST SAMPLE: 3400 MS     SAMPLE INTERVAL: 4 MS       C12 NAVIGATION SOURCE P1/90 UKOOA, SPS                                          C13 ----------------------PROCESSING SEQUENCE---------------------------------- C14 REFORMAT, RESAMPLING TO 4MS                                                 C15 Z TO P AMP. MATCHING AND DESIGNATURE APPLIED                                C16 TIDAL STATIC CORRECTION, NOISE ATTENUATION                                  C17 PZ CALIBRATION & SUMMATION                                                  C18 DIRECT ARRIVAL REMOVAL (SHOT & RECEIVER DOMAIN)                             C19 LINEAR NOISE ATTENUATION (RECEIVER DOMAIN), OFFSET REGULARIZATION           C20 SINGLE BOUNCE DECON IN TAU-PQ DOMAIN                                        C21 DETERMINISTIC WATER DEMULTIPLE, PrSDM (2011 VELOCITY MODEL),                C22 DEPTH TO TIME CONVERSION, RESIDUAL VELOCITY APPLIED, RADON DEMULTIPLE       C23  ANGLE MUTE (3-41 DEGREES), STACK,  MODEL BASED DEMULTIPLE                  C24 INVERSE_Q (100),  RANDOM NOISE ATTENUATION, 12.5X12.5 INTERPOLATION         C25 BPF 70Hz 50dB/OCT HIGH-CUT, OUTPUT SEGY FORMAT                              C26 ----------------------PROCESSING GRID INFORMATION-------------------------  C27 INLINE  BIN SIZE: 12.5M   CROSSLINE BIN SIZE: 12.5M  AZIMUTH: 284 DEGREES   C28 INLINE NUMBER INCREMENT:1       CROSSLINE  NUMBER INCREMENT:1               C29 PG1   X: 439272.97   Y: 6475068.89   IL:   9961   XL: 1881                  C30 PG2   X: 429582.21   Y: 6477485.37   IL:   9961   XL: 2680                  C31 PG3   X: 440588.57   Y: 6480344.84   IL: 10396   XL: 1881                   C32 PG4   X: 430897.81   Y: 6482761.32   IL: 10396   XL: 2680                   C33                                                                             C34 ----------------------HEADER WORD POSITIONS-------------------------------- C35 3D INLINE  BYTES 189-192             |  3D CROSS LINE   BYTES 193-196       C36 BIN CENTRE UTM-X  BYTES 181-184.  |  BIN CENTRE UTM-Y  BYTES 185-188        C37 CMP BYTES 21-24                                                             C38 ALL COORDINATE VALUES ARE MULTIPLIED BY 100                                 C39                                                                             C40 END EBCDIC                                                                  \"\n            ],\n            \"VerticalDatumOffset\": 0,\n            \"VerticalMeasurementTypeID\": \"{{data_partition_id}}:reference-data--VerticalMeasurementType:MeanSeaLevel:\",\n            \"ReplacementVelocity\": 1480,\n            \"ShiftApplied\": 0,\n            \"Preferred3DInterpretationSetID\": \"{{data_partition_id}}master-data--Seismic3DInterpretationSet:seismicSurvey3d-09cc1a5d-d7f8-40f4-8161-bd40954f147c:\",\n            \"BinGridID\": \"{{bin-grid-id}}\",\n            \"ExtensionProperties\": {}\n        },\n        \"meta\": [\n            {\n                \"kind\": \"Unit\",\n                \"name\": \"m\",\n                \"persistableReference\": \"{\\\"abcd\\\":{\\\"a\\\":0.0,\\\"b\\\":1.0,\\\"c\\\":1.0,\\\"d\\\":0.0},\\\"symbol\\\":\\\"m\\\",\\\"baseMeasurement\\\":{\\\"ancestry\\\":\\\"L\\\",\\\"type\\\":\\\"UM\\\"},\\\"type\\\":\\\"UAD\\\"}\",\n                \"unitOfMeasureID\": \"{{data_partition_id}}:reference-data--UnitOfMeasure:m:\",\n                \"propertyNames\": [\n                    \"VerticalDatumOffset\"\n                ]\n            },\n            {\n                \"kind\": \"Unit\",\n                \"name\": \"m/s\",\n                \"persistableReference\": \"{\\\"abcd\\\":{\\\"a\\\":0.0,\\\"b\\\":1.0,\\\"c\\\":1.0,\\\"d\\\":0.0},\\\"symbol\\\":\\\"m/s\\\",\\\"baseMeasurement\\\":{\\\"ancestry\\\":\\\"L/T\\\",\\\"type\\\":\\\"UM\\\"},\\\"type\\\":\\\"UAD\\\"}\",\n                \"unitOfMeasureID\": \"{{data_partition_id}}:reference-data--UnitOfMeasure:m%2Fs:\",\n                \"propertyNames\": [\n                    \"ReplacementVelocity\"\n                ]\n            },\n            {\n                \"kind\": \"Unit\",\n                \"name\": \"amplitude\",\n                \"persistableReference\": \"{\\\"scaleOffset\\\":{\\\"scale\\\":1.0,\\\"offset\\\":0.0},\\\"symbol\\\":\\\"----\\\",\\\"baseMeasurement\\\":{\\\"ancestry\\\":\\\"Dimensionless\\\",\\\"type\\\":\\\"UM\\\"},\\\"type\\\":\\\"USO\\\"}\",\n                \"propertyNames\": [\n                    \"RangeAmplitudeMin\",\n                    \"RangeAmplitudeMax\"\n                ]\n            },\n            {\n                \"kind\": \"Unit\",\n                \"name\": \"ms\",\n                \"persistableReference\": \"{\\\"abcd\\\":{\\\"a\\\":0.0,\\\"b\\\":0.001,\\\"c\\\":1.0,\\\"d\\\":0.0},\\\"symbol\\\":\\\"ms\\\",\\\"baseMeasurement\\\":{\\\"ancestry\\\":\\\"T\\\",\\\"type\\\":\\\"UM\\\"},\\\"type\\\":\\\"UAD\\\"}\",\n                \"unitOfMeasureID\": \"{{data_partition_id}}:reference-data--UnitOfMeasure:ms:\",\n                \"propertyNames\": [\n                    \"StartTime\",\n                    \"EndTime\",\n                    \"SampleInterval\"\n                ]\n            },\n            {\n                \"kind\": \"DateTime\",\n                \"name\": \"datetime\",\n                \"persistableReference\": \"{\\\"format\\\":\\\"yyyy-MM-ddTHH:mm:ssZ\\\",\\\"timeZone\\\":\\\"UTC\\\",\\\"type\\\":\\\"DTM\\\"}\",\n                \"propertyNames\": [\n                    \"CreationDateTime\",\n                    \"ExtensionProperties.dateModified\"\n                ]\n            }\n        ],\n        \"kind\": \"osdu:wks:work-product-component--SeismicTraceData:1.0.0\",\n        \"id\": \"{{work-product-component-id}}\",\n        \"acl\": {\n            \"owners\": [\n                \"data.default.owners@{{data_partition_id}}.{{domain}}\"\n            ],\n            \"viewers\": [\n                \"data.default.viewers@{{data_partition_id}}.{{domain}}\"\n            ]\n        },\n        \"legal\": {\n            \"legaltags\": [\n                \"{{vds_legal_tag_id}}\"\n            ],\n            \"otherRelevantDataCountries\": [\n                \"NO\"\n            ],\n            \"status\": \"compliant\"\n        }\n    },\n    {\n        \"data\": {\n            \"ancestry\": {\n                \"parents\": []\n            },\n            \"P6TransformationMethod\": 1049,\n            \"P6BinGridOriginI\": 9961,\n            \"P6BinGridOriginJ\": 1961,\n            \"P6BinGridOriginEasting\": 438302.76,\n            \"P6BinGridOriginNorthing\": 6475310.75,\n            \"P6ScaleFactorOfBinGrid\": 1,\n            \"P6BinWidthOnIaxis\": 12.5,\n            \"P6BinWidthOnJaxis\": 12.5,\n            \"P6MapGridBearingOfBinGridJaxis\": -76,\n            \"P6BinNodeIncrementOnIaxis\": 1,\n            \"P6BinNodeIncrementOnJaxis\": 1,\n            \"SpatialArea\": {\n                \"SpatialLocationCoordinatesDate\": \"2021-05:07T11:08:39.39Z\",\n                \"QuantitativeAccuracyBandID\": \":reference-data--QualitativeSpatialAccuracyType:SomeUniqueQualitativeSpatialAccuracyTypeID:\",\n                \"QualitativeSpatialAccuracyTypeID\": null,\n                \"CoordinateQualityCheckPerformedBy\": \"EDahl2\",\n                \"CoordinateQualityCheckDateTime\": \"2021-05:07T11:08:39.39Z\",\n                \"CoordinateQualityCheckRemarks\": [],\n                \"AsIngestedCoordinates\": {\n                    \"type\": \"AnyCrsFeatureCollection\",\n                    \"CoordinateReferenceSystemID\": \"{{data_partition_id}}:reference-data--CoordinateReferenceSystem:BoundCRS.SLB.32021.15851:\",\n                    \"persistableReferenceCrs\": \"{\\\"lateBoundCRS\\\":{\\\"wkt\\\":\\\"PROJCS[\\\\\\\"NAD_1927_StatePlane_North_Dakota_South_FIPS_3302\\\\\\\",GEOGCS[\\\\\\\"GCS_North_American_1927\\\\\\\",DATUM[\\\\\\\"D_North_American_1927\\\\\\\",SPHEROID[\\\\\\\"Clarke_1866\\\\\\\",6378206.4,294.9786982]],PRIMEM[\\\\\\\"Greenwich\\\\\\\",0.0],UNIT[\\\\\\\"Degree\\\\\\\",0.0174532925199433]],PROJECTION[\\\\\\\"Lambert_Conformal_Conic\\\\\\\"],PARAMETER[\\\\\\\"False_Easting\\\\\\\",2000000.0],PARAMETER[\\\\\\\"False_Northing\\\\\\\",0.0],PARAMETER[\\\\\\\"Central_Meridian\\\\\\\",-100.5],PARAMETER[\\\\\\\"Standard_Parallel_1\\\\\\\",46.1833333333333],PARAMETER[\\\\\\\"Standard_Parallel_2\\\\\\\",47.4833333333333],PARAMETER[\\\\\\\"Latitude_Of_Origin\\\\\\\",45.6666666666667],UNIT[\\\\\\\"Foot_US\\\\\\\",0.304800609601219],AUTHORITY[\\\\\\\"EPSG\\\\\\\",32021]]\\\",\\\"ver\\\":\\\"PE_10_3_1\\\",\\\"name\\\":\\\"NAD_1927_StatePlane_North_Dakota_South_FIPS_3302\\\",\\\"authCode\\\":{\\\"auth\\\":\\\"EPSG\\\",\\\"code\\\":\\\"32021\\\"},\\\"type\\\":\\\"LBC\\\"},\\\"singleCT\\\":{\\\"wkt\\\":\\\"GEOGTRAN[\\\\\\\"NAD_1927_To_WGS_1984_79_CONUS\\\\\\\",GEOGCS[\\\\\\\"GCS_North_American_1927\\\\\\\",DATUM[\\\\\\\"D_North_American_1927\\\\\\\",SPHEROID[\\\\\\\"Clarke_1866\\\\\\\",6378206.4,294.9786982]],PRIMEM[\\\\\\\"Greenwich\\\\\\\",0.0],UNIT[\\\\\\\"Degree\\\\\\\",0.0174532925199433]],GEOGCS[\\\\\\\"GCS_WGS_1984\\\\\\\",DATUM[\\\\\\\"D_WGS_1984\\\\\\\",SPHEROID[\\\\\\\"WGS_1984\\\\\\\",6378137.0,298.257223563]],PRIMEM[\\\\\\\"Greenwich\\\\\\\",0.0],UNIT[\\\\\\\"Degree\\\\\\\",0.0174532925199433]],METHOD[\\\\\\\"NADCON\\\\\\\"],PARAMETER[\\\\\\\"Dataset_conus\\\\\\\",0.0],AUTHORITY[\\\\\\\"EPSG\\\\\\\",15851]]\\\",\\\"ver\\\":\\\"PE_10_3_1\\\",\\\"name\\\":\\\"NAD_1927_To_WGS_1984_79_CONUS\\\",\\\"authCode\\\":{\\\"auth\\\":\\\"EPSG\\\",\\\"code\\\":\\\"15851\\\"},\\\"type\\\":\\\"ST\\\"},\\\"ver\\\":\\\"PE_10_3_1\\\",\\\"name\\\":\\\"NAD27 * OGP-Usa Conus / North Dakota South [32021,15851]\\\",\\\"authCode\\\":{\\\"auth\\\":\\\"SLB\\\",\\\"code\\\":\\\"32021079\\\"},\\\"type\\\":\\\"EBC\\\"}\",\n                    \"VerticalCoordinateReferenceSystemID\": \"{{data_partition_id}}:reference-data--CoordinateReferenceSystem:VerticalCRS.EPSG.5773:\",\n                    \"persistableReferenceVerticalCrs\": \"{\\\"authCode\\\":{\\\"auth\\\":\\\"EPSG\\\",\\\"code\\\":\\\"5773\\\"},\\\"type\\\":\\\"LBC\\\",\\\"ver\\\":\\\"PE_10_3_1\\\",\\\"name\\\":\\\"EGM96_Geoid\\\",\\\"wkt\\\":\\\"VERTCS[\\\\\\\"EGM96_Geoid\\\\\\\",VDATUM[\\\\\\\"EGM96_Geoid\\\\\\\"],PARAMETER[\\\\\\\"Vertical_Shift\\\\\\\",0.0],PARAMETER[\\\\\\\"Direction\\\\\\\",1.0],UNIT[\\\\\\\"Meter\\\\\\\",1.0],AUTHORITY[\\\\\\\"EPSG\\\\\\\",5773]]\\\"}\",\n                    \"persistableReferenceUnitZ\": \"{\\\"scaleOffset\\\":{\\\"scale\\\":1.0,\\\"offset\\\":0.0},\\\"symbol\\\":\\\"m\\\",\\\"baseMeasurement\\\":{\\\"ancestry\\\":\\\"Length\\\",\\\"type\\\":\\\"UM\\\"},\\\"type\\\":\\\"USO\\\"}\",\n                    \"features\": [\n                        {\n                            \"type\": \"AnyCrsFeature\",\n                            \"properties\": [],\n                            \"geometry\": {\n                                \"coordinates\": [\n                                    [\n                                        438302.76,\n                                        6475310.75\n                                    ],\n                                    [\n                                        429582.2271600945,\n                                        6477485.023036702\n                                    ],\n                                    [\n                                        430791.8366380928,\n                                        6477485.023036702\n                                    ],\n                                    [\n                                        439512.36947799835,\n                                        6480162.22863138\n                                    ],\n                                    [\n                                        438302.76,\n                                        6475310.75\n                                    ]\n                                ],\n                                \"bbox\": [\n                                    429582.2271600945,\n                                    6475310.75,\n                                    439512.36947799835,\n                                    6482336.501668082\n                                ],\n                                \"type\": \"AnyCrsPolygon\"\n                            },\n                            \"bbox\": [\n                                429582.2271600945,\n                                6475310.75,\n                                439512.36947799835,\n                                6482336.501668082\n                            ]\n                        }\n                    ],\n                    \"bbox\": [\n                        429582.2271600945,\n                        6475310.75,\n                        439512.36947799835,\n                        6482336.501668082\n                    ]\n                }\n            },\n            \"Description\": \"OSDU type of bin grid for testing\",\n            \"Name\": \"OSDU_BinGrid\",\n            \"BinGridName\": \"OSDU_BinGrid\"\n        },\n        \"meta\": [],\n        \"kind\": \"osdu:wks:work-product-component--SeismicBinGrid:1.0.0\",\n        \"id\": \"{{bin-grid-id}}\",\n        \"acl\": {\n            \"owners\": [\n                \"data.default.owners@{{data_partition_id}}.{{domain}}\"\n            ],\n            \"viewers\": [\n                \"data.default.viewers@{{data_partition_id}}.{{domain}}\"\n            ]\n        },\n        \"legal\": {\n            \"legaltags\": [\n                \"{{vds_legal_tag_id}}\"\n            ],\n            \"otherRelevantDataCountries\": [\n                \"NO\"\n            ],\n            \"status\": \"compliant\"\n        }\n    },\n    {\n        \"data\": {\n            \"Name\": \"Volve_SEGY_Time\",\n            \"Description\": \"Dataset released by Equinor and Partners\",\n            \"TotalSize\": 1050849760,\n            \"SchemaFormatTypeID\": \"{{data_partition_id}}:reference-data--SchemaFormatType:SEGY:\",\n            \"Endian\": \"BIG\",\n            \"DatasetProperties\": {\n\t\t\t\t\"FileCollectionPath\": \"{{segy_sd_path}}\",\n\t\t\t\t\t\t\"FileSourceInfos\": [\n\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\"FileSource\": \"{{segy_sd_path}}\",\n\t\t\t\t\t\t\t\t\"PreloadFilePath\": \"\",\n\t\t\t\t\t\t\t\t\"Name\": \"OSDU_SEGY\"\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t],\n\t\t\t\t\t\t\"Checksum\": \"c9df7234d5d0a7a2c2676ee2e2aa48b6\"\n\t\t\t\t},\n            \"VectorHeaderMapping\": [\n                {\n                    \"KeyName\": \"{{data_partition_id}}:reference-data--HeaderKeyName:Inline:\",\n                    \"WordFormat\": \"{{data_partition_id}}:reference-data--WordFormatType:INT:\",\n                    \"WordWidth\": 4,\n                    \"Position\": 189,\n                    \"UoM\": \"{{data_partition_id}}:reference-data--UnitOfMeasure:Unitless:\",\n                    \"ScalarIndicator\": \"NOSCALE\",\n                    \"ScalarOverride\": 0\n                },\n                {\n                    \"KeyName\": \"{{data_partition_id}}:reference-data--HeaderKeyName:Crossline:\",\n                    \"WordFormat\": \"{{data_partition_id}}:reference-data--WordFormatType:INT:\",\n                    \"WordWidth\": 4,\n                    \"Position\": 193,\n                    \"UoM\": \"{{data_partition_id}}:reference-data--UnitOfMeasure:Unitless:\",\n                    \"ScalarIndicator\": \"NOSCALE\",\n                    \"ScalarOverride\": 0\n                },\n                {\n                    \"KeyName\": \"{{data_partition_id}}:reference-data--HeaderKeyName:CMPX:\",\n                    \"WordFormat\": \"{{data_partition_id}}:reference-data--WordFormatType:INT:\",\n                    \"WordWidth\": 4,\n                    \"Position\": 181,\n                    \"UoM\": \"{{data_partition_id}}:reference-data--UnitOfMeasure:m\",\n                    \"ScalarIndicator\": \"STANDARD\",\n                    \"ScalarOverride\": 0\n                },\n                {\n                    \"KeyName\": \"{{data_partition_id}}:reference-data--HeaderKeyName:CMPY:\",\n                    \"WordFormat\": \"{{data_partition_id}}:reference-data--WordFormatType:INT:\",\n                    \"WordWidth\": 4,\n                    \"Position\": 185,\n                    \"UoM\": \"{{data_partition_id}}:reference-data--UnitOfMeasure:m:\",\n                    \"ScalarIndicator\": \"STANDARD\",\n                    \"ScalarOverride\": 0\n                },\n                {\n                    \"KeyName\": \"{{data_partition_id}}:reference-data--HeaderKeyName:STARTTIME:\",\n                    \"WordFormat\": \"{{data_partition_id}}:reference-data--WordFormatType:INT:\",\n                    \"WordWidth\": 2,\n                    \"Position\": 109,\n                    \"UoM\": \"{{data_partition_id}}:reference-data--UnitOfMeasure:ms:\",\n                    \"ScalarIndicator\": \"STANDARD\",\n                    \"ScalarOverride\": 0\n                },\n                {\n                    \"KeyName\": \"{{data_partition_id}}:reference-data--HeaderKeyName:ZSCALAR:\",\n                    \"WordFormat\": \"{{data_partition_id}}:reference-data--WordFormatType:INT:\",\n                    \"WordWidth\": 2,\n                    \"Position\": 69,\n                    \"UoM\": \"{{data_partition_id}}:reference-data--UnitOfMeasure:Unitless:\",\n                    \"ScalarIndicator\": \"NOSCALE\",\n                    \"ScalarOverride\": 0\n                },\n                {\n                    \"KeyName\": \"{{data_partition_id}}:reference-data--HeaderKeyName:XYSCALAR:\",\n                    \"WordFormat\": \"{{data_partition_id}}:reference-data--WordFormatType:INT:\",\n                    \"WordWidth\": 2,\n                    \"Position\": 71,\n                    \"UoM\": \"{{data_partition_id}}:reference-data--UnitOfMeasure:Unitless:\",\n                    \"ScalarIndicator\": \"NOSCALE\",\n                    \"ScalarOverride\": 0\n                }\n            ],\n            \"SEGYRevision\": \"rev 1\"\n        },\n        \"meta\": [],\n        \"kind\": \"osdu:wks:dataset--FileCollection.SEGY:1.0.0\",\n        \"id\": \"{{file-record-id}}\",\n        \"acl\": {\n            \"owners\": [\n                \"data.default.owners@{{data_partition_id}}.{{domain}}\"\n            ],\n            \"viewers\": [\n                \"data.default.viewers@{{data_partition_id}}.{{domain}}\"\n            ]\n        },\n        \"legal\": {\n            \"legaltags\": [\n                \"{{vds_legal_tag_id}}\"\n            ],\n            \"otherRelevantDataCountries\": [\n                \"NO\"\n            ],\n            \"status\": \"compliant\"\n        }\n    }\n]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{instance_url}}/api/storage/v2/records/",
+							"protocol": "https",
+							"host": [
+								"{{instance_url}}"
+							],
+							"path": [
+								"api",
+								"storage",
+								"v2",
+								"records",
+								""
+							],
+							"query": [
+								{
+									"key": "skipdupes",
+									"value": "true",
+									"description": "Skip duplicates when updating records with the same value.",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register Dataset",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"setNextRequestIfSegyFileExists();",
+									"",
+									"pm.test(\"Status code is 200 or 409\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 409]);",
+									"});",
+									"",
+									"pm.test(\"Dataset is Registered\", function() {",
+									"    var registeredDatasetName = '';",
+									"    let datasetName = pm.variables.get(\"segyTestFileNameForVds\");",
+									"",
+									"    switch(pm.response.code) {",
+									"        case 200:",
+									"            var response = pm.response.json();",
+									"            registeredDatasetName = response.name;",
+									"            setGcsUrl();",
+									"            break;",
+									"        case 409:",
+									"            console.log(\"in 409\")",
+									"            var response = pm.response.text();",
+									"            console.log(\"in 409\"+ response)",
+									"            var splits = response.split(' ');",
+									"            let datasetPath = splits[3];",
+									"            splits = datasetPath.split('/');",
+									"            registeredDatasetName = splits.pop();",
+									"            pm.expect(response).contains(\"already exists\");",
+									"            break;",
+									"        default:",
+									"            console.log('Unexpected server code');",
+									"    }",
+									"    ",
+									"    pm.expect(registeredDatasetName).equals(datasetName);",
+									"});",
+									"",
+									"function setGcsUrl() {",
+									"    var gcsurl = pm.response.json().gcsurl;",
+									"    pm.collectionVariables.set(\"vds_gcs_url\", gcsurl);",
+									"}",
+									"",
+									"function setNextRequestIfSegyFileExists() {",
+									"    let segyFileExists = JSON.parse(pm.variables.get(\"vds_segy_file_exists\"));",
+									"",
+									"    if (segyFileExists) {",
+									"        console.log(\"Test SEGY file exists. The next request is PATCH Metadata for VDS Test File.\");",
+									"        postman.setNextRequest(\"PATCH Metadata for VDS Test File\");",
+									"    }",
+									"}",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "ltag",
+								"value": "{{vds_legal_tag_id}}",
+								"description": "the legal tag ID",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"admin\": \"{{entitlement_admin_email}}\",\r\n  \"storage_class\": \"MULTI_REGIONAL\",\r\n  \"storage_location\": \"US\",\r\n  \"access_policy\": \"dataset\",\r\n  \"acls\": {\r\n    \"admins\": [\r\n      \"{{entitlement_admin_email}}\",\r\n    ],\r\n    \"viewers\": [\r\n      \"{{entitlement_editor_email}}\"\r\n    ]\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "text"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{instance_url}}/seistore-svc/api/v3/dataset/tenant/{{data_partition_id}}/subproject/{{vdsTestSubprojectName}}/dataset/{{segyTestFileNameForVds}}",
+							"protocol": "https",
+							"host": [
+								"{{instance_url}}"
+							],
+							"path": [
+								"seistore-svc",
+								"api",
+								"v3",
+								"dataset",
+								"tenant",
+								"{{data_partition_id}}",
+								"subproject",
+								"{{vdsTestSubprojectName}}",
+								"dataset",
+								"{{segyTestFileNameForVds}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Dataset",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"\r",
+									"\r",
+									"pm.test(\"Status code is 200 OK\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    pm.response.to.have.status(\"OK\");\r",
+									"    setGcsUrl();\r",
+									"});\r",
+									"\r",
+									"function setGcsUrl() {\r",
+									"    var gcsurl = pm.response.json().gcsurl;\r",
+									"    pm.collectionVariables.set(\"vds_gcs_url\", gcsurl);\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://{{instance_url}}/seistore-svc/api/v3/dataset/tenant/{{data_partition_id}}/subproject/{{vdsTestSubprojectName}}/dataset/{{segyTestFileNameForVds}}",
+							"protocol": "https",
+							"host": [
+								"{{instance_url}}"
+							],
+							"path": [
+								"seistore-svc",
+								"api",
+								"v3",
+								"dataset",
+								"tenant",
+								"{{data_partition_id}}",
+								"subproject",
+								"{{vdsTestSubprojectName}}",
+								"dataset",
+								"{{segyTestFileNameForVds}}"
+							],
+							"query": [
+								{
+									"key": "path",
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "BLOB SAS URL",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var response = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 200 OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.have.status(\"OK\");",
+									"});",
+									"",
+									"pm.test(\"Retrieved SAS URL\", function () {",
+									"  pm.expect(response).to.have.property('access_token');",
+									"});",
+									"",
+									"setSasUrl();",
+									"",
+									"function setSasUrl() {",
+									"    var gcsurl = pm.variables.get(\"vds_gcs_url\");",
+									"    var containerID = gcsurl.split(\"/\")[0];",
+									"    let filePath = gcsurl + \"/0\";",
+									"    var sasUrl = response.access_token.replace(containerID, filePath);",
+									"",
+									"    pm.collectionVariables.set(\"vds_sas_url\", sasUrl);",
+									"}",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "https://{{instance_url}}/seistore-svc/api/v3/utility/upload-connection-string?sdpath=sd%3A%2F%2F{{data_partition_id}}%2F{{vdsTestSubprojectName}}/{{segyTestFileNameForVds}}&readonly=false",
+							"protocol": "https",
+							"host": [
+								"{{instance_url}}"
+							],
+							"path": [
+								"seistore-svc",
+								"api",
+								"v3",
+								"utility",
+								"upload-connection-string"
+							],
+							"query": [
+								{
+									"key": "sdpath",
+									"value": "sd%3A%2F%2F{{data_partition_id}}%2F{{vdsTestSubprojectName}}/{{segyTestFileNameForVds}}",
+									"description": "full path for the subproject in the seismic store"
+								},
+								{
+									"key": "readonly",
+									"value": "false",
+									"description": "false, since we need to upload a file"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Upload SEGY File to Storage Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201 Created\", function () {",
+									"    pm.response.to.have.status(201);",
+									"    pm.response.to.have.status(\"Created\");",
+									"});",
+									"",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "BlockBlob",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "x-ms-blob-type",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/octet-stream",
+								"type": "text",
+								"description": "octet-stream since we'll be uploading a file"
+							},
+							{
+								"key": "Content-Length",
+								"value": "{{segyTestFileSize}}",
+								"description": "acknowledge file size to keep the stream open",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "file",
+							"file": {
+								"src": "source/ddms-smoke-tests/ST0202R08_PSDM_DELTA_FIELD_DEPTH.MIG_FIN.POST_STACK.3D.JS-017534.segy"
+							}
+						},
+						"url": {
+							"raw": "{{vds_sas_url}}",
+							"host": [
+								"{{vds_sas_url}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Verify Data Store Availability",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"checkIfSegyFileExists();",
+									"",
+									"pm.test(\"Status code is 200 OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.have.status(\"OK\");",
+									"});",
+									"",
+									"function checkIfSegyFileExists() {",
+									"    let segyFileName = pm.variables.get(\"segyTestFileNameForVds\");",
+									"    var response = pm.response.json();",
+									"    let segyFileExists = (response.indexOf(segyFileName) > -1) ? true : false;",
+									"    pm.collectionVariables.set(\"vds_segy_file_exists\", segyFileExists.toString());",
+									"}",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://{{instance_url}}/seistore-svc/api/v3/utility/ls?sdpath=sd://{{data_partition_id}}/{{vdsTestSubprojectName}}",
+							"protocol": "https",
+							"host": [
+								"{{instance_url}}"
+							],
+							"path": [
+								"seistore-svc",
+								"api",
+								"v3",
+								"utility",
+								"ls"
+							],
+							"query": [
+								{
+									"key": "sdpath",
+									"value": "sd://{{data_partition_id}}/{{vdsTestSubprojectName}}",
+									"description": "full path for the subproject in the seismic store"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Unlock Dataset",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 or 409\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 409]);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "ltag",
+								"value": "{{vds_legal_tag_id}}",
+								"description": "the legal tag ID",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "https://{{instance_url}}/seistore-svc/api/v3/dataset/tenant/{{data_partition_id}}/subproject/{{vdsTestSubprojectName}}/dataset/{{segyTestFileNameForVds}}/unlock",
+							"protocol": "https",
+							"host": [
+								"{{instance_url}}"
+							],
+							"path": [
+								"seistore-svc",
+								"api",
+								"v3",
+								"dataset",
+								"tenant",
+								"{{data_partition_id}}",
+								"subproject",
+								"{{vdsTestSubprojectName}}",
+								"dataset",
+								"{{segyTestFileNameForVds}}",
+								"unlock"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PATCH Metadata for VDS Test File",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var response = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 200 OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.have.status(\"OK\");",
+									"});",
+									"",
+									"pm.test(\"Filemetadata has test file size\", function() {",
+									"    let segyTestFileSize = parseInt(pm.variables.get(\"segyTestFileSize\"));",
+									"    let fileSize = response.filemetadata.size;",
+									"    pm.expect(fileSize).to.equal(segyTestFileSize);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"filemetadata\": {\n        \"type\": \"GENERIC\",\n        \"size\":  {{segyTestFileSize}},\n        \"nobjects\": 1\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{instance_url}}/seistore-svc/api/v3/dataset/tenant/{{data_partition_id}}/subproject/{{vdsTestSubprojectName}}/dataset/{{segyTestFileNameForVds}}",
+							"protocol": "https",
+							"host": [
+								"{{instance_url}}"
+							],
+							"path": [
+								"seistore-svc",
+								"api",
+								"v3",
+								"dataset",
+								"tenant",
+								"{{data_partition_id}}",
+								"subproject",
+								"{{vdsTestSubprojectName}}",
+								"dataset",
+								"{{segyTestFileNameForVds}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Verify That SEGY File Is Uploaded",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let segyFileName = pm.variables.get(\"segyTestFileNameForVds\");",
+									"",
+									"pm.test(\"Status code is 200 OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.have.status(\"OK\");",
+									"});",
+									"",
+									"pm.test(\"Test SEGY file is in subproject\", function () {",
+									"    var response = pm.response.json();",
+									"",
+									"    if (response.indexOf(segyFileName) > -1) {",
+									"        addSEGYfileToDeleteList();",
+									"    }",
+									"",
+									"    pm.expect(response.includes(segyFileName));",
+									"});",
+									"",
+									"function addSEGYfileToDeleteList() {",
+									"    pm.collectionVariables.set(\"vds_file_names_to_delete\", segyFileName);",
+									"}",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://{{instance_url}}/seistore-svc/api/v3/utility/ls?sdpath=sd://{{data_partition_id}}/{{vdsTestSubprojectName}}",
+							"protocol": "https",
+							"host": [
+								"{{instance_url}}"
+							],
+							"path": [
+								"seistore-svc",
+								"api",
+								"v3",
+								"utility",
+								"ls"
+							],
+							"query": [
+								{
+									"key": "sdpath",
+									"value": "sd://{{data_partition_id}}/{{vdsTestSubprojectName}}",
+									"description": "full path for the subproject in the seismic store"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Conversion",
+			"item": [
+				{
+					"name": "Trigger VDS Conversion",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"setRunID();",
+									"",
+									"pm.test(\"Status code is 200 OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.have.status(\"OK\");",
+									"});",
+									"",
+									"function setRunID() {",
+									"    var runId = pm.response.json().runId;",
+									"    pm.collectionVariables.set(\"vds_run_id\", runId);",
+									"}",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var segyFileName = pm.variables.get(\"segyTestFileNameForVds\");",
+									"var persistent_id = segyFileName.split(\".segy\")[0] + \".vds\";",
+									"pm.collectionVariables.set(\"persistent_id\", persistent_id);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "data-partition-id",
+								"value": "{{data_partition_id}}",
+								"type": "text",
+								"description": "the datapartition ID"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"executionContext\": {\r\n        \"Payload\": {\r\n            \"AppKey\": \"test-app\",\r\n            \"data-partition-id\": \"{{data_partition_id}}\"\r\n        },\r\n        \"vds_url\": \"sd://{{data_partition_id}}/{{vdsTestSubprojectName}}\",\r\n        \"work_product_id\": \"{{work-product-id}}\",\r\n        \"file_record_id\": \"{{file-record-id}}\",\r\n        \"persistent_id\": \"{{persistent_id}}\",\r\n        \"id_token\": \"{{access_token}}\"\r\n    }\r\n}\r\n"
+						},
+						"url": {
+							"raw": "https://{{instance_url}}/api/workflow/v1/workflow/{{vds_dag_id}}/workflowRun",
+							"protocol": "https",
+							"host": [
+								"{{instance_url}}"
+							],
+							"path": [
+								"api",
+								"workflow",
+								"v1",
+								"workflow",
+								"{{vds_dag_id}}",
+								"workflowRun"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Check VDS Conversion is Done",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let oneMinute = 60000; // in milliseconds",
+									"let tooManyIterations = 7;",
+									"",
+									"const Status = {",
+									"    Running: 'running',",
+									"    Success: 'success',",
+									"    Failed: 'failed'",
+									"};",
+									"",
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 200 OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.have.status(\"OK\");",
+									"});",
+									"",
+									"checkOrRecheckForSuccess();",
+									"",
+									"function checkOrRecheckForSuccess() {",
+									"    switch (jsonData.status) {",
+									"        case Status.Running:",
+									"            var iteration = parseInt(pm.variables.get(\"vds_iteration\"), 10);",
+									"            console.log(\"iteration: \" + iteration);",
+									"",
+									"            if (iteration < tooManyIterations) { // recheck every minute",
+									"                setTimeout(function(){}, [oneMinute]);",
+									"                pm.collectionVariables.set(\"vds_iteration\", iteration + 1);",
+									"                postman.setNextRequest(\"Check VDS Conversion is Done\");",
+									"                break;",
+									"            } else {",
+									"                console.log(\"Stop polling conversion status. Process may be hanging.\")",
+									"            }",
+									"        case Status.Success:",
+									"        case Status.Failed:",
+									"            pm.test(\"Workflow Successfully Completed\", function() {",
+									"                pm.expect(jsonData.status).to.equal(Status.Success);",
+									"            });",
+									"            break;",
+									"        default:",
+									"            throw \"Unexpected status for workflow run.\";",
+									"    };",
+									"}",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Data-Partition-Id",
+								"value": "{{data_partition_id}}",
+								"type": "text",
+								"description": "the datapartition ID"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://{{instance_url}}/api/workflow/v1/workflow/{{vds_dag_id}}/workflowRun/{{vds_run_id}}",
+							"protocol": "https",
+							"host": [
+								"{{instance_url}}"
+							],
+							"path": [
+								"api",
+								"workflow",
+								"v1",
+								"workflow",
+								"{{vds_dag_id}}",
+								"workflowRun",
+								"{{vds_run_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Verify VDS Conversion File",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.have.status(\"OK\");",
+									"});",
+									"",
+									"pm.test(\"VDS Conversion files exist\", function() {",
+									"    let segyFileNameWithExtension = pm.variables.get(\"segyTestFileNameForVds\");",
+									"    let segyFileName = segyFileNameWithExtension.split(\".segy\")[0];",
+									"    let vdsFileName = segyFileName + \".vds\";",
+									"    pm.collectionVariables.set(\"vds_filename\", vdsFileName);",
+									"",
+									"    var listOfFiles = [vdsFileName];",
+									"    var files = pm.response.json();",
+									"    var vdsFileFound = false;",
+									"",
+									"    for (const fileName of files) {",
+									"        if (fileName === vdsFileName) {",
+									"            vdsFileFound = true;",
+									"             break;",
+									"        }",
+									"    }",
+									"    ",
+									"    saveFileNamesToDeleteLater(listOfFiles);",
+									"",
+									"    pm.expect(vdsFileFound).to.be.true;",
+									"});",
+									"",
+									"function saveFileNamesToDeleteLater(fileNames) {",
+									"    let filesToDeleteString = pm.variables.get(\"vds_file_names_to_delete\");",
+									"    let filesToDeleteLater = filesToDeleteString.split(',');",
+									"    filesToDeleteLater = filesToDeleteLater.concat(fileNames);",
+									"    ",
+									"    pm.collectionVariables.set(\"vds_file_names_to_delete\", filesToDeleteLater.toString());",
+									"}",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://{{instance_url}}/seistore-svc/api/v3/utility/ls?sdpath=sd://{{data_partition_id}}/{{vdsTestSubprojectName}}",
+							"protocol": "https",
+							"host": [
+								"{{instance_url}}"
+							],
+							"path": [
+								"seistore-svc",
+								"api",
+								"v3",
+								"utility",
+								"ls"
+							],
+							"query": [
+								{
+									"key": "sdpath",
+									"value": "sd://{{data_partition_id}}/{{vdsTestSubprojectName}}",
+									"description": "full path for the subproject in the seismic store"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "TearDown",
+			"item": [
+				{
+					"name": "Remove Dataset",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let dataSetsToDelete = pm.variables.get(\"vds_file_names_to_delete\");",
+									"",
+									"if (dataSetsToDelete) {",
+									"    postman.setNextRequest(\"Remove Dataset\");",
+									"} else {",
+									"    pm.collectionVariables.unset(\"vdsDataSetToDelete\");",
+									"}",
+									"",
+									"pm.test(\"Status code is 200 OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.have.status(\"OK\");",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let dataSetsToDeleteString = pm.variables.get(\"vds_file_names_to_delete\");",
+									"",
+									"if (dataSetsToDeleteString) {",
+									"    var dataSetsToDelete = dataSetsToDeleteString.split(',');",
+									"    let dataSetToDelete = dataSetsToDelete.pop();",
+									"    pm.collectionVariables.set(\"vdsDataSetToDelete\", dataSetToDelete);",
+									"",
+									"    if (dataSetsToDelete.length > 0) {",
+									"        pm.collectionVariables.set(\"vds_file_names_to_delete\", dataSetsToDelete.toString())",
+									"    } else {",
+									"        pm.collectionVariables.unset(\"vds_file_names_to_delete\");",
+									"    }",
+									"}",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "ltag",
+								"value": "{{vds_legal_tag_id}}",
+								"description": "the legal tag ID",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"admin\": \"{{entitlement_admin_email}}\",\r\n  \"storage_class\": \"MULTI_REGIONAL\",\r\n  \"storage_location\": \"US\",\r\n  \"acls\": {\r\n    \"admins\": [\r\n      \"{{entitlement_admin_email}}\",\r\n    ],\r\n    \"viewers\": [\r\n      \"{{entitlement_editor_email}}\"\r\n    ]\r\n  }\r\n}"
+						},
+						"url": {
+							"raw": "https://{{instance_url}}/seistore-svc/api/v3/dataset/tenant/{{vdsTestSubprojectName}}/subproject/{{vdsTestSubprojectName}}/dataset/{{vdsDataSetToDelete}}",
+							"protocol": "https",
+							"host": [
+								"{{instance_url}}"
+							],
+							"path": [
+								"seistore-svc",
+								"api",
+								"v3",
+								"dataset",
+								"tenant",
+								"{{vdsTestSubprojectName}}",
+								"subproject",
+								"{{vdsTestSubprojectName}}",
+								"dataset",
+								"{{vdsDataSetToDelete}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove Test Record",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let recordsToDelete = pm.variables.get(\"vds_record_IDs_to_delete\");",
+									"",
+									"if (recordsToDelete) {",
+									"    postman.setNextRequest(\"Remove Test Record\");",
+									"} else {",
+									"    pm.collectionVariables.unset(\"vdsRecordToDelete\");",
+									"}",
+									"",
+									"pm.test(\"Status code is 204 No Content\", function () {",
+									"    pm.response.to.have.status(204);",
+									"    pm.response.to.have.status(\"No Content\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let recordsToDeleteString = pm.variables.get(\"vds_record_IDs_to_delete\");",
+									"",
+									"if (recordsToDeleteString) {",
+									"    var recordsToDelete = recordsToDeleteString.split(',');",
+									"    let recordToDelete = recordsToDelete.pop();",
+									"    pm.collectionVariables.set(\"vdsRecordToDelete\", recordToDelete);",
+									"",
+									"    if (recordsToDelete.length > 0) {",
+									"        pm.collectionVariables.set(\"vds_record_IDs_to_delete\", recordsToDelete.toString())",
+									"    } else {",
+									"        pm.collectionVariables.unset(\"vds_record_IDs_to_delete\");",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "data-partition-id",
+								"value": "{{data_partition_id}}",
+								"type": "text",
+								"description": "the datapartition ID"
+							}
+						],
+						"url": {
+							"raw": "https://{{instance_url}}/api/storage/v2/records/{{vdsRecordToDelete}}",
+							"protocol": "https",
+							"host": [
+								"{{instance_url}}"
+							],
+							"path": [
+								"api",
+								"storage",
+								"v2",
+								"records",
+								"{{vdsRecordToDelete}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove Test Legal Tag",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"description": "This value should be the desired data partition id.",
+								"key": "data-partition-id",
+								"type": "text",
+								"value": "{{data_partition_id}}"
+							}
+						],
+						"url": {
+							"raw": "https://{{instance_url}}/api/legal/v1/legaltags/{{vds_legal_tag_id}}",
+							"protocol": "https",
+							"host": [
+								"{{instance_url}}"
+							],
+							"path": [
+								"api",
+								"legal",
+								"v1",
+								"legaltags",
+								"{{vds_legal_tag_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove Test Subproject",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 or 404\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 404]);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "ltag",
+								"value": "{{vds_legal_tag_id}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "https://{{instance_url}}/seistore-svc/api/v3/subproject/tenant/{{data_partition_id}}/subproject/{{vdsTestSubprojectName}}",
+							"protocol": "https",
+							"host": [
+								"{{instance_url}}"
+							],
+							"path": [
+								"seistore-svc",
+								"api",
+								"v3",
+								"subproject",
+								"tenant",
+								"{{data_partition_id}}",
+								"subproject",
+								"{{vdsTestSubprojectName}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{TOKEN}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "entitlement_adminGroupName",
+			"value": "users.datalake.admins"
+		},
+		{
+			"key": "entitlement_domain",
+			"value": "{{data_partition_id}}.{{domain}}"
+		},
+		{
+			"key": "subproject_name",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "segyTestFileSize",
+			"value": "67550",
+			"type": "string"
+		},
+		{
+			"key": "access_token",
+			"value": ""
+		},
+		{
+			"key": "header_key_inline",
+			"value": "{{data_partition_id}}:reference-data--HeaderKeyName:Inline"
+		},
+		{
+			"key": "header_key_crossline",
+			"value": "{{data_partition_id}}:reference-data--HeaderKeyName:Crossline"
+		},
+		{
+			"key": "header_key_zscalar",
+			"value": "{{data_partition_id}}:reference-data--HeaderKeyName:ZSCALAR"
+		},
+		{
+			"key": "header_key_xyscalar",
+			"value": "{{data_partition_id}}:reference-data--HeaderKeyName:XYSCALAR"
+		},
+		{
+			"key": "header_key_cmpx",
+			"value": "{{data_partition_id}}:reference-data--HeaderKeyName:CMPX"
+		},
+		{
+			"key": "header_key_starttime",
+			"value": "{{data_partition_id}}:reference-data--HeaderKeyName:STARTTIME"
+		},
+		{
+			"key": "header_key_cmpy",
+			"value": "{{data_partition_id}}:reference-data--HeaderKeyName:CMPY"
+		},
+		{
+			"key": "authority",
+			"value": "osdu",
+			"type": "string"
+		},
+		{
+			"key": "schemaSource",
+			"value": "wks",
+			"type": "string"
+		},
+		{
+			"key": "work-product-id",
+			"value": ""
+		},
+		{
+			"key": "work-product-component-id",
+			"value": ""
+		},
+		{
+			"key": "file-record-id",
+			"value": ""
+		},
+		{
+			"key": "bin-grid-id",
+			"value": ""
+		},
+		{
+			"key": "segy_sd_path",
+			"value": "sd://dp1/undefined/undefined",
+			"disabled": true
+		},
+		{
+			"key": "segyTestFileNameForVds",
+			"value": ""
+		},
+		{
+			"key": "vds_gcs_url",
+			"value": ""
+		},
+		{
+			"key": "vds_sas_url",
+			"value": ""
+		},
+		{
+			"key": "vds_segy_file_exists",
+			"value": "true"
+		},
+		{
+			"key": "persistent_id",
+			"value": "",
+			"disabled": true
+		},
+		{
+			"key": "vds_run_id",
+			"value": ""
+		},
+		{
+			"key": "vds_filename",
+			"value": ""
+		},
+		{
+			"key": "id_token",
+			"value": "{{access_token}}",
+			"type": "string"
+		},
+		{
+			"key": "vds_dag_id",
+			"value": "segy-to-vds-conversion"
+		},
+		{
+			"key": "vdsTestSubprojectName",
+			"value": "vdstestsubproject"
+		},
+		{
+			"key": "vds_legal_tag_id",
+			"value": ""
+		}
+	]
+}
