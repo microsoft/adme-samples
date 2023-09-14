@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "ee826a58-0b69-4c71-bc07-bd60cde8c36b",
+		"_postman_id": "d4d69542-7c4f-44bd-b423-7079d8d45a70",
 		"name": "SEGYtoZGY",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "19529837"
@@ -500,7 +500,12 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"admin\": \"{{entitlement_admin_email}}\",\r\n  \"storage_class\": \"MULTI_REGIONAL\",\r\n  \"storage_location\": \"US\",\r\n  \"access_policy\": \"dataset\",\r\n  \"acls\": {\r\n    \"admins\": [\r\n      \"{{entitlement_admin_email}}\",\r\n    ],\r\n    \"viewers\": [\r\n      \"{{entitlement_editor_email}}\"\r\n    ]\r\n  }\r\n}"
+							"raw": "{\r\n    \"access_policy\": \"uniform\",\r\n    \"admin\": \"{{client_id}}\",\r\n    \"storage_class\": \"MULTI_REGIONAL\",\r\n    \"storage_location\": \"US\",\r\n    \"acls\": {\r\n        \"admins\": [\r\n            \"users.datalake.admins@{{data_partition_id}}.{{domain}}\"\r\n        ],\r\n        \"owners\": [\r\n            \"data.default.owners@{{data_partition_id}}.{{domain}}\"\r\n        ],\r\n        \"viewers\": [\r\n            \"data.default.viewers@{{data_partition_id}}.{{domain}}\"\r\n        ]\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
 						},
 						"url": {
 							"raw": "https://{{instance_url}}/seistore-svc/api/v3/subproject/tenant/{{data_partition_id}}/subproject/{{zgyTestSubprojectName}}",
