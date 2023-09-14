@@ -1,0 +1,772 @@
+[
+    {
+        "data": {
+            "ResourceHomeRegionID": "{{data_partition_id}}:reference-data--OSDURegion:SomeUniqueOSDURegionID:",
+            "ResourceHostRegionIDs": [
+                "{{data_partition_id}}:reference-data--OSDURegion:SomeUniqueOSDURegionID:"
+            ],
+            "ResourceCurationStatus": "{{data_partition_id}}:reference-data--ResourceCurationStatus:CREATED:",
+            "ResourceLifecycleStatus": "{{data_partition_id}}:reference-data--ResourceLifecycleStatus:LOADING:",
+            "ResourceSecurityClassification": "{{data_partition_id}}:reference-data--ResourceSecurityClassification:RESTRICTED:",
+            "Source": "Example Data Source",
+            "ExistenceKind": "{{data_partition_id}}:reference-data--ExistenceKind:Prototype:",
+            "Components": [
+                "{{work-product-component-id}}",
+                "{{bin-grid-id}}"
+            ],
+            "IsExtendedLoad": true,
+            "IsDiscoverable": true,
+            "Name": "Seismic migration Time  - work product",
+            "Description": "Seismic migration Time - work product",
+            "CreationDateTime": "2020-02-13T09:13:15.55Z",
+            "Tags": [
+                "Example Tags"
+            ],
+            "SpatialPoint": {
+                "SpatialLocationCoordinatesDate": "2020-02-13T09:13:15.55Z",
+                "QuantitativeAccuracyBandID": "{{data_partition_id}}:reference-data--QuantitativeAccuracyBand:%3C1%20m:",
+                "QualitativeSpatialAccuracyTypeID": "{{data_partition_id}}:reference-data--QualitativeSpatialAccuracyType:SomeUniqueQualitativeSpatialAccuracyTypeID:",
+                "CoordinateQualityCheckPerformedBy": "Example CoordinateQualityCheckPerformedBy",
+                "CoordinateQualityCheckDateTime": "2020-02-13T09:13:15.55Z",
+                "CoordinateQualityCheckRemarks": [
+                    "Example CoordinateQualityCheckRemarks"
+                ],
+                "AsIngestedCoordinates": {
+                    "type": "AnyCrsFeatureCollection",
+                    "CoordinateReferenceSystemID": "{{data_partition_id}}:reference-data--CoordinateReferenceSystem:BoundCRS.SLB.32021.15851:",
+                    "VerticalCoordinateReferenceSystemID": "{{data_partition_id}}:reference-data--CoordinateReferenceSystem:VerticalCRS.EPSG.5773:",
+                    "persistableReferenceCrs": "{\"lateBoundCRS\":{\"wkt\":\"PROJCS[\\\"NAD_1927_StatePlane_Louisiana_South_FIPS_1702\\\",GEOGCS[\\\"GCS_North_American_1927\\\",DATUM[\\\"D_North_American_1927\\\",SPHEROID[\\\"Clarke_1866\\\",6378206.4,294.9786982]],PRIMEM[\\\"Greenwich\\\",0.0],UNIT[\\\"Degree\\\",0.0174532925199433]],PROJECTION[\\\"Lambert_Conformal_Conic\\\"],PARAMETER[\\\"False_Easting\\\",2000000.0],PARAMETER[\\\"False_Northing\\\",0.0],PARAMETER[\\\"Central_Meridian\\\",-91.3333333333333],PARAMETER[\\\"Standard_Parallel_1\\\",29.3],PARAMETER[\\\"Standard_Parallel_2\\\",30.7],PARAMETER[\\\"Latitude_Of_Origin\\\",28.6666666666667],UNIT[\\\"Foot_US\\\",0.304800609601219],AUTHORITY[\\\"EPSG\\\",26782]]\",\"ver\":\"PE_10_3_1\",\"name\":\"NAD_1927_StatePlane_Louisiana_South_FIPS_1702\",\"authCode\":{\"auth\":\"EPSG\",\"code\":\"26782\"},\"type\":\"LBC\"},\"singleCT\":{\"wkt\":\"GEOGTRAN[\\\"NAD_1927_To_WGS_1984_79_CONUS\\\",GEOGCS[\\\"GCS_North_American_1927\\\",DATUM[\\\"D_North_American_1927\\\",SPHEROID[\\\"Clarke_1866\\\",6378206.4,294.9786982]],PRIMEM[\\\"Greenwich\\\",0.0],UNIT[\\\"Degree\\\",0.0174532925199433]],GEOGCS[\\\"GCS_WGS_1984\\\",DATUM[\\\"D_WGS_1984\\\",SPHEROID[\\\"WGS_1984\\\",6378137.0,298.257223563]],PRIMEM[\\\"Greenwich\\\",0.0],UNIT[\\\"Degree\\\",0.0174532925199433]],METHOD[\\\"NADCON\\\"],PARAMETER[\\\"Dataset_conus\\\",0.0],AUTHORITY[\\\"EPSG\\\",15851]]\",\"ver\":\"PE_10_3_1\",\"name\":\"NAD_1927_To_WGS_1984_79_CONUS\",\"authCode\":{\"auth\":\"EPSG\",\"code\":\"15851\"},\"type\":\"ST\"},\"ver\":\"PE_10_3_1\",\"name\":\"NAD27 * OGP-Usa Conus / Louisiana South [26782,15851]\",\"authCode\":{\"auth\":\"SLB\",\"code\":\"26782079\"},\"type\":\"EBC\"}",
+                    "persistableReferenceVerticalCrs": "{\"authCode\":{\"auth\":\"EPSG\",\"code\":\"5773\"},\"type\":\"LBC\",\"ver\":\"PE_10_3_1\",\"name\":\"EGM96_Geoid\",\"wkt\":\"VERTCS[\\\"EGM96_Geoid\\\",VDATUM[\\\"EGM96_Geoid\\\"],PARAMETER[\\\"Vertical_Shift\\\",0.0],PARAMETER[\\\"Direction\\\",1.0],UNIT[\\\"Meter\\\",1.0],AUTHORITY[\\\"EPSG\\\",5773]]\"}",
+                    "persistableReferenceUnitZ": "{\"scaleOffset\":{\"scale\":1.0,\"offset\":0.0},\"symbol\":\"m\",\"baseMeasurement\":{\"ancestry\":\"Length\",\"type\":\"UM\"},\"type\":\"USO\"}",
+                    "features": [
+                        {
+                            "geometry": {
+                                "coordinates": [
+                                    [
+                                        [
+                                            438302.76,
+                                            6475310.75
+                                        ],
+                                        [
+                                            429582.2271600945,
+                                            6477485.023036702
+                                        ],
+                                        [
+                                            430791.8366380928,
+                                            6477485.023036702
+                                        ],
+                                        [
+                                            439512.36947799835,
+                                            6480162.22863138
+                                        ],
+                                        [
+                                            438302.76,
+                                            6475310.75
+                                        ]
+                                    ]
+                                ],
+                                "type": "AnyCrsPolygon"
+                            },
+                            "properties": {
+                                "ijNumbers": [
+                                    [
+                                        9961,
+                                        1961
+                                    ],
+                                    [
+                                        10361,
+                                        1961
+                                    ],
+                                    [
+                                        10361,
+                                        2680
+                                    ],
+                                    [
+                                        9961,
+                                        2680
+                                    ],
+                                    [
+                                        9961,
+                                        1961
+                                    ]
+                                ]
+                            },
+                            "type": "AnyCrsFeature"
+                        }
+                    ]
+                },
+                "Wgs84Coordinates": {
+                    "features": [
+                        {
+                            "geometry": {
+                                "coordinates": [
+                                    [
+                                        [
+                                            1.943967222,
+                                            58.414205
+                                        ],
+                                        [
+                                            1.794071944,
+                                            58.43241222
+                                        ],
+                                        [
+                                            1.814781667,
+                                            58.43260528
+                                        ],
+                                        [
+                                            1.9633875,
+                                            58.45794
+                                        ],
+                                        [
+                                            1.943967222,
+                                            58.414205
+                                        ]
+                                    ]
+                                ],
+                                "type": "Polygon"
+                            },
+                            "properties": {
+                                "ijNumbers": [
+                                    [
+                                        9961,
+                                        1961
+                                    ],
+                                    [
+                                        10361,
+                                        1961
+                                    ],
+                                    [
+                                        10361,
+                                        2680
+                                    ],
+                                    [
+                                        9961,
+                                        2680
+                                    ],
+                                    [
+                                        9961,
+                                        1961
+                                    ]
+                                ]
+                            },
+                            "type": "Feature"
+                        }
+                    ],
+                    "type": "FeatureCollection"
+                },
+                "AppliedOperations": [
+                    "conversion from ED_1950_UTM_Zone_31N to GCS_European_1950; 1 points converted",
+                    "transformation GCS_European_1950 to GCS_WGS_1984 using ED_1950_To_WGS_1984_24; 1 points successfully transformed"
+                ],
+                "SpatialParameterTypeID": "{{data_partition_id}}:reference-data--SpatialParameterType:Outline:",
+                "SpatialGeometryTypeID": "{{data_partition_id}}:reference-data--SpatialGeometryType:Point:"
+            },
+            "SpatialArea": {
+                "AsIngestedCoordinates": {
+                    "type": "AnyCrsFeatureCollection",
+                    "CoordinateReferenceSystemID": "{{data_partition_id}}:reference-data--CoordinateReferenceSystem:BoundCRS::SLB::23034002:",
+                    "persistableReferenceCrs": "{\"lateBoundCRS\":{\"wkt\":\"PROJCS[\\\"NAD_1927_StatePlane_Louisiana_South_FIPS_1702\\\",GEOGCS[\\\"GCS_North_American_1927\\\",DATUM[\\\"D_North_American_1927\\\",SPHEROID[\\\"Clarke_1866\\\",6378206.4,294.9786982]],PRIMEM[\\\"Greenwich\\\",0.0],UNIT[\\\"Degree\\\",0.0174532925199433]],PROJECTION[\\\"Lambert_Conformal_Conic\\\"],PARAMETER[\\\"False_Easting\\\",2000000.0],PARAMETER[\\\"False_Northing\\\",0.0],PARAMETER[\\\"Central_Meridian\\\",-91.3333333333333],PARAMETER[\\\"Standard_Parallel_1\\\",29.3],PARAMETER[\\\"Standard_Parallel_2\\\",30.7],PARAMETER[\\\"Latitude_Of_Origin\\\",28.6666666666667],UNIT[\\\"Foot_US\\\",0.304800609601219],AUTHORITY[\\\"EPSG\\\",26782]]\",\"ver\":\"PE_10_3_1\",\"name\":\"NAD_1927_StatePlane_Louisiana_South_FIPS_1702\",\"authCode\":{\"auth\":\"EPSG\",\"code\":\"26782\"},\"type\":\"LBC\"},\"singleCT\":{\"wkt\":\"GEOGTRAN[\\\"NAD_1927_To_WGS_1984_79_CONUS\\\",GEOGCS[\\\"GCS_North_American_1927\\\",DATUM[\\\"D_North_American_1927\\\",SPHEROID[\\\"Clarke_1866\\\",6378206.4,294.9786982]],PRIMEM[\\\"Greenwich\\\",0.0],UNIT[\\\"Degree\\\",0.0174532925199433]],GEOGCS[\\\"GCS_WGS_1984\\\",DATUM[\\\"D_WGS_1984\\\",SPHEROID[\\\"WGS_1984\\\",6378137.0,298.257223563]],PRIMEM[\\\"Greenwich\\\",0.0],UNIT[\\\"Degree\\\",0.0174532925199433]],METHOD[\\\"NADCON\\\"],PARAMETER[\\\"Dataset_conus\\\",0.0],AUTHORITY[\\\"EPSG\\\",15851]]\",\"ver\":\"PE_10_3_1\",\"name\":\"NAD_1927_To_WGS_1984_79_CONUS\",\"authCode\":{\"auth\":\"EPSG\",\"code\":\"15851\"},\"type\":\"ST\"},\"ver\":\"PE_10_3_1\",\"name\":\"NAD27 * OGP-Usa Conus / Louisiana South [26782,15851]\",\"authCode\":{\"auth\":\"SLB\",\"code\":\"26782079\"},\"type\":\"EBC\"}",
+                    "features": [
+                        {
+                            "geometry": {
+                                "coordinates": [
+                                    [
+                                        [
+                                            438302.76,
+                                            6475310.75
+                                        ],
+                                        [
+                                            429582.2271600945,
+                                            6477485.023036702
+                                        ],
+                                        [
+                                            430791.8366380928,
+                                            6477485.023036702
+                                        ],
+                                        [
+                                            439512.36947799835,
+                                            6480162.22863138
+                                        ],
+                                        [
+                                            438302.76,
+                                            6475310.75
+                                        ]
+                                    ]
+                                ],
+                                "type": "AnyCrsPolygon"
+                            },
+                            "properties": {
+                                "ijNumbers": [
+                                    [
+                                        9961,
+                                        1961
+                                    ],
+                                    [
+                                        10361,
+                                        1961
+                                    ],
+                                    [
+                                        10361,
+                                        2680
+                                    ],
+                                    [
+                                        9961,
+                                        2680
+                                    ],
+                                    [
+                                        9961,
+                                        1961
+                                    ]
+                                ]
+                            },
+                            "type": "AnyCrsFeature"
+                        }
+                    ]
+                },
+                "Wgs84Coordinates": {
+                    "features": [
+                        {
+                            "geometry": {
+                                "coordinates": [
+                                    [
+                                        [
+                                            1.943967222,
+                                            58.414205
+                                        ],
+                                        [
+                                            1.794071944,
+                                            58.43241222
+                                        ],
+                                        [
+                                            1.814781667,
+                                            58.43260528
+                                        ],
+                                        [
+                                            1.9633875,
+                                            58.45794
+                                        ],
+                                        [
+                                            1.943967222,
+                                            58.414205
+                                        ]
+                                    ]
+                                ],
+                                "type": "Polygon"
+                            },
+                            "properties": {
+                                "ijNumbers": [
+                                    [
+                                        9961,
+                                        1961
+                                    ],
+                                    [
+                                        10361,
+                                        1961
+                                    ],
+                                    [
+                                        10361,
+                                        2680
+                                    ],
+                                    [
+                                        9961,
+                                        2680
+                                    ],
+                                    [
+                                        9961,
+                                        1961
+                                    ]
+                                ]
+                            },
+                            "type": "Feature"
+                        }
+                    ],
+                    "type": "FeatureCollection"
+                },
+                "AppliedOperations": [
+                    "conversion from ED_1950_UTM_Zone_34N to GCS_European_1950; 5 points converted",
+                    "transformation GCS_European_1950 to GCS_WGS_1984 using ED_1950_To_WGS_1984_2; 5 points successfully transformed"
+                ],
+                "SpatialParameterTypeID": "{{data_partition_id}}:reference-data--SpatialParameterType:Outline:",
+                "SpatialGeometryTypeID": "{{data_partition_id}}:reference-data--SpatialGeometryType:Polygon:"
+            },
+            "SubmitterName": "Example SubmitterName",
+            "BusinessActivities": [
+                "Example BusinessActivities"
+            ],
+            "AuthorIDs": [
+                "Example AuthorIDs"
+            ],
+            "LineageAssertions": [
+                {
+                    "ID": "{{data_partition_id}}:any-group-type--AnyIndividualType:SomeUniqueAnyIndividualTypeID:",
+                    "LineageRelationshipType": "{{data_partition_id}}:reference-data--LineageRelationshipType:Direct:"
+                }
+            ],
+            "Annotations": [
+                "Example Annotations"
+            ],
+            "ExtensionProperties": {}
+        },
+        "meta": [],
+        "kind": "osdu:wks:work-product--WorkProduct:1.0.0",
+        "id": "{{work-product-id}}",
+        "acl": {
+            "owners": [
+                "data.default.owners@{{data_partition_id}}.{{domain}}"
+            ],
+            "viewers": [
+                "data.default.viewers@{{data_partition_id}}.{{domain}}"
+            ]
+        },
+        "legal": {
+            "legaltags": [
+                "{{vds_legal_tag_id}}"
+            ],
+            "otherRelevantDataCountries": [
+                "NO"
+            ],
+            "status": "compliant"
+        }
+    },
+    {
+        "data": {
+            "IsExtendedLoad": false,
+            "IsDiscoverable": true,
+            "Name": "OSDU_SEGY",
+            "Description": "",
+            "CreationDateTime": "2021-02-12T13:11:58Z",
+            "Datasets": [
+                "{{file-record-id}}"
+            ],
+            "SpatialArea": {
+                "AsIngestedCoordinates": {
+                    "type": "AnyCrsFeatureCollection",
+                    "CoordinateReferenceSystemID": "{{data_partition_id}}:reference-data--CoordinateReferenceSystem:BoundCRS::SLB::23034002:",
+                    "persistableReferenceCrs": "{\"lateBoundCRS\":{\"wkt\":\"PROJCS[\\\"NAD_1927_StatePlane_Louisiana_South_FIPS_1702\\\",GEOGCS[\\\"GCS_North_American_1927\\\",DATUM[\\\"D_North_American_1927\\\",SPHEROID[\\\"Clarke_1866\\\",6378206.4,294.9786982]],PRIMEM[\\\"Greenwich\\\",0.0],UNIT[\\\"Degree\\\",0.0174532925199433]],PROJECTION[\\\"Lambert_Conformal_Conic\\\"],PARAMETER[\\\"False_Easting\\\",2000000.0],PARAMETER[\\\"False_Northing\\\",0.0],PARAMETER[\\\"Central_Meridian\\\",-91.3333333333333],PARAMETER[\\\"Standard_Parallel_1\\\",29.3],PARAMETER[\\\"Standard_Parallel_2\\\",30.7],PARAMETER[\\\"Latitude_Of_Origin\\\",28.6666666666667],UNIT[\\\"Foot_US\\\",0.304800609601219],AUTHORITY[\\\"EPSG\\\",26782]]\",\"ver\":\"PE_10_3_1\",\"name\":\"NAD_1927_StatePlane_Louisiana_South_FIPS_1702\",\"authCode\":{\"auth\":\"EPSG\",\"code\":\"26782\"},\"type\":\"LBC\"},\"singleCT\":{\"wkt\":\"GEOGTRAN[\\\"NAD_1927_To_WGS_1984_79_CONUS\\\",GEOGCS[\\\"GCS_North_American_1927\\\",DATUM[\\\"D_North_American_1927\\\",SPHEROID[\\\"Clarke_1866\\\",6378206.4,294.9786982]],PRIMEM[\\\"Greenwich\\\",0.0],UNIT[\\\"Degree\\\",0.0174532925199433]],GEOGCS[\\\"GCS_WGS_1984\\\",DATUM[\\\"D_WGS_1984\\\",SPHEROID[\\\"WGS_1984\\\",6378137.0,298.257223563]],PRIMEM[\\\"Greenwich\\\",0.0],UNIT[\\\"Degree\\\",0.0174532925199433]],METHOD[\\\"NADCON\\\"],PARAMETER[\\\"Dataset_conus\\\",0.0],AUTHORITY[\\\"EPSG\\\",15851]]\",\"ver\":\"PE_10_3_1\",\"name\":\"NAD_1927_To_WGS_1984_79_CONUS\",\"authCode\":{\"auth\":\"EPSG\",\"code\":\"15851\"},\"type\":\"ST\"},\"ver\":\"PE_10_3_1\",\"name\":\"NAD27 * OGP-Usa Conus / Louisiana South [26782,15851]\",\"authCode\":{\"auth\":\"SLB\",\"code\":\"26782079\"},\"type\":\"EBC\"}",
+                    "features": [
+                        {
+                            "geometry": {
+                                "coordinates": [
+                                    [
+                                        [
+                                            438302.76,
+                                            6475310.75
+                                        ],
+                                        [
+                                            429582.2271600945,
+                                            6477485.023036702
+                                        ],
+                                        [
+                                            430791.8366380928,
+                                            6477485.023036702
+                                        ],
+                                        [
+                                            439512.36947799835,
+                                            6480162.22863138
+                                        ]
+                                    ]
+                                ],
+                                "type": "AnyCrsPolygon"
+                            },
+                            "properties": {
+                                "ijNumbers": [
+                                    [
+                                        9961,
+                                        1961
+                                    ],
+                                    [
+                                        10361,
+                                        1961
+                                    ],
+                                    [
+                                        10361,
+                                        2680
+                                    ],
+                                    [
+                                        9961,
+                                        2680
+                                    ]
+                                ]
+                            },
+                            "type": "AnyCrsFeature"
+                        }
+                    ]
+                },
+                "Wgs84Coordinates": {
+                    "features": [
+                        {
+                            "geometry": {
+                                "coordinates": [
+                                    [
+                                        [
+                                            1.943967222,
+                                            58.414205
+                                        ],
+                                        [
+                                            1.794071944,
+                                            58.43241222
+                                        ],
+                                        [
+                                            1.814781667,
+                                            58.43260528
+                                        ],
+                                        [
+                                            1.9633875,
+                                            58.45794
+                                        ],
+                                        [
+                                            1.943967222,
+                                            58.414205
+                                        ]
+                                    ]
+                                ],
+                                "type": "Polygon"
+                            },
+                            "properties": {
+                                "ijNumbers": [
+                                    [
+                                        9961,
+                                        1961
+                                    ],
+                                    [
+                                        10361,
+                                        1961
+                                    ],
+                                    [
+                                        10361,
+                                        2680
+                                    ],
+                                    [
+                                        9961,
+                                        2680
+                                    ],
+                                    [
+                                        9961,
+                                        1961
+                                    ]
+                                ]
+                            },
+                            "type": "Feature"
+                        }
+                    ],
+                    "type": "FeatureCollection"
+                },
+                "AppliedOperations": [
+                    "conversion from ED_1950_UTM_Zone_34N to GCS_European_1950; 5 points converted",
+                    "transformation GCS_European_1950 to GCS_WGS_1984 using ED_1950_To_WGS_1984_2; 5 points successfully transformed"
+                ],
+                "SpatialParameterTypeID": "{{data_partition_id}}:reference-data--SpatialParameterType:Outline:",
+                "SpatialGeometryTypeID": "{{data_partition_id}}:reference-data--SpatialGeometryType:Polygon:"
+            },
+            "Precision": {
+                "WordFormat": "{{data_partition_id}}:reference-data--WordFormatType:IEEE_FLOAT:",
+                "WordWidth": 4
+            },
+            "CrosslineMin": 1,
+            "CrosslineMax": 34,
+            "CrosslineIncrement": 1,
+            "InlineMin": 1,
+            "InlineMax": 67,
+            "InlineIncrement": 1,
+            "SeismicDomainTypeID": "{{data_partition_id}}:reference-data--SeismicDomainType:Time:",
+            "StartTime": 0,
+            "EndTime": 200,
+            "SampleInterval": 4,
+            "SampleCount": 51,
+            "RangeAmplitudeMin": -67.563103,
+            "RangeAmplitudeMax": 151.844238,
+            "SeismicWaveTypeID": "{{data_partition_id}}:reference-data--SeismicWaveType:P:",
+            "SeismicStackingTypeID": "{{data_partition_id}}:reference-data--SeismicStackingType:Stk:",
+            "TextualFileHeader": [
+                "C01 CLIENT : STATOIL                              PROCESSED BY: WESTERNGECO     C02 AREA   : VOLVE, BLOCK 15/9,  NORTH SEA - ST10010     SURVEY: 3D 4C 0BC      C03 3D FULL AREA POST-STACK FINAL PSDM                       DATE: 2011-10-26   C04 DATA FORMAT: SEGY       DATA TYPE: STACK-FULL ANGLE, 3-41 DEGREES (T)       C05 ---------------------AQUISITION PARAMETRS---------------------------------- C06 DATA SHOT BY VESSEL: M/V SANCO SPIRIT & VIKLAND  CABLE LENGTH:6000 M        C07 NO OF GROUPS: 960/P,X,Y,Z.  NO OF CABLES: 8  ARRAY VOL/SOURCE: 3990 CU IN.  C08 GROUP INTERVAL: 25M  SHOT INTERVAL: 25M (FLIP-FLOP)  RECORD LENGTH: 10000 MSC09 GEODECTIC DATUM:  ED50      SPHEROID: INTERNAT 1924     PROJECTION: UTM     C10  UTM ZONE: 31 N                                                             C11 FIRST SAMPLE: 4 MS     LAST SAMPLE: 3400 MS     SAMPLE INTERVAL: 4 MS       C12 NAVIGATION SOURCE P1/90 UKOOA, SPS                                          C13 ----------------------PROCESSING SEQUENCE---------------------------------- C14 REFORMAT, RESAMPLING TO 4MS                                                 C15 Z TO P AMP. MATCHING AND DESIGNATURE APPLIED                                C16 TIDAL STATIC CORRECTION, NOISE ATTENUATION                                  C17 PZ CALIBRATION & SUMMATION                                                  C18 DIRECT ARRIVAL REMOVAL (SHOT & RECEIVER DOMAIN)                             C19 LINEAR NOISE ATTENUATION (RECEIVER DOMAIN), OFFSET REGULARIZATION           C20 SINGLE BOUNCE DECON IN TAU-PQ DOMAIN                                        C21 DETERMINISTIC WATER DEMULTIPLE, PrSDM (2011 VELOCITY MODEL),                C22 DEPTH TO TIME CONVERSION, RESIDUAL VELOCITY APPLIED, RADON DEMULTIPLE       C23  ANGLE MUTE (3-41 DEGREES), STACK,  MODEL BASED DEMULTIPLE                  C24 INVERSE_Q (100),  RANDOM NOISE ATTENUATION, 12.5X12.5 INTERPOLATION         C25 BPF 70Hz 50dB/OCT HIGH-CUT, OUTPUT SEGY FORMAT                              C26 ----------------------PROCESSING GRID INFORMATION-------------------------  C27 INLINE  BIN SIZE: 12.5M   CROSSLINE BIN SIZE: 12.5M  AZIMUTH: 284 DEGREES   C28 INLINE NUMBER INCREMENT:1       CROSSLINE  NUMBER INCREMENT:1               C29 PG1   X: 439272.97   Y: 6475068.89   IL:   9961   XL: 1881                  C30 PG2   X: 429582.21   Y: 6477485.37   IL:   9961   XL: 2680                  C31 PG3   X: 440588.57   Y: 6480344.84   IL: 10396   XL: 1881                   C32 PG4   X: 430897.81   Y: 6482761.32   IL: 10396   XL: 2680                   C33                                                                             C34 ----------------------HEADER WORD POSITIONS-------------------------------- C35 3D INLINE  BYTES 189-192             |  3D CROSS LINE   BYTES 193-196       C36 BIN CENTRE UTM-X  BYTES 181-184.  |  BIN CENTRE UTM-Y  BYTES 185-188        C37 CMP BYTES 21-24                                                             C38 ALL COORDINATE VALUES ARE MULTIPLIED BY 100                                 C39                                                                             C40 END EBCDIC                                                                  "
+            ],
+            "VerticalDatumOffset": 0,
+            "VerticalMeasurementTypeID": "{{data_partition_id}}:reference-data--VerticalMeasurementType:MeanSeaLevel:",
+            "ReplacementVelocity": 1480,
+            "ShiftApplied": 0,
+            "Preferred3DInterpretationSetID": "{{data_partition_id}}master-data--Seismic3DInterpretationSet:seismicSurvey3d-09cc1a5d-d7f8-40f4-8161-bd40954f147c:",
+            "BinGridID": "{{bin-grid-id}}",
+            "ExtensionProperties": {}
+        },
+        "meta": [
+            {
+                "kind": "Unit",
+                "name": "m",
+                "persistableReference": "{\"abcd\":{\"a\":0.0,\"b\":1.0,\"c\":1.0,\"d\":0.0},\"symbol\":\"m\",\"baseMeasurement\":{\"ancestry\":\"L\",\"type\":\"UM\"},\"type\":\"UAD\"}",
+                "unitOfMeasureID": "{{data_partition_id}}:reference-data--UnitOfMeasure:m:",
+                "propertyNames": [
+                    "VerticalDatumOffset"
+                ]
+            },
+            {
+                "kind": "Unit",
+                "name": "m/s",
+                "persistableReference": "{\"abcd\":{\"a\":0.0,\"b\":1.0,\"c\":1.0,\"d\":0.0},\"symbol\":\"m/s\",\"baseMeasurement\":{\"ancestry\":\"L/T\",\"type\":\"UM\"},\"type\":\"UAD\"}",
+                "unitOfMeasureID": "{{data_partition_id}}:reference-data--UnitOfMeasure:m%2Fs:",
+                "propertyNames": [
+                    "ReplacementVelocity"
+                ]
+            },
+            {
+                "kind": "Unit",
+                "name": "amplitude",
+                "persistableReference": "{\"scaleOffset\":{\"scale\":1.0,\"offset\":0.0},\"symbol\":\"----\",\"baseMeasurement\":{\"ancestry\":\"Dimensionless\",\"type\":\"UM\"},\"type\":\"USO\"}",
+                "propertyNames": [
+                    "RangeAmplitudeMin",
+                    "RangeAmplitudeMax"
+                ]
+            },
+            {
+                "kind": "Unit",
+                "name": "ms",
+                "persistableReference": "{\"abcd\":{\"a\":0.0,\"b\":0.001,\"c\":1.0,\"d\":0.0},\"symbol\":\"ms\",\"baseMeasurement\":{\"ancestry\":\"T\",\"type\":\"UM\"},\"type\":\"UAD\"}",
+                "unitOfMeasureID": "{{data_partition_id}}:reference-data--UnitOfMeasure:ms:",
+                "propertyNames": [
+                    "StartTime",
+                    "EndTime",
+                    "SampleInterval"
+                ]
+            },
+            {
+                "kind": "DateTime",
+                "name": "datetime",
+                "persistableReference": "{\"format\":\"yyyy-MM-ddTHH:mm:ssZ\",\"timeZone\":\"UTC\",\"type\":\"DTM\"}",
+                "propertyNames": [
+                    "CreationDateTime",
+                    "ExtensionProperties.dateModified"
+                ]
+            }
+        ],
+        "kind": "osdu:wks:work-product-component--SeismicTraceData:1.0.0",
+        "id": "{{work-product-component-id}}",
+        "acl": {
+            "owners": [
+                "data.default.owners@{{data_partition_id}}.{{domain}}"
+            ],
+            "viewers": [
+                "data.default.viewers@{{data_partition_id}}.{{domain}}"
+            ]
+        },
+        "legal": {
+            "legaltags": [
+                "{{vds_legal_tag_id}}"
+            ],
+            "otherRelevantDataCountries": [
+                "NO"
+            ],
+            "status": "compliant"
+        }
+    },
+    {
+        "data": {
+            "ancestry": {
+                "parents": []
+            },
+            "P6TransformationMethod": 1049,
+            "P6BinGridOriginI": 9961,
+            "P6BinGridOriginJ": 1961,
+            "P6BinGridOriginEasting": 438302.76,
+            "P6BinGridOriginNorthing": 6475310.75,
+            "P6ScaleFactorOfBinGrid": 1,
+            "P6BinWidthOnIaxis": 12.5,
+            "P6BinWidthOnJaxis": 12.5,
+            "P6MapGridBearingOfBinGridJaxis": -76,
+            "P6BinNodeIncrementOnIaxis": 1,
+            "P6BinNodeIncrementOnJaxis": 1,
+            "SpatialArea": {
+                "SpatialLocationCoordinatesDate": "2021-05:07T11:08:39.39Z",
+                "QuantitativeAccuracyBandID": ":reference-data--QualitativeSpatialAccuracyType:SomeUniqueQualitativeSpatialAccuracyTypeID:",
+                "QualitativeSpatialAccuracyTypeID": null,
+                "CoordinateQualityCheckPerformedBy": "EDahl2",
+                "CoordinateQualityCheckDateTime": "2021-05:07T11:08:39.39Z",
+                "CoordinateQualityCheckRemarks": [],
+                "AsIngestedCoordinates": {
+                    "type": "AnyCrsFeatureCollection",
+                    "CoordinateReferenceSystemID": "{{data_partition_id}}:reference-data--CoordinateReferenceSystem:BoundCRS.SLB.32021.15851:",
+                    "persistableReferenceCrs": "{\"lateBoundCRS\":{\"wkt\":\"PROJCS[\\\"NAD_1927_StatePlane_North_Dakota_South_FIPS_3302\\\",GEOGCS[\\\"GCS_North_American_1927\\\",DATUM[\\\"D_North_American_1927\\\",SPHEROID[\\\"Clarke_1866\\\",6378206.4,294.9786982]],PRIMEM[\\\"Greenwich\\\",0.0],UNIT[\\\"Degree\\\",0.0174532925199433]],PROJECTION[\\\"Lambert_Conformal_Conic\\\"],PARAMETER[\\\"False_Easting\\\",2000000.0],PARAMETER[\\\"False_Northing\\\",0.0],PARAMETER[\\\"Central_Meridian\\\",-100.5],PARAMETER[\\\"Standard_Parallel_1\\\",46.1833333333333],PARAMETER[\\\"Standard_Parallel_2\\\",47.4833333333333],PARAMETER[\\\"Latitude_Of_Origin\\\",45.6666666666667],UNIT[\\\"Foot_US\\\",0.304800609601219],AUTHORITY[\\\"EPSG\\\",32021]]\",\"ver\":\"PE_10_3_1\",\"name\":\"NAD_1927_StatePlane_North_Dakota_South_FIPS_3302\",\"authCode\":{\"auth\":\"EPSG\",\"code\":\"32021\"},\"type\":\"LBC\"},\"singleCT\":{\"wkt\":\"GEOGTRAN[\\\"NAD_1927_To_WGS_1984_79_CONUS\\\",GEOGCS[\\\"GCS_North_American_1927\\\",DATUM[\\\"D_North_American_1927\\\",SPHEROID[\\\"Clarke_1866\\\",6378206.4,294.9786982]],PRIMEM[\\\"Greenwich\\\",0.0],UNIT[\\\"Degree\\\",0.0174532925199433]],GEOGCS[\\\"GCS_WGS_1984\\\",DATUM[\\\"D_WGS_1984\\\",SPHEROID[\\\"WGS_1984\\\",6378137.0,298.257223563]],PRIMEM[\\\"Greenwich\\\",0.0],UNIT[\\\"Degree\\\",0.0174532925199433]],METHOD[\\\"NADCON\\\"],PARAMETER[\\\"Dataset_conus\\\",0.0],AUTHORITY[\\\"EPSG\\\",15851]]\",\"ver\":\"PE_10_3_1\",\"name\":\"NAD_1927_To_WGS_1984_79_CONUS\",\"authCode\":{\"auth\":\"EPSG\",\"code\":\"15851\"},\"type\":\"ST\"},\"ver\":\"PE_10_3_1\",\"name\":\"NAD27 * OGP-Usa Conus / North Dakota South [32021,15851]\",\"authCode\":{\"auth\":\"SLB\",\"code\":\"32021079\"},\"type\":\"EBC\"}",
+                    "VerticalCoordinateReferenceSystemID": "{{data_partition_id}}:reference-data--CoordinateReferenceSystem:VerticalCRS.EPSG.5773:",
+                    "persistableReferenceVerticalCrs": "{\"authCode\":{\"auth\":\"EPSG\",\"code\":\"5773\"},\"type\":\"LBC\",\"ver\":\"PE_10_3_1\",\"name\":\"EGM96_Geoid\",\"wkt\":\"VERTCS[\\\"EGM96_Geoid\\\",VDATUM[\\\"EGM96_Geoid\\\"],PARAMETER[\\\"Vertical_Shift\\\",0.0],PARAMETER[\\\"Direction\\\",1.0],UNIT[\\\"Meter\\\",1.0],AUTHORITY[\\\"EPSG\\\",5773]]\"}",
+                    "persistableReferenceUnitZ": "{\"scaleOffset\":{\"scale\":1.0,\"offset\":0.0},\"symbol\":\"m\",\"baseMeasurement\":{\"ancestry\":\"Length\",\"type\":\"UM\"},\"type\":\"USO\"}",
+                    "features": [
+                        {
+                            "type": "AnyCrsFeature",
+                            "properties": [],
+                            "geometry": {
+                                "coordinates": [
+                                    [
+                                        438302.76,
+                                        6475310.75
+                                    ],
+                                    [
+                                        429582.2271600945,
+                                        6477485.023036702
+                                    ],
+                                    [
+                                        430791.8366380928,
+                                        6477485.023036702
+                                    ],
+                                    [
+                                        439512.36947799835,
+                                        6480162.22863138
+                                    ],
+                                    [
+                                        438302.76,
+                                        6475310.75
+                                    ]
+                                ],
+                                "bbox": [
+                                    429582.2271600945,
+                                    6475310.75,
+                                    439512.36947799835,
+                                    6482336.501668082
+                                ],
+                                "type": "AnyCrsPolygon"
+                            },
+                            "bbox": [
+                                429582.2271600945,
+                                6475310.75,
+                                439512.36947799835,
+                                6482336.501668082
+                            ]
+                        }
+                    ],
+                    "bbox": [
+                        429582.2271600945,
+                        6475310.75,
+                        439512.36947799835,
+                        6482336.501668082
+                    ]
+                }
+            },
+            "Description": "OSDU type of bin grid for testing",
+            "Name": "OSDU_BinGrid",
+            "BinGridName": "OSDU_BinGrid"
+        },
+        "meta": [],
+        "kind": "osdu:wks:work-product-component--SeismicBinGrid:1.0.0",
+        "id": "{{bin-grid-id}}",
+        "acl": {
+            "owners": [
+                "data.default.owners@{{data_partition_id}}.{{domain}}"
+            ],
+            "viewers": [
+                "data.default.viewers@{{data_partition_id}}.{{domain}}"
+            ]
+        },
+        "legal": {
+            "legaltags": [
+                "{{vds_legal_tag_id}}"
+            ],
+            "otherRelevantDataCountries": [
+                "NO"
+            ],
+            "status": "compliant"
+        }
+    },
+    {
+        "data": {
+            "Name": "Volve_SEGY_Time",
+            "Description": "Dataset released by Equinor and Partners",
+            "TotalSize": 1050849760,
+            "SchemaFormatTypeID": "{{data_partition_id}}:reference-data--SchemaFormatType:SEGY:",
+            "Endian": "BIG",
+            "DatasetProperties": {
+				"FileCollectionPath": "{{segy_sd_path}}",
+						"FileSourceInfos": [
+							{
+								"FileSource": "{{segy_sd_path}}",
+								"PreloadFilePath": "",
+								"Name": "OSDU_SEGY"
+							}
+						],
+						"Checksum": "c9df7234d5d0a7a2c2676ee2e2aa48b6"
+				},
+            "VectorHeaderMapping": [
+                {
+                    "KeyName": "{{data_partition_id}}:reference-data--HeaderKeyName:Inline:",
+                    "WordFormat": "{{data_partition_id}}:reference-data--WordFormatType:INT:",
+                    "WordWidth": 4,
+                    "Position": 189,
+                    "UoM": "{{data_partition_id}}:reference-data--UnitOfMeasure:Unitless:",
+                    "ScalarIndicator": "NOSCALE",
+                    "ScalarOverride": 0
+                },
+                {
+                    "KeyName": "{{data_partition_id}}:reference-data--HeaderKeyName:Crossline:",
+                    "WordFormat": "{{data_partition_id}}:reference-data--WordFormatType:INT:",
+                    "WordWidth": 4,
+                    "Position": 193,
+                    "UoM": "{{data_partition_id}}:reference-data--UnitOfMeasure:Unitless:",
+                    "ScalarIndicator": "NOSCALE",
+                    "ScalarOverride": 0
+                },
+                {
+                    "KeyName": "{{data_partition_id}}:reference-data--HeaderKeyName:CMPX:",
+                    "WordFormat": "{{data_partition_id}}:reference-data--WordFormatType:INT:",
+                    "WordWidth": 4,
+                    "Position": 181,
+                    "UoM": "{{data_partition_id}}:reference-data--UnitOfMeasure:m",
+                    "ScalarIndicator": "STANDARD",
+                    "ScalarOverride": 0
+                },
+                {
+                    "KeyName": "{{data_partition_id}}:reference-data--HeaderKeyName:CMPY:",
+                    "WordFormat": "{{data_partition_id}}:reference-data--WordFormatType:INT:",
+                    "WordWidth": 4,
+                    "Position": 185,
+                    "UoM": "{{data_partition_id}}:reference-data--UnitOfMeasure:m:",
+                    "ScalarIndicator": "STANDARD",
+                    "ScalarOverride": 0
+                },
+                {
+                    "KeyName": "{{data_partition_id}}:reference-data--HeaderKeyName:STARTTIME:",
+                    "WordFormat": "{{data_partition_id}}:reference-data--WordFormatType:INT:",
+                    "WordWidth": 2,
+                    "Position": 109,
+                    "UoM": "{{data_partition_id}}:reference-data--UnitOfMeasure:ms:",
+                    "ScalarIndicator": "STANDARD",
+                    "ScalarOverride": 0
+                },
+                {
+                    "KeyName": "{{data_partition_id}}:reference-data--HeaderKeyName:ZSCALAR:",
+                    "WordFormat": "{{data_partition_id}}:reference-data--WordFormatType:INT:",
+                    "WordWidth": 2,
+                    "Position": 69,
+                    "UoM": "{{data_partition_id}}:reference-data--UnitOfMeasure:Unitless:",
+                    "ScalarIndicator": "NOSCALE",
+                    "ScalarOverride": 0
+                },
+                {
+                    "KeyName": "{{data_partition_id}}:reference-data--HeaderKeyName:XYSCALAR:",
+                    "WordFormat": "{{data_partition_id}}:reference-data--WordFormatType:INT:",
+                    "WordWidth": 2,
+                    "Position": 71,
+                    "UoM": "{{data_partition_id}}:reference-data--UnitOfMeasure:Unitless:",
+                    "ScalarIndicator": "NOSCALE",
+                    "ScalarOverride": 0
+                }
+            ],
+            "SEGYRevision": "rev 1"
+        },
+        "meta": [],
+        "kind": "osdu:wks:dataset--FileCollection.SEGY:1.0.0",
+        "id": "{{file-record-id}}",
+        "acl": {
+            "owners": [
+                "data.default.owners@{{data_partition_id}}.{{domain}}"
+            ],
+            "viewers": [
+                "data.default.viewers@{{data_partition_id}}.{{domain}}"
+            ]
+        },
+        "legal": {
+            "legaltags": [
+                "{{vds_legal_tag_id}}"
+            ],
+            "otherRelevantDataCountries": [
+                "NO"
+            ],
+            "status": "compliant"
+        }
+    }
+]

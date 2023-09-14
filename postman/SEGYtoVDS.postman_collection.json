@@ -1,9 +1,10 @@
 {
 	"info": {
-		"_postman_id": "d73b22e3-d61d-4939-8123-871a3b2b3eed",
+		"_postman_id": "4e2f2d9c-a4f5-462b-9746-f8624e3532a2",
 		"name": "SEGYtoVDS",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "19529837"
+		"_exporter_id": "19529837",
+		"_collection_link": "https://universal-station-37371.postman.co/workspace/Converters-~f7b5a044-0674-411b-983c-4ba1be2fc2aa/collection/19529837-4e2f2d9c-a4f5-462b-9746-f8624e3532a2?action=share&source=collection_link&creator=19529837"
 	},
 	"item": [
 		{
@@ -21,7 +22,8 @@
 									"});",
 									"",
 									"var body = pm.response.json()",
-									"pm.collectionVariables.set(\"access_token\", body.access_token);"
+									"pm.collectionVariables.set(\"access_token\", body.access_token);",
+									"pm.environment.set(\"TOKEN\",body.access_token);"
 								],
 								"type": "text/javascript"
 							}
@@ -1905,7 +1907,7 @@
 		},
 		{
 			"key": "subproject_name",
-			"value": "",
+			"value": "test123",
 			"type": "string"
 		},
 		{
@@ -1957,28 +1959,27 @@
 		},
 		{
 			"key": "work-product-id",
-			"value": ""
+			"value": "dp1:work-product--WorkProduct:8cdf13ae-c098-424d-aae7-e271578c585c"
 		},
 		{
 			"key": "work-product-component-id",
-			"value": ""
+			"value": "dp1:work-product-component--SeismicTraceData:8cdf13ae-c098-424d-aae7-e271578c585c"
 		},
 		{
 			"key": "file-record-id",
-			"value": ""
+			"value": "dp1:dataset--FileCollection.SEGY:8cdf13ae-c098-424d-aae7-e271578c585c"
 		},
 		{
 			"key": "bin-grid-id",
-			"value": ""
+			"value": "dp1:work-product-component--SeismicBinGrid:8cdf13ae-c098-424d-aae7-e271578c585c"
 		},
 		{
 			"key": "segy_sd_path",
-			"value": "sd://dp1/undefined/undefined",
-			"disabled": true
+			"value": "sd://dp1/undefined/undefined"
 		},
 		{
 			"key": "segyTestFileNameForVds",
-			"value": ""
+			"value": "ST0202R08_PSDM_DELTA_FIELD_DEPTH.MIG_FIN.POST_STACK.3D.JS-017534.segy"
 		},
 		{
 			"key": "vds_gcs_url",
@@ -1994,8 +1995,7 @@
 		},
 		{
 			"key": "persistent_id",
-			"value": "",
-			"disabled": true
+			"value": "ST0202R08_PSDM_DELTA_FIELD_DEPTH.MIG_FIN.POST_STACK.3D.JS-017534.vds"
 		},
 		{
 			"key": "vds_run_id",
@@ -2003,7 +2003,7 @@
 		},
 		{
 			"key": "vds_filename",
-			"value": ""
+			"value": "ST0202R08_PSDM_DELTA_FIELD_DEPTH.MIG_FIN.POST_STACK.3D.JS-017534.vds"
 		},
 		{
 			"key": "id_token",

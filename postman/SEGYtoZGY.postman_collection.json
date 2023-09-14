@@ -1,9 +1,10 @@
 {
 	"info": {
-		"_postman_id": "ee826a58-0b69-4c71-bc07-bd60cde8c36b",
+		"_postman_id": "314f92e5-45e9-4088-a07d-8a9e9a0b976c",
 		"name": "SEGYtoZGY",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "19529837"
+		"_exporter_id": "19529837",
+		"_collection_link": "https://universal-station-37371.postman.co/workspace/Converters-~f7b5a044-0674-411b-983c-4ba1be2fc2aa/collection/19529837-314f92e5-45e9-4088-a07d-8a9e9a0b976c?action=share&source=collection_link&creator=19529837"
 	},
 	"item": [
 		{
@@ -21,7 +22,8 @@
 									"});",
 									"",
 									"var body = pm.response.json()",
-									"pm.collectionVariables.set(\"access_token\", body.access_token);"
+									"pm.collectionVariables.set(\"access_token\", body.access_token);",
+									"pm.environment.set(\"TOKEN\",body.access_token);"
 								],
 								"type": "text/javascript"
 							}
@@ -123,12 +125,35 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"var jsonData = pm.response.json();\r",
-									"pm.environment.set(\"legal_tag\", jsonData.name);\r",
-									"// Tags should be added or already exists\r",
+									"var response = pm.response.json();\r",
+									"\r",
 									"pm.test(\"Status code is 201 or 409\", function () {\r",
-									"    pm.expect(pm.response.code).to.be.oneOf([201,409]);\r",
-									"});"
+									"    pm.expect(pm.response.code).to.be.oneOf([201, 409]);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Legal Tag is Created\", function() {\r",
+									"    var createdLegaltagId = '';\r",
+									"\r",
+									"    switch(pm.response.code) {\r",
+									"        case 201:\r",
+									"            createdLegaltagId = response.name;\r",
+									"            break;\r",
+									"        case 409:\r",
+									"            var splits = response.message.split(' ');\r",
+									"            createdLegaltagId = splits.pop();\r",
+									"            pm.expect(response.message).contains(\"already exists\");\r",
+									"            break;\r",
+									"        default:\r",
+									"            console.log('Unexpected server code');\r",
+									"    }\r",
+									"    \r",
+									"    pm.expect(createdLegaltagId.length > 1);\r",
+									"\r",
+									"    if (createdLegaltagId.length > 1) {\r",
+									"        pm.collectionVariables.set(\"zgy_legal_tag_id\", createdLegaltagId);\r",
+									"    }\r",
+									"});\r",
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -219,13 +244,29 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"// User should be added or already exists\r",
 									"pm.test(\"Status code is 200 or 409\", function () {\r",
-									"    pm.expect(pm.response.code).to.be.oneOf([200,409]);\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 409]);\r",
 									"});\r",
 									"\r",
-									"pm.test(\"Status description - OK or Conflict\", function () {\r",
-									"    pm.expect(pm.response.status).to.be.oneOf([\"OK\",\"Conflict\"]);\r",
+									"pm.test(\"User was added to admin group\", function () {\r",
+									"    var userGroupEmail = pm.variables.get(\"OIDC_CLIENT_ID\");\r",
+									"\r",
+									"    switch(pm.response.code) {\r",
+									"        case 200:\r",
+									"            pm.expect(pm.response.email).to.equal(\"userGroupEmail\");\r",
+									"            break;\r",
+									"        case 409:\r",
+									"            var response = pm.response.json();\r",
+									"            let adminGroupName = pm.variables.get(\"entitlement_adminGroupName\");\r",
+									"            let dp = pm.variables.get(\"DATA_PARTITION_ID\");\r",
+									"            let domain = pm.variables.get(\"INSTANCE_DOMAIN\");\r",
+									"            let adminEmail = adminGroupName + \"@\" + dp + \".\" + domain;\r",
+									"            pm.expect(response.message).to.contain(adminEmail);\r",
+									"            break;\r",
+									"        default:\r",
+									"            console.log(\"Unexpected server code\");\r",
+									"    }\r",
+									"\r",
 									"});"
 								],
 								"type": "text/javascript"
@@ -500,7 +541,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"admin\": \"{{client_id}}\",\r\n  \"storage_class\": \"MULTI_REGIONAL\",\r\n  \"storage_location\": \"US\",\r\n  \"access_policy\": \"uniform\",\r\n  \"acls\": {\r\n    \"admins\": [\r\n      \"users.datalake.admins@{{data_partition_id}}.{{domain}}\",\r\n    ],\r\n    \"viewers\": [\r\n      \"data.default.viewers@{{data_partition_id}}.{{domain}}\"\r\n    ],\r\n    \"owners\": [\r\n      \"data.default.owners@{{data_partition_id}}.{{domain}}\"\r\n    ]\r\n  }\r\n}",
+							"raw": "{\r\n  \"admin\": \"{{client_id}}\",\r\n  \"storage_class\": \"MULTI_REGIONAL\",\r\n  \"storage_location\": \"US\",\r\n  \"access_policy\": \"dataset\",\r\n  \"acls\": {\r\n    \"admins\": [\r\n      \"users.datalake.admins@{{data_partition_id}}.{{domain}}\"\r\n    ],\r\n    \"viewers\": [\r\n      \"data.default.viewers@{{data_partition_id}}.{{domain}}\"\r\n    ],\r\n    \"owners\": [\r\n      \"data.default.owners@{{data_partition_id}}.{{domain}}\"\r\n    ]\r\n  }\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -764,7 +805,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"admin\": \"{{client_id}}\",\r\n  \"storage_class\": \"MULTI_REGIONAL\",\r\n  \"storage_location\": \"US\",\r\n  \"access_policy\": \"dataset\"\r\n}",
+							"raw": "{\r\n  \"admin\": \"{{client_id}}\",\r\n  \"storage_class\": \"MULTI_REGIONAL\",\r\n  \"storage_location\": \"US\",\r\n  \"access_policy\": \"uniform\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1788,17 +1829,17 @@
 		},
 		{
 			"key": "subproject_name",
-			"value": "",
+			"value": "test123",
 			"type": "string"
 		},
 		{
 			"key": "zgyTestSubprojectName",
-			"value": "",
+			"value": "zgytestsubproject",
 			"type": "string"
 		},
 		{
 			"key": "segyTestFileNameForZgy",
-			"value": "",
+			"value": "ST0202R08_PSDM_DELTA_FIELD_DEPTH.MIG_FIN.POST_STACK.3D.JS-017534.segy",
 			"type": "string"
 		},
 		{
@@ -1812,7 +1853,7 @@
 		},
 		{
 			"key": "segyTestFileSize",
-			"value": "",
+			"value": "67550",
 			"type": "string"
 		},
 		{
@@ -1834,6 +1875,11 @@
 		{
 			"key": "access_token",
 			"value": "{{TOKEN}}",
+			"type": "string"
+		},
+		{
+			"key": "zgy_legal_tag_id",
+			"value": "",
 			"type": "string"
 		},
 		{
