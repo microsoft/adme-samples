@@ -1,0 +1,838 @@
+components:
+  schemas:
+    Acl:
+      properties:
+        owners:
+          items:
+            type: string
+          type: array
+        viewers:
+          items:
+            type: string
+          type: array
+      type: object
+    Ancestry:
+      properties:
+        parents:
+          items:
+            type: string
+          type: array
+      type: object
+    ConnectedOuterService:
+      properties:
+        name:
+          type: string
+        version:
+          type: string
+      type: object
+    CopyDmsRequest:
+      properties:
+        datasetSources:
+          items:
+            $ref: '#/components/schemas/Record'
+          type: array
+      type: object
+    CopyDmsResponse:
+      properties:
+        datasetBlobStoragePath:
+          type: string
+        success:
+          type: boolean
+      type: object
+    DatasetProperties:
+      properties:
+        FileSourceInfo:
+          $ref: '#/components/schemas/FileSourceInfo'
+      required:
+      - FileSourceInfo
+      type: object
+    DatasetRetrievalProperties:
+      properties:
+        datasetRegistryId:
+          type: string
+        providerKey:
+          type: string
+        retrievalProperties:
+          additionalProperties:
+            type: object
+          type: object
+      type: object
+    DownloadUrlResponse:
+      properties:
+        SignedUrl:
+          type: string
+      type: object
+    FileData:
+      properties:
+        Checksum:
+          type: string
+        DatasetProperties:
+          $ref: '#/components/schemas/DatasetProperties'
+        Description:
+          type: string
+        EncodingFormatTypeID:
+          type: string
+        Endian:
+          enum:
+          - BIG
+          - LITTLE
+          type: string
+        ExistenceKind:
+          type: string
+        ExtensionProperties:
+          additionalProperties:
+            type: object
+          type: object
+        Name:
+          type: string
+        ResourceCurationStatus:
+          type: string
+        ResourceHomeRegionID:
+          type: string
+        ResourceHostRegionIDs:
+          items:
+            type: string
+          type: array
+        ResourceLifecycleStatus:
+          type: string
+        ResourceSecurityClassification:
+          type: string
+        SchemaFormatTypeID:
+          type: string
+        Source:
+          type: string
+        TotalSize:
+          type: string
+      required:
+      - DatasetProperties
+      type: object
+    FileListRequest:
+      properties:
+        Items:
+          format: int32
+          type: integer
+        PageNum:
+          format: int32
+          type: integer
+        TimeFrom:
+          format: date-time
+          type: string
+        TimeTo:
+          format: date-time
+          type: string
+        UserID:
+          type: string
+      type: object
+    FileListResponse:
+      properties:
+        Content:
+          items:
+            $ref: '#/components/schemas/FileLocation'
+          type: array
+        Number:
+          format: int32
+          type: integer
+        NumberOfElements:
+          format: int32
+          type: integer
+        Size:
+          format: int32
+          type: integer
+      type: object
+    FileLocation:
+      properties:
+        CreatedAt:
+          format: date-time
+          type: string
+        CreatedBy:
+          type: string
+        Driver:
+          enum:
+          - GCS
+          type: string
+        FileID:
+          type: string
+        Location:
+          type: string
+      type: object
+    FileLocationRequest:
+      properties:
+        FileID:
+          type: string
+      type: object
+    FileLocationResponse:
+      properties:
+        Driver:
+          type: object
+        Location:
+          type: string
+      type: object
+    FileMetadata:
+      properties:
+        acl:
+          $ref: '#/components/schemas/Acl'
+        ancestry:
+          $ref: '#/components/schemas/Ancestry'
+        data:
+          $ref: '#/components/schemas/FileData'
+        id:
+          type: string
+        kind:
+          type: string
+        legal:
+          $ref: '#/components/schemas/Legal'
+        meta:
+          items:
+            additionalProperties:
+              type: object
+            type: object
+          type: array
+        tags:
+          additionalProperties:
+            type: string
+          type: object
+      required:
+      - acl
+      - data
+      - kind
+      - legal
+      type: object
+    FileMetadataResponse:
+      properties:
+        id:
+          type: string
+      type: object
+    FileRequest:
+      properties:
+        FileID:
+          type: string
+      type: object
+    FileResponse:
+      type: object
+    FileSourceInfo:
+      properties:
+        Checksum:
+          type: string
+        ChecksumAlgorithm:
+          type: string
+        EncodingFormatTypeID:
+          type: string
+        FileSize:
+          type: string
+        FileSource:
+          type: string
+        Name:
+          type: string
+        PreloadFileCreateDate:
+          type: string
+        PreloadFileCreateUser:
+          type: string
+        PreloadFileModifyDate:
+          type: string
+        PreloadFileModifyUser:
+          type: string
+        PreloadFilePath:
+          type: string
+        preloadFilePath:
+          type: string
+      required:
+      - FileSource
+      type: object
+    Legal:
+      properties:
+        legaltags:
+          items:
+            type: string
+          type: array
+          uniqueItems: true
+        otherRelevantDataCountries:
+          items:
+            type: string
+          type: array
+          uniqueItems: true
+        status:
+          enum:
+          - compliant
+          - incompliant
+          type: string
+      required:
+      - otherRelevantDataCountries
+      type: object
+    LocationRequest:
+      properties:
+        FileID:
+          type: string
+      type: object
+    LocationResponse:
+      properties:
+        FileID:
+          type: string
+        Location:
+          additionalProperties:
+            type: string
+          type: object
+      type: object
+    Record:
+      properties:
+        acl:
+          $ref: '#/components/schemas/Acl'
+        ancestry:
+          $ref: '#/components/schemas/RecordAncestry'
+        data:
+          additionalProperties:
+            type: object
+          type: object
+        id:
+          pattern: ^[\w\-\.]+:[\w-\.]+:[\w\-\.\:\%]+$
+          type: string
+        kind:
+          type: string
+        legal:
+          $ref: '#/components/schemas/Legal'
+        meta:
+          items:
+            additionalProperties:
+              type: object
+            type: object
+          type: array
+        tags:
+          additionalProperties:
+            type: string
+          type: object
+        version:
+          format: int64
+          type: integer
+      required:
+      - acl
+      - data
+      type: object
+    RecordAncestry:
+      properties:
+        parents:
+          items:
+            type: string
+          type: array
+          uniqueItems: true
+      type: object
+    RecordVersion:
+      properties:
+        acl:
+          $ref: '#/components/schemas/Acl'
+        ancestry:
+          $ref: '#/components/schemas/Ancestry'
+        data:
+          $ref: '#/components/schemas/FileData'
+        id:
+          type: string
+        kind:
+          type: string
+        legal:
+          $ref: '#/components/schemas/Legal'
+        meta:
+          items:
+            additionalProperties:
+              type: object
+            type: object
+          type: array
+        tags:
+          additionalProperties:
+            type: string
+          type: object
+        version:
+          format: int64
+          type: integer
+      required:
+      - acl
+      - data
+      - kind
+      - legal
+      type: object
+    RetrievalInstructionsRequest:
+      properties:
+        datasetRegistryIds:
+          items:
+            type: string
+          type: array
+      type: object
+    RetrievalInstructionsResponse:
+      properties:
+        datasets:
+          items:
+            $ref: '#/components/schemas/DatasetRetrievalProperties'
+          type: array
+      type: object
+    SrnFileData:
+      properties:
+        connectionString:
+          type: string
+        kind:
+          type: string
+        signedUrl:
+          type: string
+        unsignedUrl:
+          type: string
+      type: object
+    StorageInstructionsResponse:
+      properties:
+        providerKey:
+          type: string
+        storageLocation:
+          additionalProperties:
+            type: object
+          type: object
+      type: object
+    UrlSigningRequest:
+      properties:
+        srns:
+          items:
+            type: string
+          type: array
+      type: object
+    UrlSigningResponse:
+      properties:
+        processed:
+          additionalProperties:
+            $ref: '#/components/schemas/SrnFileData'
+          type: object
+        unprocessed:
+          items:
+            type: string
+          type: array
+      type: object
+    VersionInfo:
+      properties:
+        artifactId:
+          type: string
+        branch:
+          type: string
+        buildTime:
+          type: string
+        commitId:
+          type: string
+        commitMessage:
+          type: string
+        connectedOuterServices:
+          items:
+            $ref: '#/components/schemas/ConnectedOuterService'
+          type: array
+        groupId:
+          type: string
+        version:
+          type: string
+      type: object
+  securitySchemes:
+    Authorization:
+      bearerFormat: Authorization
+      scheme: Bearer
+      type: http
+info:
+  title: File Service
+  version: '1.0'
+openapi: 3.0.1
+paths:
+  /v2/delivery/GetFileSignedUrl:
+    post:
+      operationId: getFileSignedURL
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UrlSigningRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UrlSigningResponse'
+          description: OK
+      tags:
+      - delivery-api
+  /v2/file-collections/copy:
+    post:
+      operationId: copyDms_1
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CopyDmsRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                items:
+                  $ref: '#/components/schemas/CopyDmsResponse'
+                type: array
+          description: OK
+      tags:
+      - file-collection-dms-api
+  /v2/file-collections/retrievalInstructions:
+    post:
+      operationId: getRetrievalInstructions_1
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RetrievalInstructionsRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RetrievalInstructionsResponse'
+          description: OK
+      tags:
+      - file-collection-dms-api
+  /v2/file-collections/storageInstructions:
+    post:
+      operationId: getStorageInstructions_1
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/StorageInstructionsResponse'
+          description: OK
+      tags:
+      - file-collection-dms-api
+  /v2/files/copy:
+    post:
+      operationId: copyDms
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CopyDmsRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                items:
+                  $ref: '#/components/schemas/CopyDmsResponse'
+                type: array
+          description: OK
+      tags:
+      - file-dms-api
+  /v2/files/metadata:
+    post:
+      operationId: postFilesMetadata
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FileMetadata'
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/FileMetadataResponse'
+          description: OK
+      tags:
+      - file-metadata-api
+  /v2/files/retrievalInstructions:
+    post:
+      operationId: getRetrievalInstructions
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RetrievalInstructionsRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RetrievalInstructionsResponse'
+          description: OK
+      tags:
+      - file-dms-api
+  /v2/files/storageInstructions:
+    post:
+      operationId: getStorageInstructions
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/StorageInstructionsResponse'
+          description: OK
+      tags:
+      - file-dms-api
+  /v2/files/uploadURL:
+    get:
+      operationId: getLocationFile
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/LocationResponse'
+          description: OK
+      tags:
+      - file-location-api
+  /v2/files/{id}/downloadURL:
+    get:
+      operationId: downloadURL
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      - in: query
+        name: expiryTime
+        required: false
+        schema:
+          type: string
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/DownloadUrlResponse'
+          description: OK
+      tags:
+      - file-delivery-api
+  /v2/files/{id}/metadata:
+    delete:
+      operationId: deleteFileMetadataById
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+      responses:
+        '200':
+          description: OK
+      tags:
+      - file-metadata-api
+    get:
+      operationId: getFileMetadataById
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RecordVersion'
+          description: OK
+      tags:
+      - file-metadata-api
+  /v2/getFile:
+    post:
+      operationId: getFile
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FileRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/FileResponse'
+          description: OK
+      tags:
+      - file-api
+  /v2/getFileList:
+    post:
+      operationId: getFileList
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FileListRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/FileListResponse'
+          description: OK
+      tags:
+      - file-list-api
+  /v2/getFileLocation:
+    post:
+      operationId: getFileLocation
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FileLocationRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/FileLocationResponse'
+          description: OK
+      tags:
+      - file-location-api
+  /v2/getLocation:
+    post:
+      operationId: getLocation
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LocationRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/LocationResponse'
+          description: OK
+      tags:
+      - file-location-api
+  /v2/info:
+    get:
+      operationId: info
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VersionInfo'
+          description: OK
+      tags:
+      - info-api
+  /v2/liveness_check:
+    get:
+      operationId: livenessCheck
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+      tags:
+      - health-check-api
+  /v2/readiness_check:
+    get:
+      operationId: readinessCheck
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+      tags:
+      - health-check-api
+security:
+- Authorization: []
+servers:
+- url: /api/file
