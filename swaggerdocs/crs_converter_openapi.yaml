@@ -1,0 +1,832 @@
+components:
+  schemas:
+    AbstractAnyCrsFeatureCollection:
+      properties:
+        CoordinateReferenceSystemID:
+          type: string
+        features:
+          items:
+            $ref: '#/components/schemas/AbstractFeature'
+          type: array
+        persistableReferenceCrs:
+          type: string
+        type:
+          type: string
+      type: object
+    AbstractBinGrid:
+      properties:
+        ABCDBinGridSpatialLocation:
+          $ref: '#/components/schemas/AbstractSpatialLocation'
+        BinGridDefinitionMethodTypeID:
+          type: string
+        BinGridName:
+          type: string
+        BinGridTypeID:
+          type: string
+        CoveragePercent:
+          format: double
+          type: number
+        P6BinGridOriginEasting:
+          format: double
+          type: number
+        P6BinGridOriginI:
+          format: double
+          type: number
+        P6BinGridOriginJ:
+          format: double
+          type: number
+        P6BinGridOriginNorthing:
+          format: double
+          type: number
+        P6BinNodeIncrementOnIaxis:
+          format: int32
+          type: integer
+        P6BinNodeIncrementOnJaxis:
+          format: int32
+          type: integer
+        P6BinWidthOnIaxis:
+          format: double
+          type: number
+        P6BinWidthOnJaxis:
+          format: double
+          type: number
+        P6MapGridBearingOfBinGridJaxis:
+          format: double
+          type: number
+        P6ScaleFactorOfBinGrid:
+          format: double
+          type: number
+        P6TransformationMethod:
+          format: int32
+          type: integer
+        SourceBinGridAppID:
+          type: string
+        SourceBinGridID:
+          format: int32
+          type: integer
+      type: object
+    AbstractFeature:
+      properties:
+        geometry:
+          $ref: '#/components/schemas/Geometry'
+        properties:
+          $ref: '#/components/schemas/PropertiesBinGridCorners'
+        type:
+          type: string
+      type: object
+    AbstractFeatureCollection:
+      properties:
+        features:
+          items:
+            $ref: '#/components/schemas/AbstractFeature'
+          type: array
+        type:
+          type: string
+      type: object
+    AbstractSpatialLocation:
+      properties:
+        AppliedOperations:
+          items:
+            type: string
+          type: array
+        AsIngestedCoordinates:
+          $ref: '#/components/schemas/AbstractAnyCrsFeatureCollection'
+        CoordinateQualityCheckDateTime:
+          type: string
+        CoordinateQualityCheckPerformedBy:
+          type: string
+        CoordinateQualityCheckRemarks:
+          items:
+            type: string
+          type: array
+        QualitativeSpatialAccuracyTypeID:
+          type: string
+        QuantitativeAccuracyBandID:
+          type: string
+        SpatialGeometryTypeID:
+          type: string
+        SpatialLocationCoordinatesDate:
+          type: string
+        SpatialParameterTypeID:
+          type: string
+        Wgs84Coordinates:
+          $ref: '#/components/schemas/AbstractFeatureCollection'
+      type: object
+    ConnectedOuterService:
+      properties:
+        name:
+          type: string
+        version:
+          type: string
+      type: object
+    ConvertBinGridRequest:
+      properties:
+        inBinGrid:
+          $ref: '#/components/schemas/AbstractBinGrid'
+        toCRS:
+          type: string
+      type: object
+    ConvertBinGridResponse:
+      properties:
+        AppliedOperations:
+          items:
+            type: string
+          type: array
+        maxMisLocation:
+          $ref: '#/components/schemas/MaxMisLocation'
+        outBinGrid:
+          $ref: '#/components/schemas/AbstractBinGrid'
+      type: object
+    ConvertGeoJsonRequest:
+      properties:
+        featureCollection:
+          $ref: '#/components/schemas/GeoJsonFeatureCollection'
+        toCRS:
+          type: string
+        toUnitZ:
+          type: string
+      required:
+      - toCRS
+      type: object
+    ConvertGeoJsonResponse:
+      properties:
+        featureCollection:
+          $ref: '#/components/schemas/GeoJsonFeatureCollection'
+        operationsApplied:
+          items:
+            type: string
+          type: array
+        successCount:
+          format: int32
+          type: integer
+        totalCount:
+          format: int32
+          type: integer
+      type: object
+    ConvertPointsRequest:
+      properties:
+        fromCRS:
+          type: string
+        points:
+          items:
+            $ref: '#/components/schemas/Point'
+          type: array
+        toCRS:
+          type: string
+      required:
+      - fromCRS
+      - points
+      - toCRS
+      type: object
+    ConvertPointsResponse:
+      properties:
+        operationsApplied:
+          items:
+            type: string
+          type: array
+        points:
+          items:
+            $ref: '#/components/schemas/Point'
+          type: array
+        successCount:
+          format: int32
+          type: integer
+      type: object
+    ConvertTrajectoryRequest:
+      properties:
+        azimuthReference:
+          type: string
+        inputKind:
+          type: string
+        inputStations:
+          items:
+            $ref: '#/components/schemas/TrajectoryStationIn'
+          type: array
+        interpolate:
+          type: boolean
+        method:
+          type: string
+        referencePoint:
+          $ref: '#/components/schemas/Point'
+        trajectoryCRS:
+          type: string
+        unitXY:
+          type: string
+        unitZ:
+          type: string
+      required:
+      - azimuthReference
+      - inputStations
+      - method
+      - trajectoryCRS
+      - unitXY
+      - unitZ
+      type: object
+    ConvertTrajectoryResponse:
+      properties:
+        inputKind:
+          type: string
+        localCRS:
+          type: string
+        method:
+          type: string
+        operationsApplied:
+          items:
+            type: string
+          type: array
+        stations:
+          items:
+            $ref: '#/components/schemas/TrajectoryStationOut'
+          type: array
+        trajectoryCRS:
+          type: string
+        unitDls:
+          type: string
+        unitXY:
+          type: string
+        unitZ:
+          type: string
+      required:
+      - localCRS
+      - method
+      - stations
+      - trajectoryCRS
+      - unitDls
+      - unitXY
+      - unitZ
+      type: object
+    GeoJsonBase:
+      discriminator:
+        propertyName: type
+      properties:
+        bbox:
+          items:
+            format: double
+            type: number
+          type: array
+        geoJsonVariantInternal:
+          enum:
+          - GEO_JSON
+          - ANY_CRS_GEO_JSON
+          type: string
+          writeOnly: true
+        type:
+          type: string
+      required:
+      - type
+      type: object
+    GeoJsonFeature:
+      properties:
+        bbox:
+          items:
+            format: double
+            type: number
+          type: array
+        geoJsonVariantInternal:
+          enum:
+          - GEO_JSON
+          - ANY_CRS_GEO_JSON
+          type: string
+          writeOnly: true
+        geometry:
+          oneOf:
+          - $ref: '#/components/schemas/GeoJsonFeature'
+          - $ref: '#/components/schemas/GeoJsonFeatureCollection'
+          - $ref: '#/components/schemas/GeoJsonGeometryCollection'
+          - $ref: '#/components/schemas/GeoJsonLineString'
+          - $ref: '#/components/schemas/GeoJsonMultiLineString'
+          - $ref: '#/components/schemas/GeoJsonMultiPoint'
+          - $ref: '#/components/schemas/GeoJsonMultiPolygon'
+          - $ref: '#/components/schemas/GeoJsonPoint'
+          - $ref: '#/components/schemas/GeoJsonPolygon'
+        properties:
+          type: object
+        type:
+          type: string
+      required:
+      - type
+      type: object
+    GeoJsonFeatureCollection:
+      properties:
+        CoordinateReferenceSystemID:
+          type: string
+        VerticalUnitID:
+          type: string
+        bbox:
+          items:
+            format: double
+            type: number
+          type: array
+        features:
+          items:
+            $ref: '#/components/schemas/GeoJsonFeature'
+          type: array
+        geoJsonVariantInternal:
+          enum:
+          - GEO_JSON
+          - ANY_CRS_GEO_JSON
+          type: string
+          writeOnly: true
+        persistableReferenceCrs:
+          type: string
+        persistableReferenceUnitZ:
+          type: string
+        properties:
+          type: object
+        type:
+          type: string
+      required:
+      - type
+      type: object
+    GeoJsonGeometryCollection:
+      allOf:
+      - $ref: '#/components/schemas/GeoJsonBase'
+      - properties:
+          geometries:
+            items:
+              $ref: '#/components/schemas/GeoJsonBase'
+            type: array
+        type: object
+      required:
+      - type
+      type: object
+    GeoJsonLineString:
+      allOf:
+      - $ref: '#/components/schemas/GeoJsonBase'
+      - properties:
+          coordinates:
+            items:
+              items:
+                format: double
+                type: number
+              type: array
+            type: array
+        type: object
+      required:
+      - type
+      type: object
+    GeoJsonMultiLineString:
+      allOf:
+      - $ref: '#/components/schemas/GeoJsonBase'
+      - properties:
+          coordinates:
+            items:
+              items:
+                items:
+                  format: double
+                  type: number
+                type: array
+              type: array
+            type: array
+        type: object
+      required:
+      - type
+      type: object
+    GeoJsonMultiPoint:
+      allOf:
+      - $ref: '#/components/schemas/GeoJsonBase'
+      - properties:
+          coordinates:
+            items:
+              items:
+                format: double
+                type: number
+              type: array
+            type: array
+        type: object
+      required:
+      - type
+      type: object
+    GeoJsonMultiPolygon:
+      allOf:
+      - $ref: '#/components/schemas/GeoJsonBase'
+      - properties:
+          coordinates:
+            items:
+              items:
+                items:
+                  items:
+                    format: double
+                    type: number
+                  type: array
+                type: array
+              type: array
+            type: array
+        type: object
+      required:
+      - type
+      type: object
+    GeoJsonPoint:
+      allOf:
+      - $ref: '#/components/schemas/GeoJsonBase'
+      - properties:
+          coordinates:
+            items:
+              format: double
+              type: number
+            type: array
+        type: object
+      required:
+      - type
+      type: object
+    GeoJsonPolygon:
+      allOf:
+      - $ref: '#/components/schemas/GeoJsonBase'
+      - properties:
+          coordinates:
+            items:
+              items:
+                items:
+                  format: double
+                  type: number
+                type: array
+              type: array
+            type: array
+        type: object
+      required:
+      - type
+      type: object
+    Geometry:
+      properties:
+        coordinates:
+          items:
+            format: double
+            type: number
+          type: array
+        type:
+          type: string
+      required:
+      - coordinates
+      - type
+      type: object
+    MaxMisLocation:
+      properties:
+        dI:
+          format: double
+          type: number
+        dJ:
+          format: double
+          type: number
+      type: object
+    Point:
+      properties:
+        x:
+          format: double
+          type: number
+        y:
+          format: double
+          type: number
+        z:
+          format: double
+          type: number
+      required:
+      - x
+      - y
+      - z
+      type: object
+    PointProperties:
+      properties:
+        Crossline:
+          format: int32
+          type: integer
+        Inline:
+          format: int32
+          type: integer
+        Label:
+          type: string
+      type: object
+    PropertiesBinGridCorners:
+      properties:
+        Kind:
+          type: string
+        PointProperties:
+          items:
+            $ref: '#/components/schemas/PointProperties'
+          type: array
+      type: object
+    TrajectoryStationIn:
+      properties:
+        azimuth:
+          format: double
+          type: number
+        dx:
+          format: double
+          type: number
+        dy:
+          format: double
+          type: number
+        dz:
+          format: double
+          type: number
+        inclination:
+          format: double
+          type: number
+        md:
+          format: double
+          type: number
+      required:
+      - azimuth
+      - inclination
+      - md
+      type: object
+    TrajectoryStationOut:
+      properties:
+        azimuthGN:
+          format: double
+          type: number
+        azimuthTN:
+          format: double
+          type: number
+        dls:
+          format: double
+          type: number
+        dxTN:
+          format: double
+          type: number
+        dyTN:
+          format: double
+          type: number
+        dz:
+          format: double
+          type: number
+        inclination:
+          format: double
+          type: number
+        md:
+          format: double
+          type: number
+        original:
+          type: boolean
+        point:
+          $ref: '#/components/schemas/Point'
+        wgs84Latitude:
+          format: double
+          type: number
+        wgs84Longitude:
+          format: double
+          type: number
+      type: object
+    VersionInfo:
+      properties:
+        artifactId:
+          type: string
+        branch:
+          type: string
+        buildTime:
+          type: string
+        commitId:
+          type: string
+        commitMessage:
+          type: string
+        connectedOuterServices:
+          items:
+            $ref: '#/components/schemas/ConnectedOuterService'
+          type: array
+        groupId:
+          type: string
+        version:
+          type: string
+      type: object
+  securitySchemes:
+    Authorization:
+      bearerFormat: Authorization
+      scheme: Bearer
+      type: http
+info:
+  title: File Service
+  version: '1.0'
+openapi: 3.0.1
+paths:
+  /_ah/liveness_check:
+    get:
+      operationId: livenessCheck
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: object
+          description: OK
+      tags:
+      - health-check
+  /_ah/readiness_check:
+    get:
+      operationId: readinessCheck
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: object
+          description: OK
+      tags:
+      - health-check
+  /v2/convert:
+    post:
+      operationId: convertPoint_1
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConvertPointsRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ConvertPointsResponse'
+          description: OK
+      tags:
+      - crs-converter-api-v-2
+  /v2/convertGeoJson:
+    post:
+      operationId: convertGeoJson_1
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConvertGeoJsonRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ConvertGeoJsonResponse'
+          description: OK
+      tags:
+      - crs-converter-api-v-2
+  /v2/convertTrajectory:
+    post:
+      operationId: convertTrajectory_1
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConvertTrajectoryRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ConvertTrajectoryResponse'
+          description: OK
+      tags:
+      - crs-converter-api-v-2
+  /v2/info:
+    get:
+      operationId: info
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VersionInfo'
+          description: OK
+      tags:
+      - info-api
+  /v3/convert:
+    post:
+      operationId: convertPoint
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConvertPointsRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ConvertPointsResponse'
+          description: OK
+      tags:
+      - crs-converter-api-v-3
+  /v3/convertBinGrid:
+    post:
+      operationId: convertBinGrid
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConvertBinGridRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ConvertBinGridResponse'
+          description: OK
+      tags:
+      - crs-converter-api-v-3
+  /v3/convertGeoJson:
+    post:
+      operationId: convertGeoJson
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConvertGeoJsonRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ConvertGeoJsonResponse'
+          description: OK
+      tags:
+      - crs-converter-api-v-3
+  /v3/convertTrajectory:
+    post:
+      operationId: convertTrajectory
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConvertTrajectoryRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ConvertTrajectoryResponse'
+          description: OK
+      tags:
+      - crs-converter-api-v-3
+  /v3/info:
+    get:
+      operationId: info_1
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VersionInfo'
+          description: OK
+      tags:
+      - info-api
+security:
+- Authorization: []
+servers:
+- url: /api/crs/converter
