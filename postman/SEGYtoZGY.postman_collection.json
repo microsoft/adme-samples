@@ -1,0 +1,1896 @@
+{
+	"info": {
+		"_postman_id": "314f92e5-45e9-4088-a07d-8a9e9a0b976c",
+		"name": "SEGYtoZGY",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "19529837",
+		"_collection_link": "https://universal-station-37371.postman.co/workspace/Converters-~f7b5a044-0674-411b-983c-4ba1be2fc2aa/collection/19529837-314f92e5-45e9-4088-a07d-8a9e9a0b976c?action=share&source=collection_link&creator=19529837"
+	},
+	"item": [
+		{
+			"name": "Generate Token",
+			"item": [
+				{
+					"name": "Get Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+									"});",
+									"",
+									"var body = pm.response.json()",
+									"pm.collectionVariables.set(\"access_token\", body.access_token);",
+									"pm.environment.set(\"TOKEN\",body.access_token);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/x-www-form-urlencoded"
+							},
+							{
+								"key": "Ocp-Apim-Subscription-Key",
+								"type": "text",
+								"value": "xxxxxxxx",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "grant_type",
+									"value": "client_credentials",
+									"type": "text"
+								},
+								{
+									"key": "client_id",
+									"value": "{{client_id}}",
+									"description": "Supply your client id as an environment variable",
+									"type": "text"
+								},
+								{
+									"key": "client_secret",
+									"value": "{{client_secret}}",
+									"description": "Supply your client secret as an environment variable",
+									"type": "text"
+								},
+								{
+									"key": "scope",
+									"value": "{{scope}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://login.microsoftonline.com/{{tenant_id}}/oauth2/v2.0/token",
+							"protocol": "https",
+							"host": [
+								"login",
+								"microsoftonline",
+								"com"
+							],
+							"path": [
+								"{{tenant_id}}",
+								"oauth2",
+								"v2.0",
+								"token"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Legal Tag",
+			"item": [
+				{
+					"name": "Create Legal Tag",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var rand = _.random(999111111111, 999999999999);\r",
+									"var dataPartition = pm.environment.get(\"data_partition_id\");\r",
+									"pm.environment.set(\"tag_name\", \"Converter-Legal-Tag-Test\" + rand);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var response = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Status code is 201 or 409\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([201, 409]);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Legal Tag is Created\", function() {\r",
+									"    var createdLegaltagId = '';\r",
+									"\r",
+									"    switch(pm.response.code) {\r",
+									"        case 201:\r",
+									"            createdLegaltagId = response.name;\r",
+									"            break;\r",
+									"        case 409:\r",
+									"            var splits = response.message.split(' ');\r",
+									"            createdLegaltagId = splits.pop();\r",
+									"            pm.expect(response.message).contains(\"already exists\");\r",
+									"            break;\r",
+									"        default:\r",
+									"            console.log('Unexpected server code');\r",
+									"    }\r",
+									"    \r",
+									"    pm.expect(createdLegaltagId.length > 1);\r",
+									"\r",
+									"    if (createdLegaltagId.length > 1) {\r",
+									"        pm.collectionVariables.set(\"zgy_legal_tag_id\", createdLegaltagId);\r",
+									"    }\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "data-partition-id",
+								"value": "{{data_partition_id}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n        \"name\": \"{{zgy_legal_tag_id}}\",\r\n        \"description\": \"Legal Tag added for Seismic conversion testing\",\r\n        \"properties\": {\r\n            \"contractId\": \"123456\",\r\n            \"countryOfOrigin\": [\r\n                \"US\",\r\n                \"CA\"\r\n            ],\r\n            \"dataType\": \"Public Domain Data\",\r\n            \"exportClassification\": \"EAR99\",\r\n            \"originator\": \"MSFT\",\r\n            \"personalData\": \"No Personal Data\",\r\n            \"securityClassification\": \"Private\",\r\n            \"expirationDate\": \"2025-12-25\"\r\n        }\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{instance_url}}/api/legal/v1/legaltags/",
+							"protocol": "https",
+							"host": [
+								"{{instance_url}}"
+							],
+							"path": [
+								"api",
+								"legal",
+								"v1",
+								"legaltags",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Add User to Admin Group",
+			"item": [
+				{
+					"name": "Get User's Groups",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200]);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "data-partition-id",
+								"value": "{{data_partition_id}}"
+							}
+						],
+						"url": {
+							"raw": "https://{{instance_url}}/api/entitlements/v2/groups",
+							"protocol": "https",
+							"host": [
+								"{{instance_url}}"
+							],
+							"path": [
+								"api",
+								"entitlements",
+								"v2",
+								"groups"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add User to Admin Group",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 or 409\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 409]);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"User was added to admin group\", function () {\r",
+									"    var userGroupEmail = pm.variables.get(\"OIDC_CLIENT_ID\");\r",
+									"\r",
+									"    switch(pm.response.code) {\r",
+									"        case 200:\r",
+									"            pm.expect(pm.response.email).to.equal(\"userGroupEmail\");\r",
+									"            break;\r",
+									"        case 409:\r",
+									"            var response = pm.response.json();\r",
+									"            let adminGroupName = pm.variables.get(\"entitlement_adminGroupName\");\r",
+									"            let dp = pm.variables.get(\"DATA_PARTITION_ID\");\r",
+									"            let domain = pm.variables.get(\"INSTANCE_DOMAIN\");\r",
+									"            let adminEmail = adminGroupName + \"@\" + dp + \".\" + domain;\r",
+									"            pm.expect(response.message).to.contain(adminEmail);\r",
+									"            break;\r",
+									"        default:\r",
+									"            console.log(\"Unexpected server code\");\r",
+									"    }\r",
+									"\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "data-partition-id",
+								"value": "{{data_partition_id}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\" : \"{{client_id}}\",\r\n    \"role\" : \"OWNER\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{instance_url}}/api/entitlements/v2/groups/users.datalake.admins@{{data_partition_id}}.{{domain}}/members",
+							"protocol": "https",
+							"host": [
+								"{{instance_url}}"
+							],
+							"path": [
+								"api",
+								"entitlements",
+								"v2",
+								"groups",
+								"users.datalake.admins@{{data_partition_id}}.{{domain}}",
+								"members"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Build Verification",
+			"item": [
+				{
+					"name": "Workflow -  Find Workflow",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.have.status(\"OK\");",
+									"});",
+									"",
+									"pm.test(\"Found ZGY Conversion DAG ID\", function () {",
+									"    let workflows = pm.response.json();",
+									"    let dag = workflows.find((workflow) => workflow.workflowId.includes(\"segy-to-zgy-conversion\"))",
+									"    pm.expect(dag).to.exist;",
+									"",
+									"    pm.collectionVariables.set('zgy_dag_id', dag.workflowId);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Data-Partition-Id",
+								"value": "{{data_partition_id}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://{{instance_url}}/api/workflow/v1/workflow",
+							"protocol": "https",
+							"host": [
+								"{{instance_url}}"
+							],
+							"path": [
+								"api",
+								"workflow",
+								"v1",
+								"workflow"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Workflow - Get Workflow Details",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.have.status(\"OK\");",
+									"});",
+									"",
+									"pm.test(\"Have valid body\", function () {",
+									"    let json = pm.response.json();",
+									"    pm.expect(json).to.be.not.empty",
+									"    pm.expect(json.workflowId).to.be.equal(pm.variables.get('zgy_dag_id'))",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Data-Partition-Id",
+								"value": "{{data_partition_id}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://{{instance_url}}/api/workflow/v1/workflow/{{zgy_dag_id}}",
+							"protocol": "https",
+							"host": [
+								"{{instance_url}}"
+							],
+							"path": [
+								"api",
+								"workflow",
+								"v1",
+								"workflow",
+								"{{zgy_dag_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Setup",
+			"item": [
+				{
+					"name": "Register Datapartition in Seismic Store for ZGY Conversion",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 or 409\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 409]);",
+									"});",
+									"",
+									"pm.test(\"Data Partition is Registered\", function () {",
+									"    let dataPartitionID = pm.environment.replaceIn('{{data_partition_id}}');",
+									"",
+									"    switch(pm.response.code) {",
+									"        case 200:",
+									"            var response = pm.response.json();",
+									"            pm.expect(response.name).to.equal(dataPartitionID);",
+									"            break;",
+									"        case 409:",
+									"            var response = pm.response.text();",
+									"            pm.expect(response).to.contain(dataPartitionID);",
+									"            break;",
+									"        default:",
+									"            console.log (\"Unexpected server code\");",
+									"    }",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"esd\": \"{{data_partition_id}}.{{domain}}\",\r\n    \"gcpid\": \"{{data_partition_id}}\",\r\n    \"default_acl\": \"users.datalake.admins@{{data_partition_id}}.{{domain}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{instance_url}}/seistore-svc/api/v3/tenant/{{data_partition_id}}",
+							"protocol": "https",
+							"host": [
+								"{{instance_url}}"
+							],
+							"path": [
+								"seistore-svc",
+								"api",
+								"v3",
+								"tenant",
+								"{{data_partition_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Subproject",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"",
+									"pm.test(\"Status code is 200 or 409\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 409]);",
+									"});",
+									"",
+									"pm.test(\"Subproject is Created\", function() {",
+									"    var createdSubprojectName = '';",
+									"    let testSubprojectName = pm.variables.get(\"zgyTestSubprojectName\");",
+									"",
+									"    switch(pm.response.code) {",
+									"        case 200:",
+									"            var response = pm.response.json();",
+									"            createdSubprojectName = response.name;",
+									"            break;",
+									"        case 409:",
+									"            var response = pm.response.text();",
+									"            var splits = response.split(' ');",
+									"            createdSubprojectName = splits[3];",
+									"            pm.expect(response).contains(\"already exists\");",
+									"            break;",
+									"        default:",
+									"            console.log('Unexpected server code');",
+									"    }",
+									"    ",
+									"    pm.expect(createdSubprojectName).equals(testSubprojectName);",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "ltag",
+								"value": "{{zgy_legal_tag_id}}",
+								"description": "the legal tag ID",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"admin\": \"{{client_id}}\",\r\n  \"storage_class\": \"MULTI_REGIONAL\",\r\n  \"storage_location\": \"US\",\r\n  \"access_policy\": \"dataset\",\r\n  \"acls\": {\r\n    \"admins\": [\r\n      \"users.datalake.admins@{{data_partition_id}}.{{domain}}\"\r\n    ],\r\n    \"viewers\": [\r\n      \"data.default.viewers@{{data_partition_id}}.{{domain}}\"\r\n    ],\r\n    \"owners\": [\r\n      \"data.default.owners@{{data_partition_id}}.{{domain}}\"\r\n    ]\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{instance_url}}/seistore-svc/api/v3/subproject/tenant/{{data_partition_id}}/subproject/{{zgyTestSubprojectName}}",
+							"protocol": "https",
+							"host": [
+								"{{instance_url}}"
+							],
+							"path": [
+								"seistore-svc",
+								"api",
+								"v3",
+								"subproject",
+								"tenant",
+								"{{data_partition_id}}",
+								"subproject",
+								"{{zgyTestSubprojectName}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "oZGY Storage Record",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var response = pm.response.json();",
+									"let responseRecordIDs = (response.skippedRecordIds.length == 0) ? response.recordIds : response.skippedRecordIds;",
+									"",
+									"saveRecordIdsToDeleteLater();",
+									"",
+									"pm.test(\"Status code is 201 CREATED\", function () {",
+									"    pm.response.to.have.status(201);",
+									"    pm.response.to.have.status(\"Created\");",
+									"});",
+									"",
+									"pm.test(\"Found Record IDs\", function () {",
+									"    var foundSegyID = foundWorkProductID = false;",
+									"",
+									"    for (const recordID of responseRecordIDs) {",
+									"        if(recordID.includes(\"FileCollection.SEGY\")) {",
+									"            pm.collectionVariables.set(\"zgy_recordID_FileCollectionSEGY\", recordID);",
+									"            foundSegyID = true;",
+									"        } else if(recordID.includes(\"WorkProduct\")) {",
+									"            pm.collectionVariables.set(\"zgy_recordID_WorkProduct\", recordID);",
+									"            foundWorkProductID = true;",
+									"        }",
+									"        ",
+									"        if (foundSegyID && foundWorkProductID) break;",
+									"    }",
+									"",
+									"    if(!(foundSegyID && foundWorkProductID) && (responseRecordIDs == response.skippedRecordIds)) {",
+									"        responseRecordIDs = response.recordIds;",
+									"",
+									"        for (const recordID of responseRecordIDs) {",
+									"            if(recordID.includes(\"FileCollection.SEGY\")) {",
+									"                pm.collectionVariables.set(\"zgy_recordID_FileCollectionSEGY\", recordID);",
+									"                foundSegyID = true;",
+									"            } else if(recordID.includes(\"WorkProduct\")) {",
+									"                pm.collectionVariables.set(\"zgy_recordID_WorkProduct\", recordID);",
+									"                foundWorkProductID = true;",
+									"            }",
+									"            ",
+									"            if (foundSegyID && foundWorkProductID) break;",
+									"        }",
+									"    }",
+									"",
+									"    pm.expect(foundSegyID && foundWorkProductID).to.be.true;",
+									"});",
+									"",
+									"function saveRecordIdsToDeleteLater() {",
+									"    var recordIDs = [];",
+									"",
+									"    if ((response.recordIds) && (response.recordIds.length > 0)) {",
+									"        var recordIDs = recordIDs.concat(response.recordIds);",
+									"    } ",
+									"",
+									"    if ((response.skippedRecordIds) && (response.skippedRecordIds.length > 0)) {",
+									"        var recordIDs = recordIDs.concat(response.skippedRecordIds);",
+									"    }",
+									"",
+									"    if (recordIDs.length > 0) {",
+									"        pm.collectionVariables.set(\"zgy_record_IDs_to_delete\", recordIDs.toString());",
+									"    }",
+									"}",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "data-partition-id",
+								"value": "{{data_partition_id}}",
+								"type": "text",
+								"description": "the datapartition ID"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n  {\n    \"kind\": \"osdu:wks:work-product-component--SeismicBinGrid:1.0.0\",\n    \"id\": \"{{data_partition_id}}:work-product-component--SeismicBinGrid:0913cf6e9c7b60e667416fee8074018b\",\n    \"acl\": {\n      \"owners\": [\n        \"data.default.owners@{{data_partition_id}}.{{domain}}\"\n      ],\n      \"viewers\": [\n        \"data.default.viewers@{{data_partition_id}}.{{domain}}\"\n      ]\n    },\n    \"legal\": {\n      \"legaltags\": [\n        \"{{zgy_legal_tag_id}}\"\n      ],\n      \"otherRelevantDataCountries\": [\n        \"NO\"\n      ],\n      \"status\": \"compliant\"\n    },\n    \"data\": {\n      \"P6TransformationMethod\": 9666,\n      \"P6BinGridOriginI\": 9961,\n      \"P6BinGridOriginJ\": 1961,\n      \"P6BinGridOriginEasting\": 438302.76,\n      \"P6BinGridOriginNorthing\": 6475310.75,\n      \"P6ScaleFactorOfBinGrid\": 1,\n      \"P6BinWidthOnIaxis\": 12.5,\n      \"P6BinWidthOnJaxis\": 12.5,\n      \"P6MapGridBearingOfBinGridJaxis\": -76,\n      \"P6BinNodeIncrementOnIaxis\": 1,\n      \"P6BinNodeIncrementOnJaxis\": 1,\n      \"SpatialArea\": {\n        \"SpatialLocationCoordinatesDate\": \"2021-05:07T11:08:39.39Z\",\n        \"QuantitativeAccuracyBandID\": \"partition-id:reference-data--QuantitativeAccuracyBand:Length.LessThan1m:\",\n        \"QualitativeSpatialAccuracyTypeID\": \"partition-id:reference-data--QualitativeSpatialAccuracyType:Confirmed:\",\n        \"CoordinateQualityCheckPerformedBy\": \"EDahl2\",\n        \"CoordinateQualityCheckDateTime\": \"2021-05:07T11:08:39.39Z\",\n        \"CoordinateQualityCheckRemarks\": [],\n        \"AsIngestedCoordinates\": {\n          \"type\": \"AnyCrsFeatureCollection\",\n          \"CoordinateReferenceSystemID\": \"partition-id:reference-data--CoordinateReferenceSystem:BoundCRS::OSDU::23031024:\",\n          \"persistableReferenceCrs\": \"{\\\"authCode\\\":{\\\"auth\\\":\\\"OSDU\\\",\\\"code\\\":\\\"23031024\\\"},\\\"lateBoundCRS\\\":{\\\"authCode\\\":{\\\"auth\\\":\\\"EPSG\\\",\\\"code\\\":\\\"23031\\\"},\\\"name\\\":\\\"ED_1950_UTM_Zone_31N\\\",\\\"type\\\":\\\"LBC\\\",\\\"ver\\\":\\\"PE_10_3_1\\\",\\\"wkt\\\":\\\"PROJCS[\\\\\\\"ED_1950_UTM_Zone_31N\\\\\\\",GEOGCS[\\\\\\\"GCS_European_1950\\\\\\\",DATUM[\\\\\\\"D_European_1950\\\\\\\",SPHEROID[\\\\\\\"International_1924\\\\\\\",6378388.0,297.0]],PRIMEM[\\\\\\\"Greenwich\\\\\\\",0.0],UNIT[\\\\\\\"Degree\\\\\\\",0.0174532925199433]],PROJECTION[\\\\\\\"Transverse_Mercator\\\\\\\"],PARAMETER[\\\\\\\"False_Easting\\\\\\\",500000.0],PARAMETER[\\\\\\\"False_Northing\\\\\\\",0.0],PARAMETER[\\\\\\\"Central_Meridian\\\\\\\",3.0],PARAMETER[\\\\\\\"Scale_Factor\\\\\\\",0.9996],PARAMETER[\\\\\\\"Latitude_Of_Origin\\\\\\\",0.0],UNIT[\\\\\\\"Meter\\\\\\\",1.0],AUTHORITY[\\\\\\\"EPSG\\\\\\\",23031]]\\\"},\\\"name\\\":\\\"ED50 / UTM zone 31N * EPSG-Nor S62 2001 [23031,1613]\\\",\\\"singleCT\\\":{\\\"authCode\\\":{\\\"auth\\\":\\\"EPSG\\\",\\\"code\\\":\\\"1613\\\"},\\\"name\\\":\\\"ED_1950_To_WGS_1984_24\\\",\\\"type\\\":\\\"ST\\\",\\\"ver\\\":\\\"PE_10_3_1\\\",\\\"wkt\\\":\\\"GEOGTRAN[\\\\\\\"ED_1950_To_WGS_1984_24\\\\\\\",GEOGCS[\\\\\\\"GCS_European_1950\\\\\\\",DATUM[\\\\\\\"D_European_1950\\\\\\\",SPHEROID[\\\\\\\"International_1924\\\\\\\",6378388.0,297.0]],PRIMEM[\\\\\\\"Greenwich\\\\\\\",0.0],UNIT[\\\\\\\"Degree\\\\\\\",0.0174532925199433]],GEOGCS[\\\\\\\"GCS_WGS_1984\\\\\\\",DATUM[\\\\\\\"D_WGS_1984\\\\\\\",SPHEROID[\\\\\\\"WGS_1984\\\\\\\",6378137.0,298.257223563]],PRIMEM[\\\\\\\"Greenwich\\\\\\\",0.0],UNIT[\\\\\\\"Degree\\\\\\\",0.0174532925199433]],METHOD[\\\\\\\"Position_Vector\\\\\\\"],PARAMETER[\\\\\\\"X_Axis_Translation\\\\\\\",-90.365],PARAMETER[\\\\\\\"Y_Axis_Translation\\\\\\\",-101.13],PARAMETER[\\\\\\\"Z_Axis_Translation\\\\\\\",-123.384],PARAMETER[\\\\\\\"X_Axis_Rotation\\\\\\\",0.333],PARAMETER[\\\\\\\"Y_Axis_Rotation\\\\\\\",0.077],PARAMETER[\\\\\\\"Z_Axis_Rotation\\\\\\\",0.894],PARAMETER[\\\\\\\"Scale_Difference\\\\\\\",1.994],AUTHORITY[\\\\\\\"EPSG\\\\\\\",1613]]\\\"},\\\"type\\\":\\\"EBC\\\",\\\"ver\\\":\\\"PE_10_3_1\\\"}\",\n          \"features\": [\n            {\n              \"type\": \"AnyCrsFeature\",\n              \"geometry\": {\n                \"type\": \"AnyCrsPolygon\",\n                \"coordinates\": [\n                  [\n                    [\n                      438302.76,\n                      6475310.75\n                    ],\n                    [\n                      439512.36947799835,\n                      6480162.22863138\n                    ],\n                    [\n                      430791.8366380928,\n                      6482336.501668082\n                    ],\n                    [\n                      429582.2271600945,\n                      6477485.023036702\n                    ],\n                    [\n                      438302.76,\n                      6475310.75\n                    ]\n                  ]\n                ],\n                \"bbox\": [\n                  429582.2271600945,\n                  6475310.75,\n                  439512.36947799835,\n                  6482336.501668082\n                ]\n              },\n              \"properties\": {\n                \"ijNumbers\": [\n                  [\n                    9961,\n                    1961\n                  ],\n                  [\n                    10361,\n                    1961\n                  ],\n                  [\n                    10361,\n                    2680\n                  ],\n                  [\n                    9961,\n                    2680\n                  ],\n                  [\n                    9961,\n                    1961\n                  ]\n                ]\n              },\n              \"bbox\": [\n                429582.2271600945,\n                6475310.75,\n                439512.36947799835,\n                6482336.501668082\n              ]\n            }\n          ],\n          \"bbox\": [\n            429582.2271600945,\n            6475310.75,\n            439512.36947799835,\n            6482336.501668082\n          ]\n        },\n        \"Wgs84Coordinates\": {\n          \"type\": \"FeatureCollection\",\n          \"features\": [\n            {\n              \"type\": \"Feature\",\n              \"geometry\": {\n                \"coordinates\": [\n                  [\n                    [\n                      1.9424806057788713,\n                      58.41226084918759\n                    ],\n                    [\n                      1.9618974134926812,\n                      58.455995941242875\n                    ],\n                    [\n                      1.8118333645473748,\n                      58.47422297309163\n                    ],\n                    [\n                      1.7925932357154626,\n                      58.430465979740404\n                    ],\n                    [\n                      1.9424806057788713,\n                      58.41226084918759\n                    ]\n                  ]\n                ],\n                \"type\": \"Polygon\",\n                \"bbox\": [\n                  1.7925932357154626,\n                  58.41226084918759,\n                  1.9618974134926812,\n                  58.47422297309163\n                ]\n              },\n              \"properties\": {\n                \"ijNumbers\": [\n                  [\n                    9961,\n                    1961\n                  ],\n                  [\n                    10361,\n                    1961\n                  ],\n                  [\n                    10361,\n                    2680\n                  ],\n                  [\n                    9961,\n                    2680\n                  ],\n                  [\n                    9961,\n                    1961\n                  ]\n                ]\n              },\n              \"bbox\": [\n                1.7925932357154626,\n                58.41226084918759,\n                1.9618974134926812,\n                58.47422297309163\n              ]\n            }\n          ],\n          \"properties\": {},\n          \"bbox\": [\n            1.7925932357154626,\n            58.41226084918759,\n            1.9618974134926812,\n            58.47422297309163\n          ]\n        },\n        \"AppliedOperations\": [\n          \"conversion from ED_1950_UTM_Zone_31N to GCS_European_1950; 5 points converted\",\n          \"transformation GCS_European_1950 to GCS_WGS_1984 using ED_1950_To_WGS_1984_24; 5 points successfully transformed\"\n        ],\n        \"SpatialParameterTypeID\": \"partition-id:reference-data--SpatialParameterType:Outline:\",\n        \"SpatialGeometryTypeID\": \"partition-id:reference-data--SpatialGeometryType:Polygon:\"\n      },\n      \"Description\": \"OSDU type of bin grid for testing\",\n      \"Name\": \"OSDU_BinGrid\",\n      \"BinGridName\": \"OSDU_BinGrid\"\n    },\n    \"meta\": []\n  },\n  {\n    \"kind\": \"osdu:wks:dataset--FileCollection.SEGY:1.0.0\",\n    \"id\": \"{{data_partition_id}}:dataset--FileCollection.SEGY:e4a9fc6241610b3a0327f7ace99b9c6f\",\n    \"acl\": {\n      \"owners\": [\n        \"data.default.owners@{{data_partition_id}}.{{domain}}\"\n      ],\n      \"viewers\": [\n        \"data.default.viewers@{{data_partition_id}}.{{domain}}\"\n      ]\n    },\n    \"legal\": {\n      \"legaltags\": [\n        \"{{zgy_legal_tag_id}}\"\n      ],\n      \"otherRelevantDataCountries\": [\n        \"NO\"\n      ],\n      \"status\": \"compliant\"\n    },\n    \"data\": {\n      \"Name\": \"Volve_SEGY_Time\",\n      \"Description\": \"Dataset released by Equinor and Partners\",\n      \"TotalSize\": \"1050849760\",\n      \"SchemaFormatTypeID\": \"partition-id:reference-data--SchemaFormatType:SEG-Y:\",\n      \"Endian\": \"BIG\",\n      \"DatasetProperties\": {\n        \"FileCollectionPath\": \"sd://{{data_partition_id}}/{{zgyTestSubprojectName}}/\",\n        \"FileSourceInfos\": [\n          {\n            \"FileSource\": \"sd://{{data_partition_id}}/{{zgyTestSubprojectName}}/{{segyTestFileNameForZgy}}\",\n            \"PreloadFilePath\": \"MyDocuments\\\\seismic-to-osdu\\\\Volve_SEGY_Time\\\\{{segyTestFileNameForZgy}}\",\n            \"Name\": \"Volve_SEGY_Time\",\n            \"FileSize\": \"1050849760\"\n          }\n        ],\n        \"Checksum\": \"92D719208302E627516D98FD59BC271A\"\n      },\n      \"VectorHeaderMapping\": [\n        {\n          \"KeyName\": \"partition-id:reference-data--HeaderKeyName:Inline:\",\n          \"WordFormat\": \"partition-id:reference-data--WordFormatType:INT:\",\n          \"WordWidth\": 4,\n          \"Position\": 189,\n          \"UoM\": \"partition-id:reference-data--UnitOfMeasure:Euc:\",\n          \"ScalarIndicator\": \"NOSCALE\",\n          \"ScalarOverride\": 0\n        },\n        {\n          \"KeyName\": \"partition-id:reference-data--HeaderKeyName:Crossline:\",\n          \"WordFormat\": \"partition-id:reference-data--WordFormatType:INT:\",\n          \"WordWidth\": 4,\n          \"Position\": 193,\n          \"UoM\": \"partition-id:reference-data--UnitOfMeasure:Euc:\",\n          \"ScalarIndicator\": \"NOSCALE\",\n          \"ScalarOverride\": 0\n        },\n        {\n          \"KeyName\": \"partition-id:reference-data--HeaderKeyName:CMPX:\",\n          \"WordFormat\": \"partition-id:reference-data--WordFormatType:INT:\",\n          \"WordWidth\": 4,\n          \"Position\": 181,\n          \"UoM\": \"partition-id:reference-data--UnitOfMeasure:m:\",\n          \"ScalarIndicator\": \"STANDARD\",\n          \"ScalarOverride\": 0\n        },\n        {\n          \"KeyName\": \"partition-id:reference-data--HeaderKeyName:CMPY:\",\n          \"WordFormat\": \"partition-id:reference-data--WordFormatType:INT:\",\n          \"WordWidth\": 4,\n          \"Position\": 185,\n          \"UoM\": \"partition-id:reference-data--UnitOfMeasure:m:\",\n          \"ScalarIndicator\": \"STANDARD\",\n          \"ScalarOverride\": 0\n        },\n        {\n          \"KeyName\": \"partition-id:reference-data--HeaderKeyName:STARTTIME:\",\n          \"WordFormat\": \"partition-id:reference-data--WordFormatType:INT:\",\n          \"WordWidth\": 2,\n          \"Position\": 109,\n          \"UoM\": \"partition-id:reference-data--UnitOfMeasure:ms:\",\n          \"ScalarIndicator\": \"STANDARD\",\n          \"ScalarOverride\": 0\n        },\n        {\n          \"KeyName\": \"partition-id:reference-data--HeaderKeyName:ZSCALAR:\",\n          \"WordFormat\": \"partition-id:reference-data--WordFormatType:INT:\",\n          \"WordWidth\": 2,\n          \"Position\": 69,\n          \"UoM\": \"partition-id:reference-data--UnitOfMeasure:Euc:\",\n          \"ScalarIndicator\": \"NOSCALE\",\n          \"ScalarOverride\": 0\n        },\n        {\n          \"KeyName\": \"partition-id:reference-data--HeaderKeyName:XYSCALAR:\",\n          \"WordFormat\": \"partition-id:reference-data--WordFormatType:INT:\",\n          \"WordWidth\": 2,\n          \"Position\": 71,\n          \"UoM\": \"partition-id:reference-data--UnitOfMeasure:Euc:\",\n          \"ScalarIndicator\": \"NOSCALE\",\n          \"ScalarOverride\": 0\n        }\n      ],\n      \"SEGYRevision\": \"rev 1\"\n    },\n    \"meta\": []\n  },\n  {\n    \"kind\": \"osdu:wks:work-product-component--SeismicTraceData:1.0.0\",\n    \"id\": \"{{data_partition_id}}:work-product-component--SeismicTraceData:cbcd0be4709f1ec6ce65f978b51f685b\",\n    \"acl\": {\n      \"owners\": [\n        \"data.default.owners@{{data_partition_id}}.{{domain}}\"\n      ],\n      \"viewers\": [\n        \"data.default.viewers@{{data_partition_id}}.{{domain}}\"\n      ]\n    },\n    \"legal\": {\n      \"legaltags\": [\n        \"{{zgy_legal_tag_id}}\"\n      ],\n      \"otherRelevantDataCountries\": [\n        \"NO\"\n      ],\n      \"status\": \"compliant\"\n    },\n    \"data\": {\n      \"IsExtendedLoad\": false,\n      \"IsDiscoverable\": true,\n      \"Name\": \"OSDU_SEGY\",\n      \"Description\": \"\",\n      \"CreationDateTime\": \"2021-02-12T13:11:58Z\",\n      \"Datasets\": [\n        \"{{data_partition_id}}:dataset--FileCollection.SEGY:e4a9fc6241610b3a0327f7ace99b9c6f\"\n      ],\n      \"SpatialArea\": {\n        \"AsIngestedCoordinates\": {\n          \"type\": \"AnyCrsFeatureCollection\",\n          \"CoordinateReferenceSystemID\": \"partition-id:reference-data--CoordinateReferenceSystem:BoundCRS::OSDU::23031024:\",\n          \"persistableReferenceCrs\": \"{\\\"authCode\\\":{\\\"auth\\\":\\\"OSDU\\\",\\\"code\\\":\\\"23031024\\\"},\\\"lateBoundCRS\\\":{\\\"authCode\\\":{\\\"auth\\\":\\\"EPSG\\\",\\\"code\\\":\\\"23031\\\"},\\\"name\\\":\\\"ED_1950_UTM_Zone_31N\\\",\\\"type\\\":\\\"LBC\\\",\\\"ver\\\":\\\"PE_10_3_1\\\",\\\"wkt\\\":\\\"PROJCS[\\\\\\\"ED_1950_UTM_Zone_31N\\\\\\\",GEOGCS[\\\\\\\"GCS_European_1950\\\\\\\",DATUM[\\\\\\\"D_European_1950\\\\\\\",SPHEROID[\\\\\\\"International_1924\\\\\\\",6378388.0,297.0]],PRIMEM[\\\\\\\"Greenwich\\\\\\\",0.0],UNIT[\\\\\\\"Degree\\\\\\\",0.0174532925199433]],PROJECTION[\\\\\\\"Transverse_Mercator\\\\\\\"],PARAMETER[\\\\\\\"False_Easting\\\\\\\",500000.0],PARAMETER[\\\\\\\"False_Northing\\\\\\\",0.0],PARAMETER[\\\\\\\"Central_Meridian\\\\\\\",3.0],PARAMETER[\\\\\\\"Scale_Factor\\\\\\\",0.9996],PARAMETER[\\\\\\\"Latitude_Of_Origin\\\\\\\",0.0],UNIT[\\\\\\\"Meter\\\\\\\",1.0],AUTHORITY[\\\\\\\"EPSG\\\\\\\",23031]]\\\"},\\\"name\\\":\\\"ED50 / UTM zone 31N * EPSG-Nor S62 2001 [23031,1613]\\\",\\\"singleCT\\\":{\\\"authCode\\\":{\\\"auth\\\":\\\"EPSG\\\",\\\"code\\\":\\\"1613\\\"},\\\"name\\\":\\\"ED_1950_To_WGS_1984_24\\\",\\\"type\\\":\\\"ST\\\",\\\"ver\\\":\\\"PE_10_3_1\\\",\\\"wkt\\\":\\\"GEOGTRAN[\\\\\\\"ED_1950_To_WGS_1984_24\\\\\\\",GEOGCS[\\\\\\\"GCS_European_1950\\\\\\\",DATUM[\\\\\\\"D_European_1950\\\\\\\",SPHEROID[\\\\\\\"International_1924\\\\\\\",6378388.0,297.0]],PRIMEM[\\\\\\\"Greenwich\\\\\\\",0.0],UNIT[\\\\\\\"Degree\\\\\\\",0.0174532925199433]],GEOGCS[\\\\\\\"GCS_WGS_1984\\\\\\\",DATUM[\\\\\\\"D_WGS_1984\\\\\\\",SPHEROID[\\\\\\\"WGS_1984\\\\\\\",6378137.0,298.257223563]],PRIMEM[\\\\\\\"Greenwich\\\\\\\",0.0],UNIT[\\\\\\\"Degree\\\\\\\",0.0174532925199433]],METHOD[\\\\\\\"Position_Vector\\\\\\\"],PARAMETER[\\\\\\\"X_Axis_Translation\\\\\\\",-90.365],PARAMETER[\\\\\\\"Y_Axis_Translation\\\\\\\",-101.13],PARAMETER[\\\\\\\"Z_Axis_Translation\\\\\\\",-123.384],PARAMETER[\\\\\\\"X_Axis_Rotation\\\\\\\",0.333],PARAMETER[\\\\\\\"Y_Axis_Rotation\\\\\\\",0.077],PARAMETER[\\\\\\\"Z_Axis_Rotation\\\\\\\",0.894],PARAMETER[\\\\\\\"Scale_Difference\\\\\\\",1.994],AUTHORITY[\\\\\\\"EPSG\\\\\\\",1613]]\\\"},\\\"type\\\":\\\"EBC\\\",\\\"ver\\\":\\\"PE_10_3_1\\\"}\",\n          \"features\": [\n            {\n              \"type\": \"AnyCrsFeature\",\n              \"geometry\": {\n                \"type\": \"AnyCrsPolygon\",\n                \"coordinates\": [\n                  [\n                    [\n                      438302.76,\n                      6475310.75\n                    ],\n                    [\n                      439512.36947799835,\n                      6480162.22863138\n                    ],\n                    [\n                      430791.8366380928,\n                      6482336.501668082\n                    ],\n                    [\n                      429582.2271600945,\n                      6477485.023036702\n                    ],\n                    [\n                      438302.76,\n                      6475310.75\n                    ]\n                  ]\n                ],\n                \"bbox\": [\n                  429582.2271600945,\n                  6475310.75,\n                  439512.36947799835,\n                  6482336.501668082\n                ]\n              },\n              \"properties\": {\n                \"ijNumbers\": [\n                  [\n                    9961,\n                    1961\n                  ],\n                  [\n                    10361,\n                    1961\n                  ],\n                  [\n                    10361,\n                    2680\n                  ],\n                  [\n                    9961,\n                    2680\n                  ],\n                  [\n                    9961,\n                    1961\n                  ]\n                ]\n              },\n              \"bbox\": [\n                429582.2271600945,\n                6475310.75,\n                439512.36947799835,\n                6482336.501668082\n              ]\n            }\n          ],\n          \"bbox\": [\n            429582.2271600945,\n            6475310.75,\n            439512.36947799835,\n            6482336.501668082\n          ]\n        },\n        \"Wgs84Coordinates\": {\n          \"type\": \"FeatureCollection\",\n          \"features\": [\n            {\n              \"type\": \"Feature\",\n              \"geometry\": {\n                \"coordinates\": [\n                  [\n                    [\n                      1.9424806057788713,\n                      58.41226084918759\n                    ],\n                    [\n                      1.9618974134926812,\n                      58.455995941242875\n                    ],\n                    [\n                      1.8118333645473748,\n                      58.47422297309163\n                    ],\n                    [\n                      1.7925932357154626,\n                      58.430465979740404\n                    ],\n                    [\n                      1.9424806057788713,\n                      58.41226084918759\n                    ]\n                  ]\n                ],\n                \"type\": \"Polygon\",\n                \"bbox\": [\n                  1.7925932357154626,\n                  58.41226084918759,\n                  1.9618974134926812,\n                  58.47422297309163\n                ]\n              },\n              \"properties\": {\n                \"ijNumbers\": [\n                  [\n                    9961,\n                    1961\n                  ],\n                  [\n                    10361,\n                    1961\n                  ],\n                  [\n                    10361,\n                    2680\n                  ],\n                  [\n                    9961,\n                    2680\n                  ],\n                  [\n                    9961,\n                    1961\n                  ]\n                ]\n              },\n              \"bbox\": [\n                1.7925932357154626,\n                58.41226084918759,\n                1.9618974134926812,\n                58.47422297309163\n              ]\n            }\n          ],\n          \"properties\": {},\n          \"bbox\": [\n            1.7925932357154626,\n            58.41226084918759,\n            1.9618974134926812,\n            58.47422297309163\n          ]\n        },\n        \"AppliedOperations\": [\n          \"conversion from ED_1950_UTM_Zone_31N to GCS_European_1950; 5 points converted\",\n          \"transformation GCS_European_1950 to GCS_WGS_1984 using ED_1950_To_WGS_1984_24; 5 points successfully transformed\"\n        ],\n        \"SpatialParameterTypeID\": \"partition-id:reference-data--SpatialParameterType:Outline:\",\n        \"SpatialGeometryTypeID\": \"partition-id:reference-data--SpatialGeometryType:Polygon:\"\n      },\n      \"Precision\": {\n        \"WordFormat\": \"partition-id:reference-data--WordFormatType:IEEEFLOAT:\",\n        \"WordWidth\": 4\n      },\n      \"CrosslineMin\": 1,\n      \"CrosslineMax\": 34,\n      \"CrosslineIncrement\": 1,\n      \"InlineMin\": 1,\n      \"InlineMax\": 67,\n      \"InlineIncrement\": 1,\n      \"SeismicDomainTypeID\": \"partition-id:reference-data--SeismicDomainType:Time:\",\n      \"StartTime\": 0,\n      \"EndTime\": 200,\n      \"SampleInterval\": 4,\n      \"SampleCount\": 51,\n      \"RangeAmplitudeMin\": -67.563103,\n      \"RangeAmplitudeMax\": 151.844238,\n      \"SeismicWaveTypeID\": \"partition-id:reference-data--SeismicWaveType:P:\",\n      \"SeismicStackingTypeID\": \"partition-id:reference-data--SeismicStackingType:Stk:\",\n      \"TextualFileHeader\": [\n        \"C01 CLIENT : STATOIL                              PROCESSED BY: WESTERNGECO     C02 AREA   : VOLVE, BLOCK 15/9,  NORTH SEA - ST10010     SURVEY: 3D 4C 0BC      C03 3D FULL AREA POST-STACK FINAL PSDM                       DATE: 2011-10-26   C04 DATA FORMAT: SEGY       DATA TYPE: STACK-FULL ANGLE, 3-41 DEGREES (T)       C05 ---------------------AQUISITION PARAMETRS---------------------------------- C06 DATA SHOT BY VESSEL: M/V SANCO SPIRIT & VIKLAND  CABLE LENGTH:6000 M        C07 NO OF GROUPS: 960/P,X,Y,Z.  NO OF CABLES: 8  ARRAY VOL/SOURCE: 3990 CU IN.  C08 GROUP INTERVAL: 25M  SHOT INTERVAL: 25M (FLIP-FLOP)  RECORD LENGTH: 10000 MSC09 GEODECTIC DATUM:  ED50      SPHEROID: INTERNAT 1924     PROJECTION: UTM     C10  UTM ZONE: 31 N                                                             C11 FIRST SAMPLE: 4 MS     LAST SAMPLE: 3400 MS     SAMPLE INTERVAL: 4 MS       C12 NAVIGATION SOURCE P1/90 UKOOA, SPS                                          C13 ----------------------PROCESSING SEQUENCE---------------------------------- C14 REFORMAT, RESAMPLING TO 4MS                                                 C15 Z TO P AMP. MATCHING AND DESIGNATURE APPLIED                                C16 TIDAL STATIC CORRECTION, NOISE ATTENUATION                                  C17 PZ CALIBRATION & SUMMATION                                                  C18 DIRECT ARRIVAL REMOVAL (SHOT & RECEIVER DOMAIN)                             C19 LINEAR NOISE ATTENUATION (RECEIVER DOMAIN), OFFSET REGULARIZATION           C20 SINGLE BOUNCE DECON IN TAU-PQ DOMAIN                                        C21 DETERMINISTIC WATER DEMULTIPLE, PrSDM (2011 VELOCITY MODEL),                C22 DEPTH TO TIME CONVERSION, RESIDUAL VELOCITY APPLIED, RADON DEMULTIPLE       C23  ANGLE MUTE (3-41 DEGREES), STACK,  MODEL BASED DEMULTIPLE                  C24 INVERSE_Q (100),  RANDOM NOISE ATTENUATION, 12.5X12.5 INTERPOLATION         C25 BPF 70Hz 50dB/OCT HIGH-CUT, OUTPUT SEGY FORMAT                              C26 ----------------------PROCESSING GRID INFORMATION-------------------------  C27 INLINE  BIN SIZE: 12.5M   CROSSLINE BIN SIZE: 12.5M  AZIMUTH: 284 DEGREES   C28 INLINE NUMBER INCREMENT:1       CROSSLINE  NUMBER INCREMENT:1               C29 PG1   X: 439272.97   Y: 6475068.89   IL:   9961   XL: 1881                  C30 PG2   X: 429582.21   Y: 6477485.37   IL:   9961   XL: 2680                  C31 PG3   X: 440588.57   Y: 6480344.84   IL: 10396   XL: 1881                   C32 PG4   X: 430897.81   Y: 6482761.32   IL: 10396   XL: 2680                   C33                                                                             C34 ----------------------HEADER WORD POSITIONS-------------------------------- C35 3D INLINE  BYTES 189-192             |  3D CROSS LINE   BYTES 193-196       C36 BIN CENTRE UTM-X  BYTES 181-184.  |  BIN CENTRE UTM-Y  BYTES 185-188        C37 CMP BYTES 21-24                                                             C38 ALL COORDINATE VALUES ARE MULTIPLIED BY 100                                 C39                                                                             C40 END EBCDIC                                                                  \"\n      ],\n      \"VerticalDatumOffset\": 0,\n      \"VerticalMeasurementTypeID\": \"partition-id:reference-data--VerticalMeasurementType:MSL:\",\n      \"ReplacementVelocity\": 1480,\n      \"ShiftApplied\": 0,\n      \"Preferred3DInterpretationSetID\": \"partition-id:master-data--Seismic3DInterpretationSet:seismicSurvey3d-09cc1a5d-d7f8-40f4-8161-bd40954f147c:\",\n      \"BinGridID\": \"{{data_partition_id}}:work-product-component--SeismicBinGrid:0913cf6e9c7b60e667416fee8074018b\",\n      \"ExtensionProperties\": {}\n    },\n    \"meta\": [\n      {\n        \"kind\": \"Unit\",\n        \"name\": \"m\",\n        \"persistableReference\": \"{\\\"abcd\\\":{\\\"a\\\":0.0,\\\"b\\\":1.0,\\\"c\\\":1.0,\\\"d\\\":0.0},\\\"symbol\\\":\\\"m\\\",\\\"baseMeasurement\\\":{\\\"ancestry\\\":\\\"L\\\",\\\"type\\\":\\\"UM\\\"},\\\"type\\\":\\\"UAD\\\"}\",\n        \"unitOfMeasureID\": \"partition-id:reference-data--UnitOfMeasure:m:\",\n        \"propertyNames\": [\n          \"VerticalDatumOffset\"\n        ]\n      },\n      {\n        \"kind\": \"Unit\",\n        \"name\": \"m/s\",\n        \"persistableReference\": \"{\\\"abcd\\\":{\\\"a\\\":0.0,\\\"b\\\":1.0,\\\"c\\\":1.0,\\\"d\\\":0.0},\\\"symbol\\\":\\\"m/s\\\",\\\"baseMeasurement\\\":{\\\"ancestry\\\":\\\"L/T\\\",\\\"type\\\":\\\"UM\\\"},\\\"type\\\":\\\"UAD\\\"}\",\n        \"unitOfMeasureID\": \"partition-id:reference-data--UnitOfMeasure:m%2Fs:\",\n        \"propertyNames\": [\n          \"ReplacementVelocity\"\n        ]\n      },\n      {\n        \"kind\": \"Unit\",\n        \"name\": \"amplitude\",\n        \"persistableReference\": \"{\\\"scaleOffset\\\":{\\\"scale\\\":1.0,\\\"offset\\\":0.0},\\\"symbol\\\":\\\"----\\\",\\\"baseMeasurement\\\":{\\\"ancestry\\\":\\\"Dimensionless\\\",\\\"type\\\":\\\"UM\\\"},\\\"type\\\":\\\"USO\\\"}\",\n        \"unitOfMeasureID\": \"partition-id:reference-data--UnitOfMeasure:Euc:\",\n        \"propertyNames\": [\n          \"RangeAmplitudeMin\",\n          \"RangeAmplitudeMax\"\n        ]\n      },\n      {\n        \"kind\": \"Unit\",\n        \"name\": \"ms\",\n        \"persistableReference\": \"{\\\"abcd\\\":{\\\"a\\\":0.0,\\\"b\\\":0.001,\\\"c\\\":1.0,\\\"d\\\":0.0},\\\"symbol\\\":\\\"ms\\\",\\\"baseMeasurement\\\":{\\\"ancestry\\\":\\\"T\\\",\\\"type\\\":\\\"UM\\\"},\\\"type\\\":\\\"UAD\\\"}\",\n        \"unitOfMeasureID\": \"partition-id:reference-data--UnitOfMeasure:ms:\",\n        \"propertyNames\": [\n          \"StartTime\",\n          \"EndTime\",\n          \"SampleInterval\"\n        ]\n      },\n      {\n        \"kind\": \"DateTime\",\n        \"name\": \"datetime\",\n        \"persistableReference\": \"{\\\"format\\\":\\\"yyyy-MM-ddTHH:mm:ssZ\\\",\\\"timeZone\\\":\\\"UTC\\\",\\\"type\\\":\\\"DTM\\\"}\",\n        \"propertyNames\": [\n          \"CreationDateTime\",\n          \"ExtensionProperties.dateModified\"\n        ]\n      }\n    ]\n  },\n  {\n    \"kind\": \"osdu:wks:work-product--WorkProduct:1.0.0\",\n    \"id\": \"{{data_partition_id}}:work-product--WorkProduct:819c76be31892652773f5dacd642b0e8\",\n    \"acl\": {\n      \"owners\": [\n        \"data.default.owners@{{data_partition_id}}.{{domain}}\"\n      ],\n      \"viewers\": [\n        \"data.default.viewers@{{data_partition_id}}.{{domain}}\"\n      ]\n    },\n    \"legal\": {\n      \"legaltags\": [\n        \"{{zgy_legal_tag_id}}\"\n      ],\n      \"otherRelevantDataCountries\": [\n        \"NO\"\n      ],\n      \"status\": \"compliant\"\n    },\n    \"data\": {\n      \"ResourceHomeRegionID\": \"partition-id:reference-data--OSDURegion:SomeUniqueOSDURegionID:\",\n      \"ResourceHostRegionIDs\": [\n        \"partition-id:reference-data--OSDURegion:SomeUniqueOSDURegionID:\"\n      ],\n      \"ResourceCurationStatus\": \"partition-id:reference-data--ResourceCurationStatus:CURATED:\",\n      \"ResourceLifecycleStatus\": \"partition-id:reference-data--ResourceLifecycleStatus:RECIEVED:\",\n      \"ResourceSecurityClassification\": \"partition-id:reference-data--ResourceSecurityClassification:Public:\",\n      \"Source\": \"Example Data Source\",\n      \"ExistenceKind\": \"partition-id:reference-data--ExistenceKind:Prototype:\",\n      \"Components\": [\n        \"{{data_partition_id}}:work-product-component--SeismicTraceData:cbcd0be4709f1ec6ce65f978b51f685b\",\n        \"{{data_partition_id}}:work-product-component--SeismicBinGrid:0913cf6e9c7b60e667416fee8074018b\"\n      ],\n      \"IsExtendedLoad\": false,\n      \"IsDiscoverable\": true,\n      \"Name\": \"Seismic migration Time  - work product\",\n      \"Description\": \"Seismic migration Time - work product\",\n      \"CreationDateTime\": \"2020-02-13T09:13:15.55Z\",\n      \"Tags\": [\n        \"Example Tags\"\n      ],\n      \"SpatialPoint\": {\n        \"SpatialLocationCoordinatesDate\": \"2020-02-13T09:13:15.55Z\",\n        \"QuantitativeAccuracyBandID\": \"partition-id:reference-data--QuantitativeAccuracyBand:Length.LessThan1m:\",\n        \"QualitativeSpatialAccuracyTypeID\": \"partition-id:reference-data--QualitativeSpatialAccuracyType:Confirmed:\",\n        \"CoordinateQualityCheckPerformedBy\": \"Example CoordinateQualityCheckPerformedBy\",\n        \"CoordinateQualityCheckDateTime\": \"2020-02-13T09:13:15.55Z\",\n        \"CoordinateQualityCheckRemarks\": [\n          \"Example CoordinateQualityCheckRemarks\"\n        ],\n        \"AsIngestedCoordinates\": {\n          \"type\": \"AnyCrsFeatureCollection\",\n          \"CoordinateReferenceSystemID\": \"partition-id:reference-data--CoordinateReferenceSystem:BoundCRS::OSDU::23031024:\",\n          \"persistableReferenceCrs\": \"{\\\"authCode\\\":{\\\"auth\\\":\\\"OSDU\\\",\\\"code\\\":\\\"23031024\\\"},\\\"lateBoundCRS\\\":{\\\"authCode\\\":{\\\"auth\\\":\\\"EPSG\\\",\\\"code\\\":\\\"23031\\\"},\\\"name\\\":\\\"ED_1950_UTM_Zone_31N\\\",\\\"type\\\":\\\"LBC\\\",\\\"ver\\\":\\\"PE_10_3_1\\\",\\\"wkt\\\":\\\"PROJCS[\\\\\\\"ED_1950_UTM_Zone_31N\\\\\\\",GEOGCS[\\\\\\\"GCS_European_1950\\\\\\\",DATUM[\\\\\\\"D_European_1950\\\\\\\",SPHEROID[\\\\\\\"International_1924\\\\\\\",6378388.0,297.0]],PRIMEM[\\\\\\\"Greenwich\\\\\\\",0.0],UNIT[\\\\\\\"Degree\\\\\\\",0.0174532925199433]],PROJECTION[\\\\\\\"Transverse_Mercator\\\\\\\"],PARAMETER[\\\\\\\"False_Easting\\\\\\\",500000.0],PARAMETER[\\\\\\\"False_Northing\\\\\\\",0.0],PARAMETER[\\\\\\\"Central_Meridian\\\\\\\",3.0],PARAMETER[\\\\\\\"Scale_Factor\\\\\\\",0.9996],PARAMETER[\\\\\\\"Latitude_Of_Origin\\\\\\\",0.0],UNIT[\\\\\\\"Meter\\\\\\\",1.0],AUTHORITY[\\\\\\\"EPSG\\\\\\\",23031]]\\\"},\\\"name\\\":\\\"ED50 / UTM zone 31N * EPSG-Nor S62 2001 [23031,1613]\\\",\\\"singleCT\\\":{\\\"authCode\\\":{\\\"auth\\\":\\\"EPSG\\\",\\\"code\\\":\\\"1613\\\"},\\\"name\\\":\\\"ED_1950_To_WGS_1984_24\\\",\\\"type\\\":\\\"ST\\\",\\\"ver\\\":\\\"PE_10_3_1\\\",\\\"wkt\\\":\\\"GEOGTRAN[\\\\\\\"ED_1950_To_WGS_1984_24\\\\\\\",GEOGCS[\\\\\\\"GCS_European_1950\\\\\\\",DATUM[\\\\\\\"D_European_1950\\\\\\\",SPHEROID[\\\\\\\"International_1924\\\\\\\",6378388.0,297.0]],PRIMEM[\\\\\\\"Greenwich\\\\\\\",0.0],UNIT[\\\\\\\"Degree\\\\\\\",0.0174532925199433]],GEOGCS[\\\\\\\"GCS_WGS_1984\\\\\\\",DATUM[\\\\\\\"D_WGS_1984\\\\\\\",SPHEROID[\\\\\\\"WGS_1984\\\\\\\",6378137.0,298.257223563]],PRIMEM[\\\\\\\"Greenwich\\\\\\\",0.0],UNIT[\\\\\\\"Degree\\\\\\\",0.0174532925199433]],METHOD[\\\\\\\"Position_Vector\\\\\\\"],PARAMETER[\\\\\\\"X_Axis_Translation\\\\\\\",-90.365],PARAMETER[\\\\\\\"Y_Axis_Translation\\\\\\\",-101.13],PARAMETER[\\\\\\\"Z_Axis_Translation\\\\\\\",-123.384],PARAMETER[\\\\\\\"X_Axis_Rotation\\\\\\\",0.333],PARAMETER[\\\\\\\"Y_Axis_Rotation\\\\\\\",0.077],PARAMETER[\\\\\\\"Z_Axis_Rotation\\\\\\\",0.894],PARAMETER[\\\\\\\"Scale_Difference\\\\\\\",1.994],AUTHORITY[\\\\\\\"EPSG\\\\\\\",1613]]\\\"},\\\"type\\\":\\\"EBC\\\",\\\"ver\\\":\\\"PE_10_3_1\\\"}\",\n          \"features\": [\n            {\n              \"geometry\": {\n                \"coordinates\": [\n                  [\n                    [\n                      438302.76,\n                      6475310.75\n                    ],\n                    [\n                      429582.2271600945,\n                      6477485.023036702\n                    ],\n                    [\n                      430791.8366380928,\n                      6477485.023036702\n                    ],\n                    [\n                      439512.36947799835,\n                      6480162.22863138\n                    ],\n                    [\n                      438302.76,\n                      6475310.75\n                    ]\n                  ]\n                ],\n                \"type\": \"AnyCrsPolygon\"\n              },\n              \"properties\": {\n                \"ijNumbers\": [\n                  [\n                    9961,\n                    1961\n                  ],\n                  [\n                    10361,\n                    1961\n                  ],\n                  [\n                    10361,\n                    2680\n                  ],\n                  [\n                    9961,\n                    2680\n                  ],\n                  [\n                    9961,\n                    1961\n                  ]\n                ]\n              },\n              \"type\": \"AnyCrsFeature\"\n            }\n          ]\n        },\n        \"Wgs84Coordinates\": {\n          \"features\": [\n            {\n              \"geometry\": {\n                \"coordinates\": [\n                  [\n                    [\n                      1.943967222,\n                      58.414205\n                    ],\n                    [\n                      1.794071944,\n                      58.43241222\n                    ],\n                    [\n                      1.814781667,\n                      58.43260528\n                    ],\n                    [\n                      1.9633875,\n                      58.45794\n                    ],\n                    [\n                      1.943967222,\n                      58.414205\n                    ]\n                  ]\n                ],\n                \"type\": \"Polygon\"\n              },\n              \"properties\": {\n                \"ijNumbers\": [\n                  [\n                    9961,\n                    1961\n                  ],\n                  [\n                    10361,\n                    1961\n                  ],\n                  [\n                    10361,\n                    2680\n                  ],\n                  [\n                    9961,\n                    2680\n                  ],\n                  [\n                    9961,\n                    1961\n                  ]\n                ]\n              },\n              \"type\": \"Feature\"\n            }\n          ],\n          \"type\": \"FeatureCollection\"\n        },\n        \"AppliedOperations\": [\n          \"conversion from ED_1950_UTM_Zone_31N to GCS_European_1950; 5 points converted\",\n          \"transformation GCS_European_1950 to GCS_WGS_1984 using ED_1950_To_WGS_1984_24; 5 points successfully transformed\"\n        ],\n        \"SpatialParameterTypeID\": \"partition-id:reference-data--SpatialParameterType:Outline:\",\n        \"SpatialGeometryTypeID\": \"partition-id:reference-data--SpatialGeometryType:Point:\"\n      },\n      \"SpatialArea\": {\n        \"AsIngestedCoordinates\": {\n          \"type\": \"AnyCrsFeatureCollection\",\n          \"CoordinateReferenceSystemID\": \"partition-id:reference-data--CoordinateReferenceSystem:BoundCRS::OSDU::23031024:\",\n          \"persistableReferenceCrs\": \"{\\\"authCode\\\":{\\\"auth\\\":\\\"OSDU\\\",\\\"code\\\":\\\"23031024\\\"},\\\"lateBoundCRS\\\":{\\\"authCode\\\":{\\\"auth\\\":\\\"EPSG\\\",\\\"code\\\":\\\"23031\\\"},\\\"name\\\":\\\"ED_1950_UTM_Zone_31N\\\",\\\"type\\\":\\\"LBC\\\",\\\"ver\\\":\\\"PE_10_3_1\\\",\\\"wkt\\\":\\\"PROJCS[\\\\\\\"ED_1950_UTM_Zone_31N\\\\\\\",GEOGCS[\\\\\\\"GCS_European_1950\\\\\\\",DATUM[\\\\\\\"D_European_1950\\\\\\\",SPHEROID[\\\\\\\"International_1924\\\\\\\",6378388.0,297.0]],PRIMEM[\\\\\\\"Greenwich\\\\\\\",0.0],UNIT[\\\\\\\"Degree\\\\\\\",0.0174532925199433]],PROJECTION[\\\\\\\"Transverse_Mercator\\\\\\\"],PARAMETER[\\\\\\\"False_Easting\\\\\\\",500000.0],PARAMETER[\\\\\\\"False_Northing\\\\\\\",0.0],PARAMETER[\\\\\\\"Central_Meridian\\\\\\\",3.0],PARAMETER[\\\\\\\"Scale_Factor\\\\\\\",0.9996],PARAMETER[\\\\\\\"Latitude_Of_Origin\\\\\\\",0.0],UNIT[\\\\\\\"Meter\\\\\\\",1.0],AUTHORITY[\\\\\\\"EPSG\\\\\\\",23031]]\\\"},\\\"name\\\":\\\"ED50 / UTM zone 31N * EPSG-Nor S62 2001 [23031,1613]\\\",\\\"singleCT\\\":{\\\"authCode\\\":{\\\"auth\\\":\\\"EPSG\\\",\\\"code\\\":\\\"1613\\\"},\\\"name\\\":\\\"ED_1950_To_WGS_1984_24\\\",\\\"type\\\":\\\"ST\\\",\\\"ver\\\":\\\"PE_10_3_1\\\",\\\"wkt\\\":\\\"GEOGTRAN[\\\\\\\"ED_1950_To_WGS_1984_24\\\\\\\",GEOGCS[\\\\\\\"GCS_European_1950\\\\\\\",DATUM[\\\\\\\"D_European_1950\\\\\\\",SPHEROID[\\\\\\\"International_1924\\\\\\\",6378388.0,297.0]],PRIMEM[\\\\\\\"Greenwich\\\\\\\",0.0],UNIT[\\\\\\\"Degree\\\\\\\",0.0174532925199433]],GEOGCS[\\\\\\\"GCS_WGS_1984\\\\\\\",DATUM[\\\\\\\"D_WGS_1984\\\\\\\",SPHEROID[\\\\\\\"WGS_1984\\\\\\\",6378137.0,298.257223563]],PRIMEM[\\\\\\\"Greenwich\\\\\\\",0.0],UNIT[\\\\\\\"Degree\\\\\\\",0.0174532925199433]],METHOD[\\\\\\\"Position_Vector\\\\\\\"],PARAMETER[\\\\\\\"X_Axis_Translation\\\\\\\",-90.365],PARAMETER[\\\\\\\"Y_Axis_Translation\\\\\\\",-101.13],PARAMETER[\\\\\\\"Z_Axis_Translation\\\\\\\",-123.384],PARAMETER[\\\\\\\"X_Axis_Rotation\\\\\\\",0.333],PARAMETER[\\\\\\\"Y_Axis_Rotation\\\\\\\",0.077],PARAMETER[\\\\\\\"Z_Axis_Rotation\\\\\\\",0.894],PARAMETER[\\\\\\\"Scale_Difference\\\\\\\",1.994],AUTHORITY[\\\\\\\"EPSG\\\\\\\",1613]]\\\"},\\\"type\\\":\\\"EBC\\\",\\\"ver\\\":\\\"PE_10_3_1\\\"}\",\n          \"features\": [\n            {\n              \"geometry\": {\n                \"coordinates\": [\n                  [\n                    [\n                      438302.76,\n                      6475310.75\n                    ],\n                    [\n                      429582.2271600945,\n                      6477485.023036702\n                    ],\n                    [\n                      430791.8366380928,\n                      6477485.023036702\n                    ],\n                    [\n                      439512.36947799835,\n                      6480162.22863138\n                    ],\n                    [\n                      438302.76,\n                      6475310.75\n                    ]\n                  ]\n                ],\n                \"type\": \"AnyCrsPolygon\"\n              },\n              \"properties\": {\n                \"ijNumbers\": [\n                  [\n                    9961,\n                    1961\n                  ],\n                  [\n                    10361,\n                    1961\n                  ],\n                  [\n                    10361,\n                    2680\n                  ],\n                  [\n                    9961,\n                    2680\n                  ],\n                  [\n                    9961,\n                    1961\n                  ]\n                ]\n              },\n              \"type\": \"AnyCrsFeature\"\n            }\n          ]\n        },\n        \"Wgs84Coordinates\": {\n          \"features\": [\n            {\n              \"geometry\": {\n                \"coordinates\": [\n                  [\n                    [\n                      1.943967222,\n                      58.414205\n                    ],\n                    [\n                      1.794071944,\n                      58.43241222\n                    ],\n                    [\n                      1.814781667,\n                      58.43260528\n                    ],\n                    [\n                      1.9633875,\n                      58.45794\n                    ],\n                    [\n                      1.943967222,\n                      58.414205\n                    ]\n                  ]\n                ],\n                \"type\": \"Polygon\"\n              },\n              \"properties\": {\n                \"ijNumbers\": [\n                  [\n                    9961,\n                    1961\n                  ],\n                  [\n                    10361,\n                    1961\n                  ],\n                  [\n                    10361,\n                    2680\n                  ],\n                  [\n                    9961,\n                    2680\n                  ],\n                  [\n                    9961,\n                    1961\n                  ]\n                ]\n              },\n              \"type\": \"Feature\"\n            }\n          ],\n          \"type\": \"FeatureCollection\"\n        },\n        \"AppliedOperations\": [\n          \"conversion from ED_1950_UTM_Zone_31N to GCS_European_1950; 5 points converted\",\n          \"transformation GCS_European_1950 to GCS_WGS_1984 using ED_1950_To_WGS_1984_24; 5 points successfully transformed\"\n        ],\n        \"SpatialParameterTypeID\": \"partition-id:reference-data--SpatialParameterType:Outline:\",\n        \"SpatialGeometryTypeID\": \"partition-id:reference-data--SpatialGeometryType:Polygon:\"\n      },\n      \"SubmitterName\": \"Example SubmitterName\",\n      \"BusinessActivities\": [\n        \"Example BusinessActivities\"\n      ],\n      \"AuthorIDs\": [\n        \"Example AuthorIDs\"\n      ],\n      \"LineageAssertions\": [],\n      \"Annotations\": [\n        \"Example Annotations\"\n      ],\n      \"ExtensionProperties\": {}\n    },\n    \"meta\": []\n  },\n  {\n    \"kind\": \"osdu:wks:dataset--FileCollection.SEGY:1.0.0\",\n    \"id\": \"{{data_partition_id}}:dataset--FileCollection.SEGY:642ffdfcdd37b9477e02b36e2e0bf8b7\",\n    \"acl\": {\n      \"owners\": [\n        \"data.default.owners@{{data_partition_id}}.{{domain}}\"\n      ],\n      \"viewers\": [\n        \"data.default.viewers@{{data_partition_id}}.{{domain}}\"\n      ]\n    },\n    \"legal\": {\n      \"legaltags\": [\n        \"{{zgy_legal_tag_id}}\"\n      ],\n      \"otherRelevantDataCountries\": [\n        \"NO\"\n      ],\n      \"status\": \"compliant\"\n    },\n    \"ancestry\": {\n      \"parents\": []\n    },\n    \"meta\": [],\n    \"data\": {\n      \"Name\": \"Volve_SEGY_Depth\",\n      \"Description\": \"Dataset released by Equinor and Partners\",\n      \"TotalSize\": \"1368413160\",\n      \"SchemaFormatTypeID\": \"partition-id:reference-data--SchemaFormatType:SEG-Y:\",\n      \"Endian\": \"BIG\",\n      \"DatasetProperties\": {\n        \"FileCollectionPath\": \"sd://opendes/sntc/volve/\",\n        \"FileSourceInfos\": [\n          {\n            \"FileSource\": \"sd://{{data_partition_id}}/{{zgyTestSubprojectName}}/{{segyTestFileNameForZgy}}\",\n            \"PreloadFilePath\": \"MyDocuments\\\\seismic-to-osdu\\\\Volve_SEGY_Depth\\\\{{segyTestFileNameForZgy}}\",\n            \"Name\": \"Volve_SEGY_Depth\",\n            \"FileSize\": \"1368413160\"\n          }\n        ],\n        \"Checksum\": \"FFC6ECC93E1DF02D44F2A19BD518BD1A\"\n      },\n      \"VectorHeaderMapping\": [\n        {\n          \"KeyName\": \"partition-id:reference-data--HeaderKeyName:Inline:\",\n          \"WordFormat\": \"partition-id:reference-data--WordFormatType:INT:\",\n          \"WordWidth\": 4,\n          \"Position\": 189,\n          \"UoM\": \"partition-id:reference-data--UnitOfMeasure:Euc:\",\n          \"ScalarIndicator\": \"NOSCALE\",\n          \"ScalarOverride\": 0\n        },\n        {\n          \"KeyName\": \"partition-id:reference-data--HeaderKeyName:Crossline:\",\n          \"WordFormat\": \"partition-id:reference-data--WordFormatType:INT:\",\n          \"WordWidth\": 4,\n          \"Position\": 193,\n          \"UoM\": \"partition-id:reference-data--UnitOfMeasure:Euc:\",\n          \"ScalarIndicator\": \"NOSCALE\",\n          \"ScalarOverride\": 0\n        },\n        {\n          \"KeyName\": \"partition-id:reference-data--HeaderKeyName:CMPX:\",\n          \"WordFormat\": \"partition-id:reference-data--WordFormatType:INT:\",\n          \"WordWidth\": 4,\n          \"Position\": 181,\n          \"UoM\": \"partition-id:reference-data--UnitOfMeasure:m:\",\n          \"ScalarIndicator\": \"STANDARD\",\n          \"ScalarOverride\": 0\n        },\n        {\n          \"KeyName\": \"partition-id:reference-data--HeaderKeyName:CMPY:\",\n          \"WordFormat\": \"partition-id:reference-data--WordFormatType:INT:\",\n          \"WordWidth\": 4,\n          \"Position\": 185,\n          \"UoM\": \"partition-id:reference-data--UnitOfMeasure:m:\",\n          \"ScalarIndicator\": \"STANDARD\",\n          \"ScalarOverride\": 0\n        },\n        {\n          \"KeyName\": \"partition-id:reference-data--HeaderKeyName:STARTTIME:\",\n          \"WordFormat\": \"partition-id:reference-data--WordFormatType:INT:\",\n          \"WordWidth\": 2,\n          \"Position\": 109,\n          \"UoM\": \"partition-id:reference-data--UnitOfMeasure:ms:\",\n          \"ScalarIndicator\": \"STANDARD\",\n          \"ScalarOverride\": 0\n        },\n        {\n          \"KeyName\": \"partition-id:reference-data--HeaderKeyName:ZSCALAR:\",\n          \"WordFormat\": \"partition-id:reference-data--WordFormatType:INT:\",\n          \"WordWidth\": 2,\n          \"Position\": 69,\n          \"UoM\": \"partition-id:reference-data--UnitOfMeasure:Euc:\",\n          \"ScalarIndicator\": \"NOSCALE\",\n          \"ScalarOverride\": 0\n        },\n        {\n          \"KeyName\": \"partition-id:reference-data--HeaderKeyName:XYSCALAR:\",\n          \"WordFormat\": \"partition-id:reference-data--WordFormatType:INT:\",\n          \"WordWidth\": 2,\n          \"Position\": 71,\n          \"UoM\": \"partition-id:reference-data--UnitOfMeasure:Euc:\",\n          \"ScalarIndicator\": \"NOSCALE\",\n          \"ScalarOverride\": 0\n        }\n      ],\n      \"SEGYRevision\": \"rev 1\"\n    }\n  },\n  {\n    \"kind\": \"osdu:wks:work-product-component--SeismicTraceData:1.0.0\",\n    \"id\": \"{{data_partition_id}}:work-product-component--SeismicTraceData:d7dbe845be104562fe8ebfe63fdf9f80\",\n    \"acl\": {\n      \"owners\": [\n        \"data.default.owners@{{data_partition_id}}.{{domain}}\"\n      ],\n      \"viewers\": [\n        \"data.default.viewers@{{data_partition_id}}.{{domain}}\"\n      ]\n    },\n    \"legal\": {\n      \"legaltags\": [\n        \"{{zgy_legal_tag_id}}\"\n      ],\n      \"otherRelevantDataCountries\": [\n        \"NO\"\n      ],\n      \"status\": \"compliant\"\n    },\n    \"data\": {\n      \"IsExtendedLoad\": false,\n      \"IsDiscoverable\": true,\n      \"Name\": \"OSDU_SEGY\",\n      \"Description\": \"\",\n      \"CreationDateTime\": \"2021-02-12T13:11:58Z\",\n      \"Datasets\": [\n        \"{{data_partition_id}}:dataset--FileCollection.SEGY:642ffdfcdd37b9477e02b36e2e0bf8b7\"\n      ],\n      \"SpatialArea\": {\n        \"AsIngestedCoordinates\": {\n          \"type\": \"AnyCrsFeatureCollection\",\n          \"CoordinateReferenceSystemID\": \"partition-id:reference-data--CoordinateReferenceSystem:BoundCRS::OSDU::23031024:\",\n          \"persistableReferenceCrs\": \"{\\\"authCode\\\":{\\\"auth\\\":\\\"OSDU\\\",\\\"code\\\":\\\"23031024\\\"},\\\"lateBoundCRS\\\":{\\\"authCode\\\":{\\\"auth\\\":\\\"EPSG\\\",\\\"code\\\":\\\"23031\\\"},\\\"name\\\":\\\"ED_1950_UTM_Zone_31N\\\",\\\"type\\\":\\\"LBC\\\",\\\"ver\\\":\\\"PE_10_3_1\\\",\\\"wkt\\\":\\\"PROJCS[\\\\\\\"ED_1950_UTM_Zone_31N\\\\\\\",GEOGCS[\\\\\\\"GCS_European_1950\\\\\\\",DATUM[\\\\\\\"D_European_1950\\\\\\\",SPHEROID[\\\\\\\"International_1924\\\\\\\",6378388.0,297.0]],PRIMEM[\\\\\\\"Greenwich\\\\\\\",0.0],UNIT[\\\\\\\"Degree\\\\\\\",0.0174532925199433]],PROJECTION[\\\\\\\"Transverse_Mercator\\\\\\\"],PARAMETER[\\\\\\\"False_Easting\\\\\\\",500000.0],PARAMETER[\\\\\\\"False_Northing\\\\\\\",0.0],PARAMETER[\\\\\\\"Central_Meridian\\\\\\\",3.0],PARAMETER[\\\\\\\"Scale_Factor\\\\\\\",0.9996],PARAMETER[\\\\\\\"Latitude_Of_Origin\\\\\\\",0.0],UNIT[\\\\\\\"Meter\\\\\\\",1.0],AUTHORITY[\\\\\\\"EPSG\\\\\\\",23031]]\\\"},\\\"name\\\":\\\"ED50 / UTM zone 31N * EPSG-Nor S62 2001 [23031,1613]\\\",\\\"singleCT\\\":{\\\"authCode\\\":{\\\"auth\\\":\\\"EPSG\\\",\\\"code\\\":\\\"1613\\\"},\\\"name\\\":\\\"ED_1950_To_WGS_1984_24\\\",\\\"type\\\":\\\"ST\\\",\\\"ver\\\":\\\"PE_10_3_1\\\",\\\"wkt\\\":\\\"GEOGTRAN[\\\\\\\"ED_1950_To_WGS_1984_24\\\\\\\",GEOGCS[\\\\\\\"GCS_European_1950\\\\\\\",DATUM[\\\\\\\"D_European_1950\\\\\\\",SPHEROID[\\\\\\\"International_1924\\\\\\\",6378388.0,297.0]],PRIMEM[\\\\\\\"Greenwich\\\\\\\",0.0],UNIT[\\\\\\\"Degree\\\\\\\",0.0174532925199433]],GEOGCS[\\\\\\\"GCS_WGS_1984\\\\\\\",DATUM[\\\\\\\"D_WGS_1984\\\\\\\",SPHEROID[\\\\\\\"WGS_1984\\\\\\\",6378137.0,298.257223563]],PRIMEM[\\\\\\\"Greenwich\\\\\\\",0.0],UNIT[\\\\\\\"Degree\\\\\\\",0.0174532925199433]],METHOD[\\\\\\\"Position_Vector\\\\\\\"],PARAMETER[\\\\\\\"X_Axis_Translation\\\\\\\",-90.365],PARAMETER[\\\\\\\"Y_Axis_Translation\\\\\\\",-101.13],PARAMETER[\\\\\\\"Z_Axis_Translation\\\\\\\",-123.384],PARAMETER[\\\\\\\"X_Axis_Rotation\\\\\\\",0.333],PARAMETER[\\\\\\\"Y_Axis_Rotation\\\\\\\",0.077],PARAMETER[\\\\\\\"Z_Axis_Rotation\\\\\\\",0.894],PARAMETER[\\\\\\\"Scale_Difference\\\\\\\",1.994],AUTHORITY[\\\\\\\"EPSG\\\\\\\",1613]]\\\"},\\\"type\\\":\\\"EBC\\\",\\\"ver\\\":\\\"PE_10_3_1\\\"}\",\n          \"features\": [\n            {\n              \"type\": \"AnyCrsFeature\",\n              \"geometry\": {\n                \"type\": \"AnyCrsPolygon\",\n                \"coordinates\": [\n                  [\n                    [\n                      438302.76,\n                      6475310.75\n                    ],\n                    [\n                      439512.36947799835,\n                      6480162.22863138\n                    ],\n                    [\n                      430791.8366380928,\n                      6482336.501668082\n                    ],\n                    [\n                      429582.2271600945,\n                      6477485.023036702\n                    ],\n                    [\n                      438302.76,\n                      6475310.75\n                    ]\n                  ]\n                ],\n                \"bbox\": [\n                  429582.2271600945,\n                  6475310.75,\n                  439512.36947799835,\n                  6482336.501668082\n                ]\n              },\n              \"properties\": {\n                \"ijNumbers\": [\n                  [\n                    9961,\n                    1961\n                  ],\n                  [\n                    10361,\n                    1961\n                  ],\n                  [\n                    10361,\n                    2680\n                  ],\n                  [\n                    9961,\n                    2680\n                  ],\n                  [\n                    9961,\n                    1961\n                  ]\n                ]\n              },\n              \"bbox\": [\n                429582.2271600945,\n                6475310.75,\n                439512.36947799835,\n                6482336.501668082\n              ]\n            }\n          ],\n          \"bbox\": [\n            429582.2271600945,\n            6475310.75,\n            439512.36947799835,\n            6482336.501668082\n          ]\n        },\n        \"Wgs84Coordinates\": {\n          \"type\": \"FeatureCollection\",\n          \"features\": [\n            {\n              \"type\": \"Feature\",\n              \"geometry\": {\n                \"coordinates\": [\n                  [\n                    [\n                      1.9424806057788713,\n                      58.41226084918759\n                    ],\n                    [\n                      1.9618974134926812,\n                      58.455995941242875\n                    ],\n                    [\n                      1.8118333645473748,\n                      58.47422297309163\n                    ],\n                    [\n                      1.7925932357154626,\n                      58.430465979740404\n                    ],\n                    [\n                      1.9424806057788713,\n                      58.41226084918759\n                    ]\n                  ]\n                ],\n                \"type\": \"Polygon\",\n                \"bbox\": [\n                  1.7925932357154626,\n                  58.41226084918759,\n                  1.9618974134926812,\n                  58.47422297309163\n                ]\n              },\n              \"properties\": {\n                \"ijNumbers\": [\n                  [\n                    9961,\n                    1961\n                  ],\n                  [\n                    10361,\n                    1961\n                  ],\n                  [\n                    10361,\n                    2680\n                  ],\n                  [\n                    9961,\n                    2680\n                  ],\n                  [\n                    9961,\n                    1961\n                  ]\n                ]\n              },\n              \"bbox\": [\n                1.7925932357154626,\n                58.41226084918759,\n                1.9618974134926812,\n                58.47422297309163\n              ]\n            }\n          ],\n          \"properties\": {},\n          \"bbox\": [\n            1.7925932357154626,\n            58.41226084918759,\n            1.9618974134926812,\n            58.47422297309163\n          ]\n        },\n        \"AppliedOperations\": [\n          \"conversion from ED_1950_UTM_Zone_31N to GCS_European_1950; 5 points converted\",\n          \"transformation GCS_European_1950 to GCS_WGS_1984 using ED_1950_To_WGS_1984_24; 5 points successfully transformed\"\n        ],\n        \"SpatialParameterTypeID\": \"partition-id:reference-data--SpatialParameterType:Outline:\",\n        \"SpatialGeometryTypeID\": \"partition-id:reference-data--SpatialGeometryType:Polygon:\"\n      },\n      \"Precision\": {\n        \"WordFormat\": \"partition-id:reference-data--WordFormatType:IEEEFLOAT:\",\n        \"WordWidth\": 4\n      },\n      \"CrosslineMin\": 1,\n      \"CrosslineMax\": 34,\n      \"CrosslineIncrement\": 1,\n      \"InlineMin\": 1,\n      \"InlineMax\": 67,\n      \"InlineIncrement\": 1,\n      \"SeismicDomainTypeID\": \"partition-id:reference-data--SeismicDomainType:Depth:\",\n      \"StartTime\": 0,\n      \"EndTime\": 200,\n      \"SampleInterval\": 4,\n      \"SampleCount\": 51,\n      \"RangeAmplitudeMin\": -67.563103,\n      \"RangeAmplitudeMax\": 151.844238,\n      \"SeismicWaveTypeID\": \"partition-id:reference-data--SeismicWaveType:P:\",\n      \"SeismicStackingTypeID\": \"partition-id:reference-data--SeismicStackingType:Stk:\",\n      \"TextualFileHeader\": [\n        \"C01 CLIENT : STATOIL                              PROCESSED BY: WESTERNGECO     C02 AREA   : VOLVE, BLOCK 15/9,  NORTH SEA - ST10010     SURVEY: 3D 4C 0BC      C03 3D FULL AREA POST-STACK FINAL PSDM                       DATE: 2011-10-26   C04 DATA FORMAT: SEGY       DATA TYPE: STACK-FULL ANGLE, 3-41 DEGREES (T)       C05 ---------------------AQUISITION PARAMETRS---------------------------------- C06 DATA SHOT BY VESSEL: M/V SANCO SPIRIT & VIKLAND  CABLE LENGTH:6000 M        C07 NO OF GROUPS: 960/P,X,Y,Z.  NO OF CABLES: 8  ARRAY VOL/SOURCE: 3990 CU IN.  C08 GROUP INTERVAL: 25M  SHOT INTERVAL: 25M (FLIP-FLOP)  RECORD LENGTH: 10000 MSC09 GEODECTIC DATUM:  ED50      SPHEROID: INTERNAT 1924     PROJECTION: UTM     C10  UTM ZONE: 31 N                                                             C11 FIRST SAMPLE: 4 MS     LAST SAMPLE: 3400 MS     SAMPLE INTERVAL: 4 MS       C12 NAVIGATION SOURCE P1/90 UKOOA, SPS                                          C13 ----------------------PROCESSING SEQUENCE---------------------------------- C14 REFORMAT, RESAMPLING TO 4MS                                                 C15 Z TO P AMP. MATCHING AND DESIGNATURE APPLIED                                C16 TIDAL STATIC CORRECTION, NOISE ATTENUATION                                  C17 PZ CALIBRATION & SUMMATION                                                  C18 DIRECT ARRIVAL REMOVAL (SHOT & RECEIVER DOMAIN)                             C19 LINEAR NOISE ATTENUATION (RECEIVER DOMAIN), OFFSET REGULARIZATION           C20 SINGLE BOUNCE DECON IN TAU-PQ DOMAIN                                        C21 DETERMINISTIC WATER DEMULTIPLE, PrSDM (2011 VELOCITY MODEL),                C22 DEPTH TO TIME CONVERSION, RESIDUAL VELOCITY APPLIED, RADON DEMULTIPLE       C23  ANGLE MUTE (3-41 DEGREES), STACK,  MODEL BASED DEMULTIPLE                  C24 INVERSE_Q (100),  RANDOM NOISE ATTENUATION, 12.5X12.5 INTERPOLATION         C25 BPF 70Hz 50dB/OCT HIGH-CUT, OUTPUT SEGY FORMAT                              C26 ----------------------PROCESSING GRID INFORMATION-------------------------  C27 INLINE  BIN SIZE: 12.5M   CROSSLINE BIN SIZE: 12.5M  AZIMUTH: 284 DEGREES   C28 INLINE NUMBER INCREMENT:1       CROSSLINE  NUMBER INCREMENT:1               C29 PG1   X: 439272.97   Y: 6475068.89   IL:   9961   XL: 1881                  C30 PG2   X: 429582.21   Y: 6477485.37   IL:   9961   XL: 2680                  C31 PG3   X: 440588.57   Y: 6480344.84   IL: 10396   XL: 1881                   C32 PG4   X: 430897.81   Y: 6482761.32   IL: 10396   XL: 2680                   C33                                                                             C34 ----------------------HEADER WORD POSITIONS-------------------------------- C35 3D INLINE  BYTES 189-192             |  3D CROSS LINE   BYTES 193-196       C36 BIN CENTRE UTM-X  BYTES 181-184.  |  BIN CENTRE UTM-Y  BYTES 185-188        C37 CMP BYTES 21-24                                                             C38 ALL COORDINATE VALUES ARE MULTIPLIED BY 100                                 C39                                                                             C40 END EBCDIC                                                                  \"\n      ],\n      \"VerticalDatumOffset\": 0,\n      \"VerticalMeasurementTypeID\": \"partition-id:reference-data--VerticalMeasurementType:MSL:\",\n      \"ReplacementVelocity\": 1480,\n      \"ShiftApplied\": 0,\n      \"Preferred3DInterpretationSetID\": \"partition-id:master-data--Seismic3DInterpretationSet:seismicSurvey3d-09cc1a5d-d7f8-40f4-8161-bd40954f147c:\",\n      \"BinGridID\": \"{{data_partition_id}}:work-product-component--SeismicBinGrid:0913cf6e9c7b60e667416fee8074018b\",\n      \"ExtensionProperties\": {}\n    },\n    \"meta\": [\n      {\n        \"kind\": \"Unit\",\n        \"name\": \"m\",\n        \"persistableReference\": \"{\\\"abcd\\\":{\\\"a\\\":0.0,\\\"b\\\":1.0,\\\"c\\\":1.0,\\\"d\\\":0.0},\\\"symbol\\\":\\\"m\\\",\\\"baseMeasurement\\\":{\\\"ancestry\\\":\\\"L\\\",\\\"type\\\":\\\"UM\\\"},\\\"type\\\":\\\"UAD\\\"}\",\n        \"unitOfMeasureID\": \"partition-id:reference-data--UnitOfMeasure:m:\",\n        \"propertyNames\": [\n          \"VerticalDatumOffset\"\n        ]\n      },\n      {\n        \"kind\": \"Unit\",\n        \"name\": \"m/s\",\n        \"persistableReference\": \"{\\\"abcd\\\":{\\\"a\\\":0.0,\\\"b\\\":1.0,\\\"c\\\":1.0,\\\"d\\\":0.0},\\\"symbol\\\":\\\"m/s\\\",\\\"baseMeasurement\\\":{\\\"ancestry\\\":\\\"L/T\\\",\\\"type\\\":\\\"UM\\\"},\\\"type\\\":\\\"UAD\\\"}\",\n        \"unitOfMeasureID\": \"partition-id:reference-data--UnitOfMeasure:m%2Fs:\",\n        \"propertyNames\": [\n          \"ReplacementVelocity\"\n        ]\n      },\n      {\n        \"kind\": \"Unit\",\n        \"name\": \"amplitude\",\n        \"persistableReference\": \"{\\\"scaleOffset\\\":{\\\"scale\\\":1.0,\\\"offset\\\":0.0},\\\"symbol\\\":\\\"----\\\",\\\"baseMeasurement\\\":{\\\"ancestry\\\":\\\"Dimensionless\\\",\\\"type\\\":\\\"UM\\\"},\\\"type\\\":\\\"USO\\\"}\",\n        \"propertyNames\": [\n          \"RangeAmplitudeMin\",\n          \"RangeAmplitudeMax\"\n        ]\n      },\n      {\n        \"kind\": \"Unit\",\n        \"name\": \"ms\",\n        \"persistableReference\": \"{\\\"abcd\\\":{\\\"a\\\":0.0,\\\"b\\\":0.001,\\\"c\\\":1.0,\\\"d\\\":0.0},\\\"symbol\\\":\\\"ms\\\",\\\"baseMeasurement\\\":{\\\"ancestry\\\":\\\"T\\\",\\\"type\\\":\\\"UM\\\"},\\\"type\\\":\\\"UAD\\\"}\",\n        \"unitOfMeasureID\": \"partition-id:reference-data--UnitOfMeasure:ms:\",\n        \"propertyNames\": [\n          \"StartTime\",\n          \"EndTime\",\n          \"SampleInterval\"\n        ]\n      },\n      {\n        \"kind\": \"DateTime\",\n        \"name\": \"datetime\",\n        \"persistableReference\": \"{\\\"format\\\":\\\"yyyy-MM-ddTHH:mm:ssZ\\\",\\\"timeZone\\\":\\\"UTC\\\",\\\"type\\\":\\\"DTM\\\"}\",\n        \"propertyNames\": [\n          \"CreationDateTime\",\n          \"ExtensionProperties.dateModified\"\n        ]\n      }\n    ]\n  },\n  {\n    \"kind\": \"osdu:wks:work-product--WorkProduct:1.0.0\",\n    \"acl\": {\n      \"owners\": [\n        \"data.default.owners@{{data_partition_id}}.{{domain}}\"\n      ],\n      \"viewers\": [\n        \"data.default.viewers@{{data_partition_id}}.{{domain}}\"\n      ]\n    },\n    \"legal\": {\n      \"legaltags\": [\n        \"{{zgy_legal_tag_id}}\"\n      ],\n      \"otherRelevantDataCountries\": [\n        \"NO\"\n      ],\n      \"status\": \"compliant\"\n    },\n    \"data\": {\n      \"ResourceHomeRegionID\": \"partition-id:reference-data--OSDURegion:SomeUniqueOSDURegionID:\",\n      \"ResourceHostRegionIDs\": [\n        \"partition-id:reference-data--OSDURegion:SomeUniqueOSDURegionID:\"\n      ],\n      \"ResourceCurationStatus\": \"partition-id:reference-data--ResourceCurationStatus:CURATED:\",\n      \"ResourceLifecycleStatus\": \"partition-id:reference-data--ResourceLifecycleStatus:RECIEVED:\",\n      \"ResourceSecurityClassification\": \"partition-id:reference-data--ResourceSecurityClassification:Public:\",\n      \"Source\": \"Example Data Source\",\n      \"ExistenceKind\": \"partition-id:reference-data--ExistenceKind:Prototype:\",\n      \"Components\": [\n        \"{{data_partition_id}}:work-product-component--SeismicTraceData:d7dbe845be104562fe8ebfe63fdf9f80\",\n        \"{{data_partition_id}}:work-product-component--SeismicBinGrid:0913cf6e9c7b60e667416fee8074018b\"\n      ],\n      \"IsExtendedLoad\": false,\n      \"IsDiscoverable\": true,\n      \"Name\": \"Seismic migration Time  - work product\",\n      \"Description\": \"Seismic migration Time - work product\",\n      \"CreationDateTime\": \"2020-02-13T09:13:15.55Z\",\n      \"Tags\": [\n        \"Example Tags\"\n      ],\n      \"SpatialPoint\": {\n        \"SpatialLocationCoordinatesDate\": \"2020-02-13T09:13:15.55Z\",\n        \"QuantitativeAccuracyBandID\": \"partition-id:reference-data--QuantitativeAccuracyBand:Length.LessThan1m:\",\n        \"QualitativeSpatialAccuracyTypeID\": \"partition-id:reference-data--QualitativeSpatialAccuracyType:Confirmed:\",\n        \"CoordinateQualityCheckPerformedBy\": \"Example CoordinateQualityCheckPerformedBy\",\n        \"CoordinateQualityCheckDateTime\": \"2020-02-13T09:13:15.55Z\",\n        \"CoordinateQualityCheckRemarks\": [\n          \"Example CoordinateQualityCheckRemarks\"\n        ],\n        \"AsIngestedCoordinates\": {\n          \"type\": \"AnyCrsFeatureCollection\",\n          \"CoordinateReferenceSystemID\": \"partition-id:reference-data--CoordinateReferenceSystem:BoundCRS::OSDU::23031024:\",\n          \"persistableReferenceCrs\": \"{\\\"authCode\\\":{\\\"auth\\\":\\\"OSDU\\\",\\\"code\\\":\\\"23031024\\\"},\\\"lateBoundCRS\\\":{\\\"authCode\\\":{\\\"auth\\\":\\\"EPSG\\\",\\\"code\\\":\\\"23031\\\"},\\\"name\\\":\\\"ED_1950_UTM_Zone_31N\\\",\\\"type\\\":\\\"LBC\\\",\\\"ver\\\":\\\"PE_10_3_1\\\",\\\"wkt\\\":\\\"PROJCS[\\\\\\\"ED_1950_UTM_Zone_31N\\\\\\\",GEOGCS[\\\\\\\"GCS_European_1950\\\\\\\",DATUM[\\\\\\\"D_European_1950\\\\\\\",SPHEROID[\\\\\\\"International_1924\\\\\\\",6378388.0,297.0]],PRIMEM[\\\\\\\"Greenwich\\\\\\\",0.0],UNIT[\\\\\\\"Degree\\\\\\\",0.0174532925199433]],PROJECTION[\\\\\\\"Transverse_Mercator\\\\\\\"],PARAMETER[\\\\\\\"False_Easting\\\\\\\",500000.0],PARAMETER[\\\\\\\"False_Northing\\\\\\\",0.0],PARAMETER[\\\\\\\"Central_Meridian\\\\\\\",3.0],PARAMETER[\\\\\\\"Scale_Factor\\\\\\\",0.9996],PARAMETER[\\\\\\\"Latitude_Of_Origin\\\\\\\",0.0],UNIT[\\\\\\\"Meter\\\\\\\",1.0],AUTHORITY[\\\\\\\"EPSG\\\\\\\",23031]]\\\"},\\\"name\\\":\\\"ED50 / UTM zone 31N * EPSG-Nor S62 2001 [23031,1613]\\\",\\\"singleCT\\\":{\\\"authCode\\\":{\\\"auth\\\":\\\"EPSG\\\",\\\"code\\\":\\\"1613\\\"},\\\"name\\\":\\\"ED_1950_To_WGS_1984_24\\\",\\\"type\\\":\\\"ST\\\",\\\"ver\\\":\\\"PE_10_3_1\\\",\\\"wkt\\\":\\\"GEOGTRAN[\\\\\\\"ED_1950_To_WGS_1984_24\\\\\\\",GEOGCS[\\\\\\\"GCS_European_1950\\\\\\\",DATUM[\\\\\\\"D_European_1950\\\\\\\",SPHEROID[\\\\\\\"International_1924\\\\\\\",6378388.0,297.0]],PRIMEM[\\\\\\\"Greenwich\\\\\\\",0.0],UNIT[\\\\\\\"Degree\\\\\\\",0.0174532925199433]],GEOGCS[\\\\\\\"GCS_WGS_1984\\\\\\\",DATUM[\\\\\\\"D_WGS_1984\\\\\\\",SPHEROID[\\\\\\\"WGS_1984\\\\\\\",6378137.0,298.257223563]],PRIMEM[\\\\\\\"Greenwich\\\\\\\",0.0],UNIT[\\\\\\\"Degree\\\\\\\",0.0174532925199433]],METHOD[\\\\\\\"Position_Vector\\\\\\\"],PARAMETER[\\\\\\\"X_Axis_Translation\\\\\\\",-90.365],PARAMETER[\\\\\\\"Y_Axis_Translation\\\\\\\",-101.13],PARAMETER[\\\\\\\"Z_Axis_Translation\\\\\\\",-123.384],PARAMETER[\\\\\\\"X_Axis_Rotation\\\\\\\",0.333],PARAMETER[\\\\\\\"Y_Axis_Rotation\\\\\\\",0.077],PARAMETER[\\\\\\\"Z_Axis_Rotation\\\\\\\",0.894],PARAMETER[\\\\\\\"Scale_Difference\\\\\\\",1.994],AUTHORITY[\\\\\\\"EPSG\\\\\\\",1613]]\\\"},\\\"type\\\":\\\"EBC\\\",\\\"ver\\\":\\\"PE_10_3_1\\\"}\",\n          \"features\": [\n            {\n              \"geometry\": {\n                \"coordinates\": [\n                  [\n                    [\n                      438302.76,\n                      6475310.75\n                    ],\n                    [\n                      429582.2271600945,\n                      6477485.023036702\n                    ],\n                    [\n                      430791.8366380928,\n                      6477485.023036702\n                    ],\n                    [\n                      439512.36947799835,\n                      6480162.22863138\n                    ],\n                    [\n                      438302.76,\n                      6475310.75\n                    ]\n                  ]\n                ],\n                \"type\": \"AnyCrsPolygon\"\n              },\n              \"properties\": {\n                \"ijNumbers\": [\n                  [\n                    9961,\n                    1961\n                  ],\n                  [\n                    10361,\n                    1961\n                  ],\n                  [\n                    10361,\n                    2680\n                  ],\n                  [\n                    9961,\n                    2680\n                  ],\n                  [\n                    9961,\n                    1961\n                  ]\n                ]\n              },\n              \"type\": \"AnyCrsFeature\"\n            }\n          ]\n        },\n        \"Wgs84Coordinates\": {\n          \"features\": [\n            {\n              \"geometry\": {\n                \"coordinates\": [\n                  [\n                    [\n                      1.943967222,\n                      58.414205\n                    ],\n                    [\n                      1.794071944,\n                      58.43241222\n                    ],\n                    [\n                      1.814781667,\n                      58.43260528\n                    ],\n                    [\n                      1.9633875,\n                      58.45794\n                    ],\n                    [\n                      1.943967222,\n                      58.414205\n                    ]\n                  ]\n                ],\n                \"type\": \"Polygon\"\n              },\n              \"properties\": {\n                \"ijNumbers\": [\n                  [\n                    9961,\n                    1961\n                  ],\n                  [\n                    10361,\n                    1961\n                  ],\n                  [\n                    10361,\n                    2680\n                  ],\n                  [\n                    9961,\n                    2680\n                  ],\n                  [\n                    9961,\n                    1961\n                  ]\n                ]\n              },\n              \"type\": \"Feature\"\n            }\n          ],\n          \"type\": \"FeatureCollection\"\n        },\n        \"AppliedOperations\": [\n          \"conversion from ED_1950_UTM_Zone_31N to GCS_European_1950; 5 points converted\",\n          \"transformation GCS_European_1950 to GCS_WGS_1984 using ED_1950_To_WGS_1984_24; 5 points successfully transformed\"\n        ],\n        \"SpatialParameterTypeID\": \"partition-id:reference-data--SpatialParameterType:Outline:\",\n        \"SpatialGeometryTypeID\": \"partition-id:reference-data--SpatialGeometryType:Point:\"\n      },\n      \"SpatialArea\": {\n        \"AsIngestedCoordinates\": {\n          \"type\": \"AnyCrsFeatureCollection\",\n          \"CoordinateReferenceSystemID\": \"partition-id:reference-data--CoordinateReferenceSystem:BoundCRS::OSDU::23031024:\",\n          \"persistableReferenceCrs\": \"{\\\"authCode\\\":{\\\"auth\\\":\\\"OSDU\\\",\\\"code\\\":\\\"23031024\\\"},\\\"lateBoundCRS\\\":{\\\"authCode\\\":{\\\"auth\\\":\\\"EPSG\\\",\\\"code\\\":\\\"23031\\\"},\\\"name\\\":\\\"ED_1950_UTM_Zone_31N\\\",\\\"type\\\":\\\"LBC\\\",\\\"ver\\\":\\\"PE_10_3_1\\\",\\\"wkt\\\":\\\"PROJCS[\\\\\\\"ED_1950_UTM_Zone_31N\\\\\\\",GEOGCS[\\\\\\\"GCS_European_1950\\\\\\\",DATUM[\\\\\\\"D_European_1950\\\\\\\",SPHEROID[\\\\\\\"International_1924\\\\\\\",6378388.0,297.0]],PRIMEM[\\\\\\\"Greenwich\\\\\\\",0.0],UNIT[\\\\\\\"Degree\\\\\\\",0.0174532925199433]],PROJECTION[\\\\\\\"Transverse_Mercator\\\\\\\"],PARAMETER[\\\\\\\"False_Easting\\\\\\\",500000.0],PARAMETER[\\\\\\\"False_Northing\\\\\\\",0.0],PARAMETER[\\\\\\\"Central_Meridian\\\\\\\",3.0],PARAMETER[\\\\\\\"Scale_Factor\\\\\\\",0.9996],PARAMETER[\\\\\\\"Latitude_Of_Origin\\\\\\\",0.0],UNIT[\\\\\\\"Meter\\\\\\\",1.0],AUTHORITY[\\\\\\\"EPSG\\\\\\\",23031]]\\\"},\\\"name\\\":\\\"ED50 / UTM zone 31N * EPSG-Nor S62 2001 [23031,1613]\\\",\\\"singleCT\\\":{\\\"authCode\\\":{\\\"auth\\\":\\\"EPSG\\\",\\\"code\\\":\\\"1613\\\"},\\\"name\\\":\\\"ED_1950_To_WGS_1984_24\\\",\\\"type\\\":\\\"ST\\\",\\\"ver\\\":\\\"PE_10_3_1\\\",\\\"wkt\\\":\\\"GEOGTRAN[\\\\\\\"ED_1950_To_WGS_1984_24\\\\\\\",GEOGCS[\\\\\\\"GCS_European_1950\\\\\\\",DATUM[\\\\\\\"D_European_1950\\\\\\\",SPHEROID[\\\\\\\"International_1924\\\\\\\",6378388.0,297.0]],PRIMEM[\\\\\\\"Greenwich\\\\\\\",0.0],UNIT[\\\\\\\"Degree\\\\\\\",0.0174532925199433]],GEOGCS[\\\\\\\"GCS_WGS_1984\\\\\\\",DATUM[\\\\\\\"D_WGS_1984\\\\\\\",SPHEROID[\\\\\\\"WGS_1984\\\\\\\",6378137.0,298.257223563]],PRIMEM[\\\\\\\"Greenwich\\\\\\\",0.0],UNIT[\\\\\\\"Degree\\\\\\\",0.0174532925199433]],METHOD[\\\\\\\"Position_Vector\\\\\\\"],PARAMETER[\\\\\\\"X_Axis_Translation\\\\\\\",-90.365],PARAMETER[\\\\\\\"Y_Axis_Translation\\\\\\\",-101.13],PARAMETER[\\\\\\\"Z_Axis_Translation\\\\\\\",-123.384],PARAMETER[\\\\\\\"X_Axis_Rotation\\\\\\\",0.333],PARAMETER[\\\\\\\"Y_Axis_Rotation\\\\\\\",0.077],PARAMETER[\\\\\\\"Z_Axis_Rotation\\\\\\\",0.894],PARAMETER[\\\\\\\"Scale_Difference\\\\\\\",1.994],AUTHORITY[\\\\\\\"EPSG\\\\\\\",1613]]\\\"},\\\"type\\\":\\\"EBC\\\",\\\"ver\\\":\\\"PE_10_3_1\\\"}\",\n          \"features\": [\n            {\n              \"geometry\": {\n                \"coordinates\": [\n                  [\n                    [\n                      438302.76,\n                      6475310.75\n                    ],\n                    [\n                      429582.2271600945,\n                      6477485.023036702\n                    ],\n                    [\n                      430791.8366380928,\n                      6477485.023036702\n                    ],\n                    [\n                      439512.36947799835,\n                      6480162.22863138\n                    ],\n                    [\n                      438302.76,\n                      6475310.75\n                    ]\n                  ]\n                ],\n                \"type\": \"AnyCrsPolygon\"\n              },\n              \"properties\": {\n                \"ijNumbers\": [\n                  [\n                    9961,\n                    1961\n                  ],\n                  [\n                    10361,\n                    1961\n                  ],\n                  [\n                    10361,\n                    2680\n                  ],\n                  [\n                    9961,\n                    2680\n                  ],\n                  [\n                    9961,\n                    1961\n                  ]\n                ]\n              },\n              \"type\": \"AnyCrsFeature\"\n            }\n          ]\n        },\n        \"Wgs84Coordinates\": {\n          \"features\": [\n            {\n              \"geometry\": {\n                \"coordinates\": [\n                  [\n                    [\n                      1.943967222,\n                      58.414205\n                    ],\n                    [\n                      1.794071944,\n                      58.43241222\n                    ],\n                    [\n                      1.814781667,\n                      58.43260528\n                    ],\n                    [\n                      1.9633875,\n                      58.45794\n                    ],\n                    [\n                      1.943967222,\n                      58.414205\n                    ]\n                  ]\n                ],\n                \"type\": \"Polygon\"\n              },\n              \"properties\": {\n                \"ijNumbers\": [\n                  [\n                    9961,\n                    1961\n                  ],\n                  [\n                    10361,\n                    1961\n                  ],\n                  [\n                    10361,\n                    2680\n                  ],\n                  [\n                    9961,\n                    2680\n                  ],\n                  [\n                    9961,\n                    1961\n                  ]\n                ]\n              },\n              \"type\": \"Feature\"\n            }\n          ],\n          \"type\": \"FeatureCollection\"\n        },\n        \"AppliedOperations\": [\n          \"conversion from ED_1950_UTM_Zone_31N to GCS_European_1950; 5 points converted\",\n          \"transformation GCS_European_1950 to GCS_WGS_1984 using ED_1950_To_WGS_1984_24; 5 points successfully transformed\"\n        ],\n        \"SpatialParameterTypeID\": \"partition-id:reference-data--SpatialParameterType:Outline:\",\n        \"SpatialGeometryTypeID\": \"partition-id:reference-data--SpatialGeometryType:Polygon:\"\n      },\n      \"SubmitterName\": \"Example SubmitterName\",\n      \"BusinessActivities\": [\n        \"Example BusinessActivities\"\n      ],\n      \"AuthorIDs\": [\n        \"Example AuthorIDs\"\n      ],\n      \"LineageAssertions\": [],\n      \"Annotations\": [\n        \"Example Annotations\"\n      ],\n      \"ExtensionProperties\": {}\n    },\n    \"meta\": [],\n    \"id\": \"{{data_partition_id}}:work-product--WorkProduct:e1ef7d6bf590d994d56dea12f102d811\"\n  }\n]"
+						},
+						"url": {
+							"raw": "https://{{instance_url}}/api/storage/v2/records?skipdupes=true",
+							"protocol": "https",
+							"host": [
+								"{{instance_url}}"
+							],
+							"path": [
+								"api",
+								"storage",
+								"v2",
+								"records"
+							],
+							"query": [
+								{
+									"key": "skipdupes",
+									"value": "true",
+									"description": "Skip duplicates in case the storage record has already been set"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Unlock dataset if needed",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check if the status code is 200 or 404",
+									"pm.test(\"Status code should be 200 or 404\", function () {",
+									"     pm.expect(pm.response.code).to.be.oneOf([200, 404]);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[\r\n    {\r\n        \"filemetadata\": {\r\n            \"type\": \"GENERIC\",\r\n            \"size\": \"{{segyTestFileSize}}\",\r\n            \"nobjects\": 1\r\n        }\r\n    }\r\n]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{instance_url}}/seistore-svc/api/v3/dataset/tenant/{{data_partition_id}}/subproject/{{zgyTestSubprojectName}}/dataset/{{segyTestFileNameForZgy}}/unlock",
+							"protocol": "https",
+							"host": [
+								"{{instance_url}}"
+							],
+							"path": [
+								"seistore-svc",
+								"api",
+								"v3",
+								"dataset",
+								"tenant",
+								"{{data_partition_id}}",
+								"subproject",
+								"{{zgyTestSubprojectName}}",
+								"dataset",
+								"{{segyTestFileNameForZgy}}",
+								"unlock"
+							],
+							"query": [
+								{
+									"key": "path",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "close",
+									"value": "1",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Dataset",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"\r",
+									"pm.test(\"Status code is 200 or 409\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 409]);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Dataset is Registered\", function() {\r",
+									"    var registeredDatasetName = '';\r",
+									"    let datasetName = pm.variables.get(\"segyTestFileNameForZgy\");\r",
+									"\r",
+									"    switch(pm.response.code) {\r",
+									"        case 200:\r",
+									"            var response = pm.response.json();\r",
+									"            registeredDatasetName = response.name;\r",
+									"            break;\r",
+									"        case 409:\r",
+									"            var response = pm.response.text();\r",
+									"            var splits = response.split(' ');\r",
+									"            let datasetPath = splits[3];\r",
+									"            splits = datasetPath.split('/');\r",
+									"            registeredDatasetName = splits.pop();\r",
+									"            pm.expect(response).contains(\"already exists\");\r",
+									"            break;\r",
+									"        default:\r",
+									"            console.log('Unexpected server code');\r",
+									"    }\r",
+									"    \r",
+									"    pm.expect(registeredDatasetName).equals(datasetName);\r",
+									"});\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "ltag",
+								"value": "{{zgy_legal_tag_id}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"admin\": \"{{client_id}}\",\r\n  \"storage_class\": \"MULTI_REGIONAL\",\r\n  \"storage_location\": \"US\",\r\n  \"access_policy\": \"uniform\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{instance_url}}/seistore-svc/api/v3/dataset/tenant/{{data_partition_id}}/subproject/{{zgyTestSubprojectName}}/dataset/{{segyTestFileNameForZgy}}",
+							"protocol": "https",
+							"host": [
+								"{{instance_url}}"
+							],
+							"path": [
+								"seistore-svc",
+								"api",
+								"v3",
+								"dataset",
+								"tenant",
+								"{{data_partition_id}}",
+								"subproject",
+								"{{zgyTestSubprojectName}}",
+								"dataset",
+								"{{segyTestFileNameForZgy}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Dataset",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"\r",
+									"\r",
+									"pm.test(\"Status code is 200 OK\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    pm.response.to.have.status(\"OK\");\r",
+									"    setGcsUrl();\r",
+									"});\r",
+									"\r",
+									"\r",
+									"function setGcsUrl() {\r",
+									"    var gcsurl = pm.response.json().gcsurl;\r",
+									"    pm.collectionVariables.set(\"zgy_gcs_url\", gcsurl);\r",
+									"    var sbit = pm.response.json().sbit\r",
+									"    pm.collectionVariables.set(\"sbit\", sbit);\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://{{instance_url}}/seistore-svc/api/v3/dataset/tenant/{{data_partition_id}}/subproject/{{zgyTestSubprojectName}}/dataset/{{segyTestFileNameForZgy}}",
+							"protocol": "https",
+							"host": [
+								"{{instance_url}}"
+							],
+							"path": [
+								"seistore-svc",
+								"api",
+								"v3",
+								"dataset",
+								"tenant",
+								"{{data_partition_id}}",
+								"subproject",
+								"{{zgyTestSubprojectName}}",
+								"dataset",
+								"{{segyTestFileNameForZgy}}"
+							],
+							"query": [
+								{
+									"key": "path",
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get GCS Upload URL",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var response = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Status code is 200 OK\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    pm.response.to.have.status(\"OK\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Retrieved SAS URL\", function () {\r",
+									"  pm.expect(response).to.have.property('access_token');\r",
+									"});\r",
+									"\r",
+									"setSasUrl();\r",
+									"\r",
+									"function setSasUrl() {\r",
+									"    var gcsurl = pm.variables.get(\"zgy_gcs_url\");\r",
+									"    var containerID = gcsurl.split(\"/\")[0];\r",
+									"    let filePath = gcsurl; //+ \"/0\";\r",
+									"    var sasUrl = response.access_token.replace(containerID, filePath);\r",
+									"\r",
+									"    pm.collectionVariables.set(\"zgy_sas_url\", sasUrl);\r",
+									"   // pm.environmentVariables.set(\"zgy_sas_url\", sasUrl)\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "https://{{instance_url}}/seistore-svc/api/v3/utility/gcs-access-token?sdpath=sd://{{data_partition_id}}/{{zgyTestSubprojectName}}&readonly=false",
+							"protocol": "https",
+							"host": [
+								"{{instance_url}}"
+							],
+							"path": [
+								"seistore-svc",
+								"api",
+								"v3",
+								"utility",
+								"gcs-access-token"
+							],
+							"query": [
+								{
+									"key": "sdpath",
+									"value": "sd://{{data_partition_id}}/{{zgyTestSubprojectName}}"
+								},
+								{
+									"key": "readonly",
+									"value": "false"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Upload SEGY File to Storage",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201 Created\", function () {",
+									"    pm.response.to.have.status(201);",
+									"    pm.response.to.have.status(\"Created\");",
+									"});",
+									"",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "BlockBlob",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "x-ms-blob-type",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/octet-stream",
+								"type": "text",
+								"description": "octet-stream since we'll be uploading a file"
+							},
+							{
+								"key": "Content-Length",
+								"value": "{{segyTestFileSize}}",
+								"description": "acknowledge file size to keep the stream open",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "file",
+							"file": {
+								"src": "source/ddms-smoke-tests/ST0202R08_PSDM_DELTA_FIELD_DEPTH.MIG_FIN.POST_STACK.3D.JS-017534.segy"
+							}
+						},
+						"url": {
+							"raw": "{{zgy_sas_url}}",
+							"host": [
+								"{{zgy_sas_url}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Verify Data Store Availability",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"checkIfSegyFileExists();",
+									"",
+									"pm.test(\"Status code is 200 OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.have.status(\"OK\");",
+									"});",
+									"",
+									"function checkIfSegyFileExists() {",
+									"    let segyFileName = pm.variables.get(\"segyTestFileNameForZgy\");",
+									"    var response = pm.response.json();",
+									"    let segyFileExists = (response.indexOf(segyFileName) > -1) ? true : false;",
+									"    pm.collectionVariables.set(\"zgy_segy_file_exists\", segyFileExists.toString());",
+									"}",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://{{instance_url}}/seistore-svc/api/v3/utility/ls?sdpath=sd://{{data_partition_id}}/{{zgyTestSubprojectName}}",
+							"protocol": "https",
+							"host": [
+								"{{instance_url}}"
+							],
+							"path": [
+								"seistore-svc",
+								"api",
+								"v3",
+								"utility",
+								"ls"
+							],
+							"query": [
+								{
+									"key": "sdpath",
+									"value": "sd://{{data_partition_id}}/{{zgyTestSubprojectName}}",
+									"description": "full path for the subproject in the seismic store"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Unlock dataset",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"",
+									"",
+									"pm.test(\"Status code is 200 OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.have.status(\"OK\");",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[\r\n    {\r\n        \"filemetadata\": {\r\n            \"type\": \"GENERIC\",\r\n            \"size\": \"{{segyTestFileSize}}\",\r\n            \"nobjects\": 1\r\n        }\r\n    }\r\n]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{instance_url}}/seistore-svc/api/v3/dataset/tenant/{{data_partition_id}}/subproject/{{zgyTestSubprojectName}}/dataset/{{segyTestFileNameForZgy}}/unlock",
+							"protocol": "https",
+							"host": [
+								"{{instance_url}}"
+							],
+							"path": [
+								"seistore-svc",
+								"api",
+								"v3",
+								"dataset",
+								"tenant",
+								"{{data_partition_id}}",
+								"subproject",
+								"{{zgyTestSubprojectName}}",
+								"dataset",
+								"{{segyTestFileNameForZgy}}",
+								"unlock"
+							],
+							"query": [
+								{
+									"key": "path",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "close",
+									"value": "1",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Adding Metadata",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"",
+									"",
+									"pm.test(\"Status code is 200 OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.have.status(\"OK\");",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "\r\n    {\r\n        \"filemetadata\": {\r\n            \"type\": \"GENERIC\",\r\n            \"size\": {{segyTestFileSize}},\r\n            \"nobjects\": 1\r\n        }\r\n    }\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{instance_url}}/seistore-svc/api/v3/dataset/tenant/{{data_partition_id}}/subproject/{{zgyTestSubprojectName}}/dataset/{{segyTestFileNameForZgy}}?path=/&close={{sbit}}",
+							"protocol": "https",
+							"host": [
+								"{{instance_url}}"
+							],
+							"path": [
+								"seistore-svc",
+								"api",
+								"v3",
+								"dataset",
+								"tenant",
+								"{{data_partition_id}}",
+								"subproject",
+								"{{zgyTestSubprojectName}}",
+								"dataset",
+								"{{segyTestFileNameForZgy}}"
+							],
+							"query": [
+								{
+									"key": "path",
+									"value": "/"
+								},
+								{
+									"key": "close",
+									"value": "{{sbit}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Size of Dataset",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"\r",
+									"\r",
+									"pm.test(\"Status code is 200 OK\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    pm.response.to.have.status(\"OK\");\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"File size is greater than zero\", function() {\r",
+									"    var filesize = pm.response.json().filemetadata.size;\r",
+									"    pm.expect(filesize).to.be.above(0);\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://{{instance_url}}/seistore-svc/api/v3/dataset/tenant/{{data_partition_id}}/subproject/{{zgyTestSubprojectName}}/dataset/{{segyTestFileNameForZgy}}",
+							"protocol": "https",
+							"host": [
+								"{{instance_url}}"
+							],
+							"path": [
+								"seistore-svc",
+								"api",
+								"v3",
+								"dataset",
+								"tenant",
+								"{{data_partition_id}}",
+								"subproject",
+								"{{zgyTestSubprojectName}}",
+								"dataset",
+								"{{segyTestFileNameForZgy}}"
+							],
+							"query": [
+								{
+									"key": "path",
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Conversion",
+			"item": [
+				{
+					"name": "Trigger ZGY",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Ensure the API was able to send a successful response\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    var runId = jsonData.runId;\r",
+									"    pm.environment.set(\"zgy_run_id\", runId);\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "data-partition-id",
+								"value": "{{data_partition_id}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"executionContext\": {\r\n    \"data_partition_id\": \"{{data_partition_id}}\",\r\n    \"data-partition-id\": \"{{data_partition_id}}\",\r\n    \"sd_svc_api_key\": \"no\",\r\n    \"storage_svc_api_key\": \"no\",\r\n    \"filecollection_segy_id\": \"{{data_partition_id}}:dataset--FileCollection.SEGY:e4a9fc6241610b3a0327f7ace99b9c6f\",\r\n    \"work_product_id\":\"{{data_partition_id}}:work-product--WorkProduct:819c76be31892652773f5dacd642b0e8\",\r\n    \"id_token\": \"{{access_token}}\"\r\n  }\r\n\r\n}"
+						},
+						"url": {
+							"raw": "https://{{instance_url}}/api/workflow/v1/workflow/{{zgy_dag_id}}/workflowRun",
+							"protocol": "https",
+							"host": [
+								"{{instance_url}}"
+							],
+							"path": [
+								"api",
+								"workflow",
+								"v1",
+								"workflow",
+								"{{zgy_dag_id}}",
+								"workflowRun"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get ZGY Workflow Status",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var correlationId = \"zgy-get-run-status-\" +  _.random(1,1000000);\r",
+									"pm.environment.set(\"correlation-id\", correlationId);\r",
+									"console.log(correlationId);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"setTimeout(function() {}, 10000);\r",
+									"\r",
+									"if (jsonData.status == \"submitted\") {\r",
+									"    setTimeout(function() {}, 10000);\r",
+									"    postman.setNextRequest(request.name);\r",
+									"} else if (jsonData.status == \"running\"){\r",
+									"    setTimeout(function() {}, 20000);\r",
+									"    postman.setNextRequest(request.name);\r",
+									"}\r",
+									"else if (jsonData.status == \"queued\"){\r",
+									"    setTimeout(function() {}, 20000);\r",
+									"    postman.setNextRequest(request.name);\r",
+									"} else {\r",
+									"        pm.test(\"Status is finished\", function () {\r",
+									"        var jsonData = pm.response.json();\r",
+									"        pm.expect(jsonData.status).to.be.oneOf([\"finished\", \"success\"])\r",
+									"    });\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Data-Partition-Id",
+								"value": "{{data_partition_id}}",
+								"type": "text"
+							},
+							{
+								"key": "correlation-id",
+								"value": "{{correlation-id}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{instance_url}}/api/workflow/v1/workflow/{{zgy_dag_id}}/workflowRun/{{zgy_run_id}}",
+							"protocol": "https",
+							"host": [
+								"{{instance_url}}"
+							],
+							"path": [
+								"api",
+								"workflow",
+								"v1",
+								"workflow",
+								"{{zgy_dag_id}}",
+								"workflowRun",
+								"{{zgy_run_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ZGY Conversion",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"ZGY File Exists\", function () {\r",
+									"    let zgyExt = \".zgy\"\r",
+									"    var response = pm.response.json();\r",
+									"    var filteredArray = response.filter(function (str) {\r",
+									"        return str.includes(zgyExt);\r",
+									"    });\r",
+									"    \r",
+									"    pm.expect(filteredArray.length).to.be.above(0);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Data-Partition-Id",
+								"value": "{{DATA_PARTITION_ID}}",
+								"type": "text"
+							},
+							{
+								"key": "correlation-id",
+								"value": "{{correlation-id}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{instance_url}}/seistore-svc/api/v3/utility/ls?sdpath=sd://{{data_partition_id}}/{{zgyTestSubprojectName}}",
+							"protocol": "https",
+							"host": [
+								"{{instance_url}}"
+							],
+							"path": [
+								"seistore-svc",
+								"api",
+								"v3",
+								"utility",
+								"ls"
+							],
+							"query": [
+								{
+									"key": "sdpath",
+									"value": "sd://{{data_partition_id}}/{{zgyTestSubprojectName}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Teardown",
+			"item": [
+				{
+					"name": "Remove Dataset",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let dataSetsToDelete = pm.variables.get(\"zgy_file_names_to_delete\");",
+									"",
+									"if (dataSetsToDelete) {",
+									"    postman.setNextRequest(\"Remove Dataset\");",
+									"} else {",
+									"    pm.collectionVariables.unset(\"zgyDataSetToDelete\");",
+									"}",
+									"",
+									"pm.test(\"Status code is 200 OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.have.status(\"OK\");",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let dataSetsToDeleteString = pm.variables.get(\"zgy_file_names_to_delete\");",
+									"",
+									"if (dataSetsToDeleteString) {",
+									"    var dataSetsToDelete = dataSetsToDeleteString.split(',');",
+									"    let dataSetToDelete = dataSetsToDelete.pop();",
+									"    pm.collectionVariables.set(\"zgyDataSetToDelete\", dataSetToDelete);",
+									"",
+									"    if (dataSetsToDelete.length > 0) {",
+									"        pm.collectionVariables.set(\"zgy_file_names_to_delete\", dataSetsToDelete.toString())",
+									"    } else {",
+									"        pm.collectionVariables.unset(\"zgy_file_names_to_delete\");",
+									"    }",
+									"}",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "ltag",
+								"value": "{{zgy_legal_tag_id}}",
+								"description": "the legal tag ID",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"admin\": \"{{entitlement_admin_email}}\",\r\n  \"storage_class\": \"MULTI_REGIONAL\",\r\n  \"storage_location\": \"US\",\r\n  \"acls\": {\r\n    \"admins\": [\r\n      \"{{entitlement_admin_email}}\",\r\n    ],\r\n    \"viewers\": [\r\n      \"{{entitlement_editor_email}}\"\r\n    ]\r\n  }\r\n}"
+						},
+						"url": {
+							"raw": "https://{{instance_url}}/seistore-svc/api/v3/dataset/tenant/{{data_partition_id}}/subproject/{{zgyTestSubprojectName}}/dataset/{{zgyDataSetToDelete}}",
+							"protocol": "https",
+							"host": [
+								"{{instance_url}}"
+							],
+							"path": [
+								"seistore-svc",
+								"api",
+								"v3",
+								"dataset",
+								"tenant",
+								"{{data_partition_id}}",
+								"subproject",
+								"{{zgyTestSubprojectName}}",
+								"dataset",
+								"{{zgyDataSetToDelete}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove Test Record",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let recordsToDelete = pm.variables.get(\"zgy_record_IDs_to_delete\");",
+									"",
+									"if (recordsToDelete) {",
+									"    postman.setNextRequest(\"Remove Test Record\");",
+									"} else {",
+									"    pm.collectionVariables.unset(\"zgyRecordToDelete\");",
+									"}",
+									"",
+									"pm.test(\"Status code is 204 No Content\", function () {",
+									"    pm.response.to.have.status(204);",
+									"    pm.response.to.have.status(\"No Content\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let recordsToDeleteString = pm.variables.get(\"zgy_record_IDs_to_delete\");",
+									"",
+									"if (recordsToDeleteString) {",
+									"    var recordsToDelete = recordsToDeleteString.split(',');",
+									"    let recordToDelete = recordsToDelete.pop();",
+									"    pm.collectionVariables.set(\"zgyRecordToDelete\", recordToDelete);",
+									"",
+									"    if (recordsToDelete.length > 0) {",
+									"        pm.collectionVariables.set(\"zgy_record_IDs_to_delete\", recordsToDelete.toString())",
+									"    } else {",
+									"        pm.collectionVariables.unset(\"zgy_record_IDs_to_delete\");",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "data-partition-id",
+								"value": "{{data_partition_id}}",
+								"type": "text",
+								"description": "the datapartition ID"
+							}
+						],
+						"url": {
+							"raw": "https://{{instance_url}}/api/storage/v2/records/{{zgyRecordToDelete}}",
+							"protocol": "https",
+							"host": [
+								"{{instance_url}}"
+							],
+							"path": [
+								"api",
+								"storage",
+								"v2",
+								"records",
+								"{{zgyRecordToDelete}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove Test Legal Tag",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"description": "This value should be the desired data partition id.",
+								"key": "data-partition-id",
+								"type": "text",
+								"value": "{{data_partition_id}}"
+							}
+						],
+						"url": {
+							"raw": "https://{{instance_url}}/api/legal/v1/legaltags/{{zgy_legal_tag_id}}",
+							"protocol": "https",
+							"host": [
+								"{{instance_url}}"
+							],
+							"path": [
+								"api",
+								"legal",
+								"v1",
+								"legaltags",
+								"{{zgy_legal_tag_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove Test Subproject",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 or 404\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 404]);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "ltag",
+								"value": "{{zgy_legal_tag_id}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "https://{{instance_url}}/seistore-svc/api/v3/subproject/tenant/{{data_partition_id}}/subproject/{{zgyTestSubprojectName}}",
+							"protocol": "https",
+							"host": [
+								"{{instance_url}}"
+							],
+							"path": [
+								"seistore-svc",
+								"api",
+								"v3",
+								"subproject",
+								"tenant",
+								"{{data_partition_id}}",
+								"subproject",
+								"{{zgyTestSubprojectName}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{TOKEN}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "zgy_gcs_url",
+			"value": ""
+		},
+		{
+			"key": "sbit",
+			"value": ""
+		},
+		{
+			"key": "gcs_upload_url",
+			"value": ""
+		},
+		{
+			"key": "entitlement_adminGroupName",
+			"value": "users.datalake.admins"
+		},
+		{
+			"key": "entitlement_domain",
+			"value": "{{data_partition_id}}.{{domain}}"
+		},
+		{
+			"key": "subproject_name",
+			"value": "test123",
+			"type": "string"
+		},
+		{
+			"key": "zgyTestSubprojectName",
+			"value": "zgytestsubproject",
+			"type": "string"
+		},
+		{
+			"key": "segyTestFileNameForZgy",
+			"value": "ST0202R08_PSDM_DELTA_FIELD_DEPTH.MIG_FIN.POST_STACK.3D.JS-017534.segy",
+			"type": "string"
+		},
+		{
+			"key": "zgy_sas_url",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "zgy_segy_file_exists",
+			"value": ""
+		},
+		{
+			"key": "segyTestFileSize",
+			"value": "67550",
+			"type": "string"
+		},
+		{
+			"key": "segyToZgyWorkflowName",
+			"value": ""
+		},
+		{
+			"key": "zgy_dag_id",
+			"value": ""
+		},
+		{
+			"key": "zgy_recordID_FileCollectionSEGY",
+			"value": ""
+		},
+		{
+			"key": "zgy_recordID_WorkProduct",
+			"value": ""
+		},
+		{
+			"key": "access_token",
+			"value": "{{TOKEN}}",
+			"type": "string"
+		},
+		{
+			"key": "zgy_legal_tag_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "id_token",
+			"value": "{{access_token}}",
+			"type": "string"
+		},
+		{
+			"key": "zgy_run_id",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

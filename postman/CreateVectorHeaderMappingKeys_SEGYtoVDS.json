@@ -1,0 +1,191 @@
+[
+    {
+      "id": "{{header_key_cmpx}}",
+      "kind": "{{authority}}:{{schemaSource}}:reference-data--HeaderKeyName:1.0.0",
+      "acl": {
+        "owners": [
+          "data.default.owners@{{data_partition_id}}.{{domain}}"
+        ],
+        "viewers": [
+          "data.default.viewers@{{data_partition_id}}.{{domain}}"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "{{vds_legal_tag_id}}"
+        ],
+        "otherRelevantDataCountries": [
+          "US"
+        ]
+      },
+      "data": {
+        "Name": "CMPX",
+        "Description": "X coordinate of bin center",
+        "Code": "CMPX",
+        "Source": "Workbook Published/HeaderKeyName.1.0.0.xlsx; commit SHA 38615b34.",
+        "CommitDate": "2021-02-25T09:18:48-05:00"
+      }
+    },
+    {
+      "id": "{{header_key_cmpy}}",
+      "kind": "{{authority}}:{{schemaSource}}:reference-data--HeaderKeyName:1.0.0",
+      "acl": {
+        "owners": [
+          "data.default.owners@{{data_partition_id}}.{{domain}}"
+        ],
+        "viewers": [
+          "data.default.viewers@{{data_partition_id}}.{{domain}}"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "{{vds_legal_tag_id}}"
+        ],
+        "otherRelevantDataCountries": [
+          "US"
+        ]
+      },
+      "data": {
+        "Name": "CMPY",
+        "Description": "Y coordinate of bin center",
+        "Code": "CMPY",
+        "Source": "Workbook Published/HeaderKeyName.1.0.0.xlsx; commit SHA 38615b34.",
+        "CommitDate": "2021-02-25T09:18:48-05:00"
+      }
+    },
+    {
+      "id": "{{header_key_inline}}",
+      "kind": "{{authority}}:{{schemaSource}}:reference-data--HeaderKeyName:1.0.0",
+      "acl": {
+        "owners": [
+          "data.default.owners@{{data_partition_id}}.{{domain}}"
+        ],
+        "viewers": [
+          "data.default.viewers@{{data_partition_id}}.{{domain}}"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "{{vds_legal_tag_id}}"
+        ],
+        "otherRelevantDataCountries": [
+          "US"
+        ]
+      },
+      "data": {
+        "Name": "Inline",
+        "Description": "Inline coordinate of bin center",
+        "Code": "Inline",
+        "Source": "Workbook Published/HeaderKeyName.1.0.0.xlsx; commit SHA 38615b34.",
+        "CommitDate": "2021-02-25T09:18:48-05:00"
+      }
+    },
+    {
+      "id": "{{header_key_crossline}}",
+      "kind": "{{authority}}:{{schemaSource}}:reference-data--HeaderKeyName:1.0.0",
+      "acl": {
+        "owners": [
+          "data.default.owners@{{data_partition_id}}.{{domain}}"
+        ],
+        "viewers": [
+          "data.default.viewers@{{data_partition_id}}.{{domain}}"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "{{vds_legal_tag_id}}"
+        ],
+        "otherRelevantDataCountries": [
+          "US"
+        ]
+      },
+      "data": {
+        "Name": "Crossline",
+        "Description": "Crossline coordinate of bin center",
+        "Code": "Crossline",
+        "Source": "Workbook Published/HeaderKeyName.1.0.0.xlsx; commit SHA 38615b34.",
+        "CommitDate": "2021-02-25T09:18:48-05:00"
+      }
+    },
+    {
+      "id": "{{header_key_xyscalar}}",
+      "kind": "{{authority}}:{{schemaSource}}:reference-data--HeaderKeyName:1.0.0",
+      "acl": {
+        "owners": [
+          "data.default.owners@{{data_partition_id}}.{{domain}}"
+        ],
+        "viewers": [
+          "data.default.viewers@{{data_partition_id}}.{{domain}}"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "{{vds_legal_tag_id}}"
+        ],
+        "otherRelevantDataCountries": [
+          "US"
+        ]
+      },
+      "data": {
+        "Name": "XY-Scalar",
+        "Description": "Scalar for position coordinates",
+        "Code": "XYSCALAR",
+        "Source": "Workbook Published/HeaderKeyName.1.0.0.xlsx; commit SHA 38615b34.",
+        "CommitDate": "2021-02-25T09:18:48-05:00"
+      }
+    },
+    {
+      "id": "{{header_key_zscalar}}",
+      "kind": "{{authority}}:{{schemaSource}}:reference-data--HeaderKeyName:1.0.0",
+      "acl": {
+        "owners": [
+          "data.default.owners@{{data_partition_id}}.{{domain}}"
+        ],
+        "viewers": [
+          "data.default.viewers@{{data_partition_id}}.{{domain}}"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "{{vds_legal_tag_id}}"
+        ],
+        "otherRelevantDataCountries": [
+          "US"
+        ]
+      },
+      "data": {
+        "Name": "Z-Scalar",
+        "Description": "Scalar for elevations",
+        "Code": "ZSCALAR",
+        "Source": "Workbook Published/HeaderKeyName.1.0.0.xlsx; commit SHA 38615b34.",
+        "CommitDate": "2021-02-25T09:18:48-05:00"
+      }
+    },
+    {
+      "id": "{{header_key_starttime}}",
+      "kind": "{{authority}}:{{schemaSource}}:reference-data--HeaderKeyName:1.0.0",
+      "acl": {
+        "owners": [
+          "data.default.owners@{{data_partition_id}}.{{domain}}"
+        ],
+        "viewers": [
+          "data.default.viewers@{{data_partition_id}}.{{domain}}"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "{{vds_legal_tag_id}}"
+        ],
+        "otherRelevantDataCountries": [
+          "US"
+        ]
+      },
+      "data": {
+        "Name": "Start Time",
+        "Description": "The time associated with the first sample, often the delay recording time.",
+        "Code": "STARTTIME",
+        "Source": "Workbook Published/HeaderKeyName.1.0.0.xlsx; commit SHA 38615b34.",
+        "CommitDate": "2021-02-25T09:18:48-05:00"
+      }
+    }
+]
