@@ -1,0 +1,1134 @@
+components:
+  schemas:
+    AddMemberDto:
+      description: Represents a model to add a member
+      properties:
+        email:
+          description: Email Id of the member
+          type: string
+        role:
+          description: Role of the member
+          enum:
+          - MEMBER
+          - OWNER
+          type: string
+      required:
+      - email
+      - role
+      type: object
+    AliasEntity:
+      properties:
+        aliasId:
+          type: string
+        userId:
+          type: string
+      type: object
+    AppError:
+      properties:
+        code:
+          format: int32
+          type: integer
+        message:
+          type: string
+        reason:
+          type: string
+      type: object
+    ConnectedOuterService:
+      properties:
+        name:
+          type: string
+        version:
+          type: string
+      type: object
+    CreateGroupDto:
+      description: Represents a model to create a Group
+      properties:
+        description:
+          description: Description of the Group
+          pattern: ^[-A-Za-z0-9 _./,;:'"!@&+%#$]{0,255}$
+          type: string
+        name:
+          description: Name of the Group
+          pattern: ^[A-Za-z0-9{}_.-]{3,128}$
+          type: string
+      required:
+      - name
+      type: object
+    GroupDto:
+      description: Represents a model for the Group
+      properties:
+        description:
+          description: Description of the Group
+          type: string
+        email:
+          description: Email id of the Group
+          type: string
+        name:
+          description: Name of the Group
+          type: string
+      type: object
+    InitServiceDto:
+      properties:
+        aliasMappings:
+          items:
+            $ref: '#/components/schemas/AliasEntity'
+          type: array
+      type: object
+    ListGroupResponseDto:
+      description: Represents a model for List Group Response.
+      properties:
+        desId:
+          description: desId
+          type: string
+        groups:
+          description: Represents a List of Groups
+          items:
+            $ref: '#/components/schemas/ParentReference'
+          type: array
+        memberEmail:
+          description: member email
+          type: string
+      type: object
+    ListGroupsOfPartitionDto:
+      description: Represents a List Group of Partition model.
+      properties:
+        cursor:
+          description: cursor
+          type: string
+        groups:
+          description: Represents a List of Groups
+          items:
+            $ref: '#/components/schemas/ParentReference'
+          type: array
+        totalCount:
+          description: Total Count
+          format: int64
+          type: integer
+      type: object
+    ListMemberResponseDto:
+      description: Represents a model for List Member Response
+      properties:
+        members:
+          description: List of Members
+          items:
+            $ref: '#/components/schemas/MemberDto'
+          type: array
+      type: object
+    MemberDto:
+      description: Represents a model for the Member
+      properties:
+        dataPartitionId:
+          description: dataPartitionId
+          type: string
+        email:
+          description: Email Id of the member
+          type: string
+        memberType:
+          description: Type of the member
+          enum:
+          - USER
+          - GROUP
+          type: string
+        role:
+          description: Role of the member
+          enum:
+          - MEMBER
+          - OWNER
+          type: string
+      type: object
+    ParentReference:
+      description: Represents a List of Groups
+      properties:
+        description:
+          type: string
+        email:
+          type: string
+        name:
+          type: string
+      type: object
+    UpdateGroupOperation:
+      description: Represents a model for the Update Group Operation
+      properties:
+        op:
+          description: Update Group Operation
+          type: string
+        path:
+          description: Update Group Path
+          type: string
+        value:
+          description: list of values to be updated
+          items:
+            description: list of values to be updated
+            type: string
+          type: array
+      type: object
+    UpdateGroupResponseDto:
+      description: Represents a model for the Update Group Response
+      properties:
+        appIds:
+          description: List of AppId of the Updated Group
+          items:
+            description: List of AppId of the Updated Group
+            type: string
+          type: array
+        email:
+          description: Email of the Updated Group
+          type: string
+        name:
+          description: Name of the Updated Group
+          type: string
+      type: object
+    VersionInfo:
+      properties:
+        artifactId:
+          type: string
+        branch:
+          type: string
+        buildTime:
+          type: string
+        commitId:
+          type: string
+        commitMessage:
+          type: string
+        connectedOuterServices:
+          items:
+            $ref: '#/components/schemas/ConnectedOuterService'
+          type: array
+        groupId:
+          type: string
+        version:
+          type: string
+      type: object
+  securitySchemes:
+    Authorization:
+      bearerFormat: Authorization
+      scheme: bearer
+      type: http
+info:
+  contact:
+    email: dps@OSDU.org
+    name: OSDU Data Platform Team
+  description: Entitlements Service is used to enable authorization in OSDU Data Ecosystem
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  title: Entitlements Service
+  version: '2.0'
+openapi: 3.0.1
+paths:
+  /_ah/liveness_check:
+    get:
+      description: For deployment available public `/liveness_check` endpoint.
+      operationId: livenessCheck
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+      summary: Liveness Check endpoint
+      tags:
+      - health-checks-api
+  /_ah/readiness_check:
+    get:
+      description: For deployment available public `/readiness_check` endpoint.
+      operationId: readinessCheck
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+      summary: Readiness Check endpoint
+      tags:
+      - health-checks-api
+  /groups:
+    get:
+      description: List Groups
+      operationId: listGroups
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ListGroupResponseDto'
+          description: OK
+        '400':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Request
+        '401':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Unauthorized
+        '403':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: User not authorized to perform the action.
+        '404':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Not Found
+        '500':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Internal Server Error
+        '502':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Gateway
+        '503':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Service Unavailable
+      security:
+      - Authorization: []
+      summary: List Groups
+      tags:
+      - list-group-api
+    post:
+      description: Create Group
+      operationId: createGroup
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateGroupDto'
+        required: true
+      responses:
+        '201':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/GroupDto'
+          description: Created
+        '400':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Request
+        '401':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Unauthorized
+        '403':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: User not authorized to perform the action.
+        '404':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Not Found
+        '500':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Internal Server Error
+        '502':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Gateway
+        '503':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Service Unavailable
+      security:
+      - Authorization: []
+      summary: Create Group
+      tags:
+      - create-group-api
+  /groups/all:
+    get:
+      description: List All Partition Groups
+      operationId: listAllPartitionGroups
+      parameters:
+      - description: Type of the Group. Allowable Values = "NONE,DATA,USER,SERVICE"
+        example: NONE
+        in: query
+        name: type
+        required: true
+        schema:
+          type: string
+      - description: cursor
+        in: query
+        name: cursor
+        required: false
+        schema:
+          type: string
+      - description: limit
+        example: 100
+        in: query
+        name: limit
+        required: false
+        schema:
+          default: 100
+          format: int32
+          minimum: 1
+          type: integer
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ListGroupsOfPartitionDto'
+          description: OK
+        '400':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Request
+        '401':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Unauthorized
+        '403':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: User not authorized to perform the action.
+        '404':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Not Found
+        '500':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Internal Server Error
+        '502':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Gateway
+        '503':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Service Unavailable
+      security:
+      - Authorization: []
+      summary: List All Partition Groups
+      tags:
+      - list-group-on-behalf-of-api
+  /groups/{group_email}:
+    delete:
+      description: Delete Group
+      operationId: deleteGroup
+      parameters:
+      - description: Group Email
+        in: path
+        name: group_email
+        required: true
+        schema:
+          type: string
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: No Content
+        '400':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Request
+        '401':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Unauthorized
+        '403':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: User not authorized to perform the action.
+        '404':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Not Found
+        '500':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Internal Server Error
+        '502':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Gateway
+        '503':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Service Unavailable
+      security:
+      - Authorization: []
+      summary: Delete Group
+      tags:
+      - delete-group-api
+    patch:
+      description: Update Group
+      operationId: updateGroup
+      parameters:
+      - description: Group Email
+        in: path
+        name: group_email
+        required: true
+        schema:
+          type: string
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              items:
+                $ref: '#/components/schemas/UpdateGroupOperation'
+              type: array
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/UpdateGroupResponseDto'
+          description: OK
+        '400':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Request
+        '401':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Unauthorized
+        '403':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: User not authorized to perform the action.
+        '404':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Not Found
+        '500':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Internal Server Error
+        '502':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Gateway
+        '503':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Service Unavailable
+      security:
+      - Authorization: []
+      summary: Update Group
+      tags:
+      - update-group-api
+  /groups/{group_email}/members:
+    get:
+      description: List Group Members
+      operationId: listGroupMembers
+      parameters:
+      - description: Group Email
+        in: path
+        name: group_email
+        required: true
+        schema:
+          type: string
+      - description: Role of the member
+        example: MEMBER
+        in: query
+        name: role
+        required: false
+        schema:
+          enum:
+          - MEMBER
+          - OWNER
+          type: string
+      - description: Include Type
+        in: query
+        name: includeType
+        required: false
+        schema:
+          type: boolean
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ListMemberResponseDto'
+          description: OK
+        '400':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Request
+        '401':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Unauthorized
+        '403':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: User not authorized to perform the action.
+        '404':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Not Found
+        '500':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Internal Server Error
+        '502':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Gateway
+        '503':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Service Unavailable
+      security:
+      - Authorization: []
+      summary: List Group Members
+      tags:
+      - list-member-api
+    post:
+      description: Add Member
+      operationId: addMember
+      parameters:
+      - description: Group Email
+        in: path
+        name: group_email
+        required: true
+        schema:
+          type: string
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddMemberDto'
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AddMemberDto'
+          description: OK
+        '400':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Request
+        '401':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Unauthorized
+        '403':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: User not authorized to perform the action.
+        '404':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Not Found
+        '500':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Internal Server Error
+        '502':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Gateway
+        '503':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Service Unavailable
+      security:
+      - Authorization: []
+      summary: Add Member
+      tags:
+      - add-member-api
+  /groups/{group_email}/members/{member_email}:
+    delete:
+      description: Delete Member
+      operationId: deleteMember_1
+      parameters:
+      - description: Group Email
+        in: path
+        name: group_email
+        required: true
+        schema:
+          type: string
+      - description: Member Email
+        in: path
+        name: member_email
+        required: true
+        schema:
+          type: string
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: No Content
+        '400':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Request
+        '401':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Unauthorized
+        '403':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: User not authorized to perform the action.
+        '404':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Not Found
+        '500':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Internal Server Error
+        '502':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Gateway
+        '503':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Service Unavailable
+      security:
+      - Authorization: []
+      summary: Delete Member
+      tags:
+      - remove-member-api
+  /info:
+    get:
+      description: For deployment available public `/info` endpoint, which provides
+        build and git related information.
+      operationId: info
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VersionInfo'
+          description: Version info.
+      summary: Version info
+      tags:
+      - info
+  /members/{member_email}:
+    delete:
+      description: Delete Member
+      operationId: deleteMember
+      parameters:
+      - description: Member Email
+        in: path
+        name: member_email
+        required: true
+        schema:
+          type: string
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: No Content
+        '400':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Request
+        '401':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Unauthorized
+        '403':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: User not authorized to perform the action.
+        '404':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Not Found
+        '500':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Internal Server Error
+        '502':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Gateway
+        '503':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Service Unavailable
+      security:
+      - Authorization: []
+      summary: Delete Member
+      tags:
+      - delete-member-api
+  /members/{member_email}/groups:
+    get:
+      description: List Group On Behalf Of
+      operationId: listGroupsOnBehalfOf
+      parameters:
+      - description: Member Email
+        in: path
+        name: member_email
+        required: true
+        schema:
+          type: string
+      - description: Type of the Group. Allowable Values = "NONE,DATA,USER,SERVICE"
+        example: NONE
+        in: query
+        name: type
+        required: true
+        schema:
+          type: string
+      - description: App Id
+        in: query
+        name: appid
+        required: false
+        schema:
+          type: string
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ListGroupResponseDto'
+          description: OK
+        '400':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Request
+        '401':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Unauthorized
+        '403':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: User not authorized to perform the action.
+        '404':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Not Found
+        '500':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Internal Server Error
+        '502':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Gateway
+        '503':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Service Unavailable
+      security:
+      - Authorization: []
+      summary: List Group On Behalf Of
+      tags:
+      - list-group-on-behalf-of-api
+  /tenant-provisioning:
+    post:
+      description: Initiate Tenant
+      operationId: initiateTenant
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InitServiceDto'
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/InitServiceDto'
+          description: OK
+        '400':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Request
+        '401':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Unauthorized
+        '404':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Not found.
+        '500':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Internal Server Error
+        '502':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Gateway
+        '503':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Service Unavailable
+      security:
+      - Authorization: []
+      summary: Initiate Tenant
+      tags:
+      - init-api
+security:
+- Authorization: []
+servers:
+- url: /api/entitlements/v2/
+tags:
+- description: Update Group API
+  name: update-group-api
+- description: List Group On Behalf Of API
+  name: list-group-on-behalf-of-api
+- description: List Member API
+  name: list-member-api
+- description: Init API
+  name: init-api
+- description: Delete Group API
+  name: delete-group-api
+- description: Delete Member API
+  name: delete-member-api
+- description: Add Member API
+  name: add-member-api
+- description: Create Group API
+  name: create-group-api
+- description: Remove Member API
+  name: remove-member-api
+- description: Health Checks API
+  name: health-checks-api
+- description: List Group API
+  name: list-group-api
+- description: Version info endpoint
+  name: info
