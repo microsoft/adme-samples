@@ -1,0 +1,702 @@
+components:
+  schemas:
+    AppError:
+      properties:
+        code:
+          format: int32
+          type: integer
+        message:
+          type: string
+        reason:
+          type: string
+      type: object
+    ConnectedOuterService:
+      properties:
+        name:
+          type: string
+        version:
+          type: string
+      type: object
+    SchemaIdentity:
+      description: Schema authority source and type description
+      properties:
+        authority:
+          description: Entity authority
+          example: osdu
+          pattern: ^[\w\-\.]+$
+          type: string
+        entityType:
+          description: EntityType Code
+          example: wellbore
+          pattern: ^[\w\-\.]+$
+          type: string
+        id:
+          description: A read-only system defined id used for referencing of a schema.
+          example: osdu:wks:wellbore:1.0.0
+          type: string
+        schemaVersionMajor:
+          description: Major Schema Version Number
+          example: 1
+          format: int64
+          type: integer
+        schemaVersionMinor:
+          description: Minor Schema Version Number
+          example: 1
+          format: int64
+          type: integer
+        schemaVersionPatch:
+          description: Patch Schema Version Number
+          example: 0
+          format: int64
+          type: integer
+        source:
+          description: Entity source
+          example: wks
+          pattern: ^[\w\-\.]+$
+          type: string
+      required:
+      - authority
+      - entityType
+      - schemaVersionMajor
+      - schemaVersionMinor
+      - schemaVersionPatch
+      - source
+      title: SchemaIdentity
+      type: object
+    SchemaInfo:
+      description: Represents a model to Schema Info including status, creation and
+        schemaIdentity
+      properties:
+        createdBy:
+          description: The user who created the schema. This value is taken from API
+            caller token.
+          example: user@opendes.com
+          type: string
+        dateCreated:
+          description: The UTC date time of the entity creation
+          example: '2019-05-23T11:16:03Z'
+          format: date-time
+          type: string
+        schemaIdentity:
+          $ref: '#/components/schemas/SchemaIdentity'
+        scope:
+          description: ' Schema Scope - is it internal or shared. This is a system
+            defined attribute based on partition-id passed.'
+          enum:
+          - INTERNAL
+          - SHARED
+          example: INTERNAL
+          title: Schema Scope
+          type: string
+        status:
+          description: Schema lifecycle status
+          enum:
+          - PUBLISHED
+          - OBSOLETE
+          - DEVELOPMENT
+          example: PUBLISHED
+          title: SchemaStatus
+          type: string
+        supersededBy:
+          $ref: '#/components/schemas/SchemaIdentity'
+      required:
+      - schemaIdentity
+      - status
+      title: Schema Info
+      type: object
+    SchemaInfoResponse:
+      description: The response for a GET schema request
+      properties:
+        count:
+          description: The number of schema versions in this response
+          format: int32
+          minimum: 0
+          type: integer
+        offset:
+          description: The offset for the next query
+          format: int32
+          minimum: 0
+          type: integer
+        schemaInfos:
+          items:
+            $ref: '#/components/schemas/SchemaInfo'
+          type: array
+        totalCount:
+          description: The total number of entity type codes in the repositories
+          format: int32
+          minimum: 0
+          type: integer
+      title: Schema Info Response
+      type: object
+    SchemaRequest:
+      description: Represents a model to Schema Request
+      properties:
+        schema:
+          type: object
+        schemaInfo:
+          $ref: '#/components/schemas/SchemaInfo'
+      required:
+      - schema
+      - schemaInfo
+      type: object
+    VersionInfo:
+      properties:
+        artifactId:
+          type: string
+        branch:
+          type: string
+        buildTime:
+          type: string
+        commitId:
+          type: string
+        commitMessage:
+          type: string
+        connectedOuterServices:
+          items:
+            $ref: '#/components/schemas/ConnectedOuterService'
+          type: array
+        groupId:
+          type: string
+        version:
+          type: string
+      type: object
+  securitySchemes:
+    Authorization:
+      bearerFormat: Authorization
+      scheme: bearer
+      type: http
+info:
+  contact:
+    email: dps@OSDU.org
+    name: OSDU Data Platform Team
+  description: Schema Service enables a centralized governance and management of schema
+    in the Data Ecosystem. It offers an implementation of the schema standard. <p>Schema
+    Service provides all necessary APIs to Fetch, create, update and mark a schema
+    obsolete.</p>
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  title: Schema Service
+  version: '1.0'
+openapi: 3.0.1
+paths:
+  /info:
+    get:
+      description: For deployment available public `/info` endpoint, which provides
+        build and git related information.
+      operationId: info
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VersionInfo'
+          description: Version info.
+      summary: Version info
+      tags:
+      - info
+  /schema:
+    get:
+      description: 'Searches for information of available schema (SchemaInfo) in schema
+        repository. Support options to filter out the search contents. <p>Required
+        roles:  `service.schema-service.viewers` groups to get the schema.</p>'
+      operationId: getSchemaInfoList
+      parameters:
+      - description: pass an optional string to search for a specific authority
+        example: osdu
+        in: query
+        name: authority
+        required: false
+        schema:
+          default: '*'
+          type: string
+      - description: pass an optional string to search for a specific source
+        example: wks
+        in: query
+        name: source
+        required: false
+        schema:
+          default: '*'
+          type: string
+      - description: pass an optional string to search for a specific entityType
+        example: wellbore
+        in: query
+        name: entityType
+        required: false
+        schema:
+          default: '*'
+          type: string
+      - description: pass an optional string to search for a specific schemaVersionMajor
+        example: 1
+        in: query
+        name: schemaVersionMajor
+        required: false
+        schema:
+          default: '*'
+          type: string
+      - description: pass an optional string to search for a specific schemaVersionMinor
+        example: 1
+        in: query
+        name: schemaVersionMinor
+        required: false
+        schema:
+          default: '*'
+          type: string
+      - description: pass an optional string to search for a specific schemaVersionPatch
+        example: 0
+        in: query
+        name: schemaVersionPatch
+        required: false
+        schema:
+          default: '*'
+          type: string
+      - description: The schema status specification
+        example: PUBLISHED
+        in: query
+        name: status
+        required: false
+        schema:
+          default: PUBLISHED
+          type: string
+      - description: The scope or schema visibility specification
+        example: INTERNAL
+        in: query
+        name: scope
+        required: false
+        schema:
+          default: INTERNAL
+          type: string
+      - description: if True, only return the latest version
+        example: 'True'
+        in: query
+        name: latestVersion
+        required: false
+        schema:
+          default: 'False'
+          type: string
+      - description: maximum number of schema records to return
+        example: 10
+        in: query
+        name: limit
+        required: false
+        schema:
+          maximum: 100
+          minimum: 0
+          type: string
+      - description: number of records to skip for pagination
+        example: 0
+        in: query
+        name: offset
+        required: false
+        schema:
+          minimum: 0
+          type: string
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/SchemaInfoResponse'
+          description: OK
+        '400':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad user input. Mandatory fields missing or unacceptable value
+            passed to API
+        '401':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Unauthorized
+        '403':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: User not authorized to perform the action.
+        '404':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Requested Schema not found in repository
+        '500':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Internal Server Error
+        '502':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Gateway
+        '503':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Service Unavailable
+      security:
+      - Authorization: []
+      summary: Searches SchemaInfo repository
+      tags:
+      - schema-api
+    post:
+      description: 'Adds a schema to the schema repository. The schemaIdentity must
+        be unique. The `authority`, `source` and `entityType` will be registered if
+        not present. <p>If lower minor versions are registered the service validates
+        the new schema against breaking changes; if breaking changes are discovered
+        the request fails.</p> <p>**Note:** The schema must not reference other schemas
+        with status `DEVELOPMENT`. Scope to a schema will be set by system based on
+        partition id (`SHARED` for common tenant and `INTERNAL` for private tenant).
+        </p><p>Required roles : `service.schema-service.editors` groups to create
+        schema.</p>'
+      operationId: createSchema
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SchemaRequest'
+        required: true
+      responses:
+        '201':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/SchemaInfo'
+          description: Schema created
+        '400':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad user input. Mandatory fields missing or unacceptable value
+            passed to API
+        '401':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Unauthorized
+        '403':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: User not authorized to perform the action.
+        '404':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Not Found
+        '500':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Internal Server Error
+        '502':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Gateway
+        '503':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Service Unavailable
+      security:
+      - Authorization: []
+      summary: Adds a schema to the schema repository.
+      tags:
+      - schema-api
+    put:
+      description: 'Creates a new schema or updates an already existing schema with
+        status `DEVELOPMENT` in the schema repository. If a user tries to create/update
+        a schema with status other than `DEVELOPMENT`, API will throw an exception.
+        <p>Any schema instance with the same schemaIdentity is replaced (in contrast
+        to the immutability of `PUBLISHED` or `OBSOLETE` schemas). A schema state
+        can also be changed from `DEVELOPMENT` to `PUBLISHED` or `OBSOLETE` while
+        updating schema content or by providing the same schema content.</p> <p>**Note:**
+        The schema may refer to other schema definitions in `DEVELOPMENT` state. If
+        those schemas are updated themselves, it is the developer''s responsibility
+        to PUT the dependent schemas again to update the schemas. Scope for a schema
+        can''t be updated, its a system defined value.</p> <p>Required roles:  `service.schema-service.editors`
+        groups to update schema.</p>'
+      operationId: upsertSchema
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SchemaRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/SchemaInfo'
+          description: Schema updated
+        '201':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/SchemaInfo'
+          description: Schema created
+        '400':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad user input. Mandatory fields missing or unacceptable value
+            passed to API
+        '401':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Unauthorized
+        '403':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: User not authorized to perform the action.
+        '404':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Not Found
+        '500':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Internal Server Error
+        '502':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Gateway
+        '503':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Service Unavailable
+      security:
+      - Authorization: []
+      summary: Creates/Updates a schema in development status
+      tags:
+      - schema-api
+  /schema/{id}:
+    get:
+      description: 'Retrieve a schema using its system defined id. Required roles:  `service.schema-service.viewers`
+        groups to get the schema.'
+      operationId: getSchema
+      parameters:
+      - description: The system id of the schema
+        example: osdu:wks:wellbore:1.0.0
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: object
+          description: Search results matching criteria
+        '400':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad user input. Mandatory fields missing or unacceptable value
+            passed to API
+        '401':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Unauthorized
+        '403':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: User not authorized to perform the action.
+        '404':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Requested Schema not found in repository
+        '500':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Internal Server Error
+        '502':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Gateway
+        '503':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Service Unavailable
+      security:
+      - Authorization: []
+      summary: Gets schema from the schema repository.
+      tags:
+      - schema-api
+  /schemas/system:
+    put:
+      description: Creates a new schema or updates an already existing schema with
+        status `DEVELOPMENT` in the schema repository. If a user tries to create a
+        schema with status other than `DEVELOPMENT`, API will not throw an exception.
+        <p>The update of schema without `DEVELOPMENT` status would cause error. Any
+        schema instance with the same schemaIdentity is replaced. A schema state can
+        also be changed from `DEVELOPMENT` to `PUBLISHED` or `OBSOLETE` while updating
+        schema content or by providing the same schema content.</p> <p>**Note:** The
+        schema may refer to other schema definitions in `DEVELOPMENT` state. If those
+        schemas are updated themselves, it is the developer's responsibility to PUT
+        the dependent schemas again to update the schema. Scope for a schema will
+        be SHARED for all the schemas created using this API.</p><p>Service principal
+        authorization is required to call thi API.</p>
+      operationId: upsertSystemSchema
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SchemaRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/SchemaInfo'
+          description: Schema updated
+        '201':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/SchemaInfo'
+          description: Schema created
+        '400':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad user input. Mandatory fields missing or unacceptable value
+            passed to API
+        '401':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Unauthorized
+        '403':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: User not authorized to perform the action.
+        '404':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Not Found
+        '500':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Internal Server Error
+        '502':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Gateway
+        '503':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Service Unavailable
+      security:
+      - Authorization: []
+      summary: Creates/Updates a schema in development status
+      tags:
+      - system-schema-api
+security:
+- Authorization: []
+servers:
+- url: /api/schema-service/v1/
+tags:
+- description: Schema API - Core Schema related endpoints
+  name: schema-api
+- description: Version info endpoint
+  name: info
+- description: System Schema API - System Schema related endpoints
+  name: system-schema-api

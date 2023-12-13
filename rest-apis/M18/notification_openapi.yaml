@@ -1,0 +1,163 @@
+components:
+  schemas:
+    AppError:
+      properties:
+        code:
+          format: int32
+          type: integer
+        message:
+          type: string
+        reason:
+          type: string
+      type: object
+    ConnectedOuterService:
+      properties:
+        name:
+          type: string
+        version:
+          type: string
+      type: object
+    VersionInfo:
+      properties:
+        artifactId:
+          type: string
+        branch:
+          type: string
+        buildTime:
+          type: string
+        commitId:
+          type: string
+        commitMessage:
+          type: string
+        connectedOuterServices:
+          items:
+            $ref: '#/components/schemas/ConnectedOuterService'
+          type: array
+        groupId:
+          type: string
+        version:
+          type: string
+      type: object
+  securitySchemes:
+    Authorization:
+      bearerFormat: Authorization
+      scheme: bearer
+      type: http
+info:
+  contact:
+    email: dps@OSDU.org
+    name: OSDU Data Platform Team
+  description: The Notification service, with Register service, allow interested consumers
+    to subscribe to data and metadata changes using a publisher/subscriber pattern
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  title: Notification Service
+  version: 1.0.0
+openapi: 3.0.1
+paths:
+  /_ah/warmup:
+    get:
+      description: For deployment available public `/_ah` endpoint.
+      operationId: warmup
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+      summary: Liveness Check endpoint
+      tags:
+      - health-checks-api
+  /info:
+    get:
+      description: For deployment available public `/info` endpoint, which provides
+        build and git related information.
+      operationId: info
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VersionInfo'
+          description: Version info.
+      summary: Version info
+      tags:
+      - info
+  /push-handlers/records-changed:
+    post:
+      description: 'Record Changed. Required Roles: `users.datalake.ops` or `notification.pubsub`'
+      operationId: recordChanged
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+        '201':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: Created
+        '400':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad user input. Mandatory fields missing or unacceptable value
+            passed to API
+        '401':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Unauthorized
+        '403':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: User not authorized to perform the action.
+        '404':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Not Found
+        '500':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Internal Server Error
+        '502':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Gateway
+        '503':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Service Unavailable
+      security:
+      - Authorization: []
+      summary: Record Changed
+      tags:
+      - pubsub-endpoint-api
+security:
+- Authorization: []
+servers:
+- url: /api/notification/v1/
+tags:
+- description: Health Checks API
+  name: health-checks-api
+- description: PubSub Endpoint API
+  name: pubsub-endpoint-api
+- description: Version info endpoint
+  name: info

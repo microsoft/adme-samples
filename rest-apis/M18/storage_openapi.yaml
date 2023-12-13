@@ -1,0 +1,1479 @@
+components:
+  schemas:
+    Acl:
+      properties:
+        owners:
+          items:
+            type: string
+          type: array
+        viewers:
+          items:
+            type: string
+          type: array
+      type: object
+    AppError:
+      properties:
+        code:
+          format: int32
+          type: integer
+        message:
+          type: string
+        reason:
+          type: string
+      type: object
+    BulkUpdateRecordsResponse:
+      properties:
+        lockedRecordIds:
+          items:
+            type: string
+          type: array
+        notFoundRecordIds:
+          items:
+            type: string
+          type: array
+        recordCount:
+          format: int32
+          type: integer
+        recordIds:
+          items:
+            type: string
+          type: array
+        unAuthorizedRecordIds:
+          items:
+            type: string
+          type: array
+      type: object
+    ConnectedOuterService:
+      properties:
+        name:
+          type: string
+        version:
+          type: string
+      type: object
+    ConversionStatus:
+      properties:
+        errors:
+          items:
+            type: string
+          type: array
+        id:
+          type: string
+        status:
+          type: string
+      type: object
+    CreateUpdateRecordsResponse:
+      properties:
+        recordCount:
+          format: int32
+          type: integer
+        recordIdVersions:
+          items:
+            type: string
+          type: array
+        recordIds:
+          items:
+            type: string
+          type: array
+        skippedRecordIds:
+          items:
+            type: string
+          type: array
+      type: object
+    DatastoreQueryResult:
+      properties:
+        cursor:
+          type: string
+        results:
+          items:
+            type: string
+          type: array
+      type: object
+    DeleteRecordsException:
+      properties:
+        cause:
+          properties:
+            localizedMessage:
+              type: string
+            message:
+              type: string
+            stackTrace:
+              items:
+                properties:
+                  className:
+                    type: string
+                  fileName:
+                    type: string
+                  lineNumber:
+                    format: int32
+                    type: integer
+                  methodName:
+                    type: string
+                  nativeMethod:
+                    type: boolean
+                type: object
+              type: array
+            suppressed:
+              items:
+                properties:
+                  localizedMessage:
+                    type: string
+                  message:
+                    type: string
+                  stackTrace:
+                    items:
+                      properties:
+                        className:
+                          type: string
+                        fileName:
+                          type: string
+                        lineNumber:
+                          format: int32
+                          type: integer
+                        methodName:
+                          type: string
+                        nativeMethod:
+                          type: boolean
+                      type: object
+                    type: array
+                type: object
+              type: array
+          type: object
+        localizedMessage:
+          type: string
+        message:
+          type: string
+        notDeletedRecords:
+          items:
+            $ref: '#/components/schemas/PairStringString'
+          type: array
+        stackTrace:
+          items:
+            properties:
+              className:
+                type: string
+              fileName:
+                type: string
+              lineNumber:
+                format: int32
+                type: integer
+              methodName:
+                type: string
+              nativeMethod:
+                type: boolean
+            type: object
+          type: array
+        suppressed:
+          items:
+            properties:
+              localizedMessage:
+                type: string
+              message:
+                type: string
+              stackTrace:
+                items:
+                  properties:
+                    className:
+                      type: string
+                    fileName:
+                      type: string
+                    lineNumber:
+                      format: int32
+                      type: integer
+                    methodName:
+                      type: string
+                    nativeMethod:
+                      type: boolean
+                  type: object
+                type: array
+            type: object
+          type: array
+      type: object
+    JsonPatch:
+      description: Record patch operations.
+      type: object
+    Legal:
+      properties:
+        legaltags:
+          items:
+            type: string
+          type: array
+          uniqueItems: true
+        otherRelevantDataCountries:
+          items:
+            type: string
+          type: array
+          uniqueItems: true
+        status:
+          enum:
+          - compliant
+          - incompliant
+          type: string
+      required:
+      - otherRelevantDataCountries
+      type: object
+    MultiRecordIds:
+      description: Record ids
+      properties:
+        attributes:
+          items:
+            type: string
+          type: array
+        records:
+          items:
+            type: string
+          maxItems: 100
+          minItems: 0
+          type: array
+      required:
+      - records
+      type: object
+    MultiRecordInfo:
+      properties:
+        invalidRecords:
+          items:
+            type: string
+          type: array
+        records:
+          items:
+            $ref: '#/components/schemas/Record'
+          type: array
+        retryRecords:
+          items:
+            type: string
+          type: array
+      type: object
+    MultiRecordRequest:
+      description: Record ids
+      properties:
+        records:
+          items:
+            type: string
+          maxItems: 20
+          minItems: 1
+          type: array
+      required:
+      - records
+      type: object
+    MultiRecordResponse:
+      properties:
+        conversionStatuses:
+          items:
+            $ref: '#/components/schemas/ConversionStatus'
+          type: array
+        notFound:
+          items:
+            type: string
+          type: array
+        records:
+          items:
+            type: string
+          type: array
+      type: object
+    PairStringString:
+      properties:
+        key:
+          type: string
+        left:
+          type: string
+        right:
+          type: string
+        value:
+          type: string
+      type: object
+    PatchOperation:
+      properties:
+        op:
+          type: string
+        path:
+          type: string
+        value:
+          items:
+            type: string
+          type: array
+      required:
+      - value
+      type: object
+    PatchRecordsRequestModel:
+      description: Records to be patched
+      example:
+        ops:
+        - op: remove
+          path: /acl/viewers/0
+        query:
+          ids:
+          - common:work-product-component--wellLog:123456
+      properties:
+        ops:
+          $ref: '#/components/schemas/JsonPatch'
+        query:
+          $ref: '#/components/schemas/RecordQueryPatch'
+      required:
+      - ops
+      - query
+      type: object
+    PatchRecordsResponse:
+      properties:
+        errors:
+          items:
+            type: string
+          type: array
+        failedRecordIds:
+          items:
+            type: string
+          type: array
+        notFoundRecordIds:
+          items:
+            type: string
+          type: array
+        recordCount:
+          format: int32
+          type: integer
+        recordIds:
+          items:
+            type: string
+          type: array
+      type: object
+    Record:
+      properties:
+        acl:
+          $ref: '#/components/schemas/Acl'
+        ancestry:
+          $ref: '#/components/schemas/RecordAncestry'
+        data:
+          additionalProperties:
+            type: object
+          type: object
+        id:
+          pattern: ^[\w\-\.]+:[\w-\.]+:[\w\-\.\:\%]+$
+          type: string
+        kind:
+          type: string
+        legal:
+          $ref: '#/components/schemas/Legal'
+        meta:
+          items:
+            additionalProperties:
+              type: object
+            type: object
+          type: array
+        tags:
+          additionalProperties:
+            type: string
+          type: object
+        version:
+          format: int64
+          type: integer
+      required:
+      - acl
+      - data
+      type: object
+    RecordAncestry:
+      properties:
+        parents:
+          items:
+            type: string
+          type: array
+          uniqueItems: true
+      type: object
+    RecordBulkUpdateParam:
+      description: Records to be updated
+      properties:
+        ops:
+          items:
+            $ref: '#/components/schemas/PatchOperation'
+          type: array
+        query:
+          $ref: '#/components/schemas/RecordQuery'
+      required:
+      - ops
+      - query
+      type: object
+    RecordQuery:
+      properties:
+        ids:
+          items:
+            type: string
+          maxItems: 500
+          minItems: 1
+          type: array
+      required:
+      - ids
+      type: object
+    RecordQueryPatch:
+      description: Represents a model for Record Query Patch
+      example:
+        ids:
+        - common:work-product-component--wellLog:123456
+      properties:
+        ids:
+          description: List of record ids. Each record id must follow the naming convention
+            {Data-Partition-Id}:{dataset-name}:{record-type}:{version}.
+          items:
+            type: string
+          type: array
+      type: object
+    RecordVersions:
+      properties:
+        recordId:
+          type: string
+        versions:
+          items:
+            format: int64
+            type: integer
+          type: array
+      type: object
+    VersionInfo:
+      properties:
+        artifactId:
+          type: string
+        branch:
+          type: string
+        buildTime:
+          type: string
+        commitId:
+          type: string
+        commitMessage:
+          type: string
+        connectedOuterServices:
+          items:
+            $ref: '#/components/schemas/ConnectedOuterService'
+          type: array
+        groupId:
+          type: string
+        version:
+          type: string
+      type: object
+  securitySchemes:
+    Authorization:
+      bearerFormat: Authorization
+      scheme: bearer
+      type: http
+info:
+  contact:
+    email: dps@OSDU.org
+    name: OSDU Data Platform Team
+  description: Storage service which handles the metadata ingestion in the OSDU data
+    platform
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  title: Storage Service
+  version: 2.0.0
+openapi: 3.0.1
+paths:
+  /health:
+    get:
+      description: For deployment available public `/health` endpoint, which provides
+        health message.
+      operationId: healthMessage
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+      summary: Health Message
+      tags:
+      - health
+  /info:
+    get:
+      description: For deployment available public `/info` endpoint, which provides
+        build and git related information.
+      operationId: info
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VersionInfo'
+          description: OK
+      summary: Version info
+      tags:
+      - info
+  /query/records:
+    get:
+      description: 'The API returns a list of all record ids which belong to the specified
+        kind.
+
+        Allowed roles: `service.storage.admin`.'
+      operationId: getAllRecords
+      parameters:
+      - description: x-collaboration
+        in: header
+        name: x-collaboration
+        required: false
+        schema:
+          type: string
+      - description: Cursor
+        in: query
+        name: cursor
+        required: false
+        schema:
+          type: string
+      - description: Page Size
+        example: 10
+        in: query
+        name: limit
+        required: false
+        schema:
+          format: int32
+          type: integer
+      - description: Filter Kind
+        example: tenant1:public:well:1.0.2
+        in: query
+        name: kind
+        required: true
+        schema:
+          type: string
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatastoreQueryResult'
+          description: Record Ids retrieved successfully.
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Request
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Unauthorized
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Forbidden
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Kind or cursor not found.
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Internal Server Error
+        '502':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Gateway
+        '503':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Service Unavailable
+      security:
+      - Authorization: []
+      summary: Get all record from kind
+      tags:
+      - query
+    post:
+      description: 'The API fetches multiple records at once.
+
+        Allowed roles: `service.storage.viewer`,`service.storage.creator` and `service.storage.admin`.'
+      operationId: getRecords
+      parameters:
+      - description: x-collaboration
+        in: header
+        name: x-collaboration
+        required: false
+        schema:
+          type: string
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MultiRecordIds'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MultiRecordInfo'
+          description: Fetch multiple records successfully.
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Request
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Unauthorized
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Forbidden
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Not Found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Internal Server Error
+        '502':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Gateway
+        '503':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Service Unavailable
+      security:
+      - Authorization: []
+      summary: Fetch records
+      tags:
+      - query
+  /query/records:batch:
+    post:
+      description: 'The API fetches multiple records at once in the specific {data-partition-id}.The
+        value of {frame-of-reference} indicates whether normalization is applied.
+
+        Required roles: `users.datalake.viewers` or `users.datalake.editors` or `users.datalake.admins`.'
+      operationId: fetchRecords
+      parameters:
+      - description: x-collaboration
+        in: header
+        name: x-collaboration
+        required: false
+        schema:
+          type: string
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+        schema:
+          type: string
+      - description: This value indicates whether normalization applies, should be
+          either `none` or `units=SI;crs=wgs84;elevation=msl;azimuth=true north;dates=utc;`
+        example: units=SI;crs=wgs84;elevation=msl;azimuth=true north;dates=utc;
+        in: header
+        name: frame-of-reference
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MultiRecordRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MultiRecordResponse'
+          description: Fetch multiple records successfully.
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Request
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Unauthorized
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Forbidden
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Not Found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Internal Server Error
+        '502':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Gateway
+        '503':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Service Unavailable
+      security:
+      - Authorization: []
+      summary: Fetch multiple records
+      tags:
+      - query
+  /records:
+    patch:
+      description: "The API represents the patch update mechanism for records. It\
+        \ allows updating multiple records in one request. The API supports metadata\
+        \ update only (Legal Tags, ACLs and Tags) if the request body media type is\
+        \ `application/json`. The API supports metadata and data update (Legal Tags,\
+        \ ACLs, Tags, Ancestry, Kind, Meta and Data) if the request body media type\
+        \ is `application/json-patch+json`. Please choose the appropriate media type\
+        \ from the Request body dropdown. The currently supported operations are replace,\
+        \ add, and remove. \nRequired roles: `users.datalake.editors` or `users.datalake.admins`."
+      operationId: updateRecordsMetadata_1
+      parameters:
+      - description: x-collaboration
+        in: header
+        name: x-collaboration
+        required: false
+        schema:
+          type: string
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+        schema:
+          type: string
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecordBulkUpdateParam'
+          application/json-patch+json:
+            schema:
+              $ref: '#/components/schemas/PatchRecordsRequestModel'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/PatchRecordsResponse'
+                - $ref: '#/components/schemas/BulkUpdateRecordsResponse'
+          description: Records updated successfully.
+        '206':
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/PatchRecordsResponse'
+                - $ref: '#/components/schemas/BulkUpdateRecordsResponse'
+          description: Records updated successful partially.
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Request
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Unauthorized
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: User not authorized to perform the action.
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Not Found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Internal Server Error
+        '502':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Gateway
+        '503':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Service Unavailable
+      security:
+      - Authorization: []
+      summary: Modify record data and/or metadata attributes using patch operations
+      tags:
+      - records
+    put:
+      description: "The API represents the main injection mechanism into the Data\
+        \ Ecosystem. \nIt allows records creation and/or update.When no record id\
+        \ is provided or when the provided id is not already present in the Data Ecosystem\
+        \ then a new record is created. \n If the id is related to an existing record\
+        \ in the Data Ecosystem then an update operation takes place and a new version\
+        \ of the record is created."
+      operationId: createOrUpdateRecords
+      parameters:
+      - description: x-collaboration
+        in: header
+        name: x-collaboration
+        required: false
+        schema:
+          type: string
+      - description: Skip duplicates when updating records with the same value.
+        in: query
+        name: skipdupes
+        required: false
+        schema:
+          type: boolean
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: Records to be created/updated
+              items:
+                $ref: '#/components/schemas/Record'
+              maxItems: 500
+              minItems: 0
+              type: array
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateUpdateRecordsResponse'
+          description: Records created and/or updated successfully.
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Invalid record format.
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Unauthorized
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: User not authorized to perform the action.
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Invalid acl group.
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Internal Server Error
+        '502':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Gateway
+        '503':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Service Unavailable
+      security:
+      - Authorization: []
+      summary: Create or Update Records
+      tags:
+      - records
+  /records/delete:
+    post:
+      description: "The API performs a soft deletion of the given list of records.\
+        \ \nRequired roles: `users.datalake.editors` or `users.datalake.admins` who\
+        \ is the OWNER of the record."
+      operationId: bulkDeleteRecords
+      parameters:
+      - description: x-collaboration
+        in: header
+        name: x-collaboration
+        required: false
+        schema:
+          type: string
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: recordIds to be deleted
+              items:
+                type: string
+              maxItems: 500
+              minItems: 0
+              type: array
+        required: true
+      responses:
+        '204':
+          description: All records deleted successfully.
+        '207':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/DeleteRecordsException'
+          description: Some of the records weren't deleted successfully.
+        '400':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Invalid id format
+        '401':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Unauthorized
+        '403':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Forbidden
+        '404':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Not Found
+        '500':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Internal Server Error
+        '502':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Gateway
+        '503':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Service Unavailable
+      security:
+      - Authorization: []
+      summary: Soft delete of multiple records
+      tags:
+      - records
+  /records/versions/{id}:
+    get:
+      description: "The API returns a list containing all versions for the given record\
+        \ id. \nAllowed roles: `service.storage.viewer`, `service.storage.creator`\
+        \ and `service.storage.admin`."
+      operationId: getRecordVersions
+      parameters:
+      - description: x-collaboration
+        in: header
+        name: x-collaboration
+        required: false
+        schema:
+          type: string
+      - description: Record id
+        example: tenant1:well:123456789
+        in: path
+        name: id
+        required: true
+        schema:
+          pattern: ^[\w\-\.]+:[\w-\.]+:[\w\-\.\:\%]+$
+          type: string
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecordVersions'
+          description: Record versions retrieved successfully.
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Request
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Unauthorized
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Forbidden
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Record id or version not found.
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Internal Server Error
+        '502':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Gateway
+        '503':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Service Unavailable
+      security:
+      - Authorization: []
+      summary: Get record versions
+      tags:
+      - records
+  /records/{id}:
+    delete:
+      description: "The API performs the physical deletion of the given record and\
+        \ all of its versions.\n This operation cannot be undone. \nAllowed roles:\
+        \ `service.storage.admin` who is the OWNER of the record."
+      operationId: purgeRecord
+      parameters:
+      - description: x-collaboration
+        in: header
+        name: x-collaboration
+        required: false
+        schema:
+          type: string
+      - description: Record id
+        example: tenant1:well:123456789
+        in: path
+        name: id
+        required: true
+        schema:
+          pattern: ^[\w\-\.]+:[\w-\.]+:[\w\-\.\:\%]+$
+          type: string
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Record purged successfully.
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Unauthorized
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Forbidden
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Record not found.
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Internal Server Error
+        '502':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Gateway
+        '503':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Service Unavailable
+      security:
+      - Authorization: []
+      summary: Purge Record
+      tags:
+      - records
+    get:
+      description: 'This API returns the latest version of the given record.
+
+        Allowed roles: `service.storage.viewer`, `service.storage.creator` and `service.storage.admin`.'
+      operationId: getLatestRecordVersion
+      parameters:
+      - description: x-collaboration
+        in: header
+        name: x-collaboration
+        required: false
+        schema:
+          type: string
+      - description: Record id
+        example: tenant1:well:123456789
+        in: path
+        name: id
+        required: true
+        schema:
+          pattern: ^[\w\-\.]+:[\w-\.]+:[\w\-\.\:\%]+$
+          type: string
+      - description: 'Filter attributes to restrict the returned fields of the record.  Usage:
+          data.{record-data-field-name}.'
+        example: data.wellName
+        in: query
+        name: attribute
+        required: false
+        schema:
+          items:
+            type: string
+          type: array
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: string
+          description: Record retrieved successfully.
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Request
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Unauthorized
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Forbidden
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Record not found.
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Internal Server Error
+        '502':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Gateway
+        '503':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Service Unavailable
+      security:
+      - Authorization: []
+      summary: Get latest record version data
+      tags:
+      - records
+  /records/{id}/{version}:
+    get:
+      description: "The API retrieves the specific version of the given record. \n\
+        Allowed roles: `service.storage.viewer`, `service.storage.creator` and `service.storage.admin`."
+      operationId: getSpecificRecordVersion
+      parameters:
+      - description: x-collaboration
+        in: header
+        name: x-collaboration
+        required: false
+        schema:
+          type: string
+      - description: Record id
+        example: tenant1:well:123456789
+        in: path
+        name: id
+        required: true
+        schema:
+          pattern: ^[\w\-\.]+:[\w-\.]+:[\w\-\.\:\%]+$
+          type: string
+      - description: Record version
+        example: 123456789
+        in: path
+        name: version
+        required: true
+        schema:
+          format: int64
+          type: integer
+      - description: 'Filter attributes to restrict the returned fields of the record.  Usage:
+          data.{record-data-field-name}.'
+        example: data.wellName
+        in: query
+        name: attribute
+        required: false
+        schema:
+          items:
+            type: string
+          type: array
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: string
+          description: Record retrieved successfully.
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Request
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Unauthorized
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Forbidden
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Record id or version not found.
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Internal Server Error
+        '502':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Gateway
+        '503':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Service Unavailable
+      security:
+      - Authorization: []
+      summary: Get Specific record
+      tags:
+      - records
+  /records/{id}:delete:
+    post:
+      description: "The API performs a logical deletion of the record using recordId.\
+        \ This operation can be reverted later. \nAllowed roles: `service.storage.creator`\
+        \ and `service.storage.admin` who is the OWNER of the record."
+      operationId: deleteRecord
+      parameters:
+      - description: x-collaboration
+        in: header
+        name: x-collaboration
+        required: false
+        schema:
+          type: string
+      - description: Record id
+        example: tenant1:well:123456789
+        in: path
+        name: id
+        required: true
+        schema:
+          pattern: ^[\w\-\.]+:[\w-\.]+:[\w\-\.\:\%]+$
+          type: string
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Record deleted successfully.
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Request
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Unauthorized
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Forbidden
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Record not found.
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Internal Server Error
+        '502':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Gateway
+        '503':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Service Unavailable
+      security:
+      - Authorization: []
+      summary: Delete Record
+      tags:
+      - records
+security:
+- Authorization: []
+servers:
+- url: /api/storage/v2/
+tags:
+- description: Health endpoint
+  name: health
+- description: Querying Records operations
+  name: query
+- description: Records management operations
+  name: records
+- description: Version info endpoint
+  name: info
