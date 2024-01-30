@@ -650,7 +650,5 @@ servers:
 tags:
 - description: Dataset DMS and Dataset Registry related operations
   name: dataset
-- description: dataset api operations
-  name: dataset
 - description: Version info endpoint
   name: info
