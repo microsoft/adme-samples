@@ -22,6 +22,7 @@ This repo contains samples for Azure Data Manager for Energy APIs.
 * [Wellbore DDMS Service](/adme-samples/rest-apis/index.html?page=/adme-samples/rest-apis/M18/wellbore_ddms_openapi.yaml)
 * [Well Delivery DDMS Service](/adme-samples/rest-apis/index.html?page=/adme-samples/rest-apis/M18/welldelivery_ddms_openapi.yaml)
 * [Workflow Service](/adme-samples/rest-apis/index.html?page=/adme-samples/rest-apis/M18/ingestion_worflow_openapi.yaml)
+* [Secret Service](/adme-samples/rest-apis/index.html?page=/adme-samples/rest-apis/M18/secret_openapi.yaml)
 
 ## Contributing
 
