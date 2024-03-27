@@ -26,7 +26,7 @@ This repo contains samples for Azure Data Manager for Energy APIs.
 
 **Note:** \
 Partition service's swagger is not uploaded to this repo because it is an internal service. Users are not expected to call the partition service directly. Partition service is called by other services indirectly for reading partition info. It's also invoked when users interact with the partition management section of ADME Azure portal experience and the ADME partition management APIs
-This behavior will soon be changed in the future, it is recommended by ADME team to not make direct API calls to the partition service.
+Access to paritition service will soon be revoked in the future, it is recommended by ADME team to not make direct API calls to the partition service.
 
 ## Contributing
 
