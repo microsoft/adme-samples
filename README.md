@@ -16,13 +16,14 @@ This repo contains samples for Azure Data Manager for Energy APIs.
 * [Register Service](/adme-samples/rest-apis/index.html?page=/adme-samples/rest-apis/M18/register_openapi.yaml)
 * [Schema Service](/adme-samples/rest-apis/index.html?page=/adme-samples/rest-apis/M18/schema_openapi.yaml)
 * [Search Service](/adme-samples/rest-apis/index.html?page=/adme-samples/rest-apis/M18/search_openapi.yaml)
+* [Secret Service](/adme-samples/rest-apis/index.html?page=/adme-samples/rest-apis/M18/secret_openapi.yaml)
 * [Seismic DDMS Service](/adme-samples/rest-apis/index.html?page=/adme-samples/rest-apis/M18/seismic_ddms_openapi.yaml)
+* [Seismic File MetaData Service](/adme-samples/rest-apis/index.html?page=/adme-samples/rest-apis/M18/seismic_file_metadata.yaml)
 * [Storage Service](/adme-samples/rest-apis/index.html?page=/adme-samples/rest-apis/M18/storage_openapi.yaml)
 * [Unit Service](/adme-samples/rest-apis/index.html?page=/adme-samples/rest-apis/M18/unit_openapi.yaml)
 * [Wellbore DDMS Service](/adme-samples/rest-apis/index.html?page=/adme-samples/rest-apis/M18/wellbore_ddms_openapi.yaml)
 * [Well Delivery DDMS Service](/adme-samples/rest-apis/index.html?page=/adme-samples/rest-apis/M18/welldelivery_ddms_openapi.yaml)
 * [Workflow Service](/adme-samples/rest-apis/index.html?page=/adme-samples/rest-apis/M18/ingestion_worflow_openapi.yaml)
-* [Secret Service](/adme-samples/rest-apis/index.html?page=/adme-samples/rest-apis/M18/secret_openapi.yaml)
 
 **Note:** \
 Partition service's swagger is not uploaded to this repo because it is an internal service. Users are not expected to call the partition service directly. Partition service is called by other services indirectly for reading partition info. It's also invoked when users interact with the partition management section of ADME Azure portal experience and the ADME partition management APIs.\
