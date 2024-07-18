@@ -1,0 +1,785 @@
+components:
+  schemas:
+    AggregationResponse:
+      properties:
+        count:
+          format: int64
+          type: integer
+        key:
+          type: string
+      type: object
+    AppError:
+      properties:
+        code:
+          format: int32
+          type: integer
+        message:
+          type: string
+        reason:
+          type: string
+      type: object
+    BaseCRS:
+      description: BaseCRS
+      properties:
+        id:
+          description: Record Id of parent CRS
+          type: string
+        name:
+          description: Name of parent CRS
+          type: string
+      type: object
+    ConnectedOuterService:
+      properties:
+        name:
+          type: string
+        version:
+          type: string
+      type: object
+    CoordinateReferenceSystemsQuery:
+      description: Body for searching on CRSs
+      properties:
+        baseCRS:
+          $ref: '#/components/schemas/BaseCRS'
+        code:
+          description: Corresponds to Code field on CRS records
+          type: string
+        codeSpace:
+          description: Corresponds to CodeSpace field on CRS records
+          type: string
+        coordinateReferenceSystemType:
+          description: Type of CRS, e.g., BoundCRS, ProjectedCRS, GeodeticCRS, VerticalCRS
+          type: string
+        datum:
+          $ref: '#/components/schemas/Datum'
+        extent:
+          description: Description of extent. Corresponds to PreferredUsage.Extent.Description
+            in the record. All entities with PreferredUsage.Extent.Description containing
+            the search string will be returned. Wildcard is not supported.
+          type: string
+        horizontalAxisUnitId:
+          description: Corresponds to CoordinateSystem.HorizontalAxisUnitID field
+            on CRS records, e.g., "osdu:reference-data--UnitOfMeasure:dega:".
+          type: string
+        id:
+          description: Corresponds to ID field on CRS records
+          type: string
+        includeDeprecated:
+          description: Whether to return deprecated records marked with InactiveIndicator=true.
+            Default is false
+          type: boolean
+        kind:
+          description: Corresponds to Kind field on CRS records
+          type: string
+        latitude:
+          description: Latitude point for searching on CRS bounding box
+          type: number
+        limit:
+          description: Corresponds to limit on search service. Default is to return
+            all found entities.
+          format: int32
+          type: integer
+        longitude:
+          description: Longitude point for searching on CRS bounding box
+          type: number
+        name:
+          description: Corresponds to Code field on CRS records
+          type: string
+        offset:
+          description: Corresponds to offset on search service
+          format: int32
+          type: integer
+        persistableReferenceSearch:
+          type: string
+        returnAllFields:
+          description: Whether to return all fields in the record. Default is false
+            and only a subset is returned
+          type: boolean
+        returnBoundGeographic2DAndWgs84:
+          description: 'Whether or not to only return bound geopraphic 2d type. If
+            true, it only returns CRS 1. with Kind as "BoundGeographic2D" or 2. with
+            Kind as "geographic 2D" and Code as 4326 and CodeSpace as "EPSG" '
+          type: boolean
+        returnBoundProjectedAndProjectedBasedOnWgs84:
+          description: Whether or not to only return bound projected type or projected
+            type based on wgs84. If true, it only returns CRS 1. with Kind as "BoundProjected"
+            or 2. with Kind as "projected" and BaseCRS.AuthorityCode.Code as 4326
+          type: boolean
+        returnedFields:
+          description: Return all fields in the record
+          items:
+            description: Return all fields in the record
+            type: string
+          type: array
+        verticalAxisUnitId:
+          description: CorrespondsCorresponds to CoordinateSystem.VerticalAxisUnitID
+            field on CRS records
+          type: string
+      type: object
+    CoordinateTransformationsQuery:
+      description: Body for searching on CTs
+      properties:
+        code:
+          description: Corresponds to Code field on CT records
+          type: string
+        codeSpace:
+          description: Corresponds to CodeSpace field on CT records
+          type: string
+        id:
+          description: Corresponds to ID field on CT records
+          type: string
+        includeDeprecated:
+          description: Whether to return deprecated records marked with InactiveIndicator=true.
+            Default is false.
+          type: boolean
+        kind:
+          description: Corresponds to the Kind field on CT records. Default is to
+            not return CT records with Kind "VerticalTransformation". Viable options
+            include "Transformation", "ConcatenatedOperation", "VerticalTransformation",
+            "ExcludeVertical" (default) and "All". "All" is a special value which
+            indicates returning records of all kinds.
+          type: string
+        latitude:
+          description: Returns all entities for which the (Latitude, Longitude) is
+            inside the Extent bounding box. Must also provide longitude
+          type: number
+        limit:
+          description: Corresponds to limit on search service. Default is to return
+            all found entities.
+          format: int32
+          type: integer
+        longitude:
+          description: See latitude
+          type: number
+        name:
+          description: Corresponds to Name field on CT records. All entities with
+            name containing the search string will be returned. Wildcard is not supported
+          type: string
+        offset:
+          description: Corresponds to offset on search service
+          format: int32
+          type: integer
+        returnAllFields:
+          description: Whether to return all fields in the record. Default is false
+            and only a subset is returned
+          type: boolean
+        returnedFields:
+          items:
+            type: string
+          type: array
+        sourceCRS:
+          description: Corresponds to SourceCRS.SourceCRSID (record id), e.g., "osdu:reference-data--CoordinateReferenceSystem:Geographic2D:EPSG::4198:".
+            As SourceCRS and TargetCRS are interchangeable, it will also search TargetCRS.TargetCRSID
+          type: string
+        targetCRS:
+          description: Corresponds to TargetCRS.TargetCRSID (record id), e.g., "osdu:reference-data--CoordinateReferenceSystem:Geographic2D:EPSG::4198:".
+            As SourceCRS and TargetCRS are interchangeable, it will also search SourceCRS.SourceCRSID
+          type: string
+      type: object
+    CursorQueryResponse:
+      properties:
+        cursor:
+          type: string
+        results:
+          items:
+            additionalProperties:
+              type: object
+            type: object
+          type: array
+        totalCount:
+          format: int64
+          type: integer
+      type: object
+    Datum:
+      description: Datum
+      properties:
+        code:
+          description: Codespace of datum
+          type: string
+        codeSpace:
+          description: Name of datum
+          type: string
+        name:
+          description: Code of datum
+          type: string
+      type: object
+    InPolygonQuery:
+      description: Coordinate Transformations
+      properties:
+        dataId:
+          description: Searches on id for CRS records
+          type: string
+        limit:
+          description: Corresponds to limit on search service. Default is to return
+            all found entities.
+          format: int32
+          type: integer
+        offset:
+          description: Corresponds to offset on search service
+          format: int32
+          type: integer
+        points:
+          description: List of points to check against CRS or CT bounding boxes
+          items:
+            $ref: '#/components/schemas/Point'
+          type: array
+        recordId:
+          description: Record of CRS or CT to check points against
+          type: string
+        returnedFields:
+          items:
+            type: string
+          type: array
+      type: object
+    Point:
+      description: Lat, long point
+      properties:
+        latitude:
+          format: double
+          maximum: 90
+          minimum: -90
+          type: number
+        longitude:
+          format: double
+          type: number
+      type: object
+    PointsInAouSearchPoint:
+      description: A point that didn't land in the bounding box for area of use search
+      properties:
+        approximateKmDistanceOutside:
+          description: Kilometers outside the record's bounding box
+          format: int32
+          type: integer
+        index:
+          description: A zero-based index of the point in the input "points" array
+          format: int32
+          type: integer
+        point:
+          $ref: '#/components/schemas/Point'
+      type: object
+    PointsInAouSearchResult:
+      description: List of failed points, ones that aren't in bounding box
+      properties:
+        bboxFailedPoints:
+          description: A point that didn't land in the bounding box for area of use
+            search
+          items:
+            $ref: '#/components/schemas/PointsInAouSearchPoint'
+          type: array
+        maxDistKmOutsideBBox:
+          description: Point distance with highest km outside bounding box
+          format: int32
+          type: integer
+      type: object
+    QueryResponse:
+      description: Results from Search service
+      properties:
+        aggregations:
+          items:
+            $ref: '#/components/schemas/AggregationResponse'
+          type: array
+        phraseSuggestions:
+          items:
+            type: string
+          type: array
+        results:
+          items:
+            additionalProperties:
+              type: object
+            type: object
+          type: array
+        totalCount:
+          format: int64
+          type: integer
+      type: object
+    SearchResponse:
+      description: Results for most V3 endpoints
+      properties:
+        cursorSearchResults:
+          $ref: '#/components/schemas/CursorQueryResponse'
+        query:
+          description: Query string used against Search service
+          type: string
+        searchResults:
+          $ref: '#/components/schemas/QueryResponse'
+      type: object
+    VersionInfo:
+      properties:
+        artifactId:
+          type: string
+        branch:
+          type: string
+        buildTime:
+          type: string
+        commitId:
+          type: string
+        commitMessage:
+          type: string
+        connectedOuterServices:
+          items:
+            $ref: '#/components/schemas/ConnectedOuterService'
+          type: array
+        groupId:
+          type: string
+        version:
+          type: string
+      type: object
+  securitySchemes:
+    Authorization:
+      bearerFormat: Authorization
+      scheme: bearer
+      type: http
+info:
+  contact:
+    email: dps@OSDU.org
+    name: OSDU Data Platform Team
+  description: Coordinate Reference System (CRS) Catalog Service
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  title: CRS Catalog Service API
+  version: 3.0.0
+openapi: 3.0.1
+paths:
+  /v3/coordinate-reference-system:
+    get:
+      description: Coordinate Reference Systems
+      operationId: getCoordinateReferenceSystem
+      parameters:
+      - in: query
+        name: recordId
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: dataId
+        required: false
+        schema:
+          type: string
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResponse'
+          description: A successful response
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Request
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Unauthorized
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: User not authorized to perform the action.
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Not Found
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: A LegalTag with the given name already exists.
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Internal Server Error
+        '502':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Gateway
+        '503':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Service Unavailable
+      security:
+      - Authorization: []
+      summary: Coordinate Reference Systems
+      tags:
+      - coordinate-reference-systems-api-v3
+    post:
+      description: Coordinate Transformations
+      operationId: getCoordinateReferenceSystems
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CoordinateReferenceSystemsQuery'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResponse'
+          description: A successful response
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Request
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Unauthorized
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: User not authorized to perform the action.
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Not Found
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: A LegalTag with the given name already exists.
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Internal Server Error
+        '502':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Gateway
+        '503':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Service Unavailable
+      security:
+      - Authorization: []
+      summary: Coordinate Transformations
+      tags:
+      - coordinate-reference-systems-api-v3
+  /v3/coordinate-transformation:
+    get:
+      description: Coordinate Transformations
+      operationId: getCoordinateTransformation
+      parameters:
+      - in: query
+        name: recordId
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: dataId
+        required: false
+        schema:
+          type: string
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResponse'
+          description: A successful response
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Request
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Unauthorized
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: User not authorized to perform the action.
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Not Found
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: A LegalTag with the given name already exists.
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Internal Server Error
+        '502':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Gateway
+        '503':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Service Unavailable
+      security:
+      - Authorization: []
+      summary: Coordinate Transformations
+      tags:
+      - coordinate-transformations-api-v3
+    post:
+      description: Coordinate Transformations
+      operationId: getCoordinateTransformations
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CoordinateTransformationsQuery'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResponse'
+          description: A successful response
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Request
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Unauthorized
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: User not authorized to perform the action.
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Not Found
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: A LegalTag with the given name already exists.
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Internal Server Error
+        '502':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Gateway
+        '503':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Service Unavailable
+      security:
+      - Authorization: []
+      summary: Coordinate Transformations
+      tags:
+      - coordinate-transformations-api-v3
+  /v3/info:
+    get:
+      description: For deployment available public `/info` endpoint, which provides
+        build and git related information..
+      operationId: info
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VersionInfo'
+          description: Version info.
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Unauthorized
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Forbidden
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Not Found
+      summary: info
+      tags:
+      - info-api-v3
+  /v3/points-in-aou:
+    post:
+      description: Coordinate Transformations
+      operationId: getAouInfo
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InPolygonQuery'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PointsInAouSearchResult'
+          description: A successful response
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Request
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Unauthorized
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: User not authorized to perform the action.
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Not Found
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: A LegalTag with the given name already exists.
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Internal Server Error
+        '502':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Gateway
+        '503':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Service Unavailable
+      security:
+      - Authorization: []
+      summary: Coordinate Transformations
+      tags:
+      - area-of-use-api-v3
+security:
+- Authorization: []
+servers:
+- description: Generated server url
+  url: https://m23epsilon.oep.ppe.azure-int.net/api/crs/catalog
+tags:
+- description: Version info endpoint
+  name: info-api-v3
+- description: Coordinate Transformations endpoints
+  name: coordinate-transformations-api-v3
+- description: Coordinate Reference Systems endpoints
+  name: coordinate-reference-systems-api-v3
+- description: Area Of Use endpoints
+  name: area-of-use-api-v3
