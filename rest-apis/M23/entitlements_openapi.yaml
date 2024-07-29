@@ -281,12 +281,6 @@ paths:
         name: on-behalf-of
         schema:
           type: string
-      - description: Tenant Id
-        in: header
-        name: data-partition-id
-        required: true
-        schema:
-          type: string
       responses:
         '200':
           content:

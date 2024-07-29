@@ -3188,8 +3188,6 @@ tags:
   name: wellbore-trajectory-api
 - description: Query related endpoints
   name: query-api
-- description: FluidsProgram related endpoints
-  name: hole-section-api
 - description: ActivityPlans related endpoints
   name: activity-plans-api
 - description: FluidsReport related endpoints

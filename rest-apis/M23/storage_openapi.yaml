@@ -803,12 +803,6 @@ paths:
         required: true
         schema:
           type: string
-      - description: Tenant Id
-        in: header
-        name: data-partition-id
-        required: true
-        schema:
-          type: string
       requestBody:
         content:
           application/json:

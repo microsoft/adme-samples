@@ -800,6 +800,6 @@ tags:
 - description: Health Check API
   name: health-check-api
 - description: dataset api operations
-  name: dataset
+  name: dataset-api
 - description: Version info endpoint
   name: info
