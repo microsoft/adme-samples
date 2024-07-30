@@ -168,7 +168,7 @@ components:
     manual:
       bearerFormat: JWT
       description: Put **_ONLY_** your JWT Bearer token on textbox below!
-      scheme: Bearer
+      scheme: bearer
       type: http
 info:
   description: Petrel DMS OAK Sample Storage API
@@ -237,7 +237,7 @@ paths:
           type: string
       - description: The JWT
         in: header
-        name: Data-Partition-Id
+        name: Authorization
         required: true
         schema:
           type: string
