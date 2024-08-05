@@ -772,8 +772,7 @@ paths:
 security:
 - Authorization: []
 servers:
-- description: Generated server url
-  url: https://m23brtst18.oep.ppe.azure-int.net/api/crs/catalog
+- url: /api/crs/catalog
 tags:
 - description: Version info endpoint
   name: info-api-v3

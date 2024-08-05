@@ -8129,4 +8129,4 @@ paths:
 security:
 - bearer: []
 servers:
-- url: http://m23brtst18.oep.ppe.azure-int.net/seistore-svc/api/v3
+- url: /seistore-svc/api/v3

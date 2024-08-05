@@ -781,8 +781,7 @@ paths:
 security:
 - Authorization: []
 servers:
-- description: Generated server url
-  url: https://m23brtst18.oep.ppe.azure-int.net/api/file
+- url: /api/file
 tags:
 - description: File Metadata API
   name: file-metadata-api

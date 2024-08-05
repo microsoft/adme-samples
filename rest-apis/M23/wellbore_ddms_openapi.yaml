@@ -3953,7 +3953,7 @@ info:
   description: build local
   title: Wellbore DDMS OSDU
   version: '0.2'
-openapi: 3.1.0
+openapi: 3.0.2
 paths:
   /about:
     get:
@@ -4029,8 +4029,10 @@ paths:
         required: false
         schema:
           description: Filters curves. List of curves to be returned. The curves are
-            returned in the same order as it is given.
-          examples:
+            returned in the same order as it is given.          
+          title: Curves
+          type: string
+        examples:
             all:
               summary: Select all curves
               value: ''
@@ -4046,8 +4048,6 @@ paths:
             basic:
               summary: Select specific curves
               value: MD,GR
-          title: Curves
-          type: string
       - description: The "describe" query option allows clients to request a description
           of the matching result. (number of rows, columns name)
         example: 'false'
@@ -4073,8 +4073,14 @@ paths:
             \ to filter by rows, it selects rows data following the pattern `$column_name:$operator:$value`.\
             \  \nThe supported operators are : lt, lte, gt, gte, eq, neq, in.  \n\
             \  \nNote: If the column name contains ':', enclose it in double quotation\
-            \ marks (\").\n"
-          examples:
+            \ marks (\").\n"          
+          items:
+            pattern: ^(".+"|[^:]+):(lt|lte|gt|gte|eq|neq|in):.*$
+            type: string
+          pattern: ^(".+"|[^:]+):(lt|lte|gt|gte|eq|neq|in):.*$
+          title: Filter
+          type: array
+        examples:
             double-md-filter:
               summary: Select 'MD' > 1000 and 'MD' < 42000
               value:
@@ -4087,13 +4093,7 @@ paths:
             simple-md-filter-2:
               summary: Select rows when 'MD' column values <= 1000
               value:
-              - MD:lte:1000
-          items:
-            pattern: ^(".+"|[^:]+):(lt|lte|gt|gte|eq|neq|in):.*$
-            type: string
-          pattern: ^(".+"|[^:]+):(lt|lte|gt|gte|eq|neq|in):.*$
-          title: Filter
-          type: array
+              - MD:lte:1000          
       - description: format for JSON only.
         in: query
         name: orient
@@ -4499,8 +4499,9 @@ paths:
           application/json:
             schema:
               allOf:
-              - $ref: '#/components/schemas/UpdateSessionState'
-              examples:
+              - $ref: '#/components/schemas/UpdateSessionState'              
+              title: Update Request 
+            examples:
                 abandon:
                   summary: Abandon session data
                   value:
@@ -4508,8 +4509,7 @@ paths:
                 commit:
                   summary: Commit session data
                   value:
-                    state: commit
-              title: Update Request
+                    state: commit                         
         required: true
       responses:
         '200':
@@ -4686,8 +4686,10 @@ paths:
         required: false
         schema:
           description: Filters curves. List of curves to be returned. The curves are
-            returned in the same order as it is given.
-          examples:
+            returned in the same order as it is given.          
+          title: Curves
+          type: string
+        examples:
             all:
               summary: Select all curves
               value: ''
@@ -4703,8 +4705,6 @@ paths:
             basic:
               summary: Select specific curves
               value: MD,GR
-          title: Curves
-          type: string
       - description: The "describe" query option allows clients to request a description
           of the matching result. (number of rows, columns name)
         example: 'false'
@@ -4730,8 +4730,14 @@ paths:
             \ to filter by rows, it selects rows data following the pattern `$column_name:$operator:$value`.\
             \  \nThe supported operators are : lt, lte, gt, gte, eq, neq, in.  \n\
             \  \nNote: If the column name contains ':', enclose it in double quotation\
-            \ marks (\").\n"
-          examples:
+            \ marks (\").\n"          
+          items:
+            pattern: ^(".+"|[^:]+):(lt|lte|gt|gte|eq|neq|in):.*$
+            type: string
+          pattern: ^(".+"|[^:]+):(lt|lte|gt|gte|eq|neq|in):.*$
+          title: Filter
+          type: array
+        examples:
             double-md-filter:
               summary: Select 'MD' > 1000 and 'MD' < 42000
               value:
@@ -4745,12 +4751,6 @@ paths:
               summary: Select rows when 'MD' column values <= 1000
               value:
               - MD:lte:1000
-          items:
-            pattern: ^(".+"|[^:]+):(lt|lte|gt|gte|eq|neq|in):.*$
-            type: string
-          pattern: ^(".+"|[^:]+):(lt|lte|gt|gte|eq|neq|in):.*$
-          title: Filter
-          type: array
       - description: format for JSON only.
         in: query
         name: orient
@@ -10127,8 +10127,10 @@ paths:
         required: false
         schema:
           description: Filters curves. List of curves to be returned. The curves are
-            returned in the same order as it is given.
-          examples:
+            returned in the same order as it is given.          
+          title: Curves
+          type: string
+        examples:
             all:
               summary: Select all curves
               value: ''
@@ -10144,8 +10146,6 @@ paths:
             basic:
               summary: Select specific curves
               value: MD,GR
-          title: Curves
-          type: string
       - description: The "describe" query option allows clients to request a description
           of the matching result. (number of rows, columns name)
         example: 'false'
@@ -10171,8 +10171,14 @@ paths:
             \ to filter by rows, it selects rows data following the pattern `$column_name:$operator:$value`.\
             \  \nThe supported operators are : lt, lte, gt, gte, eq, neq, in.  \n\
             \  \nNote: If the column name contains ':', enclose it in double quotation\
-            \ marks (\").\n"
-          examples:
+            \ marks (\").\n"          
+          items:
+            pattern: ^(".+"|[^:]+):(lt|lte|gt|gte|eq|neq|in):.*$
+            type: string
+          pattern: ^(".+"|[^:]+):(lt|lte|gt|gte|eq|neq|in):.*$
+          title: Filter
+          type: array
+        examples:
             double-md-filter:
               summary: Select 'MD' > 1000 and 'MD' < 42000
               value:
@@ -10186,12 +10192,6 @@ paths:
               summary: Select rows when 'MD' column values <= 1000
               value:
               - MD:lte:1000
-          items:
-            pattern: ^(".+"|[^:]+):(lt|lte|gt|gte|eq|neq|in):.*$
-            type: string
-          pattern: ^(".+"|[^:]+):(lt|lte|gt|gte|eq|neq|in):.*$
-          title: Filter
-          type: array
       - description: format for JSON only.
         in: query
         name: orient
@@ -10592,8 +10592,9 @@ paths:
           application/json:
             schema:
               allOf:
-              - $ref: '#/components/schemas/UpdateSessionState'
-              examples:
+              - $ref: '#/components/schemas/UpdateSessionState'              
+              title: Update Request
+            examples:
                 abandon:
                   summary: Abandon session data
                   value:
@@ -10602,7 +10603,6 @@ paths:
                   summary: Commit session data
                   value:
                     state: commit
-              title: Update Request
         required: true
       responses:
         '200':
@@ -10777,25 +10777,25 @@ paths:
         required: false
         schema:
           description: Filters curves. List of curves to be returned. The curves are
-            returned in the same order as it is given.
-          examples:
-            all:
-              summary: Select all curves
-              value: ''
-            array-curve:
-              summary: Select one specific curve of an array
-              value: ARR[100]
-            array-slice:
-              summary: Select a slice of array curves
-              value: ARR[10:50]
-            array-slice-plus-curve:
-              summary: Select slice of array + another curve(s)
-              value: MD,ARR[50:55],GR
-            basic:
-              summary: Select specific curves
-              value: MD,GR
+            returned in the same order as it is given.          
           title: Curves
           type: string
+        examples:
+          all:
+            summary: Select all curves
+            value: ''
+          array-curve:
+            summary: Select one specific curve of an array
+            value: ARR[100]
+          array-slice:
+            summary: Select a slice of array curves
+            value: ARR[10:50]
+          array-slice-plus-curve:
+            summary: Select slice of array + another curve(s)
+            value: MD,ARR[50:55],GR
+          basic:
+            summary: Select specific curves
+            value: MD,GR
       - description: The "describe" query option allows clients to request a description
           of the matching result. (number of rows, columns name)
         example: 'false'
@@ -10821,27 +10821,27 @@ paths:
             \ to filter by rows, it selects rows data following the pattern `$column_name:$operator:$value`.\
             \  \nThe supported operators are : lt, lte, gt, gte, eq, neq, in.  \n\
             \  \nNote: If the column name contains ':', enclose it in double quotation\
-            \ marks (\").\n"
-          examples:
-            double-md-filter:
-              summary: Select 'MD' > 1000 and 'MD' < 42000
-              value:
-              - MD:gt:1000
-              - MD:lt:42000
-            simple-md-filter:
-              summary: Select rows when column 'MD' values >= 1000
-              value:
-              - MD:gte:1000
-            simple-md-filter-2:
-              summary: Select rows when 'MD' column values <= 1000
-              value:
-              - MD:lte:1000
+            \ marks (\").\n"          
           items:
             pattern: ^(".+"|[^:]+):(lt|lte|gt|gte|eq|neq|in):.*$
             type: string
           pattern: ^(".+"|[^:]+):(lt|lte|gt|gte|eq|neq|in):.*$
           title: Filter
           type: array
+        examples:
+          double-md-filter:
+            summary: Select 'MD' > 1000 and 'MD' < 42000
+            value:
+            - MD:gt:1000
+            - MD:lt:42000
+          simple-md-filter:
+            summary: Select rows when column 'MD' values >= 1000
+            value:
+            - MD:gte:1000
+          simple-md-filter-2:
+            summary: Select rows when 'MD' column values <= 1000
+            value:
+            - MD:lte:1000
       - description: format for JSON only.
         in: query
         name: orient
@@ -11337,8 +11337,10 @@ paths:
         required: false
         schema:
           description: Filters curves. List of curves to be returned. The curves are
-            returned in the same order as it is given.
-          examples:
+            returned in the same order as it is given.          
+          title: Curves
+          type: string
+        examples:
             all:
               summary: Select all curves
               value: ''
@@ -11354,8 +11356,6 @@ paths:
             basic:
               summary: Select specific curves
               value: MD,GR
-          title: Curves
-          type: string
       - description: The "describe" query option allows clients to request a description
           of the matching result. (number of rows, columns name)
         example: 'false'
@@ -11381,8 +11381,14 @@ paths:
             \ to filter by rows, it selects rows data following the pattern `$column_name:$operator:$value`.\
             \  \nThe supported operators are : lt, lte, gt, gte, eq, neq, in.  \n\
             \  \nNote: If the column name contains ':', enclose it in double quotation\
-            \ marks (\").\n"
-          examples:
+            \ marks (\").\n"          
+          items:
+            pattern: ^(".+"|[^:]+):(lt|lte|gt|gte|eq|neq|in):.*$
+            type: string
+          pattern: ^(".+"|[^:]+):(lt|lte|gt|gte|eq|neq|in):.*$
+          title: Filter
+          type: array
+        examples:
             double-md-filter:
               summary: Select 'MD' > 1000 and 'MD' < 42000
               value:
@@ -11396,12 +11402,6 @@ paths:
               summary: Select rows when 'MD' column values <= 1000
               value:
               - MD:lte:1000
-          items:
-            pattern: ^(".+"|[^:]+):(lt|lte|gt|gte|eq|neq|in):.*$
-            type: string
-          pattern: ^(".+"|[^:]+):(lt|lte|gt|gte|eq|neq|in):.*$
-          title: Filter
-          type: array
       - description: format for JSON only.
         in: query
         name: orient
@@ -11623,8 +11623,10 @@ paths:
         name: curves
         required: false
         schema:
-          description: List of curves or array to be returned. All curves if empty
-          examples:
+          description: List of curves or array to be returned. All curves if empty          
+          title: Curves
+          type: string
+        examples:
             all:
               summary: Select all curves
               value: ''
@@ -11640,8 +11642,6 @@ paths:
             basic:
               summary: Select specific curves
               value: MD,GR
-          title: Curves
-          type: string
       - description: identifier of the data partition to query
         in: header
         name: data-partition-id
@@ -11900,8 +11900,9 @@ paths:
           application/json:
             schema:
               allOf:
-              - $ref: '#/components/schemas/UpdateSessionState'
-              examples:
+              - $ref: '#/components/schemas/UpdateSessionState'              
+              title: Update Request
+            examples:
                 abandon:
                   summary: Abandon session data
                   value:
@@ -11910,7 +11911,6 @@ paths:
                   summary: Commit session data
                   value:
                     state: commit
-              title: Update Request
         required: true
       responses:
         '200':
@@ -12085,8 +12085,10 @@ paths:
         required: false
         schema:
           description: Filters curves. List of curves to be returned. The curves are
-            returned in the same order as it is given.
-          examples:
+            returned in the same order as it is given.          
+          title: Curves
+          type: string
+        examples:
             all:
               summary: Select all curves
               value: ''
@@ -12102,8 +12104,6 @@ paths:
             basic:
               summary: Select specific curves
               value: MD,GR
-          title: Curves
-          type: string
       - description: The "describe" query option allows clients to request a description
           of the matching result. (number of rows, columns name)
         example: 'false'
@@ -12129,8 +12129,14 @@ paths:
             \ to filter by rows, it selects rows data following the pattern `$column_name:$operator:$value`.\
             \  \nThe supported operators are : lt, lte, gt, gte, eq, neq, in.  \n\
             \  \nNote: If the column name contains ':', enclose it in double quotation\
-            \ marks (\").\n"
-          examples:
+            \ marks (\").\n"          
+          items:
+            pattern: ^(".+"|[^:]+):(lt|lte|gt|gte|eq|neq|in):.*$
+            type: string
+          pattern: ^(".+"|[^:]+):(lt|lte|gt|gte|eq|neq|in):.*$
+          title: Filter
+          type: array
+        examples:
             double-md-filter:
               summary: Select 'MD' > 1000 and 'MD' < 42000
               value:
@@ -12144,12 +12150,6 @@ paths:
               summary: Select rows when 'MD' column values <= 1000
               value:
               - MD:lte:1000
-          items:
-            pattern: ^(".+"|[^:]+):(lt|lte|gt|gte|eq|neq|in):.*$
-            type: string
-          pattern: ^(".+"|[^:]+):(lt|lte|gt|gte|eq|neq|in):.*$
-          title: Filter
-          type: array
       - description: format for JSON only.
         in: query
         name: orient
@@ -12299,8 +12299,10 @@ paths:
         name: curves
         required: false
         schema:
-          description: List of curves or array to be returned. All curves if empty
-          examples:
+          description: List of curves or array to be returned. All curves if empty          
+          title: Curves
+          type: string
+        examples:
             all:
               summary: Select all curves
               value: ''
@@ -12316,8 +12318,6 @@ paths:
             basic:
               summary: Select specific curves
               value: MD,GR
-          title: Curves
-          type: string
       - description: identifier of the data partition to query
         in: header
         name: data-partition-id
@@ -13060,4 +13060,4 @@ paths:
       tags:
       - Wellbore DDMS
 servers:
-- url: http://m23brtst18.oep.ppe.azure-int.net/api/os-wellbore-ddms
+- url: /api/os-wellbore-ddms

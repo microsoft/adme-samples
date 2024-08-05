@@ -886,8 +886,7 @@ paths:
 security:
 - Authorization: []
 servers:
-- description: Generated server url
-  url: https://m23brtst18.oep.ppe.azure-int.net/api/crs/converter
+- url: /api/crs/converter
 tags:
 - description: Health related endpoints
   name: health-check-api
