@@ -8,6 +8,7 @@ This repo contains samples for Azure Data Manager for Energy APIs.
 * [CRS Conversion Service](/adme-samples/rest-apis/index.html?page=/adme-samples/rest-apis/M23/crs_converter_openapi.yaml)
 * [Dataset Service](/adme-samples/rest-apis/index.html?page=/adme-samples/rest-apis/M23/dataset_openapi.yaml)
 * [Entitlements Service](/adme-samples/rest-apis/index.html?page=/adme-samples/rest-apis/M23/entitlements_openapi.yaml)
+* [EDS Service](/adme-samples/rest-apis/index.html?page=/adme-samples/rest-apis/M23/eds_openapi.yaml)
 * [File Service](/adme-samples/rest-apis/index.html?page=/adme-samples/rest-apis/M23/file_service_openapi.yaml)
 * [Indexer Service](/adme-samples/rest-apis/index.html?page=/adme-samples/rest-apis/M23/indexer_openapi.yaml)
 * [Legal Service](/adme-samples/rest-apis/index.html?page=/adme-samples/rest-apis/M23/compliance_openapi.yaml)
