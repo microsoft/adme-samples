@@ -1,0 +1,1103 @@
+components:
+  schemas:
+    AppError:
+      properties:
+        code:
+          format: int32
+          type: integer
+        message:
+          type: string
+        reason:
+          type: string
+      type: object
+    ConnectedOuterService:
+      properties:
+        name:
+          type: string
+        version:
+          type: string
+      type: object
+    CreateWorkflowRequest:
+      properties:
+        description:
+          description: Description of workflow provided by user at time of creation
+            of workflow
+          type: string
+        registrationInstructions:
+          additionalProperties:
+            description: 'Workfow registration instructions which could contains:
+
+
+              Name of already registered Airflow DAG
+
+              Content of python DAG file
+
+              etc By default this is Airflow DAG named workflowName'
+            type: object
+          description: 'Workfow registration instructions which could contains:
+
+
+            Name of already registered Airflow DAG
+
+            Content of python DAG file
+
+            etc By default this is Airflow DAG named workflowName'
+          type: object
+        workflowName:
+          description: Workfow name given as input from user while deploying the workflow
+          type: string
+      type: object
+    TriggerWorkflowRequest:
+      properties:
+        executionContext:
+          additionalProperties:
+            description: Map to configure workflow speciffic key value pairs
+            type: object
+          description: Map to configure workflow speciffic key value pairs
+          type: object
+        runId:
+          description: Optional. Explicit setting up workflow run id.
+          type: string
+      type: object
+    UpdateWorkflowRunRequest:
+      properties:
+        status:
+          enum:
+          - submitted
+          - running
+          - finished
+          - failed
+          - success
+          - queued
+          type: string
+      type: object
+    VersionInfo:
+      properties:
+        artifactId:
+          type: string
+        branch:
+          type: string
+        buildTime:
+          type: string
+        commitId:
+          type: string
+        commitMessage:
+          type: string
+        connectedOuterServices:
+          items:
+            $ref: '#/components/schemas/ConnectedOuterService'
+          type: array
+        groupId:
+          type: string
+        version:
+          type: string
+      type: object
+    WorkflowMetadata:
+      properties:
+        createdBy:
+          description: System captured user info who created workflow.
+          type: string
+        creationTimestamp:
+          description: System date of creation of workflow.Epoch tiemstamp.
+          format: int64
+          type: integer
+        description:
+          description: Description of workflow provided by user at time of creation
+            of workflow.
+          type: string
+        isDeployedThroughWorkflowService:
+          type: boolean
+          writeOnly: true
+        isSystemWorkflow:
+          type: boolean
+          writeOnly: true
+        registrationInstructions:
+          additionalProperties:
+            description: 'Workfow registration instructions which could contains:
+
+
+              Name of already registered Airflow DAG
+
+              Cotent of python DAG file
+
+              etc By default this is Airflow DAG named workflowName'
+            type: object
+          description: 'Workfow registration instructions which could contains:
+
+
+            Name of already registered Airflow DAG
+
+            Cotent of python DAG file
+
+            etc By default this is Airflow DAG named workflowName'
+          type: object
+        version:
+          description: Sematic versions of workflow. These numbers are assigned in
+            increasing order and correspond to edits\modifications to workflow definitions.
+          format: int32
+          type: integer
+        workflowId:
+          description: System generated id, which uniquely recongnizes a workflow.
+          type: string
+        workflowName:
+          description: Workfow name given as input from user while deploying the workflow.
+          type: string
+      type: object
+    WorkflowRun:
+      description: Reperesent one workflow run.
+      properties:
+        endTimeStamp:
+          description: End timestamp of the workflow run.Epoch timestamp
+          format: int64
+          type: integer
+        runId:
+          description: Run id for the workflow
+          type: string
+        startTimeStamp:
+          description: Start timestamp of the workflow run.Epoch time stamp
+          format: int64
+          type: integer
+        status:
+          description: Task execution status
+          enum:
+          - submitted
+          - running
+          - finished
+          - failed
+          - success
+          - queued
+          type: string
+        submittedBy:
+          description: System captured user details which triggered the run.
+          type: string
+        workflowEngineExecutionDate:
+          type: string
+        workflowId:
+          description: Workflow id for the workflow
+          type: string
+        workflowName:
+          description: Workflow id for the workflow
+          type: string
+      type: object
+    WorkflowRunResponse:
+      properties:
+        endTimeStamp:
+          description: End timestamp of the workflow run.Epoch timestamp
+          format: int64
+          type: integer
+        runId:
+          description: Run id for the workflow
+          type: string
+        startTimeStamp:
+          description: Start timestamp of the workflow run.Epoch time stamp
+          format: int64
+          type: integer
+        status:
+          description: Task execution status
+          enum:
+          - INPROGRESS
+          - PARTIAL_SUCCESS
+          - SUCCESS
+          - FAILED
+          - SUBMITTED
+          type: string
+        submittedBy:
+          description: System captured user details which triggered the run
+          type: string
+        workflowId:
+          description: Workflow id for the workflow
+          type: string
+      type: object
+  securitySchemes:
+    Authorization:
+      bearerFormat: Authorization
+      scheme: bearer
+      type: http
+info:
+  contact:
+    email: dps@OSDU.org
+    name: OSDU Data Platform Team
+  description: "Workflow Service API is a wrapper API on existing orchestrator services\
+    \ (ariflow) defined in way which suits the domain workflow needs.Operational tasks\
+    \ like starting,stopping, pausing etc will be part of this API. Also creation\
+    \ and maintenance will be responsilbilities of this API.\n ## Key Points:\n **Workflow**\
+    \ - Workflow is a collection of steps taken in some order to perform some meaning\
+    \ full tasks. For example, CSV workflow will perform the steps needed to successfully\
+    \ ingest a CSV file into data platform. Each workflow is repsented by a unique\
+    \ workflow id. (`id`).    <br> Workflows are represented as Directed Acyclic Graphs.\
+    \ In case of Airflow implementation of Workflow, each workflow will corresepond\
+    \ to an Airflow DAG.\n \n **Workflow Run** - Workflow Run is single execution\
+    \ of a workflow. For example, a CSV workflow executed to ingest a CSV is CSV workflow\
+    \ run.\n In case of Airflow as orchestrator, a workflow run will be equivalent\
+    \ to one dag run.\n \nEach instance of workflow run is represented by unique run\
+    \ id. (`runId`)."
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  title: Workflow Service API
+  version: 2.0.5
+openapi: 3.0.1
+paths:
+  /liveness_check:
+    get:
+      description: For deployment available public `/liveness_check` endpoint, which
+        provides `Workflow service is alive` message.
+      operationId: livenessCheck
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: Workflow service is alive
+      summary: Liveness Check endpoint
+      tags:
+      - health
+  /readiness_check:
+    get:
+      description: For deployment available public `/readiness_check` endpoint, which
+        provides `Workflow service is ready` message.
+      operationId: readinessCheck
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: Workflow service is ready
+      summary: Readiness Check endpoint
+      tags:
+      - health
+  /v1/info:
+    get:
+      description: For deployment available public `/info` endpoint, which provides
+        build and git related information.
+      operationId: info
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VersionInfo'
+          description: Version info.
+      summary: Version info
+      tags:
+      - info
+  /v1/workflow:
+    get:
+      description: List all the workflows for the tenant. **Required roles** - 'service.workflow.viewer'.
+      operationId: getAllWorkflowsForTenant
+      parameters:
+      - in: query
+        name: prefix
+        required: false
+        schema:
+          type: string
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/WorkflowMetadata'
+          description: List of all the workflows
+        '400':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Request
+        '401':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Unauthorized
+        '403':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: User not authorized to perform the action.
+        '404':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Not Found
+        '409':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: A Workflow with the given name already exists.
+        '500':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Internal Server Error
+        '502':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Gateway
+        '503':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Service Unavailable
+      security:
+      - Authorization: []
+      summary: List all the workflow applicable for a tenant.
+      tags:
+      - workflow-manager-api
+    post:
+      description: API to create a new workflow using standard operators of orchestrator.
+        **Required roles** - 'service.workflow.admin'.
+      operationId: create
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateWorkflowRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/WorkflowMetadata'
+          description: Workflow created | updated successfully
+        '400':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Request
+        '401':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Unauthorized
+        '403':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: User not authorized to perform the action.
+        '404':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Not Found
+        '409':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: A Workflow with the given name already exists.
+        '500':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Internal Server Error
+        '502':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Gateway
+        '503':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Service Unavailable
+      security:
+      - Authorization: []
+      summary: Creates workflow definition with standard orchestrator operators.
+      tags:
+      - workflow-manager-api
+  /v1/workflow/system:
+    post:
+      description: API to create a new workflow using standard operators of orchestrator.
+        **Required roles** - 'service.workflow.admin'.
+      operationId: createSystemWorkflow
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateWorkflowRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/WorkflowMetadata'
+          description: Workflow created | updated successfully
+        '400':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Request
+        '401':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Unauthorized
+        '403':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: User not authorized to perform the action.
+        '404':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Not Found
+        '409':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: A Workflow with the given name already exists.
+        '500':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Internal Server Error
+        '502':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Gateway
+        '503':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Service Unavailable
+      security:
+      - Authorization: []
+      summary: Creates workflow definition with standard orchestrator operators.
+      tags:
+      - workflow-system-manager-api
+  /v1/workflow/system/{workflow_name}:
+    delete:
+      description: Delete a workflow by it's name. **Required roles** - 'service.workflow.admin'.
+      operationId: deleteSystemWorkflowById
+      parameters:
+      - in: path
+        name: workflow_name
+        required: true
+        schema:
+          type: string
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Workflow deleted successfully.
+        '400':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Request
+        '401':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Unauthorized
+        '403':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: User not authorized to perform the action.
+        '404':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Not Found
+        '409':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: A Workflow with the given name already exists.
+        '500':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Internal Server Error
+        '502':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Gateway
+        '503':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Service Unavailable
+      security:
+      - Authorization: []
+      summary: Delete a workflow defintion.
+      tags:
+      - workflow-system-manager-api
+  /v1/workflow/{workflow_name}:
+    delete:
+      description: Delete a workflow by it's name. **Required roles** - 'service.workflow.admin'.
+      operationId: deleteWorkflowById
+      parameters:
+      - in: path
+        name: workflow_name
+        required: true
+        schema:
+          type: string
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Workflow deleted successfully.
+        '400':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Request
+        '401':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Unauthorized
+        '403':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: User not authorized to perform the action.
+        '404':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Not Found
+        '409':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: A Workflow with the given name already exists.
+        '500':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Internal Server Error
+        '502':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Gateway
+        '503':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Service Unavailable
+      security:
+      - Authorization: []
+      summary: Delete a workflow defintion.
+      tags:
+      - workflow-manager-api
+    get:
+      description: Get complete details for an workflow. **Required roles** - 'service.workflow.viewer'.
+      operationId: getWorkflowByName
+      parameters:
+      - in: path
+        name: workflow_name
+        required: true
+        schema:
+          type: string
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkflowMetadata'
+          description: Workflow Details
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Request
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Unauthorized
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: User not authorized to perform the action.
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Not Found
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: A Workflow with the given name already exists.
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Internal Server Error
+        '502':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Gateway
+        '503':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Service Unavailable
+      security:
+      - Authorization: []
+      summary: Get complete details for a workflow.
+      tags:
+      - workflow-manager-api
+  /v1/workflow/{workflow_name}/workflowRun:
+    get:
+      description: Get all run instances for a worflow. **Required roles** - 'service.workflow.viewer'.
+      operationId: getAllRunInstances
+      parameters:
+      - in: path
+        name: workflow_name
+        required: true
+        schema:
+          type: string
+      - in: query
+        name: params
+        required: true
+        schema:
+          additionalProperties:
+            type: object
+          type: object
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkflowRun'
+          description: History of workflow runs
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Request
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Unauthorized
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: User not authorized to perform the action.
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Not Found
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: A Workflow with the given name already exists.
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Internal Server Error
+        '502':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Gateway
+        '503':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Service Unavailable
+      security:
+      - Authorization: []
+      summary: Get all run instances of a workflow.
+      tags:
+      - workflow-run-api
+    post:
+      description: Trigger a workflow mentioned in payload. **Required roles** - 'service.workflow.creator'.
+      operationId: triggerWorkflow
+      parameters:
+      - in: path
+        name: workflow_name
+        required: true
+        schema:
+          type: string
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TriggerWorkflowRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkflowRunResponse'
+          description: Workflow successully triggered
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Request
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Unauthorized
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: User not authorized to perform the action.
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Not Found
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: A Workflow with the given name already exists.
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Internal Server Error
+        '502':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Gateway
+        '503':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Service Unavailable
+      security:
+      - Authorization: []
+      summary: Trigger a workflow.
+      tags:
+      - workflow-run-api
+  /v1/workflow/{workflow_name}/workflowRun/{runId}:
+    get:
+      description: Get an execution instances for a workflow. **Required roles** -
+        'service.workflow.viewer'.
+      operationId: getWorkflowRunById
+      parameters:
+      - in: path
+        name: workflow_name
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: runId
+        required: true
+        schema:
+          type: string
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkflowRunResponse'
+          description: Workflow execution detail
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Request
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Unauthorized
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: User not authorized to perform the action.
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Not Found
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: A Workflow with the given name already exists.
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Internal Server Error
+        '502':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Gateway
+        '503':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Service Unavailable
+      security:
+      - Authorization: []
+      summary: Get details for a speciffic workflow run instance.
+      tags:
+      - workflow-run-api
+    put:
+      description: Update workflow run. **Required roles** - 'service.workflow.viewer'.
+      operationId: updateWorkflowRun
+      parameters:
+      - in: path
+        name: workflow_name
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: runId
+        required: true
+        schema:
+          type: string
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateWorkflowRunRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkflowRunResponse'
+          description: Workflow updated successfully
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Request
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Unauthorized
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: User not authorized to perform the action.
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Not Found
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: A Workflow with the given name already exists.
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Internal Server Error
+        '502':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Bad Gateway
+        '503':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+          description: Service Unavailable
+      security:
+      - Authorization: []
+      summary: Update the workflow run instance.
+      tags:
+      - workflow-run-api
+security:
+- Authorization: []
+servers:
+- url: /api/workflow
+tags:
+- description: WorkflowManager related endpoints
+  name: workflow-manager-api
+- description: WorkflowRun related endpoints
+  name: workflow-run-api
+- description: Health related endpoints
+  name: health
+- description: Workflow System Manager related endpoints
+  name: workflow-system-manager-api
+- description: Version info endpoint
+  name: info
