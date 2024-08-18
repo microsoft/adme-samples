@@ -1,0 +1,730 @@
+components:
+  schemas:
+    ConnectedOuterService:
+      properties:
+        name:
+          type: string
+        version:
+          type: string
+      type: object
+    CreateWorkflowRequest:
+      properties:
+        description:
+          type: string
+        registrationInstructions:
+          additionalProperties:
+            type: object
+          type: object
+        workflowName:
+          type: string
+      type: object
+    CustomOperator:
+      properties:
+        className:
+          type: string
+        createdAt:
+          format: int64
+          type: integer
+        createdBy:
+          type: string
+        description:
+          type: string
+        id:
+          type: string
+        name:
+          type: string
+        properties:
+          items:
+            $ref: '#/components/schemas/CustomOperatorProperty'
+          type: array
+      type: object
+    CustomOperatorProperty:
+      properties:
+        description:
+          type: string
+        mandatory:
+          type: boolean
+        name:
+          type: string
+      required:
+      - description
+      - mandatory
+      - name
+      type: object
+    CustomOperatorsPage:
+      properties:
+        cursor:
+          type: string
+        items:
+          items:
+            $ref: '#/components/schemas/CustomOperator'
+          type: array
+      type: object
+    GetSignedUrlResponse:
+      properties:
+        url:
+          type: string
+      type: object
+    RegisterCustomOperatorRequest:
+      properties:
+        className:
+          type: string
+        content:
+          type: string
+        description:
+          type: string
+        name:
+          type: string
+        properties:
+          items:
+            $ref: '#/components/schemas/CustomOperatorProperty'
+          type: array
+      required:
+      - className
+      - content
+      - description
+      - name
+      - properties
+      type: object
+    TriggerWorkflowRequest:
+      properties:
+        executionContext:
+          additionalProperties:
+            type: object
+          type: object
+        runId:
+          type: string
+      type: object
+    UpdateWorkflowRunRequest:
+      properties:
+        status:
+          enum:
+          - submitted
+          - running
+          - finished
+          - failed
+          - success
+          - queued
+          type: string
+      type: object
+    VersionInfo:
+      properties:
+        artifactId:
+          type: string
+        branch:
+          type: string
+        buildTime:
+          type: string
+        commitId:
+          type: string
+        commitMessage:
+          type: string
+        connectedOuterServices:
+          items:
+            $ref: '#/components/schemas/ConnectedOuterService'
+          type: array
+        groupId:
+          type: string
+        version:
+          type: string
+      type: object
+    WorkflowMetadata:
+      properties:
+        createdBy:
+          type: string
+        creationTimestamp:
+          format: int64
+          type: integer
+        description:
+          type: string
+        isDeployedThroughWorkflowService:
+          type: boolean
+          writeOnly: true
+        isSystemWorkflow:
+          type: boolean
+          writeOnly: true
+        registrationInstructions:
+          additionalProperties:
+            type: object
+          type: object
+        version:
+          format: int64
+          type: integer
+        workflowId:
+          type: string
+        workflowName:
+          type: string
+      type: object
+    WorkflowRun:
+      properties:
+        endTimeStamp:
+          format: int64
+          type: integer
+        runId:
+          type: string
+        startTimeStamp:
+          format: int64
+          type: integer
+        status:
+          enum:
+          - submitted
+          - running
+          - finished
+          - failed
+          - success
+          - queued
+          type: string
+        submittedBy:
+          type: string
+        workflowEngineExecutionDate:
+          type: string
+        workflowId:
+          type: string
+        workflowName:
+          type: string
+      type: object
+    WorkflowRunResponse:
+      properties:
+        endTimeStamp:
+          format: int64
+          type: integer
+        runId:
+          type: string
+        startTimeStamp:
+          format: int64
+          type: integer
+        status:
+          enum:
+          - submitted
+          - running
+          - finished
+          - failed
+          - success
+          - queued
+          type: string
+        submittedBy:
+          type: string
+        workflowId:
+          type: string
+      type: object
+  securitySchemes:
+    Authorization:
+      bearerFormat: Authorization
+      scheme: Bearer
+      type: http
+info:
+  title: Ingestion Workflow Service
+  version: '1.0'
+openapi: 3.0.1
+paths:
+  /liveness_check:
+    get:
+      operationId: livenessCheck
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+      tags:
+      - health-check-api
+  /readiness_check:
+    get:
+      operationId: readinessCheck
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+      tags:
+      - health-check-api
+  /v1/customOperator:
+    get:
+      operationId: getAllCustomOperators
+      parameters:
+      - in: query
+        name: limit
+        required: false
+        schema:
+          default: 50
+          format: int32
+          type: integer
+      - in: query
+        name: cursor
+        required: false
+        schema:
+          type: string
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CustomOperatorsPage'
+          description: OK
+      tags:
+      - custom-operator-api
+    post:
+      operationId: registerCustomOperator
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterCustomOperatorRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CustomOperator'
+          description: OK
+      tags:
+      - custom-operator-api
+  /v1/customOperator/{custom_operator_name}:
+    get:
+      operationId: getCustomOperatorByName
+      parameters:
+      - in: path
+        name: custom_operator_name
+        required: true
+        schema:
+          type: string
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CustomOperator'
+          description: OK
+      tags:
+      - custom-operator-api
+  /v1/info:
+    get:
+      operationId: info
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VersionInfo'
+          description: OK
+      tags:
+      - info-api
+  /v1/workflow:
+    get:
+      operationId: getAllWorkflowsForTenant
+      parameters:
+      - in: query
+        name: prefix
+        required: false
+        schema:
+          type: string
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                items:
+                  $ref: '#/components/schemas/WorkflowMetadata'
+                type: array
+          description: OK
+      tags:
+      - workflow-manager-api
+    post:
+      operationId: create
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateWorkflowRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/WorkflowMetadata'
+          description: OK
+      tags:
+      - workflow-manager-api
+  /v1/workflow/system:
+    post:
+      operationId: createSystemWorkflow
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateWorkflowRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/WorkflowMetadata'
+          description: OK
+      tags:
+      - workflow-system-manager-api
+  /v1/workflow/system/{workflow_name}:
+    delete:
+      operationId: deleteSystemWorkflowById
+      parameters:
+      - in: path
+        name: workflow_name
+        required: true
+        schema:
+          type: string
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+      responses:
+        '204':
+          description: No Content
+      tags:
+      - workflow-system-manager-api
+  /v1/workflow/{workflow_name}:
+    delete:
+      operationId: deleteWorkflowById
+      parameters:
+      - in: path
+        name: workflow_name
+        required: true
+        schema:
+          type: string
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+      responses:
+        '204':
+          description: No Content
+      tags:
+      - workflow-manager-api
+    get:
+      operationId: getWorkflowByName
+      parameters:
+      - in: path
+        name: workflow_name
+        required: true
+        schema:
+          type: string
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/WorkflowMetadata'
+          description: OK
+      tags:
+      - workflow-manager-api
+  /v1/workflow/{workflow_name}/workflowRun:
+    get:
+      operationId: getAllRunInstances
+      parameters:
+      - in: path
+        name: workflow_name
+        required: true
+        schema:
+          type: string
+      - in: query
+        name: params
+        required: true
+        schema:
+          additionalProperties:
+            type: object
+          type: object
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                items:
+                  $ref: '#/components/schemas/WorkflowRun'
+                type: array
+          description: OK
+      tags:
+      - workflow-run-api
+    post:
+      operationId: triggerWorkflow
+      parameters:
+      - in: path
+        name: workflow_name
+        required: true
+        schema:
+          type: string
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TriggerWorkflowRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/WorkflowRunResponse'
+          description: OK
+      tags:
+      - workflow-run-api
+  /v1/workflow/{workflow_name}/workflowRun/{runId}:
+    get:
+      operationId: getWorkflowRunById
+      parameters:
+      - in: path
+        name: workflow_name
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: runId
+        required: true
+        schema:
+          type: string
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/WorkflowRunResponse'
+          description: OK
+      tags:
+      - workflow-run-api
+    put:
+      operationId: updateWorkflowRun
+      parameters:
+      - in: path
+        name: workflow_name
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: runId
+        required: true
+        schema:
+          type: string
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateWorkflowRunRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/WorkflowRunResponse'
+          description: OK
+      tags:
+      - workflow-run-api
+  /v1/workflow/{workflow_name}/workflowRun/{runId}/getSignedUrl:
+    get:
+      operationId: create_1
+      parameters:
+      - in: path
+        name: workflow_name
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: runId
+        required: true
+        schema:
+          type: string
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/GetSignedUrlResponse'
+          description: OK
+      tags:
+      - workflow-tasks-sharing-api
+  /whoami:
+    delete:
+      operationId: whoami_5
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+      tags:
+      - whoami-controller
+    get:
+      operationId: whoami
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+      tags:
+      - whoami-controller
+    head:
+      operationId: whoami_1
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+      tags:
+      - whoami-controller
+    options:
+      operationId: whoami_6
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+      tags:
+      - whoami-controller
+    patch:
+      operationId: whoami_4
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+      tags:
+      - whoami-controller
+    post:
+      operationId: whoami_2
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+      tags:
+      - whoami-controller
+    put:
+      operationId: whoami_3
+      parameters:
+      - description: Tenant Id
+        in: header
+        name: data-partition-id
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+      tags:
+      - whoami-controller
+security:
+- Authorization: []
+servers:
+- url: /api/workflow
