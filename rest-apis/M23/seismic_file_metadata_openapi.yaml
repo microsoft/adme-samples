@@ -1,0 +1,858 @@
+components:
+  schemas:
+    HTTPValidationError:
+      properties:
+        errors:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          title: Errors
+          type: array
+      title: HTTPValidationError
+      type: object
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          title: Location
+          type: array
+        msg:
+          title: Message
+          type: string
+        type:
+          title: Error Type
+          type: string
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+      type: object
+  securitySchemes:
+    bearer:
+      in: header
+      name: Authorization
+      type: apiKey
+info:
+  title: Seismic File Metadata Service
+  version: 0.0.1
+openapi: 3.0.0
+paths:
+  /seismic-file-metadata/api/service-status:
+    get:
+      description: <ul><li>Returns service status</li><li>Required roles:<ul><li>None</li></ul></li></ul>
+      operationId: get_status_seismic_file_metadata_api_service_status_get
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+      summary: Get Status
+      tags:
+      - General
+  /seismic-file-metadata/api/v1/openzgy/bingrid:
+    get:
+      description: '<ul><li>Returns bingrid of the given dataset.</li><li>Required
+        roles:<ul><li>subproject.viewer: if the applied subproject policy is ''uniform''</li><li>dataset.viewer:
+        if the applied subproject policy is ''dataset''</li></ul></li></ul>'
+      operationId: get_bingrid_seismic_file_metadata_api_v1_openzgy_bingrid_get
+      parameters:
+      - in: query
+        name: sdpath
+        required: true
+        schema:
+          title: Sdpath
+          type: string
+      - in: query
+        name: api_key_header
+        required: false
+        schema:
+          default: DEFAULT_API_KEY
+          title: Api Key Header
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      security:
+      - bearer: []
+      summary: Get Bingrid
+      tags:
+      - OPENZGY (DEPRECATED)
+  /seismic-file-metadata/api/v1/openzgy/headers:
+    get:
+      description: '<ul><li>Returns headers of the given dataset.</li><li>Required
+        roles:<ul><li>subproject.viewer: if the applied subproject policy is ''uniform''</li><li>dataset.viewer:
+        if the applied subproject policy is ''dataset''</li></ul></li></ul>'
+      operationId: get_headers_seismic_file_metadata_api_v1_openzgy_headers_get
+      parameters:
+      - in: query
+        name: sdpath
+        required: true
+        schema:
+          title: Sdpath
+          type: string
+      - in: query
+        name: api_key_header
+        required: false
+        schema:
+          default: DEFAULT_API_KEY
+          title: Api Key Header
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      security:
+      - bearer: []
+      summary: Get Headers
+      tags:
+      - OPENZGY (DEPRECATED)
+  /seismic-file-metadata/api/v1/segy/binaryHeader:
+    get:
+      description: '<ul><li>Returns binary header of the given dataset.</li><li>Required
+        roles:<ul><li>subproject.viewer: if the applied subproject policy is ''uniform''</li><li>dataset.viewer:
+        if the applied subproject policy is ''dataset''</li></ul></li></ul>'
+      operationId: get_binary_header_seismic_file_metadata_api_v1_segy_binaryHeader_get
+      parameters:
+      - in: query
+        name: sdpath
+        required: true
+        schema:
+          title: Sdpath
+          type: string
+      - in: query
+        name: api_key_header
+        required: false
+        schema:
+          default: DEFAULT_API_KEY
+          title: Api Key Header
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      security:
+      - bearer: []
+      summary: Get Binary Header
+      tags:
+      - SEGY (DEPRECATED)
+  /seismic-file-metadata/api/v1/segy/extendedTextualHeaders:
+    get:
+      description: '<ul><li>Returns extended textual headers of the given dataset.</li><li>Required
+        roles:<ul><li>subproject.viewer: if the applied subproject policy is ''uniform''</li><li>dataset.viewer:
+        if the applied subproject policy is ''dataset''</li></ul></li></ul>'
+      operationId: get_extended_textual_headers_seismic_file_metadata_api_v1_segy_extendedTextualHeaders_get
+      parameters:
+      - in: query
+        name: sdpath
+        required: true
+        schema:
+          title: Sdpath
+          type: string
+      - in: query
+        name: api_key_header
+        required: false
+        schema:
+          default: DEFAULT_API_KEY
+          title: Api Key Header
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      security:
+      - bearer: []
+      summary: Get Extended Textual Headers
+      tags:
+      - SEGY (DEPRECATED)
+  /seismic-file-metadata/api/v1/segy/is3D:
+    get:
+      description: '<ul><li>Returns 1 if given dataset is 3D</li><li>Required roles:<ul><li>subproject.viewer:
+        if the applied subproject policy is ''uniform''</li><li>dataset.viewer: if
+        the applied subproject policy is ''dataset''</li></ul></li></ul>'
+      operationId: get_is_3d_seismic_file_metadata_api_v1_segy_is3D_get
+      parameters:
+      - in: query
+        name: sdpath
+        required: true
+        schema:
+          title: Sdpath
+          type: string
+      - in: query
+        name: api_key_header
+        required: false
+        schema:
+          default: DEFAULT_API_KEY
+          title: Api Key Header
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      security:
+      - bearer: []
+      summary: Get Is 3D
+      tags:
+      - SEGY (DEPRECATED)
+  /seismic-file-metadata/api/v1/segy/rawTraceHeaders:
+    get:
+      description: '<ul><li>Returns raw trace headers of the given dataset.</li><li>Required
+        roles:<ul><li>subproject.viewer: if the applied subproject policy is ''uniform''</li><li>dataset.viewer:
+        if the applied subproject policy is ''dataset''</li></ul></li></ul>'
+      operationId: get_raw_trace_headers_seismic_file_metadata_api_v1_segy_rawTraceHeaders_get
+      parameters:
+      - in: query
+        name: sdpath
+        required: true
+        schema:
+          title: Sdpath
+          type: string
+      - in: query
+        name: start_trace
+        required: true
+        schema:
+          title: Start Trace
+          type: integer
+      - in: query
+        name: traces_to_dump
+        required: true
+        schema:
+          title: Traces To Dump
+          type: integer
+      - in: query
+        name: api_key_header
+        required: false
+        schema:
+          default: DEFAULT_API_KEY
+          title: Api Key Header
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      security:
+      - bearer: []
+      summary: Get Raw Trace Headers
+      tags:
+      - SEGY (DEPRECATED)
+  /seismic-file-metadata/api/v1/segy/revision:
+    get:
+      description: '<ul><li>Returns revision of the given dataset.</li><li>Required
+        roles:<ul><li>subproject.viewer: if the applied subproject policy is ''uniform''</li><li>dataset.viewer:
+        if the applied subproject policy is ''dataset''</li></ul></li></ul>'
+      operationId: get_revision_seismic_file_metadata_api_v1_segy_revision_get
+      parameters:
+      - in: query
+        name: sdpath
+        required: true
+        schema:
+          title: Sdpath
+          type: string
+      - in: query
+        name: api_key_header
+        required: false
+        schema:
+          default: DEFAULT_API_KEY
+          title: Api Key Header
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      security:
+      - bearer: []
+      summary: Get Revision
+      tags:
+      - SEGY (DEPRECATED)
+  /seismic-file-metadata/api/v1/segy/scaledTraceHeaders:
+    get:
+      description: '<ul><li>Returns scaled trace headers of the given dataset.</li><li>Required
+        roles:<ul><li>subproject.viewer: if the applied subproject policy is ''uniform''</li><li>dataset.viewer:
+        if the applied subproject policy is ''dataset''</li></ul></li></ul>'
+      operationId: get_scaled_trace_headers_seismic_file_metadata_api_v1_segy_scaledTraceHeaders_get
+      parameters:
+      - in: query
+        name: sdpath
+        required: true
+        schema:
+          title: Sdpath
+          type: string
+      - in: query
+        name: start_trace
+        required: true
+        schema:
+          title: Start Trace
+          type: integer
+      - in: query
+        name: traces_to_dump
+        required: true
+        schema:
+          title: Traces To Dump
+          type: integer
+      - in: query
+        name: api_key_header
+        required: false
+        schema:
+          default: DEFAULT_API_KEY
+          title: Api Key Header
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      security:
+      - bearer: []
+      summary: Get Scaled Trace Headers
+      tags:
+      - SEGY (DEPRECATED)
+  /seismic-file-metadata/api/v1/segy/textualHeader:
+    get:
+      description: '<ul><li>Returns textual header of the given dataset.</li><li>Required
+        roles:<ul><li>subproject.viewer: if the applied subproject policy is ''uniform''</li><li>dataset.viewer:
+        if the applied subproject policy is ''dataset''</li></ul></li></ul>'
+      operationId: get_textual_header_seismic_file_metadata_api_v1_segy_textualHeader_get
+      parameters:
+      - in: query
+        name: sdpath
+        required: true
+        schema:
+          title: Sdpath
+          type: string
+      - in: query
+        name: api_key_header
+        required: false
+        schema:
+          default: DEFAULT_API_KEY
+          title: Api Key Header
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      security:
+      - bearer: []
+      summary: Get Textual Header
+      tags:
+      - SEGY (DEPRECATED)
+  /seismic-file-metadata/api/v1/segy/traceHeaderFieldCount:
+    get:
+      description: '<ul><li>Returns trace header field count of the given dataset.</li><li>Required
+        roles:<ul><li>subproject.viewer: if the applied subproject policy is ''uniform''</li><li>dataset.viewer:
+        if the applied subproject policy is ''dataset''</li></ul></li></ul>'
+      operationId: get_trace_header_field_count_seismic_file_metadata_api_v1_segy_traceHeaderFieldCount_get
+      parameters:
+      - in: query
+        name: sdpath
+        required: true
+        schema:
+          title: Sdpath
+          type: string
+      - in: query
+        name: api_key_header
+        required: false
+        schema:
+          default: DEFAULT_API_KEY
+          title: Api Key Header
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      security:
+      - bearer: []
+      summary: Get Trace Header Field Count
+      tags:
+      - SEGY (DEPRECATED)
+  /seismic-file-metadata/api/v1/service-status:
+    get:
+      description: <ul><li>Returns service status</li><li>Required roles:<ul><li>None</li></ul></li></ul>
+      operationId: get_status_seismic_file_metadata_api_v1_service_status_get
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+      summary: Get Status
+      tags:
+      - General (DEPRECATED)
+  /seismic-file-metadata/api/v2/openzgy/bingrid:
+    get:
+      description: '<ul><li>Returns bingrid of the given dataset.</li><li>Required
+        roles:<ul><li>subproject.viewer: if the applied subproject policy is ''uniform''</li><li>dataset.viewer:
+        if the applied subproject policy is ''dataset''</li></ul></li></ul>'
+      operationId: get_bingrid_seismic_file_metadata_api_v2_openzgy_bingrid_get
+      parameters:
+      - in: query
+        name: sdpath
+        required: true
+        schema:
+          title: Sdpath
+          type: string
+      - in: query
+        name: api_key_header
+        required: false
+        schema:
+          default: DEFAULT_API_KEY
+          title: Api Key Header
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      security:
+      - bearer: []
+      summary: Get Bingrid
+      tags:
+      - OPENZGY
+  /seismic-file-metadata/api/v2/openzgy/headers:
+    get:
+      description: '<ul><li>Returns headers of the given dataset.</li><li>Required
+        roles:<ul><li>subproject.viewer: if the applied subproject policy is ''uniform''</li><li>dataset.viewer:
+        if the applied subproject policy is ''dataset''</li></ul></li></ul>'
+      operationId: get_headers_seismic_file_metadata_api_v2_openzgy_headers_get
+      parameters:
+      - in: query
+        name: sdpath
+        required: true
+        schema:
+          title: Sdpath
+          type: string
+      - in: query
+        name: api_key_header
+        required: false
+        schema:
+          default: DEFAULT_API_KEY
+          title: Api Key Header
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      security:
+      - bearer: []
+      summary: Get Headers
+      tags:
+      - OPENZGY
+  /seismic-file-metadata/api/v2/segy/binaryHeader:
+    get:
+      description: '<ul><li>Returns binary header of the given dataset.</li><li>Required
+        roles:<ul><li>subproject.viewer: if the applied subproject policy is ''uniform''</li><li>dataset.viewer:
+        if the applied subproject policy is ''dataset''</li></ul></li></ul>'
+      operationId: get_binary_header_seismic_file_metadata_api_v2_segy_binaryHeader_get
+      parameters:
+      - in: query
+        name: sdpath
+        required: true
+        schema:
+          title: Sdpath
+          type: string
+      - in: query
+        name: api_key_header
+        required: false
+        schema:
+          default: DEFAULT_API_KEY
+          title: Api Key Header
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      security:
+      - bearer: []
+      summary: Get Binary Header
+      tags:
+      - SEGY
+  /seismic-file-metadata/api/v2/segy/extendedTextualHeaders:
+    get:
+      description: '<ul><li>Returns extended textual headers of the given dataset.</li><li>Required
+        roles:<ul><li>subproject.viewer: if the applied subproject policy is ''uniform''</li><li>dataset.viewer:
+        if the applied subproject policy is ''dataset''</li></ul></li></ul>'
+      operationId: get_extended_textual_headers_seismic_file_metadata_api_v2_segy_extendedTextualHeaders_get
+      parameters:
+      - in: query
+        name: sdpath
+        required: true
+        schema:
+          title: Sdpath
+          type: string
+      - in: query
+        name: api_key_header
+        required: false
+        schema:
+          default: DEFAULT_API_KEY
+          title: Api Key Header
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      security:
+      - bearer: []
+      summary: Get Extended Textual Headers
+      tags:
+      - SEGY
+  /seismic-file-metadata/api/v2/segy/is3D:
+    get:
+      description: '<ul><li>Returns 1 if given dataset is 3D</li><li>Required roles:<ul><li>subproject.viewer:
+        if the applied subproject policy is ''uniform''</li><li>dataset.viewer: if
+        the applied subproject policy is ''dataset''</li></ul></li></ul>'
+      operationId: get_is_3d_seismic_file_metadata_api_v2_segy_is3D_get
+      parameters:
+      - in: query
+        name: sdpath
+        required: true
+        schema:
+          title: Sdpath
+          type: string
+      - in: query
+        name: api_key_header
+        required: false
+        schema:
+          default: DEFAULT_API_KEY
+          title: Api Key Header
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      security:
+      - bearer: []
+      summary: Get Is 3D
+      tags:
+      - SEGY
+  /seismic-file-metadata/api/v2/segy/rawTraceHeaders:
+    get:
+      description: '<ul><li>Returns raw trace headers of the given dataset.</li><li>Required
+        roles:<ul><li>subproject.viewer: if the applied subproject policy is ''uniform''</li><li>dataset.viewer:
+        if the applied subproject policy is ''dataset''</li></ul></li></ul>'
+      operationId: get_raw_trace_headers_seismic_file_metadata_api_v2_segy_rawTraceHeaders_get
+      parameters:
+      - in: query
+        name: sdpath
+        required: true
+        schema:
+          title: Sdpath
+          type: string
+      - in: query
+        name: start_trace
+        required: true
+        schema:
+          title: Start Trace
+          type: integer
+      - in: query
+        name: traces_to_dump
+        required: true
+        schema:
+          title: Traces To Dump
+          type: integer
+      - in: query
+        name: api_key_header
+        required: false
+        schema:
+          default: DEFAULT_API_KEY
+          title: Api Key Header
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      security:
+      - bearer: []
+      summary: Get Raw Trace Headers
+      tags:
+      - SEGY
+  /seismic-file-metadata/api/v2/segy/revision:
+    get:
+      description: '<ul><li>Returns revision of the given dataset.</li><li>Required
+        roles:<ul><li>subproject.viewer: if the applied subproject policy is ''uniform''</li><li>dataset.viewer:
+        if the applied subproject policy is ''dataset''</li></ul></li></ul>'
+      operationId: get_revision_seismic_file_metadata_api_v2_segy_revision_get
+      parameters:
+      - in: query
+        name: sdpath
+        required: true
+        schema:
+          title: Sdpath
+          type: string
+      - in: query
+        name: api_key_header
+        required: false
+        schema:
+          default: DEFAULT_API_KEY
+          title: Api Key Header
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      security:
+      - bearer: []
+      summary: Get Revision
+      tags:
+      - SEGY
+  /seismic-file-metadata/api/v2/segy/scaledTraceHeaders:
+    get:
+      description: '<ul><li>Returns scaled trace headers of the given dataset.</li><li>Required
+        roles:<ul><li>subproject.viewer: if the applied subproject policy is ''uniform''</li><li>dataset.viewer:
+        if the applied subproject policy is ''dataset''</li></ul></li></ul>'
+      operationId: get_scaled_trace_headers_seismic_file_metadata_api_v2_segy_scaledTraceHeaders_get
+      parameters:
+      - in: query
+        name: sdpath
+        required: true
+        schema:
+          title: Sdpath
+          type: string
+      - in: query
+        name: start_trace
+        required: true
+        schema:
+          title: Start Trace
+          type: integer
+      - in: query
+        name: traces_to_dump
+        required: true
+        schema:
+          title: Traces To Dump
+          type: integer
+      - in: query
+        name: api_key_header
+        required: false
+        schema:
+          default: DEFAULT_API_KEY
+          title: Api Key Header
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      security:
+      - bearer: []
+      summary: Get Scaled Trace Headers
+      tags:
+      - SEGY
+  /seismic-file-metadata/api/v2/segy/textualHeader:
+    get:
+      description: '<ul><li>Returns textual header of the given dataset.</li><li>Required
+        roles:<ul><li>subproject.viewer: if the applied subproject policy is ''uniform''</li><li>dataset.viewer:
+        if the applied subproject policy is ''dataset''</li></ul></li></ul>'
+      operationId: get_textual_header_seismic_file_metadata_api_v2_segy_textualHeader_get
+      parameters:
+      - in: query
+        name: sdpath
+        required: true
+        schema:
+          title: Sdpath
+          type: string
+      - in: query
+        name: api_key_header
+        required: false
+        schema:
+          default: DEFAULT_API_KEY
+          title: Api Key Header
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      security:
+      - bearer: []
+      summary: Get Textual Header
+      tags:
+      - SEGY
+  /seismic-file-metadata/api/v2/segy/traceHeaderFieldCount:
+    get:
+      description: '<ul><li>Returns trace header field count of the given dataset.</li><li>Required
+        roles:<ul><li>subproject.viewer: if the applied subproject policy is ''uniform''</li><li>dataset.viewer:
+        if the applied subproject policy is ''dataset''</li></ul></li></ul>'
+      operationId: get_trace_header_field_count_seismic_file_metadata_api_v2_segy_traceHeaderFieldCount_get
+      parameters:
+      - in: query
+        name: sdpath
+        required: true
+        schema:
+          title: Sdpath
+          type: string
+      - in: query
+        name: api_key_header
+        required: false
+        schema:
+          default: DEFAULT_API_KEY
+          title: Api Key Header
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      security:
+      - bearer: []
+      summary: Get Trace Header Field Count
+      tags:
+      - SEGY
+servers:
+- url: /seismic-file-metadata/api/
