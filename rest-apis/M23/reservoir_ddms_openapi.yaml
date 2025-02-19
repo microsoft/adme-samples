@@ -538,9 +538,6 @@ paths:
           description: Unknown Error
       security:
       - access-token: []
-      servers:
-      - description: API server
-        url: https://rbtest70.oep.ppe.azure-int.net:443/api/reservoir-ddms/v2
       summary: List dataspaces.
       tags:
       - Resources
@@ -861,9 +858,6 @@ paths:
           description: Unknown Error
       security:
       - access-token: []
-      servers:
-      - description: API server
-        url: https://rbtest70.oep.ppe.azure-int.net:443/api/reservoir-ddms/v2
       summary: Graph all resources.
       tags:
       - Resources
@@ -1230,9 +1224,6 @@ paths:
           description: Unknown Error
       security:
       - access-token: []
-      servers:
-      - description: API server
-        url: https://rbtest70.oep.ppe.azure-int.net:443/api/reservoir-ddms/v2
       summary: Graph the resources referencing current one.
       tags:
       - Resources
@@ -1599,9 +1590,6 @@ paths:
           description: Unknown Error
       security:
       - access-token: []
-      servers:
-      - description: API server
-        url: https://rbtest70.oep.ppe.azure-int.net:443/api/reservoir-ddms/v2
       summary: Graph the resources referenced by current one.
       tags:
       - Resources
@@ -1790,9 +1778,6 @@ paths:
           description: Unknown Error
       security:
       - access-token: []
-      servers:
-      - description: API server
-        url: https://rbtest70.oep.ppe.azure-int.net:443/api/reservoir-ddms/v2
       summary: Get info on a dataspace.
       tags:
       - Resources
@@ -1981,9 +1966,6 @@ paths:
           description: Unknown Error
       security:
       - access-token: []
-      servers:
-      - description: API server
-        url: https://rbtest70.oep.ppe.azure-int.net:443/api/reservoir-ddms/v2
       summary: Unlock a dataspace.
       tags:
       - Resources
@@ -2171,9 +2153,6 @@ paths:
           description: Unknown Error
       security:
       - access-token: []
-      servers:
-      - description: API server
-        url: https://rbtest70.oep.ppe.azure-int.net:443/api/reservoir-ddms/v2
       summary: Lock a dataspace.
       tags:
       - Resources
@@ -2401,9 +2380,6 @@ paths:
           description: Unknown Error
       security:
       - access-token: []
-      servers:
-      - description: API server
-        url: https://rbtest70.oep.ppe.azure-int.net:443/api/reservoir-ddms/v2
       summary: List types inside a dataspace.
       tags:
       - Resources
@@ -2724,9 +2700,6 @@ paths:
           description: Unknown Error
       security:
       - access-token: []
-      servers:
-      - description: API server
-        url: https://rbtest70.oep.ppe.azure-int.net:443/api/reservoir-ddms/v2
       summary: List all resources.
       tags:
       - Resources
@@ -3047,9 +3020,6 @@ paths:
           description: Unknown Error
       security:
       - access-token: []
-      servers:
-      - description: API server
-        url: https://rbtest70.oep.ppe.azure-int.net:443/api/reservoir-ddms/v2
       summary: Get the resources of a given type.
       tags:
       - Resources
@@ -3358,9 +3328,6 @@ paths:
           description: Unknown Error
       security:
       - access-token: []
-      servers:
-      - description: API server
-        url: https://rbtest70.oep.ppe.azure-int.net:443/api/reservoir-ddms/v2
       summary: Get object content.
       tags:
       - Resources
@@ -3653,9 +3620,6 @@ paths:
           description: Unknown Error
       security:
       - access-token: []
-      servers:
-      - description: API server
-        url: https://rbtest70.oep.ppe.azure-int.net:443/api/reservoir-ddms/v2
       summary: Get the description of all arrays.
       tags:
       - Resources
@@ -3994,9 +3958,6 @@ paths:
           description: Unknown Error
       security:
       - access-token: []
-      servers:
-      - description: API server
-        url: https://rbtest70.oep.ppe.azure-int.net:443/api/reservoir-ddms/v2
       summary: Get the content of an array.
       tags:
       - Resources
@@ -4294,9 +4255,6 @@ paths:
           description: Unknown Error
       security:
       - access-token: []
-      servers:
-      - description: API server
-        url: https://rbtest70.oep.ppe.azure-int.net:443/api/reservoir-ddms/v2
       summary: Get the description of an array.
       tags:
       - Resources
@@ -4662,9 +4620,6 @@ paths:
           description: Unknown Error
       security:
       - access-token: []
-      servers:
-      - description: API server
-        url: https://rbtest70.oep.ppe.azure-int.net:443/api/reservoir-ddms/v2
       summary: Get the resources referencing current one.
       tags:
       - Resources
@@ -5030,9 +4985,6 @@ paths:
           description: Unknown Error
       security:
       - access-token: []
-      servers:
-      - description: API server
-        url: https://rbtest70.oep.ppe.azure-int.net:443/api/reservoir-ddms/v2
       summary: Get the resources referenced by current one.
       tags:
       - Resources
@@ -5198,9 +5150,6 @@ paths:
                 type: object
           description: Unknown Error
       security: []
-      servers:
-      - description: API server
-        url: https://rbtest70.oep.ppe.azure-int.net:443/api/reservoir-ddms/v2
       summary: Check liveness of the server.
       tags:
       - Health
@@ -5399,12 +5348,9 @@ paths:
           description: Unknown Error
       security:
       - access-token: []
-      servers:
-      - description: API server
-        url: https://rbtest70.oep.ppe.azure-int.net:443/api/reservoir-ddms/v2
       summary: Create OSDU manifest.
       tags:
       - Manifest
 servers:
-- url: https://rbtest70.oep.ppe.azure-int.net:443/api/reservoir-ddms/v2
+- url: /api/reservoir-ddms/v2
 tags: []
