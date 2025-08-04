@@ -8240,7 +8240,7 @@ paths:
 security:
 - bearer: []
 servers:
-- url: https://it1754067708300.oep.ppe.azure-int.net/seistore-svc/api/v3
+- url: /seistore-svc/api/v3
 tags:
 - description: General seismic store information
   name: General

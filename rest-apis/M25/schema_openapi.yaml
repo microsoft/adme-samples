@@ -702,8 +702,7 @@ paths:
 security:
 - Authorization: []
 servers:
-- description: Generated server url
-  url: https://it1754067708300.oep.ppe.azure-int.net/api/schema-service/v1
+- url: /api/schema-service/v1
 tags:
 - description: Schema API - Core Schema related endpoints
   name: schema-api

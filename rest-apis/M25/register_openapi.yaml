@@ -1679,8 +1679,7 @@ paths:
 security:
 - Authorization: []
 servers:
-- description: Generated server url
-  url: https://it1754067708300.oep.ppe.azure-int.net/api/register/v1
+- url: /api/register/v1
 tags:
 - description: Subscriber API
   name: subscriber-api

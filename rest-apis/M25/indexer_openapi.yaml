@@ -505,8 +505,7 @@ paths:
 security:
 - Authorization: []
 servers:
-- description: Generated server url
-  url: https://it1754067708300.oep.ppe.azure-int.net/api/indexer/v2
+- url: /api/indexer/v2
 tags:
 - description: Partition Setup API
   name: partition-setup-api

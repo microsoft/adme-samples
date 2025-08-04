@@ -538,9 +538,6 @@ paths:
           description: Unknown Error
       security:
       - access-token: []
-      servers:
-      - description: API server
-        url: https://it1754067708300.oep.ppe.azure-int.net:443/api/reservoir-ddms/v2
       summary: List dataspaces.
       tags:
       - Resources
@@ -744,9 +741,6 @@ paths:
           description: Unknown Error
       security:
       - access-token: []
-      servers:
-      - description: API server
-        url: https://it1754067708300.oep.ppe.azure-int.net:443/api/reservoir-ddms/v2
       summary: Create new dataspaces.
       tags:
       - Write
@@ -1011,9 +1005,6 @@ paths:
           description: Unknown Error
       security:
       - access-token: []
-      servers:
-      - description: API server
-        url: https://it1754067708300.oep.ppe.azure-int.net:443/api/reservoir-ddms/v2
       summary: Get content or multiple objects.
       tags:
       - Resources
@@ -1176,9 +1167,6 @@ paths:
           description: Unknown Error
       security:
       - access-token: []
-      servers:
-      - description: API server
-        url: https://it1754067708300.oep.ppe.azure-int.net:443/api/reservoir-ddms/v2
       summary: Delete existing dataspace.
       tags:
       - Write
@@ -1386,9 +1374,6 @@ paths:
           description: Unknown Error
       security:
       - access-token: []
-      servers:
-      - description: API server
-        url: https://it1754067708300.oep.ppe.azure-int.net:443/api/reservoir-ddms/v2
       summary: Duplicate a dataspace.
       tags:
       - Write
@@ -1717,9 +1702,6 @@ paths:
           description: Unknown Error
       security:
       - access-token: []
-      servers:
-      - description: API server
-        url: https://it1754067708300.oep.ppe.azure-int.net:443/api/reservoir-ddms/v2
       summary: Graph all resources.
       tags:
       - Resources
@@ -2094,9 +2076,6 @@ paths:
           description: Unknown Error
       security:
       - access-token: []
-      servers:
-      - description: API server
-        url: https://it1754067708300.oep.ppe.azure-int.net:443/api/reservoir-ddms/v2
       summary: Graph the resources referencing current one.
       tags:
       - Resources
@@ -2471,9 +2450,6 @@ paths:
           description: Unknown Error
       security:
       - access-token: []
-      servers:
-      - description: API server
-        url: https://it1754067708300.oep.ppe.azure-int.net:443/api/reservoir-ddms/v2
       summary: Graph the resources referenced by current one.
       tags:
       - Resources
@@ -2662,9 +2638,6 @@ paths:
           description: Unknown Error
       security:
       - access-token: []
-      servers:
-      - description: API server
-        url: https://it1754067708300.oep.ppe.azure-int.net:443/api/reservoir-ddms/v2
       summary: Get info on a dataspace.
       tags:
       - Resources
@@ -2853,9 +2826,6 @@ paths:
           description: Unknown Error
       security:
       - access-token: []
-      servers:
-      - description: API server
-        url: https://it1754067708300.oep.ppe.azure-int.net:443/api/reservoir-ddms/v2
       summary: Unlock a dataspace.
       tags:
       - Resources
@@ -3043,9 +3013,6 @@ paths:
           description: Unknown Error
       security:
       - access-token: []
-      servers:
-      - description: API server
-        url: https://it1754067708300.oep.ppe.azure-int.net:443/api/reservoir-ddms/v2
       summary: Lock a dataspace.
       tags:
       - Resources
@@ -3281,9 +3248,6 @@ paths:
           description: Unknown Error
       security:
       - access-token: []
-      servers:
-      - description: API server
-        url: https://it1754067708300.oep.ppe.azure-int.net:443/api/reservoir-ddms/v2
       summary: List types inside a dataspace.
       tags:
       - Resources
@@ -3597,9 +3561,6 @@ paths:
           description: Unknown Error
       security:
       - access-token: []
-      servers:
-      - description: API server
-        url: https://it1754067708300.oep.ppe.azure-int.net:443/api/reservoir-ddms/v2
       summary: Create or update objects.
       tags:
       - Write
@@ -3928,9 +3889,6 @@ paths:
           description: Unknown Error
       security:
       - access-token: []
-      servers:
-      - description: API server
-        url: https://it1754067708300.oep.ppe.azure-int.net:443/api/reservoir-ddms/v2
       summary: List all resources.
       tags:
       - Resources
@@ -4258,9 +4216,6 @@ paths:
           description: Unknown Error
       security:
       - access-token: []
-      servers:
-      - description: API server
-        url: https://it1754067708300.oep.ppe.azure-int.net:443/api/reservoir-ddms/v2
       summary: Create or update a data array.
       tags:
       - Write
@@ -4589,9 +4544,6 @@ paths:
           description: Unknown Error
       security:
       - access-token: []
-      servers:
-      - description: API server
-        url: https://it1754067708300.oep.ppe.azure-int.net:443/api/reservoir-ddms/v2
       summary: Get the resources of a given type.
       tags:
       - Resources
@@ -4788,9 +4740,6 @@ paths:
           description: Unknown Error
       security:
       - access-token: []
-      servers:
-      - description: API server
-        url: https://it1754067708300.oep.ppe.azure-int.net:443/api/reservoir-ddms/v2
       summary: Delete existing object.
       tags:
       - Write
@@ -5106,9 +5055,6 @@ paths:
           description: Unknown Error
       security:
       - access-token: []
-      servers:
-      - description: API server
-        url: https://it1754067708300.oep.ppe.azure-int.net:443/api/reservoir-ddms/v2
       summary: Get object content.
       tags:
       - Resources
@@ -5401,9 +5347,6 @@ paths:
           description: Unknown Error
       security:
       - access-token: []
-      servers:
-      - description: API server
-        url: https://it1754067708300.oep.ppe.azure-int.net:443/api/reservoir-ddms/v2
       summary: Get the description of all arrays.
       tags:
       - Resources
@@ -5750,9 +5693,6 @@ paths:
           description: Unknown Error
       security:
       - access-token: []
-      servers:
-      - description: API server
-        url: https://it1754067708300.oep.ppe.azure-int.net:443/api/reservoir-ddms/v2
       summary: Get the content of an array.
       tags:
       - Resources
@@ -6058,9 +5998,6 @@ paths:
           description: Unknown Error
       security:
       - access-token: []
-      servers:
-      - description: API server
-        url: https://it1754067708300.oep.ppe.azure-int.net:443/api/reservoir-ddms/v2
       summary: Get the description of an array.
       tags:
       - Resources
@@ -6434,9 +6371,6 @@ paths:
           description: Unknown Error
       security:
       - access-token: []
-      servers:
-      - description: API server
-        url: https://it1754067708300.oep.ppe.azure-int.net:443/api/reservoir-ddms/v2
       summary: Get the resources referencing current one.
       tags:
       - Resources
@@ -6810,9 +6744,6 @@ paths:
           description: Unknown Error
       security:
       - access-token: []
-      servers:
-      - description: API server
-        url: https://it1754067708300.oep.ppe.azure-int.net:443/api/reservoir-ddms/v2
       summary: Get the resources referenced by current one.
       tags:
       - Resources
@@ -7026,9 +6957,6 @@ paths:
           description: Unknown Error
       security:
       - access-token: []
-      servers:
-      - description: API server
-        url: https://it1754067708300.oep.ppe.azure-int.net:443/api/reservoir-ddms/v2
       summary: Create new transaction.
       tags:
       - Transactions
@@ -7204,9 +7132,6 @@ paths:
           description: Unknown Error
       security:
       - access-token: []
-      servers:
-      - description: API server
-        url: https://it1754067708300.oep.ppe.azure-int.net:443/api/reservoir-ddms/v2
       summary: Rollback transaction.
       tags:
       - Transactions
@@ -7403,9 +7328,6 @@ paths:
           description: Unknown Error
       security:
       - access-token: []
-      servers:
-      - description: API server
-        url: https://it1754067708300.oep.ppe.azure-int.net:443/api/reservoir-ddms/v2
       summary: Commit transaction.
       tags:
       - Transactions
@@ -7571,9 +7493,6 @@ paths:
                 type: object
           description: Unknown Error
       security: []
-      servers:
-      - description: API server
-        url: https://it1754067708300.oep.ppe.azure-int.net:443/api/reservoir-ddms/v2
       summary: Check liveness of the server.
       tags:
       - Health
@@ -7772,12 +7691,9 @@ paths:
           description: Unknown Error
       security:
       - access-token: []
-      servers:
-      - description: API server
-        url: https://it1754067708300.oep.ppe.azure-int.net:443/api/reservoir-ddms/v2
       summary: Create OSDU manifest.
       tags:
       - Manifest
 servers:
-- url: https://it1754067708300.oep.ppe.azure-int.net:443/api/reservoir-ddms/v2
+- url: /api/reservoir-ddms/v2
 tags: []

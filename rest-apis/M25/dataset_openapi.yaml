@@ -862,8 +862,7 @@ paths:
 security:
 - Authorization: []
 servers:
-- description: Generated server url
-  url: https://it1754067708300.oep.ppe.azure-int.net/api/dataset/v1
+- url: /api/dataset/v1
 tags:
 - description: Dataset DMS and Dataset Registry related operations
   name: dataset

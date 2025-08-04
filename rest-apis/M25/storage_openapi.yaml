@@ -1668,8 +1668,7 @@ paths:
 security:
 - Authorization: []
 servers:
-- description: Generated server url
-  url: https://it1754067708300.oep.ppe.azure-int.net/api/storage/v2
+- url: /api/storage/v2
 tags:
 - description: Querying Records operations
   name: query

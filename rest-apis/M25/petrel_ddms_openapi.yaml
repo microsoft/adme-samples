@@ -527,6 +527,3 @@ paths:
 security:
 - login: []
 - manual: []
-servers:
-- description: Current Host
-  url: https://it1754067708300.oep.ppe.azure-int.net

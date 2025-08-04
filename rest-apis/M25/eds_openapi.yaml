@@ -227,8 +227,7 @@ paths:
 security:
 - Authorization: []
 servers:
-- description: Generated server url
-  url: https://maadme.oep.ppe.azure-int.net/api/eds/v1
+- url: /api/eds/v1
 tags:
 - description: Version info endpoint
   name: info-api

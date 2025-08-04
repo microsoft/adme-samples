@@ -595,8 +595,7 @@ paths:
 security:
 - Authorization: []
 servers:
-- description: Generated server url
-  url: https://it1754067708300.oep.ppe.azure-int.net/api/search/v2
+- url: /api/search/v2
 tags:
 - description: Service endpoints to search data in datalake
   name: search-api
