@@ -1169,8 +1169,7 @@ paths:
 security:
 - Authorization: []
 servers:
-- description: Generated server url
-  url: https://it1754067708300.oep.ppe.azure-int.net/api/legal/v1
+- url: /api/legal/v1
 tags:
 - description: Health related endpoints
   name: health
