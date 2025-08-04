@@ -1,0 +1,529 @@
+components:
+  schemas:
+    ErrorDetails:
+      additionalProperties: false
+      properties:
+        correlationId:
+          nullable: true
+          type: string
+        details:
+          nullable: true
+          type: string
+        error:
+          nullable: true
+        errorId:
+          nullable: true
+          type: string
+        message:
+          nullable: true
+          type: string
+        statusCode:
+          format: int32
+          type: integer
+      type: object
+    FieldOperation:
+      additionalProperties: false
+      properties:
+        name:
+          minLength: 1
+          type: string
+        value:
+          nullable: true
+      required:
+      - name
+      type: object
+    OsduAcl:
+      additionalProperties: false
+      properties:
+        owners:
+          items:
+            type: string
+          nullable: true
+          type: array
+        viewers:
+          items:
+            type: string
+          nullable: true
+          type: array
+      type: object
+    OsduLegalTag:
+      additionalProperties: false
+      properties:
+        legaltags:
+          items:
+            type: string
+          nullable: true
+          type: array
+        otherRelevantDataCountries:
+          items:
+            type: string
+          nullable: true
+          type: array
+      type: object
+    OsduRecord:
+      additionalProperties: false
+      properties:
+        acl:
+          $ref: '#/components/schemas/OsduAcl'
+        createTime:
+          default: ''
+          nullable: true
+          type: string
+        createUser:
+          default: ''
+          nullable: true
+          type: string
+        data:
+          default: null
+          nullable: true
+        id:
+          default: ''
+          nullable: true
+          type: string
+        kind:
+          default: ''
+          nullable: true
+          type: string
+        legal:
+          $ref: '#/components/schemas/OsduLegalTag'
+        meta:
+          items: {}
+          nullable: true
+          type: array
+        modifyTime:
+          default: ''
+          nullable: true
+          type: string
+        modifyUser:
+          default: ''
+          nullable: true
+          type: string
+        version:
+          default: ''
+          nullable: true
+          type: string
+      type: object
+    ProjectDownloadResponse:
+      additionalProperties: false
+      properties:
+        downloadUrl:
+          nullable: true
+          type: string
+        providerKey:
+          nullable: true
+          readOnly: true
+          type: string
+      type: object
+    ProjectPatchRequest:
+      additionalProperties: false
+      properties:
+        fields:
+          items:
+            $ref: '#/components/schemas/FieldOperation'
+          type: array
+        id:
+          minLength: 1
+          type: string
+      required:
+      - fields
+      - id
+      type: object
+    ProjectUpdateRequest:
+      additionalProperties: false
+      properties:
+        records:
+          items:
+            $ref: '#/components/schemas/OsduRecord'
+          nullable: true
+          type: array
+        signedUrl:
+          nullable: true
+          type: string
+      type: object
+    ProjectUploadResponse:
+      additionalProperties: false
+      properties:
+        downloadUrl:
+          nullable: true
+          type: string
+        providerKey:
+          nullable: true
+          readOnly: true
+          type: string
+        uploadUrl:
+          nullable: true
+          type: string
+      type: object
+  securitySchemes:
+    login:
+      description: Put **_ONLY_** your JWT Bearer token on textbox below!
+      flows:
+        authorizationCode:
+          authorizationUrl: https://p4d.csi.cloud.slb-ds.com/v2/auth
+          scopes:
+            963f2cc6915e479fa0fcb73ec2ec90e7: OSDU Client ID
+            openid: User information
+          tokenUrl: https://p4d.csi.cloud.slb-ds.com/v2/token
+      type: oauth2
+    manual:
+      bearerFormat: JWT
+      description: Put **_ONLY_** your JWT Bearer token on textbox below!
+      scheme: Bearer
+      type: http
+info:
+  description: Petrel DMS OAK Sample Storage API
+  title: Petrel DMS API
+  version: '1.0'
+openapi: 3.0.1
+paths:
+  /api/petreldms/v1/projects/{projectId}:
+    get:
+      parameters:
+      - description: This value should be the desired data partition id.
+        in: header
+        name: Data-Partition-Id
+        required: true
+        schema:
+          type: string
+      - description: The auth token
+        in: header
+        name: Authorization
+        required: true
+        schema:
+          type: string
+      - description: The requested project identifier.
+        in: path
+        name: projectId
+        required: true
+        schema:
+          type: string
+      - description: 'Filter attributes to restrict the returned fields of the record.
+          Usage: data.{record-data-field-name}.'
+        in: query
+        name: attribute
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OsduRecord'
+          description: The project was successfully retrieved.
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetails'
+          description: The request is invalid
+        '403':
+          description: You don't have permission to this project
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetails'
+          description: The project does not exist.
+      summary: Gets a single project record.
+      tags:
+      - Projects
+    patch:
+      parameters:
+      - description: This value should be the desired data partition id.
+        in: header
+        name: Data-Partition-Id
+        required: true
+        schema:
+          type: string
+      - description: The JWT
+        in: header
+        name: Data-Partition-Id
+        required: true
+        schema:
+          type: string
+      - description: The requested project identifier.
+        in: path
+        name: projectId
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProjectPatchRequest'
+        description: The requested update value and parameters.
+        required: true
+      responses:
+        '200':
+          description: The project was successfully updated.
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetails'
+          description: The request is invalid
+        '403':
+          description: You don't have permission to this project
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetails'
+          description: The project does not exist.
+      summary: Updates a specific project properties.
+      tags:
+      - Projects
+    post:
+      parameters:
+      - description: This value should be the desired data partition id.
+        in: header
+        name: Data-Partition-Id
+        required: true
+        schema:
+          type: string
+      - description: The JWT
+        in: header
+        name: Authorization
+        required: true
+        schema:
+          type: string
+      - description: The requested project identifier.
+        in: path
+        name: projectId
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              items:
+                type: string
+              type: array
+        description: Records with identifiers to be deleted
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                items:
+                  type: string
+                type: array
+          description: The project was successfully deleted.
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetails'
+          description: The request is invalid
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetails'
+          description: You don't have permission to this project
+        '404':
+          description: The project does not exist.
+      summary: Deletes a specific project.
+      tags:
+      - Projects
+  /api/petreldms/v1/projects/{projectId}/download:
+    get:
+      parameters:
+      - description: This value should be the desired data partition id.
+        in: header
+        name: Data-Partition-Id
+        required: true
+        schema:
+          type: string
+      - description: the JWT
+        in: header
+        name: Authorization
+        required: true
+        schema:
+          type: string
+      - description: The requested project identifier.
+        in: path
+        name: projectId
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectDownloadResponse'
+          description: The project download response was successfully generated.
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetails'
+          description: The request is invalid
+        '403':
+          description: You don't have permission to this project
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetails'
+          description: The project does not exist.
+      summary: Get download url of a specific project.
+      tags:
+      - Projects
+  /api/petreldms/v1/projects/{projectId}/update:
+    put:
+      parameters:
+      - description: This value should be the desired data partition id.
+        in: header
+        name: Data-Partition-Id
+        required: true
+        schema:
+          type: string
+      - description: The JWT
+        in: header
+        name: Authorization
+        required: true
+        schema:
+          type: string
+      - description: The requested project identifier.
+        in: path
+        name: projectId
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProjectUpdateRequest'
+        description: The requested update value and parameters.
+        required: true
+      responses:
+        '201':
+          description: The project was successfully updated.
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetails'
+          description: The request is invalid
+        '403':
+          description: You don't have permission to this project
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetails'
+          description: The project does not exist.
+      summary: Updates a specific project.
+      tags:
+      - Projects
+  /api/petreldms/v1/projects/{projectId}/upload:
+    post:
+      parameters:
+      - description: This value should be the desired data partition id.
+        in: header
+        name: Data-Partition-Id
+        required: true
+        schema:
+          type: string
+      - description: The JWT
+        in: header
+        name: Authorization
+        required: true
+        schema:
+          type: string
+      - description: The requested project identifier.
+        in: path
+        name: projectId
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectUploadResponse'
+          description: The project upload response was successfully generated.
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetails'
+          description: The request is invalid
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetails'
+          description: You don't have permission to this project
+        '404':
+          description: The project does not exist.
+      summary: Uploads a specific project.
+      tags:
+      - Projects
+  /api/petreldms/v1/projects/{projectId}/versions/{versionId}:
+    get:
+      parameters:
+      - description: This value should be the desired data partition id.
+        in: header
+        name: Data-Partition-Id
+        required: true
+        schema:
+          type: string
+      - description: the JWT
+        in: header
+        name: Authorization
+        required: true
+        schema:
+          type: string
+      - description: The requested project identifier.
+        in: path
+        name: projectId
+        required: true
+        schema:
+          type: string
+      - description: The requested version identifier.
+        in: path
+        name: versionId
+        required: true
+        schema:
+          type: string
+      - description: 'Filter attributes to restrict the returned fields of the record.
+          Usage: data.{record-data-field-name}.'
+        in: query
+        name: attribute
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OsduRecord'
+          description: The project version was successfully retrieved.
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetails'
+          description: The request is invalid
+        '403':
+          description: You don't have permission to this project or version
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetails'
+          description: The project version does not exist.
+      summary: Gets a single version record of a project.
+      tags:
+      - Projects
+security:
+- login: []
+- manual: []
