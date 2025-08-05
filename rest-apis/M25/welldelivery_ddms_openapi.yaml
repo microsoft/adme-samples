@@ -55,7 +55,7 @@ info:
     url: https://www.apache.org/licenses/LICENSE-2.0.html
   title: Well Delivery Service API
   version: 1.0.0
-openapi: 3.1.0
+openapi: 3.0.3
 paths:
   /_ah/warmup:
     get:
@@ -3190,7 +3190,7 @@ tags:
 - description: Query related endpoints
   name: query-api
 - description: FluidsProgram related endpoints
-  name: hole-section-api
+  name: fluids-program-api
 - description: ActivityPlans related endpoints
   name: activity-plans-api
 - description: FluidsReport related endpoints
@@ -3201,8 +3201,6 @@ tags:
   name: well-api
 - description: BHARunApi related endpoints
   name: bhaRuns-api
-- description: FluidsProgram related endpoints
-  name: fluids-program-api
 - description: WellActivityProgram related endpoints
   name: well-activity-program-api
 - description: Version info endpoint

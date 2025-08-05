@@ -1131,7 +1131,8 @@ info:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
   title: CRS Conversion Service
-openapi: 3.1.0
+  version: 1.0.0
+openapi: 3.0.3
 paths:
   /_ah/liveness_check:
     get:

@@ -15,7 +15,7 @@ This repo contains samples for Azure Data Manager for Energy APIs.
 * [Notification Service](/adme-samples/rest-apis/index.html?page=/adme-samples/rest-apis/M25/notification_openapi.yaml)
 * [Petrel DDMS Service](/adme-samples/rest-apis/index.html?page=/adme-samples/rest-apis/M25/petrel_ddms_openapi.yaml)
 * [Register Service](/adme-samples/rest-apis/index.html?page=/adme-samples/rest-apis/M25/register_openapi.yaml)
-* [Reservoir DDMS Service](/adme-samples/rest-apis/index.html?page=/adme-samples/rest-apis/M25/reservoir_ddms_openapi.yaml)
+* [Reservoir DDMS Service](/adme-samples/rest-apis/index.html?page=/adme-samples/rest-apis/M25/reservoir_openapi.yaml)
 * [Schema Service](/adme-samples/rest-apis/index.html?page=/adme-samples/rest-apis/M25/schema_openapi.yaml)
 * [Search Service](/adme-samples/rest-apis/index.html?page=/adme-samples/rest-apis/M25/search_openapi.yaml)
 * [Secret Service](/adme-samples/rest-apis/index.html?page=/adme-samples/rest-apis/M25/secret_openapi.yaml)

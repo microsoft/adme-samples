@@ -470,7 +470,7 @@ info:
     url: https://www.apache.org/licenses/LICENSE-2.0.html
   title: Storage Service
   version: 2.0.0
-openapi: 3.1.0
+openapi: 3.0.3
 paths:
   /info:
     get:
@@ -805,12 +805,6 @@ paths:
         in: header
         name: x-collaboration
         required: false
-        schema:
-          type: string
-      - description: Tenant Id
-        in: header
-        name: data-partition-id
-        required: true
         schema:
           type: string
       - description: Tenant Id
@@ -1674,9 +1668,7 @@ tags:
   name: query
 - description: Health Check API
   name: health-check-api
-- description: Copying record references management operations
-  name: records
-- description: Records management operations
+- description: Records management and copying operations
   name: records
 - description: Version info endpoint
   name: info
