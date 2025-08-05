@@ -589,6 +589,8 @@ paths:
         in: header
         name: data-partition-id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           content:
@@ -627,6 +629,8 @@ paths:
         in: header
         name: data-partition-id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           content:
@@ -664,6 +668,8 @@ paths:
         in: header
         name: data-partition-id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           content:
@@ -733,6 +739,8 @@ paths:
         in: header
         name: data-partition-id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           content:
@@ -816,6 +824,8 @@ paths:
         in: header
         name: data-partition-id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           content:
@@ -899,6 +909,8 @@ paths:
         in: header
         name: data-partition-id
         required: true
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -995,6 +1007,8 @@ paths:
         in: header
         name: data-partition-id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           content:
@@ -1063,6 +1077,8 @@ paths:
         in: header
         name: data-partition-id
         required: true
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -1159,6 +1175,8 @@ paths:
         in: header
         name: data-partition-id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           content:
@@ -1227,6 +1245,8 @@ paths:
         in: header
         name: data-partition-id
         required: true
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -1309,6 +1329,8 @@ paths:
         in: header
         name: data-partition-id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           content:
@@ -1351,6 +1373,8 @@ paths:
         in: header
         name: data-partition-id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           content:
@@ -1419,6 +1443,8 @@ paths:
         in: header
         name: data-partition-id
         required: true
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -1514,6 +1540,8 @@ paths:
         in: header
         name: data-partition-id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           content:
@@ -1597,6 +1625,8 @@ paths:
         in: header
         name: data-partition-id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           content:
@@ -1680,6 +1710,8 @@ paths:
         in: header
         name: data-partition-id
         required: true
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -1775,6 +1807,8 @@ paths:
         in: header
         name: data-partition-id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           content:
@@ -1843,6 +1877,8 @@ paths:
         in: header
         name: data-partition-id
         required: true
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -1938,6 +1974,8 @@ paths:
         in: header
         name: data-partition-id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           content:
@@ -2012,6 +2050,8 @@ paths:
         in: header
         name: data-partition-id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           content:
@@ -2080,6 +2120,8 @@ paths:
         in: header
         name: data-partition-id
         required: true
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -2166,6 +2208,8 @@ paths:
         in: header
         name: data-partition-id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           content:
@@ -2234,6 +2278,8 @@ paths:
         in: header
         name: data-partition-id
         required: true
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -2329,6 +2375,8 @@ paths:
         in: header
         name: data-partition-id
         required: true
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -2420,6 +2468,8 @@ paths:
         in: header
         name: data-partition-id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           content:
@@ -2494,6 +2544,8 @@ paths:
         in: header
         name: data-partition-id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           content:
@@ -2573,6 +2625,8 @@ paths:
         in: header
         name: data-partition-id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           content:
@@ -2646,6 +2700,8 @@ paths:
         in: header
         name: data-partition-id
         required: true
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -2746,6 +2802,8 @@ paths:
         in: header
         name: data-partition-id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           content:
@@ -2828,6 +2886,8 @@ paths:
         in: header
         name: data-partition-id
         required: true
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -2923,6 +2983,8 @@ paths:
         in: header
         name: data-partition-id
         required: true
+        schema:
+          type: string
       responses:
         '200':
           content:
