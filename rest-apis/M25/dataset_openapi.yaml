@@ -868,7 +868,5 @@ tags:
   name: dataset
 - description: Health Check API
   name: health-check-api
-- description: dataset api operations
-  name: dataset
 - description: Version info endpoint
   name: info

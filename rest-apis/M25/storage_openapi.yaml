@@ -813,12 +813,6 @@ paths:
         required: true
         schema:
           type: string
-      - description: Tenant Id
-        in: header
-        name: data-partition-id
-        required: true
-        schema:
-          type: string
       requestBody:
         content:
           application/json:
@@ -1674,9 +1668,7 @@ tags:
   name: query
 - description: Health Check API
   name: health-check-api
-- description: Copying record references management operations
-  name: records
-- description: Records management operations
+- description: Records management and copying operations
   name: records
 - description: Version info endpoint
   name: info
