@@ -1,4 +1,4 @@
-openapi: 3.0.3
+openapi: 3.1.0
 info:
   title: Rock and Fluid Sample DDMS
   description: OSDU Rock and Fluid Sample DDMS
@@ -28,7 +28,7 @@ paths:
 
         :return: application info
         :rtype: InfoResponse
-      operationId: get_info_api_rafs_ddms_info_get
+      operationId: GetInfo
       responses:
         '200':
           description: Successful Response
@@ -36,13 +36,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/InfoResponse'
+      x-action-id: RF014
   /api/rafs-ddms/v2/samplesanalysesreport/{record_id}:
     get:
       tags:
         - samplesanalysesreport
       summary: Get Record
       description: 'Get the latest version of `SamplesAnalysesReport` object by record id.<br><br>        Required roles: `users.datalake.viewers` or `users.datalake.editors` or `users.datalake.admins`.<br>         In addition, users must be members of a data group(ACL) to access the data.'
-      operationId: get_record_api_rafs_ddms_v2_samplesanalysesreport__record_id__get
+      operationId: GetSamplesAnalysesReportRecord
       parameters:
         - required: true
           schema:
@@ -66,7 +67,7 @@ paths:
             application/json:
               schema:
                 type: object
-                title: Response Get Record Api Rafs Ddms V2 Samplesanalysesreport  Record Id  Get
+                title: Response Getsamplesanalysesreportrecord
         '422':
           description: Validation Error
           content:
@@ -75,12 +76,13 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
       security:
         - HTTPBearer: []
+      x-action-id: RF009
     delete:
       tags:
         - samplesanalysesreport
       summary: Soft Delete Record
       description: 'Delete the `SamplesAnalysesReport` object by record id.<br><br>        Required roles: `users.datalake.editors` or `users.datalake.admins`.<br>         In addition, users must be members of a data group(ACL) to access the data.'
-      operationId: soft_delete_record_api_rafs_ddms_v2_samplesanalysesreport__record_id__delete
+      operationId: DeleteSamplesAnalysesReportRecord
       parameters:
         - required: true
           schema:
@@ -108,13 +110,14 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
       security:
         - HTTPBearer: []
+      x-action-id: RF013
   /api/rafs-ddms/v2/samplesanalysesreport/{record_id}/versions:
     get:
       tags:
         - samplesanalysesreport
       summary: Get Record Versions
       description: 'Get a list of `SamplesAnalysesReport` object versions by record id.<br><br>        Required roles: `users.datalake.viewers` or `users.datalake.editors` or `users.datalake.admins`.<br>         In addition, users must be members of a data group(ACL) to access the data.'
-      operationId: get_record_versions_api_rafs_ddms_v2_samplesanalysesreport__record_id__versions_get
+      operationId: GetSamplesAnalysesReportVersions
       parameters:
         - required: true
           schema:
@@ -138,7 +141,7 @@ paths:
             application/json:
               schema:
                 type: object
-                title: Response Get Record Versions Api Rafs Ddms V2 Samplesanalysesreport  Record Id  Versions Get
+                title: Response Getsamplesanalysesreportversions
         '422':
           description: Validation Error
           content:
@@ -147,13 +150,14 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
       security:
         - HTTPBearer: []
+      x-action-id: RF010
   /api/rafs-ddms/v2/samplesanalysesreport/{record_id}/versions/{version}:
     get:
       tags:
         - samplesanalysesreport
       summary: Get Record Specific Version
       description: 'Get the given version of `SamplesAnalysesReport` object.<br><br>        Required roles: `users.datalake.viewers` or `users.datalake.editors` or `users.datalake.admins`.<br>         In addition, users must be members of a data group(ACL) to access the data.'
-      operationId: get_record_specific_version_api_rafs_ddms_v2_samplesanalysesreport__record_id__versions__version__get
+      operationId: GetSamplesAnalysesReportSpecificVersion
       parameters:
         - required: true
           schema:
@@ -183,7 +187,7 @@ paths:
             application/json:
               schema:
                 type: object
-                title: Response Get Record Specific Version Api Rafs Ddms V2 Samplesanalysesreport  Record Id  Versions  Version  Get
+                title: Response Getsamplesanalysesreportspecificversion
         '422':
           description: Validation Error
           content:
@@ -192,13 +196,14 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
       security:
         - HTTPBearer: []
+      x-action-id: RF011
   /api/rafs-ddms/v2/samplesanalysesreport:
     post:
       tags:
         - samplesanalysesreport
       summary: Post Records
       description: 'Create or update `SamplesAnalysesReport` record(s).<br><br>        Required roles: `users.datalake.editors` or `users.datalake.admins`.<br>         In addition, users must be members of a data group(ACL) to access the data.'
-      operationId: post_records_api_rafs_ddms_v2_samplesanalysesreport_post
+      operationId: CreateOrUpdateSamplesAnalysesReportRecords
       parameters:
         - description: Specifies the proper data partition id
           required: true
@@ -275,27 +280,14 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
       security:
         - HTTPBearer: []
+      x-action-id: RF012
   /api/rafs-ddms/v2/samplesanalysesreport/{record_id}/source:
     get:
       tags:
         - samplesanalysesreport
       summary: Get Source Data
-      description: |-
-        Get source data from data.Datasets property.
-
-        :param record_id: record id
-        :type record_id: str
-        :param storage_service: storage service, defaults to
-            Depends(get_async_storage_service)
-        :type storage_service: dataset.DatasetService, optional
-        :param dataset_service: dataset service, defaults to
-            Depends(get_async_dataset_service)
-        :type dataset_service: storage.StorageService, optional
-        :param version: version, defaults to None
-        :type version: Optional[str], optional
-        :return: rendered source data response
-        :rtype: JSONResponse
-      operationId: get_source_data_api_rafs_ddms_v2_samplesanalysesreport__record_id__source_get
+      description: Get source data from data.Datasets property.
+      operationId: GetSourceData
       parameters:
         - required: true
           schema:
@@ -332,13 +324,14 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
       security:
         - HTTPBearer: []
+      x-action-id: RF006
   /api/rafs-ddms/v2/samplesanalysis/analysistypes:
     get:
       tags:
         - samplesanalysis
       summary: Get Types
       description: Get available types.
-      operationId: get_types_api_rafs_ddms_v2_samplesanalysis_analysistypes_get
+      operationId: GetSamplesAnalysisTypes
       parameters:
         - description: Specifies the proper data partition id
           required: true
@@ -358,20 +351,21 @@ paths:
                   items: {}
                   type: array
                 type: object
-                title: Response Get Types Api Rafs Ddms V2 Samplesanalysis Analysistypes Get
+                title: Response Getsamplesanalysistypes
         '422':
           description: Validation Error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
+      x-action-id: RF002
   /api/rafs-ddms/v2/samplesanalysis/{record_id}:
     get:
       tags:
         - samplesanalysis
       summary: Get Record
       description: 'Get the latest version of `SamplesAnalysis` object by record id.<br><br>        Required roles: `users.datalake.viewers` or `users.datalake.editors` or `users.datalake.admins`.<br>         In addition, users must be members of a data group(ACL) to access the data.'
-      operationId: get_record_api_rafs_ddms_v2_samplesanalysis__record_id__get
+      operationId: GetSamplesAnalysisRecord
       parameters:
         - required: true
           schema:
@@ -395,7 +389,7 @@ paths:
             application/json:
               schema:
                 type: object
-                title: Response Get Record Api Rafs Ddms V2 Samplesanalysis  Record Id  Get
+                title: Response Getsamplesanalysisrecord
         '422':
           description: Validation Error
           content:
@@ -404,12 +398,13 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
       security:
         - HTTPBearer: []
+      x-action-id: RF019
     delete:
       tags:
         - samplesanalysis
       summary: Soft Delete Record
       description: 'Delete the `SamplesAnalysis` object by record id.<br><br>        Required roles: `users.datalake.editors` or `users.datalake.admins`.<br>         In addition, users must be members of a data group(ACL) to access the data.'
-      operationId: soft_delete_record_api_rafs_ddms_v2_samplesanalysis__record_id__delete
+      operationId: DeleteSamplesAnalysisRecord
       parameters:
         - required: true
           schema:
@@ -437,13 +432,14 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
       security:
         - HTTPBearer: []
+      x-action-id: RF023
   /api/rafs-ddms/v2/samplesanalysis/{record_id}/versions:
     get:
       tags:
         - samplesanalysis
       summary: Get Record Versions
       description: 'Get a list of `SamplesAnalysis` object versions by record id.<br><br>        Required roles: `users.datalake.viewers` or `users.datalake.editors` or `users.datalake.admins`.<br>         In addition, users must be members of a data group(ACL) to access the data.'
-      operationId: get_record_versions_api_rafs_ddms_v2_samplesanalysis__record_id__versions_get
+      operationId: GetSamplesAnalysisVersions
       parameters:
         - required: true
           schema:
@@ -467,7 +463,7 @@ paths:
             application/json:
               schema:
                 type: object
-                title: Response Get Record Versions Api Rafs Ddms V2 Samplesanalysis  Record Id  Versions Get
+                title: Response Getsamplesanalysisversions
         '422':
           description: Validation Error
           content:
@@ -476,13 +472,14 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
       security:
         - HTTPBearer: []
+      x-action-id: RF020
   /api/rafs-ddms/v2/samplesanalysis/{record_id}/versions/{version}:
     get:
       tags:
         - samplesanalysis
       summary: Get Record Specific Version
       description: 'Get the given version of `SamplesAnalysis` object.<br><br>        Required roles: `users.datalake.viewers` or `users.datalake.editors` or `users.datalake.admins`.<br>         In addition, users must be members of a data group(ACL) to access the data.'
-      operationId: get_record_specific_version_api_rafs_ddms_v2_samplesanalysis__record_id__versions__version__get
+      operationId: GetSamplesAnalysisSpecificVersion
       parameters:
         - required: true
           schema:
@@ -512,7 +509,7 @@ paths:
             application/json:
               schema:
                 type: object
-                title: Response Get Record Specific Version Api Rafs Ddms V2 Samplesanalysis  Record Id  Versions  Version  Get
+                title: Response Getsamplesanalysisspecificversion
         '422':
           description: Validation Error
           content:
@@ -521,13 +518,14 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
       security:
         - HTTPBearer: []
+      x-action-id: RF021
   /api/rafs-ddms/v2/samplesanalysis:
     post:
       tags:
         - samplesanalysis
       summary: Post Records
       description: 'Create or update `SamplesAnalysis` record(s).<br><br>        Required roles: `users.datalake.editors` or `users.datalake.admins`.<br>         In addition, users must be members of a data group(ACL) to access the data.'
-      operationId: post_records_api_rafs_ddms_v2_samplesanalysis_post
+      operationId: CreateOrUpdateSamplesAnalysisRecords
       parameters:
         - description: Specifies the proper data partition id
           required: true
@@ -602,13 +600,14 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
       security:
         - HTTPBearer: []
+      x-action-id: RF022
   /api/rafs-ddms/v2/samplesanalysis/{analysistype}/data/schema:
     get:
       tags:
         - samplesanalysis
       summary: Get Content Schema
       description: 'Get the (`content schema`) for a given `{analysistype}`. <br><br>                Use the `Accept` request header to specify content schema version                     (example header `Accept: application/json;version=1.0.0` is supported).<br><br>        Required roles: `users.datalake.viewers` or `users.datalake.editors` or `users.datalake.admins`.<br>         In addition, users must be members of a data group(ACL) to access the data.'
-      operationId: get_content_schema_api_rafs_ddms_v2_samplesanalysis__analysistype__data_schema_get
+      operationId: GetSamplesAnalysisContentSchema
       parameters:
         - required: true
           schema:
@@ -634,20 +633,21 @@ paths:
                   items: {}
                   type: array
                 type: object
-                title: Response Get Content Schema Api Rafs Ddms V2 Samplesanalysis  Analysistype  Data Schema Get
+                title: Response Getsamplesanalysiscontentschema
         '422':
           description: Validation Error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
+      x-action-id: RF003
   /api/rafs-ddms/v2/samplesanalysis/{record_id}/data/{analysis_type}/{content_id}:
     get:
       tags:
         - samplesanalysis
       summary: Get Data V2
       description: 'Get the (`latest version`) bulk data for a given `{analysis_type}` object by record id. <br><br>            Use the `Accept` request header to specify content schema version                 (example header `Accept: */*;version=1.0.0` is supported).<br><br>            The  `columns_filter`, `rows_filter`, and  `columns_aggregation`                 query parameters can be used to manage data in response.<br><br>        Required roles: `users.datalake.viewers` or `users.datalake.editors` or `users.datalake.admins`.<br>         In addition, users must be members of a data group(ACL) to access the data.'
-      operationId: get_data_v2_api_rafs_ddms_v2_samplesanalysis__record_id__data__analysis_type___content_id__get
+      operationId: GetAnalysisDataV2
       parameters:
         - required: true
           schema:
@@ -712,13 +712,14 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
       security:
         - HTTPBearer: []
+      x-action-id: RF007
   /api/rafs-ddms/v2/samplesanalysis/{record_id}/data/{analysis_type}:
     post:
       tags:
         - samplesanalysis
       summary: Post Data V2
       description: 'Upload the bulk data for a given `{analysis_type}` object by record id.<br>            It creates a new version of the record. <br>            The previous meta-data with bulk data is available by their `versions`. <br> <br>            Use the `Content-Type` request header to specify payload and response formats                 (`application/json` and `application/parquet` are supported).<br>            Use the `Accept` request header to specify content schema version                 (example header `Accept: */*;version=1.0.0` is supported).<br><br>        Required roles: `users.datalake.editors` or `users.datalake.admins`.<br>         In addition, users must be members of a data group(ACL) to access the data.'
-      operationId: post_data_v2_api_rafs_ddms_v2_samplesanalysis__record_id__data__analysis_type__post
+      operationId: UploadAnalysisDataV2
       parameters:
         - required: true
           schema:
@@ -748,7 +749,7 @@ paths:
             application/json:
               schema:
                 type: object
-                title: Response Post Data V2 Api Rafs Ddms V2 Samplesanalysis  Record Id  Data  Analysis Type  Post
+                title: Response Uploadanalysisdatav2
         '422':
           description: Validation Error
           content:
@@ -757,6 +758,7 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
       security:
         - HTTPBearer: []
+      x-action-id: RF008
       requestBody:
         content:
           application/json:
@@ -828,7 +830,7 @@ paths:
         - samplesanalysis
       summary: Get Search Data
       description: 'Get the (`queried`) bulk data from every `{analysis_type}` found in search service. <br><br>            Use the `Accept` request header to specify content schema version                 (example header `Accept: */*;version=1.0.0` is supported).<br><br>            The  `columns_filter`, `rows_filter`, and  `columns_aggregation`                 query parameters can be used to manage data in response. <br><br>            Use `offset`, `page_limit` query parameters to control response data size.                 The `page_limit` and `total_size (found in response)` refers to the number of parquet files read.<br><br>        Required roles: `users.datalake.viewers` or `users.datalake.editors` or `users.datalake.admins`.<br>         In addition, users must be members of a data group(ACL) to access the data.'
-      operationId: get_search_data_api_rafs_ddms_v2_samplesanalysis__analysis_type__search_data_get
+      operationId: SearchSamplesAnalysisData
       parameters:
         - required: true
           schema:
@@ -898,13 +900,14 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
       security:
         - HTTPBearer: []
+      x-action-id: RF004
   /api/rafs-ddms/v2/samplesanalysis/{analysis_type}/search:
     get:
       tags:
         - samplesanalysis
       summary: Get Search
       description: 'Get the (`samples analysis`) ids list that comply with `{query}` for given`{analysis_type}`. <br><br>            Use the `Accept` request header to specify content schema version                 (example header `Accept: */*;version=1.0.0` is supported).<br><br>            The  `columns_filter`, `rows_filter`, and  `columns_aggregation`                 query parameters can be used to manage data in response. <br><br>             Use `offset`, `page_limit` query parameters to control response data size.                 The `page_limit` and `total_size (found in response)` refers to the number of parquet files read.<br><br>        Required roles: `users.datalake.viewers` or `users.datalake.editors` or `users.datalake.admins`.<br>         In addition, users must be members of a data group(ACL) to access the data.'
-      operationId: get_search_api_rafs_ddms_v2_samplesanalysis__analysis_type__search_get
+      operationId: SearchSamplesAnalysis
       parameters:
         - required: true
           schema:
@@ -974,13 +977,14 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
       security:
         - HTTPBearer: []
+      x-action-id: RF005
   /api/rafs-ddms/v2/masterdata/{record_id}:
     get:
       tags:
         - masterdata
       summary: Get Record
       description: 'Get the latest version of `(osdu:wks:master-data--GenericFacility:1.0.0|osdu:wks:master-data--GenericSite:1.0.0|osdu:wks:master-data--Sample:2.0.0|osdu:wks:master-data--Sample:2.1.0|osdu:wks:master-data--SampleAcquisitionJob:1.0.0|osdu:wks:master-data--SampleChainOfCustodyEvent:1.0.0|osdu:wks:master-data--SampleContainer:1.0.0)` object by record id.<br><br>        Required roles: `users.datalake.viewers` or `users.datalake.editors` or `users.datalake.admins`.<br>         In addition, users must be members of a data group(ACL) to access the data.'
-      operationId: get_record_api_rafs_ddms_v2_masterdata__record_id__get
+      operationId: Get(osdu:wks:master-data--GenericFacility:1.0.0|osdu:wks:master-data--GenericSite:1.0.0|osdu:wks:master-data--Sample:2.0.0|osdu:wks:master-data--Sample:2.1.0|osdu:wks:master-data--SampleAcquisitionJob:1.0.0|osdu:wks:master-data--SampleChainOfCustodyEvent:1.0.0|osdu:wks:master-data--SampleContainer:1.0.0)Record
       parameters:
         - required: true
           schema:
@@ -1004,7 +1008,7 @@ paths:
             application/json:
               schema:
                 type: object
-                title: Response Get Record Api Rafs Ddms V2 Masterdata  Record Id  Get
+                title: Response Get(Osdu:Wks:Master-Data--Genericfacility:1.0.0|Osdu:Wks:Master-Data--Genericsite:1.0.0|Osdu:Wks:Master-Data--Sample:2.0.0|Osdu:Wks:Master-Data--Sample:2.1.0|Osdu:Wks:Master-Data--Sampleacquisitionjob:1.0.0|Osdu:Wks:Master-Data--Samplechainofcustodyevent:1.0.0|Osdu:Wks:Master-Data--Samplecontainer:1.0.0)Record
         '422':
           description: Validation Error
           content:
@@ -1013,12 +1017,13 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
       security:
         - HTTPBearer: []
+      x-action-id: RF009
     delete:
       tags:
         - masterdata
       summary: Soft Delete Record
       description: 'Delete the `(osdu:wks:master-data--GenericFacility:1.0.0|osdu:wks:master-data--GenericSite:1.0.0|osdu:wks:master-data--Sample:2.0.0|osdu:wks:master-data--Sample:2.1.0|osdu:wks:master-data--SampleAcquisitionJob:1.0.0|osdu:wks:master-data--SampleChainOfCustodyEvent:1.0.0|osdu:wks:master-data--SampleContainer:1.0.0)` object by record id.<br><br>        Required roles: `users.datalake.editors` or `users.datalake.admins`.<br>         In addition, users must be members of a data group(ACL) to access the data.'
-      operationId: soft_delete_record_api_rafs_ddms_v2_masterdata__record_id__delete
+      operationId: Delete(osdu:wks:master-data--GenericFacility:1.0.0|osdu:wks:master-data--GenericSite:1.0.0|osdu:wks:master-data--Sample:2.0.0|osdu:wks:master-data--Sample:2.1.0|osdu:wks:master-data--SampleAcquisitionJob:1.0.0|osdu:wks:master-data--SampleChainOfCustodyEvent:1.0.0|osdu:wks:master-data--SampleContainer:1.0.0)Record
       parameters:
         - required: true
           schema:
@@ -1046,13 +1051,14 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
       security:
         - HTTPBearer: []
+      x-action-id: RF023
   /api/rafs-ddms/v2/masterdata/{record_id}/versions:
     get:
       tags:
         - masterdata
       summary: Get Record Versions
       description: 'Get a list of `(osdu:wks:master-data--GenericFacility:1.0.0|osdu:wks:master-data--GenericSite:1.0.0|osdu:wks:master-data--Sample:2.0.0|osdu:wks:master-data--Sample:2.1.0|osdu:wks:master-data--SampleAcquisitionJob:1.0.0|osdu:wks:master-data--SampleChainOfCustodyEvent:1.0.0|osdu:wks:master-data--SampleContainer:1.0.0)` object versions by record id.<br><br>        Required roles: `users.datalake.viewers` or `users.datalake.editors` or `users.datalake.admins`.<br>         In addition, users must be members of a data group(ACL) to access the data.'
-      operationId: get_record_versions_api_rafs_ddms_v2_masterdata__record_id__versions_get
+      operationId: Get(osdu:wks:master-data--GenericFacility:1.0.0|osdu:wks:master-data--GenericSite:1.0.0|osdu:wks:master-data--Sample:2.0.0|osdu:wks:master-data--Sample:2.1.0|osdu:wks:master-data--SampleAcquisitionJob:1.0.0|osdu:wks:master-data--SampleChainOfCustodyEvent:1.0.0|osdu:wks:master-data--SampleContainer:1.0.0)Versions
       parameters:
         - required: true
           schema:
@@ -1076,7 +1082,7 @@ paths:
             application/json:
               schema:
                 type: object
-                title: Response Get Record Versions Api Rafs Ddms V2 Masterdata  Record Id  Versions Get
+                title: Response Get(Osdu:Wks:Master-Data--Genericfacility:1.0.0|Osdu:Wks:Master-Data--Genericsite:1.0.0|Osdu:Wks:Master-Data--Sample:2.0.0|Osdu:Wks:Master-Data--Sample:2.1.0|Osdu:Wks:Master-Data--Sampleacquisitionjob:1.0.0|Osdu:Wks:Master-Data--Samplechainofcustodyevent:1.0.0|Osdu:Wks:Master-Data--Samplecontainer:1.0.0)Versions
         '422':
           description: Validation Error
           content:
@@ -1085,13 +1091,14 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
       security:
         - HTTPBearer: []
+      x-action-id: RF020
   /api/rafs-ddms/v2/masterdata/{record_id}/versions/{version}:
     get:
       tags:
         - masterdata
       summary: Get Record Specific Version
       description: 'Get the given version of `(osdu:wks:master-data--GenericFacility:1.0.0|osdu:wks:master-data--GenericSite:1.0.0|osdu:wks:master-data--Sample:2.0.0|osdu:wks:master-data--Sample:2.1.0|osdu:wks:master-data--SampleAcquisitionJob:1.0.0|osdu:wks:master-data--SampleChainOfCustodyEvent:1.0.0|osdu:wks:master-data--SampleContainer:1.0.0)` object.<br><br>        Required roles: `users.datalake.viewers` or `users.datalake.editors` or `users.datalake.admins`.<br>         In addition, users must be members of a data group(ACL) to access the data.'
-      operationId: get_record_specific_version_api_rafs_ddms_v2_masterdata__record_id__versions__version__get
+      operationId: Get(osdu:wks:master-data--GenericFacility:1.0.0|osdu:wks:master-data--GenericSite:1.0.0|osdu:wks:master-data--Sample:2.0.0|osdu:wks:master-data--Sample:2.1.0|osdu:wks:master-data--SampleAcquisitionJob:1.0.0|osdu:wks:master-data--SampleChainOfCustodyEvent:1.0.0|osdu:wks:master-data--SampleContainer:1.0.0)SpecificVersion
       parameters:
         - required: true
           schema:
@@ -1121,7 +1128,7 @@ paths:
             application/json:
               schema:
                 type: object
-                title: Response Get Record Specific Version Api Rafs Ddms V2 Masterdata  Record Id  Versions  Version  Get
+                title: Response Get(Osdu:Wks:Master-Data--Genericfacility:1.0.0|Osdu:Wks:Master-Data--Genericsite:1.0.0|Osdu:Wks:Master-Data--Sample:2.0.0|Osdu:Wks:Master-Data--Sample:2.1.0|Osdu:Wks:Master-Data--Sampleacquisitionjob:1.0.0|Osdu:Wks:Master-Data--Samplechainofcustodyevent:1.0.0|Osdu:Wks:Master-Data--Samplecontainer:1.0.0)Specificversion
         '422':
           description: Validation Error
           content:
@@ -1130,13 +1137,14 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
       security:
         - HTTPBearer: []
+      x-action-id: RF021
   /api/rafs-ddms/v2/masterdata:
     post:
       tags:
         - masterdata
       summary: Post Records
       description: 'Create or update `(osdu:wks:master-data--GenericFacility:1.0.0|osdu:wks:master-data--GenericSite:1.0.0|osdu:wks:master-data--Sample:2.0.0|osdu:wks:master-data--Sample:2.1.0|osdu:wks:master-data--SampleAcquisitionJob:1.0.0|osdu:wks:master-data--SampleChainOfCustodyEvent:1.0.0|osdu:wks:master-data--SampleContainer:1.0.0)` record(s).<br><br>        Required roles: `users.datalake.editors` or `users.datalake.admins`.<br>         In addition, users must be members of a data group(ACL) to access the data.'
-      operationId: post_records_api_rafs_ddms_v2_masterdata_post
+      operationId: CreateOrUpdate(osdu:wks:master-data--GenericFacility:1.0.0|osdu:wks:master-data--GenericSite:1.0.0|osdu:wks:master-data--Sample:2.0.0|osdu:wks:master-data--Sample:2.1.0|osdu:wks:master-data--SampleAcquisitionJob:1.0.0|osdu:wks:master-data--SampleChainOfCustodyEvent:1.0.0|osdu:wks:master-data--SampleContainer:1.0.0)Records
       parameters:
         - description: Specifies the proper data partition id
           required: true
@@ -1521,6 +1529,7 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
       security:
         - HTTPBearer: []
+      x-action-id: RF022
   /api/rafs-ddms/dev/samplesanalysis/{record_id}/data/{analysis_type}:
     get:
       tags:
