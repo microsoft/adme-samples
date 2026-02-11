@@ -1,0 +1,2210 @@
+openapi: 3.0.3
+info:
+  title: Rock and Fluid Sample DDMS
+  description: OSDU Rock and Fluid Sample DDMS
+  license:
+    name: Apache 2.0
+    url: 'https://www.apache.org/licenses/LICENSE-2.0.html'
+  version: 0.2.0
+paths:
+  /metrics:
+    get:
+      summary: Metrics
+      description: Endpoint that serves Prometheus metrics.
+      operationId: metrics_metrics_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /api/rafs-ddms/info:
+    get:
+      tags:
+        - info
+      summary: Get Info
+      description: |-
+        Get application info.
+
+        :return: application info
+        :rtype: InfoResponse
+      operationId: GetInfo
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InfoResponse'
+      x-action-id: RF014
+  '/api/rafs-ddms/v2/samplesanalysesreport/{record_id}':
+    get:
+      tags:
+        - samplesanalysesreport
+      summary: Get Record
+      description: >-
+        Get the latest version of `SamplesAnalysesReport` object by record
+        id.<br><br>        Required roles: `users.datalake.viewers` or
+        `users.datalake.editors` or `users.datalake.admins`.<br>         In
+        addition, users must be members of a data group(ACL) to access the data.
+      operationId: GetSamplesAnalysesReportRecord
+      parameters:
+        - required: true
+          schema:
+            type: string
+            pattern: >-
+              ^[\w\-\.]+:work-product-component--SamplesAnalysesReport:[\w\-\.\:\%]+$
+            title: Record Id
+          name: record_id
+          in: path
+        - description: Specifies the proper data partition id
+          required: true
+          schema:
+            title: data-partition-id
+            description: Specifies the proper data partition id
+          example: opendes
+          name: data-partition-id
+          in: header
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                title: Response Getsamplesanalysesreportrecord
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+        - HTTPBearer: []
+      x-action-id: RF009
+    delete:
+      tags:
+        - samplesanalysesreport
+      summary: Soft Delete Record
+      description: >-
+        Delete the `SamplesAnalysesReport` object by record id.<br><br>       
+        Required roles: `users.datalake.editors` or
+        `users.datalake.admins`.<br>         In addition, users must be members
+        of a data group(ACL) to access the data.
+      operationId: DeleteSamplesAnalysesReportRecord
+      parameters:
+        - required: true
+          schema:
+            type: string
+            pattern: >-
+              ^[\w\-\.]+:work-product-component--SamplesAnalysesReport:[\w\-\.\:\%]+$
+            title: Record Id
+          name: record_id
+          in: path
+        - description: Specifies the proper data partition id
+          required: true
+          schema:
+            title: data-partition-id
+            description: Specifies the proper data partition id
+          example: opendes
+          name: data-partition-id
+          in: header
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+        - HTTPBearer: []
+      x-action-id: RF013
+  '/api/rafs-ddms/v2/samplesanalysesreport/{record_id}/versions':
+    get:
+      tags:
+        - samplesanalysesreport
+      summary: Get Record Versions
+      description: >-
+        Get a list of `SamplesAnalysesReport` object versions by record
+        id.<br><br>        Required roles: `users.datalake.viewers` or
+        `users.datalake.editors` or `users.datalake.admins`.<br>         In
+        addition, users must be members of a data group(ACL) to access the data.
+      operationId: GetSamplesAnalysesReportVersions
+      parameters:
+        - required: true
+          schema:
+            type: string
+            pattern: >-
+              ^[\w\-\.]+:work-product-component--SamplesAnalysesReport:[\w\-\.\:\%]+$
+            title: Record Id
+          name: record_id
+          in: path
+        - description: Specifies the proper data partition id
+          required: true
+          schema:
+            title: data-partition-id
+            description: Specifies the proper data partition id
+          example: opendes
+          name: data-partition-id
+          in: header
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                title: Response Getsamplesanalysesreportversions
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+        - HTTPBearer: []
+      x-action-id: RF010
+  '/api/rafs-ddms/v2/samplesanalysesreport/{record_id}/versions/{version}':
+    get:
+      tags:
+        - samplesanalysesreport
+      summary: Get Record Specific Version
+      description: >-
+        Get the given version of `SamplesAnalysesReport` object.<br><br>       
+        Required roles: `users.datalake.viewers` or `users.datalake.editors` or
+        `users.datalake.admins`.<br>         In addition, users must be members
+        of a data group(ACL) to access the data.
+      operationId: GetSamplesAnalysesReportSpecificVersion
+      parameters:
+        - required: true
+          schema:
+            type: integer
+            title: Version
+          name: version
+          in: path
+        - required: true
+          schema:
+            type: string
+            pattern: >-
+              ^[\w\-\.]+:work-product-component--SamplesAnalysesReport:[\w\-\.\:\%]+$
+            title: Record Id
+          name: record_id
+          in: path
+        - description: Specifies the proper data partition id
+          required: true
+          schema:
+            title: data-partition-id
+            description: Specifies the proper data partition id
+          example: opendes
+          name: data-partition-id
+          in: header
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                title: Response Getsamplesanalysesreportspecificversion
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+        - HTTPBearer: []
+      x-action-id: RF011
+  /api/rafs-ddms/v2/samplesanalysesreport:
+    post:
+      tags:
+        - samplesanalysesreport
+      summary: Post Records
+      description: >-
+        Create or update `SamplesAnalysesReport` record(s).<br><br>       
+        Required roles: `users.datalake.editors` or
+        `users.datalake.admins`.<br>         In addition, users must be members
+        of a data group(ACL) to access the data.
+      operationId: CreateOrUpdateSamplesAnalysesReportRecords
+      parameters:
+        - description: Specifies the proper data partition id
+          required: true
+          schema:
+            title: data-partition-id
+            description: Specifies the proper data partition id
+          example: opendes
+          name: data-partition-id
+          in: header
+      requestBody:
+        content:
+          application/json:
+            schema:
+              items:
+                type: object
+              type: array
+              title: Request Records
+            example:
+              - id: >-
+                  namespace:work-product-component--SamplesAnalysesReport:dd76cf6c-226f-5636-ad1b-1ca0f8249cc8
+                kind: >-
+                  schema_authority:wks:work-product-component--SamplesAnalysesReport:1.0.0
+                version: 15620
+                acl:
+                  owners:
+                    - someone@company.com
+                  viewers:
+                    - someone@company.com
+                legal:
+                  legaltags:
+                    - Example legaltags
+                  otherRelevantDataCountries:
+                    - US
+                  status: compliant
+                tags:
+                  NameOfKey: String value
+                createTime: '2020-12-16T11:46:20.163Z'
+                createUser: some-user@some-company-cloud.com
+                modifyTime: '2020-12-16T11:52:24.477Z'
+                modifyUser: some-user@some-company-cloud.com
+                DocumentTypeID: 'namespace:reference-data--DocumentType:SampleAnalysisReport:'
+                NumberOfPages: '45'
+                SubTitle: Advanced Core Analysis Study
+                DocumentSubject: SCAL Results Report (Final)
+                DatePublished: 10-06-2021
+                DateModified: 10-06-2021
+                DocumentLanguage: English
+                SampleIDs:
+                  - >-
+                    namespace:master-data--Sample:dd76cf6c-226f-5636-ad1b-1ca0f8249cc10
+                  - >-
+                    namespace:master-data--Sample:dd76cf6c-226f-5636-ad1b-1ca0f8249cc11
+                ReportSampleIdentifiers:
+                  - 45H
+                  - 49H
+                SampleAnalysisTypeIDs:
+                  - CapillaryPressureGasOil.CentrifugeDrainageGasOil
+                SampleAnalysisCategoryTagIDs:
+                  - SCAL
+                  - CapPressure
+                Remarks:
+                  - Remark: Test was successfully conducted
+                    RemarkID: '1'
+                    RemarkSource: Lab Manager
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StorageUpsertResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+        - HTTPBearer: []
+      x-action-id: RF012
+  '/api/rafs-ddms/v2/samplesanalysesreport/{record_id}/source':
+    get:
+      tags:
+        - samplesanalysesreport
+      summary: Get Source Data
+      description: Get source data from data.Datasets property.
+      operationId: GetSourceData
+      parameters:
+        - required: true
+          schema:
+            type: string
+            pattern: >-
+              ^[\w\-\.]+:work-product-component--SamplesAnalysesReport:[\w\-\.\:\%]+$
+            title: Record Id
+          name: record_id
+          in: path
+        - required: false
+          schema:
+            type: string
+            title: Version
+          name: version
+          in: query
+        - description: Specifies the proper data partition id
+          required: true
+          schema:
+            title: data-partition-id
+            description: Specifies the proper data partition id
+          example: opendes
+          name: data-partition-id
+          in: header
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+        - HTTPBearer: []
+      x-action-id: RF006
+  /api/rafs-ddms/v2/samplesanalysis/analysistypes:
+    get:
+      tags:
+        - samplesanalysis
+      summary: Get Types
+      description: Get available types.
+      operationId: GetSamplesAnalysisTypes
+      parameters:
+        - description: Specifies the proper data partition id
+          required: true
+          schema:
+            title: data-partition-id
+            description: Specifies the proper data partition id
+          example: opendes
+          name: data-partition-id
+          in: header
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                additionalProperties:
+                  items: {}
+                  type: array
+                type: object
+                title: Response Getsamplesanalysistypes
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      x-action-id: RF002
+  '/api/rafs-ddms/v2/samplesanalysis/{record_id}':
+    get:
+      tags:
+        - samplesanalysis
+      summary: Get Record
+      description: >-
+        Get the latest version of `SamplesAnalysis` object by record
+        id.<br><br>        Required roles: `users.datalake.viewers` or
+        `users.datalake.editors` or `users.datalake.admins`.<br>         In
+        addition, users must be members of a data group(ACL) to access the data.
+      operationId: GetSamplesAnalysisRecord
+      parameters:
+        - required: true
+          schema:
+            type: string
+            pattern: '^[\w\-\.]+:work-product-component--SamplesAnalysis:[\w\-\.\:\%]+$'
+            title: Record Id
+          name: record_id
+          in: path
+        - description: Specifies the proper data partition id
+          required: true
+          schema:
+            title: data-partition-id
+            description: Specifies the proper data partition id
+          example: opendes
+          name: data-partition-id
+          in: header
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                title: Response Getsamplesanalysisrecord
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+        - HTTPBearer: []
+      x-action-id: RF019
+    delete:
+      tags:
+        - samplesanalysis
+      summary: Soft Delete Record
+      description: >-
+        Delete the `SamplesAnalysis` object by record id.<br><br>       
+        Required roles: `users.datalake.editors` or
+        `users.datalake.admins`.<br>         In addition, users must be members
+        of a data group(ACL) to access the data.
+      operationId: DeleteSamplesAnalysisRecord
+      parameters:
+        - required: true
+          schema:
+            type: string
+            pattern: '^[\w\-\.]+:work-product-component--SamplesAnalysis:[\w\-\.\:\%]+$'
+            title: Record Id
+          name: record_id
+          in: path
+        - description: Specifies the proper data partition id
+          required: true
+          schema:
+            title: data-partition-id
+            description: Specifies the proper data partition id
+          example: opendes
+          name: data-partition-id
+          in: header
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+        - HTTPBearer: []
+      x-action-id: RF023
+  '/api/rafs-ddms/v2/samplesanalysis/{record_id}/versions':
+    get:
+      tags:
+        - samplesanalysis
+      summary: Get Record Versions
+      description: >-
+        Get a list of `SamplesAnalysis` object versions by record
+        id.<br><br>        Required roles: `users.datalake.viewers` or
+        `users.datalake.editors` or `users.datalake.admins`.<br>         In
+        addition, users must be members of a data group(ACL) to access the data.
+      operationId: GetSamplesAnalysisVersions
+      parameters:
+        - required: true
+          schema:
+            type: string
+            pattern: '^[\w\-\.]+:work-product-component--SamplesAnalysis:[\w\-\.\:\%]+$'
+            title: Record Id
+          name: record_id
+          in: path
+        - description: Specifies the proper data partition id
+          required: true
+          schema:
+            title: data-partition-id
+            description: Specifies the proper data partition id
+          example: opendes
+          name: data-partition-id
+          in: header
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                title: Response Getsamplesanalysisversions
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+        - HTTPBearer: []
+      x-action-id: RF020
+  '/api/rafs-ddms/v2/samplesanalysis/{record_id}/versions/{version}':
+    get:
+      tags:
+        - samplesanalysis
+      summary: Get Record Specific Version
+      description: >-
+        Get the given version of `SamplesAnalysis` object.<br><br>       
+        Required roles: `users.datalake.viewers` or `users.datalake.editors` or
+        `users.datalake.admins`.<br>         In addition, users must be members
+        of a data group(ACL) to access the data.
+      operationId: GetSamplesAnalysisSpecificVersion
+      parameters:
+        - required: true
+          schema:
+            type: integer
+            title: Version
+          name: version
+          in: path
+        - required: true
+          schema:
+            type: string
+            pattern: '^[\w\-\.]+:work-product-component--SamplesAnalysis:[\w\-\.\:\%]+$'
+            title: Record Id
+          name: record_id
+          in: path
+        - description: Specifies the proper data partition id
+          required: true
+          schema:
+            title: data-partition-id
+            description: Specifies the proper data partition id
+          example: opendes
+          name: data-partition-id
+          in: header
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                title: Response Getsamplesanalysisspecificversion
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+        - HTTPBearer: []
+      x-action-id: RF021
+  /api/rafs-ddms/v2/samplesanalysis:
+    post:
+      tags:
+        - samplesanalysis
+      summary: Post Records
+      description: >-
+        Create or update `SamplesAnalysis` record(s).<br><br>        Required
+        roles: `users.datalake.editors` or `users.datalake.admins`.<br>        
+        In addition, users must be members of a data group(ACL) to access the
+        data.
+      operationId: CreateOrUpdateSamplesAnalysisRecords
+      parameters:
+        - description: Specifies the proper data partition id
+          required: true
+          schema:
+            title: data-partition-id
+            description: Specifies the proper data partition id
+          example: opendes
+          name: data-partition-id
+          in: header
+      requestBody:
+        content:
+          application/json:
+            schema:
+              items:
+                type: object
+              type: array
+              title: Request Records
+            example:
+              - id: >-
+                  namespace:work-product-component--SamplesAnalysis:SamplesAnalysisExample
+                kind: 'osdu:wks:work-product-component--SamplesAnalysis:1.0.0'
+                acl:
+                  viewers:
+                    - someone@company.com
+                  owners:
+                    - someone@company.com
+                legal:
+                  legaltags:
+                    - Example legaltags
+                  otherRelevantDataCountries:
+                    - US
+                  status: compliant
+                tags:
+                  NameOfKey: String value
+                data:
+                  SampleIDs:
+                    - >-
+                      namespace:master-data--Sample:dd76cf6c-226f-5636-ad1b-1ca0f8249cc11:
+                  ReportSampleIdentifiers:
+                    - 88Y
+                  AnalysisDate: '2022-12-16'
+                  LaboratoryIDs:
+                    - 'namespace:master-data--Organisation:TBD_Lab_1:'
+                  LaboratoryNames:
+                    - TestLab
+                  LaboratoryAnalysts:
+                    - Analyst Contact 1
+                  Remarks:
+                    - Remark: Test was successfully conducted
+                      RemarkSequenceNumber: 1
+                      RemarkSource: Lab
+                      RemarkDate: '2023-10-23'
+                  DateAnalyzed: '2022-12-01'
+                  DatePublished: '2022-12-16'
+                  ParentSamplesAnalysesReports:
+                    - ParentSamplesAnalysesReportID: >-
+                        namespace:work-product-component--SamplesAnalysesReport:SamplesAnalysesReport:
+                  SampleAnalysisTypeIDs:
+                    - >-
+                      namespace:reference-data--SampleAnalysisType:CapillaryPressure.Centrifuge:
+                  SamplesAnalysisCategoryTagIDs:
+                    - >-
+                      namespace:reference-data--SamplesAnalysisCategoryTag:GreenCompany.SCAL:
+                  DDMSDatasets: []
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StorageUpsertResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+        - HTTPBearer: []
+      x-action-id: RF022
+  '/api/rafs-ddms/v2/samplesanalysis/{analysistype}/data/schema':
+    get:
+      tags:
+        - samplesanalysis
+      summary: Get Content Schema
+      description: >-
+        Get the (`content schema`) for a given `{analysistype}`.
+        <br><br>                Use the `Accept` request header to specify
+        content schema version                     (example header `Accept:
+        application/json;version=1.0.0` is supported).<br><br>        Required
+        roles: `users.datalake.viewers` or `users.datalake.editors` or
+        `users.datalake.admins`.<br>         In addition, users must be members
+        of a data group(ACL) to access the data.
+      operationId: GetSamplesAnalysisContentSchema
+      parameters:
+        - required: true
+          schema:
+            type: string
+            title: Analysistype
+          name: analysistype
+          in: path
+        - description: Specifies the proper data partition id
+          required: true
+          schema:
+            title: data-partition-id
+            description: Specifies the proper data partition id
+          example: opendes
+          name: data-partition-id
+          in: header
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                additionalProperties:
+                  items: {}
+                  type: array
+                type: object
+                title: Response Getsamplesanalysiscontentschema
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      x-action-id: RF003
+  '/api/rafs-ddms/v2/samplesanalysis/{record_id}/data/{analysis_type}/{content_id}':
+    get:
+      tags:
+        - samplesanalysis
+      summary: Get Data V2
+      description: >-
+        Get the (`latest version`) bulk data for a given `{analysis_type}`
+        object by record id. <br><br>            Use the `Accept` request header
+        to specify content schema version                 (example header
+        `Accept: */*;version=1.0.0` is supported).<br><br>            The 
+        `columns_filter`, `rows_filter`, and 
+        `columns_aggregation`                 query parameters can be used to
+        manage data in response.<br><br>        Required roles:
+        `users.datalake.viewers` or `users.datalake.editors` or
+        `users.datalake.admins`.<br>         In addition, users must be members
+        of a data group(ACL) to access the data.
+      operationId: GetAnalysisDataV2
+      parameters:
+        - required: true
+          schema:
+            type: string
+            pattern: '^[\w\-\.]+:work-product-component--SamplesAnalysis:[\w\-\.\:\%]+$'
+            title: Record Id
+          name: record_id
+          in: path
+        - required: true
+          schema:
+            type: string
+            title: Analysis Type
+          name: analysis_type
+          in: path
+        - required: true
+          schema:
+            type: string
+            pattern: >-
+              ([\w\-\.]+:dataset--File.Generic:[\w\-\d\.]+:?[\w\-\.\:\%]*)|([\d\w]+-[\d\w]+-[\d\w]+-[\d\w]+-[\d\w]+)
+            title: Content Id
+          name: content_id
+          in: path
+        - required: false
+          schema:
+            type: string
+            title: Columns Filter
+          example: 'PropertyX,PropertyY,PropertyZ'
+          name: columns_filter
+          in: query
+        - required: false
+          schema:
+            type: string
+            title: Rows Filter
+          example: 'PropertyX[.PropertyXFieldA],gt,4000'
+          name: rows_filter
+          in: query
+        - required: false
+          schema:
+            type: string
+            title: Columns Aggregation
+          example: 'PropertyX[.PropertyXFieldA],avg'
+          name: columns_aggregation
+          in: query
+        - description: Specifies the proper data partition id
+          required: true
+          schema:
+            title: data-partition-id
+            description: Specifies the proper data partition id
+          example: opendes
+          name: data-partition-id
+          in: header
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+        - HTTPBearer: []
+      x-action-id: RF007
+  '/api/rafs-ddms/v2/samplesanalysis/{record_id}/data/{analysis_type}':
+    post:
+      tags:
+        - samplesanalysis
+      summary: Post Data V2
+      description: >-
+        Upload the bulk data for a given `{analysis_type}` object by record
+        id.<br>            It creates a new version of the record.
+        <br>            The previous meta-data with bulk data is available by
+        their `versions`. <br> <br>            Use the `Content-Type` request
+        header to specify payload and response formats                
+        (`application/json` and `application/parquet` are
+        supported).<br>            Use the `Accept` request header to specify
+        content schema version                 (example header `Accept:
+        */*;version=1.0.0` is supported).<br><br>        Required roles:
+        `users.datalake.editors` or `users.datalake.admins`.<br>         In
+        addition, users must be members of a data group(ACL) to access the data.
+      operationId: UploadAnalysisDataV2
+      parameters:
+        - required: true
+          schema:
+            type: string
+            pattern: '^[\w\-\.]+:work-product-component--SamplesAnalysis:[\w\-\.\:\%]+$'
+            title: Record Id
+          name: record_id
+          in: path
+        - required: true
+          schema:
+            type: string
+            title: Analysis Type
+          name: analysis_type
+          in: path
+        - description: Specifies the proper data partition id
+          required: true
+          schema:
+            title: data-partition-id
+            description: Specifies the proper data partition id
+          example: opendes
+          name: data-partition-id
+          in: header
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                title: Response Uploadanalysisdatav2
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+        - HTTPBearer: []
+      x-action-id: RF008
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: OrientSplit
+              type: object
+              properties:
+                columns:
+                  title: Columns
+                  minItems: 1
+                  type: array
+                  items:
+                    type: string
+                index:
+                  title: Index
+                  minItems: 1
+                  type: array
+                  items:
+                    type: integer
+                data:
+                  title: Data
+                  minItems: 1
+                  type: array
+                  items:
+                    type: array
+                    items: {}
+              required:
+                - columns
+                - index
+                - data
+              additionalProperties: false
+            example:
+              columns:
+                - SamplesAnalysisID
+                - TestMethod
+                - SalinityTestResults
+                - SalinityTestSteps
+              index:
+                - 0
+              data:
+                - - >-
+                    namespace:work-product-component--SamplesAnalysis:multiple_salinity_example:
+                  - TestMethod
+                  - - SampleID: 'namespace:master-data--Sample:test_id:'
+                      BQv:
+                        Value: 3.5
+                        UnitOfMeasure: 'namespace:reference-data--UnitOfMeasure:%25:'
+                      Qv:
+                        Value: 3.5
+                        UnitOfMeasure: 'namespace:reference-data--UnitOfMeasure:%25:'
+                    - SampleID: 'namespace:master-data--Sample:test_id:'
+                      BQv:
+                        Value: 4.5
+                        UnitOfMeasure: 'namespace:reference-data--UnitOfMeasure:%25:'
+                      Qv:
+                        Value: 4.5
+                        UnitOfMeasure: 'namespace:reference-data--UnitOfMeasure:%25:'
+                  - - BrineSalinity:
+                        Value: 3.5
+                        UnitOfMeasure: 'namespace:reference-data--UnitOfMeasure:%25:'
+                      BrineConductivity:
+                        Value: 3.5
+                        UnitOfMeasure: 'namespace:reference-data--UnitOfMeasure:%25:'
+                      CoreConductivity:
+                        Value: 3.5
+                        UnitOfMeasure: 'namespace:reference-data--UnitOfMeasure:%25:'
+  '/api/rafs-ddms/v2/samplesanalysis/{analysis_type}/search/data':
+    get:
+      tags:
+        - samplesanalysis
+      summary: Get Search Data
+      description: >-
+        Get the (`queried`) bulk data from every `{analysis_type}` found in
+        search service. <br><br>            Use the `Accept` request header to
+        specify content schema version                 (example header `Accept:
+        */*;version=1.0.0` is supported).<br><br>            The 
+        `columns_filter`, `rows_filter`, and 
+        `columns_aggregation`                 query parameters can be used to
+        manage data in response. <br><br>            Use `offset`, `page_limit`
+        query parameters to control response data size.                 The
+        `page_limit` and `total_size (found in response)` refers to the number
+        of parquet files read.<br><br>        Required roles:
+        `users.datalake.viewers` or `users.datalake.editors` or
+        `users.datalake.admins`.<br>         In addition, users must be members
+        of a data group(ACL) to access the data.
+      operationId: SearchSamplesAnalysisData
+      parameters:
+        - required: true
+          schema:
+            type: string
+            title: Analysis Type
+          name: analysis_type
+          in: path
+        - required: false
+          schema:
+            type: string
+            title: Columns Filter
+          example: 'PropertyX,PropertyY,PropertyZ'
+          name: columns_filter
+          in: query
+        - required: false
+          schema:
+            type: string
+            title: Rows Filter
+          example: 'PropertyX[.PropertyXFieldA],gt,4000'
+          name: rows_filter
+          in: query
+        - required: false
+          schema:
+            type: string
+            title: Columns Aggregation
+          example: 'PropertyX[.PropertyXFieldA],avg'
+          name: columns_aggregation
+          in: query
+        - required: false
+          schema:
+            type: integer
+            maximum: 100
+            exclusiveMinimum: 0
+            title: Page Limit
+            default: 100
+          example: 100
+          name: page_limit
+          in: query
+        - required: false
+          schema:
+            type: integer
+            minimum: 0
+            title: Offset
+            default: 0
+          example: 100
+          name: offset
+          in: query
+        - description: Specifies the proper data partition id
+          required: true
+          schema:
+            title: data-partition-id
+            description: Specifies the proper data partition id
+          example: opendes
+          name: data-partition-id
+          in: header
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+        - HTTPBearer: []
+      x-action-id: RF004
+  '/api/rafs-ddms/v2/samplesanalysis/{analysis_type}/search':
+    get:
+      tags:
+        - samplesanalysis
+      summary: Get Search
+      description: >-
+        Get the (`samples analysis`) ids list that comply with `{query}` for
+        given`{analysis_type}`. <br><br>            Use the `Accept` request
+        header to specify content schema version                 (example header
+        `Accept: */*;version=1.0.0` is supported).<br><br>            The 
+        `columns_filter`, `rows_filter`, and 
+        `columns_aggregation`                 query parameters can be used to
+        manage data in response. <br><br>             Use `offset`, `page_limit`
+        query parameters to control response data size.                 The
+        `page_limit` and `total_size (found in response)` refers to the number
+        of parquet files read.<br><br>        Required roles:
+        `users.datalake.viewers` or `users.datalake.editors` or
+        `users.datalake.admins`.<br>         In addition, users must be members
+        of a data group(ACL) to access the data.
+      operationId: SearchSamplesAnalysis
+      parameters:
+        - required: true
+          schema:
+            type: string
+            title: Analysis Type
+          name: analysis_type
+          in: path
+        - required: false
+          schema:
+            type: string
+            title: Columns Filter
+          example: 'PropertyX,PropertyY,PropertyZ'
+          name: columns_filter
+          in: query
+        - required: false
+          schema:
+            type: string
+            title: Rows Filter
+          example: 'PropertyX[.PropertyXFieldA],gt,4000'
+          name: rows_filter
+          in: query
+        - required: false
+          schema:
+            type: string
+            title: Columns Aggregation
+          example: 'PropertyX[.PropertyXFieldA],avg'
+          name: columns_aggregation
+          in: query
+        - required: false
+          schema:
+            type: integer
+            maximum: 1000
+            exclusiveMinimum: 0
+            title: Page Limit
+            default: 1000
+          example: 1000
+          name: page_limit
+          in: query
+        - required: false
+          schema:
+            type: integer
+            minimum: 0
+            title: Offset
+            default: 0
+          example: 100
+          name: offset
+          in: query
+        - description: Specifies the proper data partition id
+          required: true
+          schema:
+            title: data-partition-id
+            description: Specifies the proper data partition id
+          example: opendes
+          name: data-partition-id
+          in: header
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+        - HTTPBearer: []
+      x-action-id: RF005
+  '/api/rafs-ddms/v2/masterdata/{record_id}':
+    get:
+      tags:
+        - masterdata
+      summary: Get Record
+      description: >-
+        Get the latest version of
+        `(osdu:wks:master-data--GenericFacility:1.0.0|osdu:wks:master-data--GenericSite:1.0.0|osdu:wks:master-data--Sample:2.0.0|osdu:wks:master-data--Sample:2.1.0|osdu:wks:master-data--SampleAcquisitionJob:1.0.0|osdu:wks:master-data--SampleChainOfCustodyEvent:1.0.0|osdu:wks:master-data--SampleContainer:1.0.0)`
+        object by record id.<br><br>        Required roles:
+        `users.datalake.viewers` or `users.datalake.editors` or
+        `users.datalake.admins`.<br>         In addition, users must be members
+        of a data group(ACL) to access the data.
+      operationId: >-
+        Get(osdu:wks:master-data--GenericFacility:1.0.0|osdu:wks:master-data--GenericSite:1.0.0|osdu:wks:master-data--Sample:2.0.0|osdu:wks:master-data--Sample:2.1.0|osdu:wks:master-data--SampleAcquisitionJob:1.0.0|osdu:wks:master-data--SampleChainOfCustodyEvent:1.0.0|osdu:wks:master-data--SampleContainer:1.0.0)Record
+      parameters:
+        - required: true
+          schema:
+            type: string
+            pattern: >-
+              ^[\w\-\.]+:(master-data--GenericFacility|master-data--GenericSite|master-data--Sample|master-data--Sample|master-data--SampleAcquisitionJob|master-data--SampleChainOfCustodyEvent|master-data--SampleContainer):[\w\-\.\:\%]+$
+            title: Record Id
+          name: record_id
+          in: path
+        - description: Specifies the proper data partition id
+          required: true
+          schema:
+            title: data-partition-id
+            description: Specifies the proper data partition id
+          example: opendes
+          name: data-partition-id
+          in: header
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                title: >-
+                  Response
+                  Get(Osdu:Wks:Master-Data--Genericfacility:1.0.0|Osdu:Wks:Master-Data--Genericsite:1.0.0|Osdu:Wks:Master-Data--Sample:2.0.0|Osdu:Wks:Master-Data--Sample:2.1.0|Osdu:Wks:Master-Data--Sampleacquisitionjob:1.0.0|Osdu:Wks:Master-Data--Samplechainofcustodyevent:1.0.0|Osdu:Wks:Master-Data--Samplecontainer:1.0.0)Record
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+        - HTTPBearer: []
+      x-action-id: RF009
+    delete:
+      tags:
+        - masterdata
+      summary: Soft Delete Record
+      description: >-
+        Delete the
+        `(osdu:wks:master-data--GenericFacility:1.0.0|osdu:wks:master-data--GenericSite:1.0.0|osdu:wks:master-data--Sample:2.0.0|osdu:wks:master-data--Sample:2.1.0|osdu:wks:master-data--SampleAcquisitionJob:1.0.0|osdu:wks:master-data--SampleChainOfCustodyEvent:1.0.0|osdu:wks:master-data--SampleContainer:1.0.0)`
+        object by record id.<br><br>        Required roles:
+        `users.datalake.editors` or `users.datalake.admins`.<br>         In
+        addition, users must be members of a data group(ACL) to access the data.
+      operationId: >-
+        Delete(osdu:wks:master-data--GenericFacility:1.0.0|osdu:wks:master-data--GenericSite:1.0.0|osdu:wks:master-data--Sample:2.0.0|osdu:wks:master-data--Sample:2.1.0|osdu:wks:master-data--SampleAcquisitionJob:1.0.0|osdu:wks:master-data--SampleChainOfCustodyEvent:1.0.0|osdu:wks:master-data--SampleContainer:1.0.0)Record
+      parameters:
+        - required: true
+          schema:
+            type: string
+            pattern: >-
+              ^[\w\-\.]+:(master-data--GenericFacility|master-data--GenericSite|master-data--Sample|master-data--Sample|master-data--SampleAcquisitionJob|master-data--SampleChainOfCustodyEvent|master-data--SampleContainer):[\w\-\.\:\%]+$
+            title: Record Id
+          name: record_id
+          in: path
+        - description: Specifies the proper data partition id
+          required: true
+          schema:
+            title: data-partition-id
+            description: Specifies the proper data partition id
+          example: opendes
+          name: data-partition-id
+          in: header
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+        - HTTPBearer: []
+      x-action-id: RF023
+  '/api/rafs-ddms/v2/masterdata/{record_id}/versions':
+    get:
+      tags:
+        - masterdata
+      summary: Get Record Versions
+      description: >-
+        Get a list of
+        `(osdu:wks:master-data--GenericFacility:1.0.0|osdu:wks:master-data--GenericSite:1.0.0|osdu:wks:master-data--Sample:2.0.0|osdu:wks:master-data--Sample:2.1.0|osdu:wks:master-data--SampleAcquisitionJob:1.0.0|osdu:wks:master-data--SampleChainOfCustodyEvent:1.0.0|osdu:wks:master-data--SampleContainer:1.0.0)`
+        object versions by record id.<br><br>        Required roles:
+        `users.datalake.viewers` or `users.datalake.editors` or
+        `users.datalake.admins`.<br>         In addition, users must be members
+        of a data group(ACL) to access the data.
+      operationId: >-
+        Get(osdu:wks:master-data--GenericFacility:1.0.0|osdu:wks:master-data--GenericSite:1.0.0|osdu:wks:master-data--Sample:2.0.0|osdu:wks:master-data--Sample:2.1.0|osdu:wks:master-data--SampleAcquisitionJob:1.0.0|osdu:wks:master-data--SampleChainOfCustodyEvent:1.0.0|osdu:wks:master-data--SampleContainer:1.0.0)Versions
+      parameters:
+        - required: true
+          schema:
+            type: string
+            pattern: >-
+              ^[\w\-\.]+:(master-data--GenericFacility|master-data--GenericSite|master-data--Sample|master-data--Sample|master-data--SampleAcquisitionJob|master-data--SampleChainOfCustodyEvent|master-data--SampleContainer):[\w\-\.\:\%]+$
+            title: Record Id
+          name: record_id
+          in: path
+        - description: Specifies the proper data partition id
+          required: true
+          schema:
+            title: data-partition-id
+            description: Specifies the proper data partition id
+          example: opendes
+          name: data-partition-id
+          in: header
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                title: >-
+                  Response
+                  Get(Osdu:Wks:Master-Data--Genericfacility:1.0.0|Osdu:Wks:Master-Data--Genericsite:1.0.0|Osdu:Wks:Master-Data--Sample:2.0.0|Osdu:Wks:Master-Data--Sample:2.1.0|Osdu:Wks:Master-Data--Sampleacquisitionjob:1.0.0|Osdu:Wks:Master-Data--Samplechainofcustodyevent:1.0.0|Osdu:Wks:Master-Data--Samplecontainer:1.0.0)Versions
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+        - HTTPBearer: []
+      x-action-id: RF020
+  '/api/rafs-ddms/v2/masterdata/{record_id}/versions/{version}':
+    get:
+      tags:
+        - masterdata
+      summary: Get Record Specific Version
+      description: >-
+        Get the given version of
+        `(osdu:wks:master-data--GenericFacility:1.0.0|osdu:wks:master-data--GenericSite:1.0.0|osdu:wks:master-data--Sample:2.0.0|osdu:wks:master-data--Sample:2.1.0|osdu:wks:master-data--SampleAcquisitionJob:1.0.0|osdu:wks:master-data--SampleChainOfCustodyEvent:1.0.0|osdu:wks:master-data--SampleContainer:1.0.0)`
+        object.<br><br>        Required roles: `users.datalake.viewers` or
+        `users.datalake.editors` or `users.datalake.admins`.<br>         In
+        addition, users must be members of a data group(ACL) to access the data.
+      operationId: >-
+        Get(osdu:wks:master-data--GenericFacility:1.0.0|osdu:wks:master-data--GenericSite:1.0.0|osdu:wks:master-data--Sample:2.0.0|osdu:wks:master-data--Sample:2.1.0|osdu:wks:master-data--SampleAcquisitionJob:1.0.0|osdu:wks:master-data--SampleChainOfCustodyEvent:1.0.0|osdu:wks:master-data--SampleContainer:1.0.0)SpecificVersion
+      parameters:
+        - required: true
+          schema:
+            type: integer
+            title: Version
+          name: version
+          in: path
+        - required: true
+          schema:
+            type: string
+            pattern: >-
+              ^[\w\-\.]+:(master-data--GenericFacility|master-data--GenericSite|master-data--Sample|master-data--Sample|master-data--SampleAcquisitionJob|master-data--SampleChainOfCustodyEvent|master-data--SampleContainer):[\w\-\.\:\%]+$
+            title: Record Id
+          name: record_id
+          in: path
+        - description: Specifies the proper data partition id
+          required: true
+          schema:
+            title: data-partition-id
+            description: Specifies the proper data partition id
+          example: opendes
+          name: data-partition-id
+          in: header
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                title: >-
+                  Response
+                  Get(Osdu:Wks:Master-Data--Genericfacility:1.0.0|Osdu:Wks:Master-Data--Genericsite:1.0.0|Osdu:Wks:Master-Data--Sample:2.0.0|Osdu:Wks:Master-Data--Sample:2.1.0|Osdu:Wks:Master-Data--Sampleacquisitionjob:1.0.0|Osdu:Wks:Master-Data--Samplechainofcustodyevent:1.0.0|Osdu:Wks:Master-Data--Samplecontainer:1.0.0)Specificversion
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+        - HTTPBearer: []
+      x-action-id: RF021
+  /api/rafs-ddms/v2/masterdata:
+    post:
+      tags:
+        - masterdata
+      summary: Post Records
+      description: >-
+        Create or update
+        `(osdu:wks:master-data--GenericFacility:1.0.0|osdu:wks:master-data--GenericSite:1.0.0|osdu:wks:master-data--Sample:2.0.0|osdu:wks:master-data--Sample:2.1.0|osdu:wks:master-data--SampleAcquisitionJob:1.0.0|osdu:wks:master-data--SampleChainOfCustodyEvent:1.0.0|osdu:wks:master-data--SampleContainer:1.0.0)`
+        record(s).<br><br>        Required roles: `users.datalake.editors` or
+        `users.datalake.admins`.<br>         In addition, users must be members
+        of a data group(ACL) to access the data.
+      operationId: >-
+        CreateOrUpdate(osdu:wks:master-data--GenericFacility:1.0.0|osdu:wks:master-data--GenericSite:1.0.0|osdu:wks:master-data--Sample:2.0.0|osdu:wks:master-data--Sample:2.1.0|osdu:wks:master-data--SampleAcquisitionJob:1.0.0|osdu:wks:master-data--SampleChainOfCustodyEvent:1.0.0|osdu:wks:master-data--SampleContainer:1.0.0)Records
+      parameters:
+        - description: Specifies the proper data partition id
+          required: true
+          schema:
+            title: data-partition-id
+            description: Specifies the proper data partition id
+          example: opendes
+          name: data-partition-id
+          in: header
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: MasterDataRecords
+              description: Master Data records payload
+              type: array
+              items:
+                title: OsduStorageRecord
+                type: object
+                properties:
+                  id:
+                    title: Id
+                    type: string
+                  kind:
+                    title: Kind
+                    type: string
+                  acl:
+                    $ref: '#/definitions/Acl'
+                  legal:
+                    $ref: '#/definitions/Legal'
+                  data:
+                    title: Data
+                    type: object
+                  meta:
+                    title: Meta
+                    type: array
+                    items: {}
+                  ancestry:
+                    title: Ancestry
+                    type: object
+                  tags:
+                    title: Tags
+                    type: object
+                  version:
+                    title: Version
+                    type: integer
+                  createUser:
+                    title: Createuser
+                    type: string
+                  createTime:
+                    title: Createtime
+                    type: string
+                  modifyUser:
+                    title: Modifyuser
+                    type: string
+                  modifyTime:
+                    title: Modifytime
+                    type: string
+                required:
+                  - kind
+                  - acl
+                  - legal
+                  - data
+                definitions:
+                  Acl:
+                    title: Acl
+                    type: object
+                    properties:
+                      viewers:
+                        title: Viewers
+                        type: array
+                        items:
+                          type: string
+                      owners:
+                        title: Owners
+                        type: array
+                        items:
+                          type: string
+                    required:
+                      - viewers
+                      - owners
+                  Legal:
+                    title: Legal
+                    type: object
+                    properties:
+                      legaltags:
+                        title: Legaltags
+                        type: array
+                        items:
+                          type: string
+                      otherRelevantDataCountries:
+                        title: Otherrelevantdatacountries
+                        type: array
+                        items:
+                          type: string
+                      status:
+                        title: Status
+                        type: string
+                    required:
+                      - legaltags
+                      - otherRelevantDataCountries
+            example:
+              id: 'namespace:master-data--Sample:Sample_200'
+              kind: 'osdu:wks:master-data--Sample:2.0.0'
+              acl:
+                owners:
+                  - someone@company.com
+                viewers:
+                  - someone@company.com
+              legal:
+                legaltags:
+                  - Example legaltags
+                otherRelevantDataCountries:
+                  - US
+                status: compliant
+              tags:
+                NameOfKey: String value
+              ancestry:
+                parents: []
+              meta: []
+              data:
+                ResourceHomeRegionID: 'namespace:reference-data--OSDURegion:AWSEastUSA:'
+                ResourceHostRegionIDs:
+                  - 'namespace:reference-data--OSDURegion:AWSEastUSA:'
+                ResourceCurationStatus: 'namespace:reference-data--ResourceCurationStatus:Created:'
+                ResourceLifecycleStatus: 'namespace:reference-data--ResourceLifecycleStatus:Loading:'
+                ResourceSecurityClassification: >-
+                  namespace:reference-data--ResourceSecurityClassification:Public:
+                Source: Example Data Source
+                ExistenceKind: 'namespace:reference-data--ExistenceKind:Prototype:'
+                NameAliases:
+                  - AliasName: Example AliasName
+                    AliasNameTypeID: >-
+                      namespace:reference-data--AliasNameType:RegulatoryIdentifier:
+                    DefinitionOrganisationID: >-
+                      namespace:master-data--Organisation:SomeUniqueOrganisationID:
+                    EffectiveDateTime: '2020-02-13T09:13:15.55Z'
+                    TerminationDateTime: '2020-02-13T09:13:15.55Z'
+                GeoContexts:
+                  - GeoPoliticalEntityID: >-
+                      namespace:master-data--GeoPoliticalEntity:SomeUniqueGeoPoliticalEntityID:
+                    GeoTypeID: 'namespace:reference-data--GeoPoliticalEntityType:Area:'
+                  - BasinID: 'namespace:master-data--Basin:SomeUniqueBasinID:'
+                    GeoTypeID: >-
+                      namespace:reference-data--BasinType:ArcWrenchOceanContinent:
+                  - FieldID: 'namespace:master-data--Field:SomeUniqueFieldID:'
+                    GeoTypeID: Field
+                  - PlayID: 'namespace:master-data--Play:SomeUniquePlayID:'
+                    GeoTypeID: >-
+                      namespace:reference-data--PlayType:CarbonCaptureAndStorage:
+                  - ProspectID: 'namespace:master-data--Prospect:SomeUniqueProspectID:'
+                    GeoTypeID: >-
+                      namespace:reference-data--ProspectType:Structural.Anticline:
+                SpatialLocation:
+                  SpatialLocationCoordinatesDate: '2020-02-13T09:13:15.55Z'
+                  QuantitativeAccuracyBandID: >-
+                    namespace:reference-data--QuantitativeAccuracyBand:Length.LessThan1m:
+                  QualitativeSpatialAccuracyTypeID: >-
+                    namespace:reference-data--QualitativeSpatialAccuracyType:Assumed:
+                  CoordinateQualityCheckPerformedBy: Example CoordinateQualityCheckPerformedBy
+                  CoordinateQualityCheckDateTime: '2020-02-13T09:13:15.55Z'
+                  CoordinateQualityCheckRemarks:
+                    - Example CoordinateQualityCheckRemarks
+                  AsIngestedCoordinates:
+                    type: AnyCrsFeatureCollection
+                    CoordinateReferenceSystemID: >-
+                      namespace:reference-data--CoordinateReferenceSystem:BoundProjected:EPSG::32021_EPSG::15851:
+                    VerticalCoordinateReferenceSystemID: >-
+                      namespace:reference-data--CoordinateReferenceSystem:Vertical:EPSG::5714:
+                    VerticalUnitID: 'namespace:reference-data--UnitOfMeasure:m:'
+                    persistableReferenceCrs: >-
+                      {"authCode":{"auth":"OSDU","code":"32021079"},"lateBoundCRS":{"authCode":{"auth":"EPSG","code":"32021"},"name":"NAD_1927_StatePlane_North_Dakota_South_FIPS_3302","type":"LBC","ver":"PE_10_9_1","wkt":"PROJCS[\"NAD_1927_StatePlane_North_Dakota_South_FIPS_3302\",GEOGCS[\"GCS_North_American_1927\",DATUM[\"D_North_American_1927\",SPHEROID[\"Clarke_1866\",6378206.4,294.9786982]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],PROJECTION[\"Lambert_Conformal_Conic\"],PARAMETER[\"False_Easting\",2000000.0],PARAMETER[\"False_Northing\",0.0],PARAMETER[\"Central_Meridian\",-100.5],PARAMETER[\"Standard_Parallel_1\",46.18333333333333],PARAMETER[\"Standard_Parallel_2\",47.48333333333333],PARAMETER[\"Latitude_Of_Origin\",45.66666666666666],UNIT[\"Foot_US\",0.3048006096012192],AUTHORITY[\"EPSG\",32021]]"},"name":"NAD27
+                      * OGP-Usa Conus / North Dakota CS27 South zone
+                      [32021,15851]","singleCT":{"authCode":{"auth":"EPSG","code":"15851"},"name":"NAD_1927_To_WGS_1984_79_CONUS","type":"ST","ver":"PE_10_9_1","wkt":"GEOGTRAN[\"NAD_1927_To_WGS_1984_79_CONUS\",GEOGCS[\"GCS_North_American_1927\",DATUM[\"D_North_American_1927\",SPHEROID[\"Clarke_1866\",6378206.4,294.9786982]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],GEOGCS[\"GCS_WGS_1984\",DATUM[\"D_WGS_1984\",SPHEROID[\"WGS_1984\",6378137.0,298.257223563]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],METHOD[\"NADCON\"],PARAMETER[\"Dataset_conus\",0.0],OPERATIONACCURACY[5.0],AUTHORITY[\"EPSG\",15851]]"},"type":"EBC","ver":"PE_10_9_1"}
+                    persistableReferenceVerticalCrs: >-
+                      {"authCode":{"auth":"EPSG","code":"5714"},"name":"MSL_Height","type":"LBC","ver":"PE_10_9_1","wkt":"VERTCS[\"MSL_Height\",VDATUM[\"Mean_Sea_Level\"],PARAMETER[\"Vertical_Shift\",0.0],PARAMETER[\"Direction\",1.0],UNIT[\"Meter\",1.0],AUTHORITY[\"EPSG\",5714]]"}
+                    persistableReferenceUnitZ: >-
+                      {"scaleOffset":{"scale":1.0,"offset":0.0},"symbol":"m","baseMeasurement":{"ancestry":"Length","type":"UM"},"type":"USO"}
+                    features:
+                      - type: AnyCrsFeature
+                        properties: {}
+                        geometry:
+                          type: AnyCrsPoint
+                          coordinates:
+                            - 12345.6
+                            - 12345.6
+                          bbox:
+                            - 12345.6
+                            - 12345.6
+                            - 12345.6
+                            - 12345.6
+                        bbox:
+                          - 12345.6
+                          - 12345.6
+                          - 12345.6
+                          - 12345.6
+                    bbox:
+                      - 12345.6
+                      - 12345.6
+                      - 12345.6
+                      - 12345.6
+                  Wgs84Coordinates:
+                    type: FeatureCollection
+                    features:
+                      - type: Feature
+                        properties: {}
+                        geometry:
+                          type: Point
+                          coordinates:
+                            - 12345.6
+                            - 12345.6
+                          bbox:
+                            - 12345.6
+                            - 12345.6
+                            - 12345.6
+                            - 12345.6
+                        bbox:
+                          - 12345.6
+                          - 12345.6
+                          - 12345.6
+                          - 12345.6
+                    bbox:
+                      - 12345.6
+                      - 12345.6
+                      - 12345.6
+                      - 12345.6
+                  AppliedOperations:
+                    - >-
+                      conversion from ED_1950_UTM_Zone_31N to GCS_European_1950;
+                      1 points converted
+                    - >-
+                      transformation GCS_European_1950 to GCS_WGS_1984 using
+                      ED_1950_To_WGS_1984_24; 1 points successfully transformed
+                  SpatialParameterTypeID: 'namespace:reference-data--SpatialParameterType:Outline:'
+                  SpatialGeometryTypeID: 'namespace:reference-data--SpatialGeometryType:Point:'
+                VersionCreationReason: Example VersionCreationReason
+                TechnicalAssuranceTypeID: 'namespace:reference-data--TechnicalAssuranceType:Certified:'
+                TechnicalAssurances:
+                  - TechnicalAssuranceTypeID: 'namespace:reference-data--TechnicalAssuranceType:Trusted:'
+                    Reviewers:
+                      - RoleTypeID: >-
+                          namespace:reference-data--ContactRoleType:AccountOwner:
+                        DataGovernanceRoleTypeID: 'namespace:reference-data--DataGovernanceRoleType:SME:'
+                        WorkflowPersonaTypeID: >-
+                          namespace:reference-data--WorkflowPersonaType:SeismicProcessor:
+                        OrganisationID: >-
+                          namespace:master-data--Organisation:SomeUniqueOrganisationID:
+                        Name: John Smith
+                    AcceptableUsage:
+                      - WorkflowUsageTypeID: >-
+                          namespace:reference-data--WorkflowUsageType:SeismicProcessing:
+                        WorkflowPersonaTypeID: >-
+                          namespace:reference-data--WorkflowPersonaType:SeismicProcessor:
+                        DataQualityRuleSetID: >-
+                          namespace:reference-data--DataQualityRuleSet:SeismicProcessingQCRuleSet:
+                        DataQualityID: >-
+                          namespace:work-product-component--DataQuality:6a433d16-07c8-4f4d-9ddc-5608e2ec4234:1562066077849221
+                        ValueChainStatusTypeID: >-
+                          namespace:reference-data--ValueChainStatusType:Exploration:
+                    UnacceptableUsage:
+                      - WorkflowUsageTypeID: >-
+                          namespace:reference-data--WorkflowUsageType:SeismicInterpretation:
+                        WorkflowPersonaTypeID: >-
+                          namespace:reference-data--WorkflowPersonaType:SeismicInterpreter:
+                        DataQualityRuleSetID: >-
+                          namespace:reference-data--DataQualityRuleSet:SeismicInterpretationQCRuleSet:
+                        DataQualityID: >-
+                          namespace:work-product-component--DataQuality:d79bf97c-ff7c-4b82-89b5-c88520c15017:1562066009929332
+                        ValueChainStatusTypeID: >-
+                          namespace:reference-data--ValueChainStatusType:FieldDevelopment:
+                    EffectiveDate: '2020-02-13'
+                    Comment: >-
+                      This is free form text from reviewer, e.g. restrictions on
+                      use
+                SampleIdentifier: sample1A
+                SampleName: sampleA
+                SampleOriginTypeID: 'namespace:reference-data--SampleOriginType:Synthetic:'
+                SampleTypeID: 'namespace:reference-data--SampleType:Fluid:'
+                SampleDisposalInstructionID: >-
+                  namespace:work-product-component--Document:0e6a8fdb-0a0a-56db-955a-c62204c42cb0:
+                SampleAcquisition:
+                  SampleAcquisitionJobID: >-
+                    namespace:master-data--SampleAcquisitionJob:dr23383830303032991154:
+                  SampleAcquisitionDetail:
+                    VerticalMeasurement:
+                      EffectiveDateTime: '2020-02-13T09:13:15.55Z'
+                      VerticalMeasurement: 12345.6
+                      TerminationDateTime: '2020-02-13T09:13:15.55Z'
+                      VerticalMeasurementTypeID: >-
+                        namespace:reference-data--VerticalMeasurementType:ArbitraryPoint:
+                      VerticalMeasurementPathID: 'namespace:reference-data--VerticalMeasurementPath:MD:'
+                      VerticalMeasurementSourceID: 'namespace:reference-data--VerticalMeasurementSource:DRL:'
+                      WellboreTVDTrajectoryID: >-
+                        namespace:work-product-component--WellboreTrajectory:WellboreTrajectory-911bb71f-06ab-4deb-8e68-b8c9229dc76b:
+                      VerticalMeasurementUnitOfMeasureID: 'namespace:reference-data--UnitOfMeasure:m:'
+                      VerticalCRSID: >-
+                        namespace:reference-data--CoordinateReferenceSystem:BoundProjected:EPSG::32021_EPSG::15851:
+                      VerticalReferenceID: Example VerticalReferenceID
+                      VerticalReferenceEntityID: 'namespace:master-data--Rig:SomeUniqueRigID:'
+                      VerticalMeasurementDescription: Example VerticalMeasurementDescription
+                    TopDepth: 10000
+                    BaseDepth: 20000
+                    ToolKind: Wireline Formation Tester
+                    RunNumber: '22'
+                    WellboreID: 'namespace:master-data--Wellbore:cz2334t678900d53844-4:'
+                    WellheadOperatingCondition:
+                      Pressure: 1
+                      Temperature: 15
+                    ContributingWellboreOpeningIDs:
+                      - >-
+                        namespace:master-data--WellboreOpening:SomeUniqueWellboreOpeningID:
+                    SeparatorOperatingCondition:
+                      Pressure: 1
+                      Temperature: 15
+                    SamplingPoint:
+                      SamplingPointTypeID: 'namespace:reference-data--SamplingPointType:FlowPort:'
+                      SamplingPointName: 'VALVE:1723RR-01'
+                    CorrectedOilRate: 12345.6
+                    CorrectedGasRate: 12345.6
+                    CorrectedWaterRate: 12345.6
+                    MeasuredOilRate: 12345.6
+                    MeasuredGasRate: 12345.6
+                    MeasuredWaterRate: 12345.6
+                    FormationCondition:
+                      Pressure: 120
+                      Temperature: 60
+                    CorrectionRemarks:
+                      RemarkSequenceNumber: 1
+                      Remark: Example Remark
+                      RemarkSource: Example Remark Source
+                      RemarkDate: '2020-02-13'
+                    SampleCarrierSlotName: Example Sample Carrier Slot Name
+                    ToolSectionName: Example Tool Section Name
+                    SampleContainerCushionPressure: 12345.6
+                    GrossFluidKindID: 'namespace:reference-data--WellProductType:Gas:'
+                    FacilityEquipmentOperatingCondition:
+                      Pressure: 1
+                      Temperature: 15
+                    SiteID: >-
+                      namespace:master-data--GenericSite:SomeUniqueGenericSiteID:
+                    SampleRecoveredLengthActual: 12345.6
+                    PreservationTypeID: 'namespace:reference-data--CorePreservationType:ClingWrap:'
+                    SampleRecoveredLengthPlanned: 12345.6
+                    AcquisitionCondition:
+                      Pressure: 120
+                      Temperature: 60
+                    AcquisitionGOR: 340
+                    MudBaseTypeID: 'namespace:reference-data--MudBaseType:Brine:'
+                    MudTracerTypeID: >-
+                      namespace:reference-data--MudTracerType:SomeUniqueMudTracerTypeID:
+                  SampleAcquisitionTypeID: >-
+                    namespace:reference-data--SampleAcquisitionType:DownholeSampleAcquisition:
+                  SampleAcquisitionContainerID: >-
+                    namespace:master-data--SampleContainer:dr23383830303032991154:
+                  AcquisitionStartDate: '2023-01-01T12:00:00Z'
+                  AcquisitionEndDate: '2023-01-01T12:00:00Z'
+                  Remarks:
+                    - RemarkSequenceNumber: 1
+                      Remark: Example Remark
+                      RemarkSource: Example Remark Source
+                      RemarkDate: '2020-02-13'
+                  CollectionServiceCompanyID: 'namespace:master-data--Organisation:fg67383830303032991126:'
+                  HandlingServiceCompanyID: 'namespace:master-data--Organisation:fg67383830303032991126:'
+                Remarks:
+                  - Remark: Shaker not functioning properly.
+                    RemarkSource: Mud Logger
+                RecombinationSpecification:
+                  RecombinationCondition:
+                    Pressure: 120
+                    Temperature: 60
+                  RecombinationGasOilRatio:
+                    GasOilRatio: 34567
+                    VolumeReferenceConditionGas:
+                      Pressure: 14.7
+                      Temperature: 60
+                    VolumeReferenceConditionOil:
+                      Pressure: 200
+                      Temperature: 69
+                  RecombinationSaturationPressure: 120
+                  TargetSampleComposition:
+                    - SampleCompositionComponentID: >-
+                        namespace:reference-data--SampleCompositionComponent:ETHANE:
+                      MassFraction: 0.2
+                      MoleFraction: 0.1
+                    - SampleCompositionComponentID: >-
+                        namespace:reference-data--SampleCompositionComponent:PENTANE:
+                      MassFraction: 0.4
+                      MoleFraction: 0.4
+                    - SampleCompositionComponentID: >-
+                        namespace:reference-data--SampleCompositionComponent:PENTANEPLUS:
+                      MassFraction: 0.4
+                      MoleFraction: 0.5
+                  Remarks:
+                    - Remark: Shaker not functioning properly.
+                      RemarkSource: Mud Logger
+                  RecombinedSampleFraction:
+                    - SampleCompositionComponentID: >-
+                        namespace:reference-data--SampleCompositionComponent:1%25202%25204%2520TRIMETHYLBENZENE:
+                      VolumeFraction: 0.2
+                      MassFraction: 0.03
+                      MoleFraction: 0.5
+                ParentSampleIDs:
+                  - >-
+                    namespace:master-data--Sample:b7d3735f-b720-5db2-88c9-771d396d8a4e:
+                  - >-
+                    namespace:master-data--Sample:c7d3735f-b720-5db2-88c9-771d396d8a4e:
+                SamplePreparation:
+                  - SamplePreparationTypeID: 'namespace:reference-data--SamplePreparationType:Crushed:'
+                    SamplePreparationMethodID: >-
+                      namespace:reference-data--SamplePreparationMethod:WaterWash:
+                    SamplePreparationCondition:
+                      Pressure: 1
+                      Temperature: 15
+                    SamplePreparationStartDate: '2020-02-13T09:13:15.55Z'
+                    SamplePreparationEndDate: '2020-02-13T09:13:15.55Z'
+                    Remarks:
+                      - RemarkSequenceNumber: 1
+                        Remark: Example Remark
+                        RemarkSource: Example Remark Source
+                        RemarkDate: '2020-02-13'
+                ExtensionProperties: {}
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StorageUpsertResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+        - HTTPBearer: []
+      x-action-id: RF022
+  '/api/rafs-ddms/dev/samplesanalysis/{record_id}/data/{analysis_type}':
+    get:
+      tags:
+        - dev-samplesanalysis
+      summary: Get Data Dev
+      description: >-
+        Get the (`latest version`) bulk data for a given `{analysis_type}`
+        object by record id. <br><br>            Use the `Accept` request header
+        to specify content schema version                 (example header
+        `Accept: */*;version=1.0.0` is supported).<br><br>            The 
+        `columns_filter`, `rows_filter`, and 
+        `columns_aggregation`                 query parameters can be used to
+        manage data in response.<br><br>        Required roles:
+        `users.datalake.viewers` or `users.datalake.editors` or
+        `users.datalake.admins`.<br>         In addition, users must be members
+        of a data group(ACL) to access the data.
+      operationId: >-
+        get_data_dev_api_rafs_ddms_dev_samplesanalysis__record_id__data__analysis_type__get
+      parameters:
+        - required: true
+          schema:
+            type: string
+            pattern: '^[\w\-\.]+:work-product-component--SamplesAnalysis:[\w\-\.\:\%]+$'
+            title: Record Id
+          name: record_id
+          in: path
+        - required: true
+          schema:
+            type: string
+            title: Analysis Type
+          name: analysis_type
+          in: path
+        - description: A valid json array of property names
+          required: false
+          schema:
+            type: string
+            title: Columns Filter
+            description: A valid json array of property names
+          example: '["ColumnName1[.FieldName1]", "ColumnName2[.FieldName2]"]'
+          name: columns_filter
+          in: query
+        - description: 'A valid json object with property name, operator and value'
+          required: false
+          schema:
+            type: string
+            title: Rows Filter
+            description: 'A valid json object with property name, operator and value'
+          example: '{"PropertyX[.PropertyXFieldA]": {"$gt": "{Value}"}}'
+          name: rows_filter
+          in: query
+        - description: A valid json array with property name and aggregator function
+          required: false
+          schema:
+            type: string
+            title: Columns Aggregation
+            description: A valid json array with property name and aggregator function
+          example: '["ColumnName[.FieldName]", "function"]'
+          name: columns_aggregation
+          in: query
+        - description: >-
+            A valid json object with combined rows filters with optional $or and
+            $and keys
+          required: false
+          schema:
+            type: string
+            title: Rows Multiple Filter
+            description: >-
+              A valid json object with combined rows filters with optional $or
+              and $and keys
+          example: >-
+            {"$and": [{"PropertyX[.PropertyXFieldA]": {"$gt": "{Value}"}},
+            {"$or": [{"PropertyY[.PropertyYFieldB]": {"$eq": "{Value}"}},
+            {"PropertyZ[.PropertyZFieldC]": {"$le": "{Value}"}}]}]}
+          name: rows_multiple_filter
+          in: query
+        - description: Specifies the proper data partition id
+          required: true
+          schema:
+            title: data-partition-id
+            description: Specifies the proper data partition id
+          example: opendes
+          name: data-partition-id
+          in: header
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+        - HTTPBearer: []
+    post:
+      tags:
+        - dev-samplesanalysis
+      summary: Post Data Dev
+      description: >-
+        Upload the bulk data for a given `{analysis_type}` object by record
+        id.<br>            It creates a new version of the record.
+        <br>            The previous meta-data with bulk data is available by
+        their `versions`. <br> <br>            Use the `Content-Type` request
+        header to specify payload and response formats                
+        (`application/json` and `application/parquet` are
+        supported).<br>            Use the `Accept` request header to specify
+        content schema version                 (example header `Accept:
+        */*;version=1.0.0` is supported).<br><br>        Required roles:
+        `users.datalake.editors` or `users.datalake.admins`.<br>         In
+        addition, users must be members of a data group(ACL) to access the data.
+      operationId: >-
+        post_data_dev_api_rafs_ddms_dev_samplesanalysis__record_id__data__analysis_type__post
+      parameters:
+        - required: true
+          schema:
+            type: string
+            pattern: '^[\w\-\.]+:work-product-component--SamplesAnalysis:[\w\-\.\:\%]+$'
+            title: Record Id
+          name: record_id
+          in: path
+        - required: true
+          schema:
+            type: string
+            title: Analysis Type
+          name: analysis_type
+          in: path
+        - description: Specifies the proper data partition id
+          required: true
+          schema:
+            title: data-partition-id
+            description: Specifies the proper data partition id
+          example: opendes
+          name: data-partition-id
+          in: header
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                title: >-
+                  Response Post Data Dev Api Rafs Ddms Dev Samplesanalysis 
+                  Record Id  Data  Analysis Type  Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+        - HTTPBearer: []
+  '/api/rafs-ddms/dev/samplesanalysis/{analysis_type}/search/data':
+    get:
+      tags:
+        - dev-samplesanalysis
+      summary: Get Search Data
+      description: >-
+        Get the (`queried`) bulk data from every `{analysis_type}` found in
+        search service. <br><br>            Use the `Accept` request header to
+        specify content schema version                 (example header `Accept:
+        */*;version=1.0.0` is supported).<br><br>            The 
+        `columns_filter`, `rows_filter`, and 
+        `columns_aggregation`                 query parameters can be used to
+        manage data in response. <br><br>            Use `offset`, `page_limit`
+        query parameters to control response data size.                 The
+        `page_limit` and `total_size (found in response)` refers to the number
+        of parquet files read.<br><br>        Required roles:
+        `users.datalake.viewers` or `users.datalake.editors` or
+        `users.datalake.admins`.<br>         In addition, users must be members
+        of a data group(ACL) to access the data.
+      operationId: >-
+        get_search_data_api_rafs_ddms_dev_samplesanalysis__analysis_type__search_data_get
+      parameters:
+        - required: true
+          schema:
+            type: string
+            title: Analysis Type
+          name: analysis_type
+          in: path
+        - description: A valid json array of property names
+          required: false
+          schema:
+            type: string
+            title: Columns Filter
+            description: A valid json array of property names
+          example: '["ColumnName1[.FieldName1]", "ColumnName2[.FieldName2]"]'
+          name: columns_filter
+          in: query
+        - description: 'A valid json object with property name, operator and value'
+          required: false
+          schema:
+            type: string
+            title: Rows Filter
+            description: 'A valid json object with property name, operator and value'
+          example: '{"PropertyX[.PropertyXFieldA]": {"$gt": "{Value}"}}'
+          name: rows_filter
+          in: query
+        - description: A valid json array with property name and aggregator function
+          required: false
+          schema:
+            type: string
+            title: Columns Aggregation
+            description: A valid json array with property name and aggregator function
+          example: '["ColumnName[.FieldName]", "function"]'
+          name: columns_aggregation
+          in: query
+        - description: >-
+            A valid json object with combined rows filters with optional $or and
+            $and keys
+          required: false
+          schema:
+            type: string
+            title: Rows Multiple Filter
+            description: >-
+              A valid json object with combined rows filters with optional $or
+              and $and keys
+          example: >-
+            {"$and": [{"PropertyX[.PropertyXFieldA]": {"$gt": "{Value}"}},
+            {"$or": [{"PropertyY[.PropertyYFieldB]": {"$eq": "{Value}"}},
+            {"PropertyZ[.PropertyZFieldC]": {"$le": "{Value}"}}]}]}
+          name: rows_multiple_filter
+          in: query
+        - required: false
+          schema:
+            type: integer
+            maximum: 100
+            exclusiveMinimum: 0
+            title: Page Limit
+            default: 100
+          example: 100
+          name: page_limit
+          in: query
+        - required: false
+          schema:
+            type: integer
+            minimum: 0
+            title: Offset
+            default: 0
+          example: 100
+          name: offset
+          in: query
+        - description: A valid json object with property name and value.
+          required: false
+          schema:
+            type: string
+            title: Metadata
+            description: A valid json object with property name and value.
+          name: metadata
+          in: query
+        - description: Specifies the proper data partition id
+          required: true
+          schema:
+            title: data-partition-id
+            description: Specifies the proper data partition id
+          example: opendes
+          name: data-partition-id
+          in: header
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+        - HTTPBearer: []
+  '/api/rafs-ddms/dev/samplesanalysis/{analysis_type}/search':
+    get:
+      tags:
+        - dev-samplesanalysis
+      summary: Get Search
+      description: >-
+        Get the (`samples analysis`) ids list that comply with `{query}` for
+        given`{analysis_type}`. <br><br>            Use the `Accept` request
+        header to specify content schema version                 (example header
+        `Accept: */*;version=1.0.0` is supported).<br><br>            The 
+        `columns_filter`, `rows_filter`, and 
+        `columns_aggregation`                 query parameters can be used to
+        manage data in response. <br><br>             Use `offset`, `page_limit`
+        query parameters to control response data size.                 The
+        `page_limit` and `total_size (found in response)` refers to the number
+        of parquet files read.<br><br>        Required roles:
+        `users.datalake.viewers` or `users.datalake.editors` or
+        `users.datalake.admins`.<br>         In addition, users must be members
+        of a data group(ACL) to access the data.
+      operationId: get_search_api_rafs_ddms_dev_samplesanalysis__analysis_type__search_get
+      parameters:
+        - required: true
+          schema:
+            type: string
+            title: Analysis Type
+          name: analysis_type
+          in: path
+        - description: A valid json array of property names
+          required: false
+          schema:
+            type: string
+            title: Columns Filter
+            description: A valid json array of property names
+          example: '["ColumnName1[.FieldName1]", "ColumnName2[.FieldName2]"]'
+          name: columns_filter
+          in: query
+        - description: 'A valid json object with property name, operator and value'
+          required: false
+          schema:
+            type: string
+            title: Rows Filter
+            description: 'A valid json object with property name, operator and value'
+          example: '{"PropertyX[.PropertyXFieldA]": {"$gt": "{Value}"}}'
+          name: rows_filter
+          in: query
+        - description: A valid json array with property name and aggregator function
+          required: false
+          schema:
+            type: string
+            title: Columns Aggregation
+            description: A valid json array with property name and aggregator function
+          example: '["ColumnName[.FieldName]", "function"]'
+          name: columns_aggregation
+          in: query
+        - description: >-
+            A valid json object with combined rows filters with optional $or and
+            $and keys
+          required: false
+          schema:
+            type: string
+            title: Rows Multiple Filter
+            description: >-
+              A valid json object with combined rows filters with optional $or
+              and $and keys
+          example: >-
+            {"$and": [{"PropertyX[.PropertyXFieldA]": {"$gt": "{Value}"}},
+            {"$or": [{"PropertyY[.PropertyYFieldB]": {"$eq": "{Value}"}},
+            {"PropertyZ[.PropertyZFieldC]": {"$le": "{Value}"}}]}]}
+          name: rows_multiple_filter
+          in: query
+        - required: false
+          schema:
+            type: integer
+            maximum: 1000
+            exclusiveMinimum: 0
+            title: Page Limit
+            default: 1000
+          example: 1000
+          name: page_limit
+          in: query
+        - required: false
+          schema:
+            type: integer
+            minimum: 0
+            title: Offset
+            default: 0
+          example: 100
+          name: offset
+          in: query
+        - description: A valid json object with property name and value.
+          required: false
+          schema:
+            type: string
+            title: Metadata
+            description: A valid json object with property name and value.
+          name: metadata
+          in: query
+        - description: Specifies the proper data partition id
+          required: true
+          schema:
+            title: data-partition-id
+            description: Specifies the proper data partition id
+          example: opendes
+          name: data-partition-id
+          in: header
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+        - HTTPBearer: []
+components:
+  schemas:
+    HTTPValidationError:
+      properties:
+        errors:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          app_name: Errors
+      type: object
+      title: HTTPValidationError
+    InfoResponse:
+      properties:
+        name:
+          type: string
+          title: Name
+        app_version:
+          type: string
+          title: App Version
+        build_time:
+          type: string
+          title: Build Time
+        branch:
+          type: string
+          title: Branch
+        commit_id:
+          type: string
+          title: Commit Id
+        commit_message:
+          type: string
+          title: Commit Message
+        release_version:
+          type: string
+          title: Release Version
+      type: object
+      title: InfoResponse
+    StorageUpsertResponse:
+      properties:
+        record_count:
+          type: integer
+          title: Record Count
+        record_id_versions:
+          items:
+            type: string
+          type: array
+          title: Record Id Versions
+        skipped_record_count:
+          type: integer
+          title: Skipped Record Count
+      type: object
+      required:
+        - record_count
+        - record_id_versions
+        - skipped_record_count
+      title: StorageUpsertResponse
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+              - type: string
+              - type: integer
+          type: array
+          app_name: Location
+        msg:
+          type: string
+          app_name: Message
+        type:
+          type: string
+          app_name: Error Type
+      type: object
+      required:
+        - loc
+        - msg
+        - type
+      title: ValidationError
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer
