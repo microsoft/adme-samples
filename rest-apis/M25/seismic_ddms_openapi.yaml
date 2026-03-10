@@ -5528,6 +5528,44 @@ components:
         last_updated_at: string
         operation_id: c3d282e6-e7d1-40d8-8ac2-edc15b6d174c
         status: Completed
+      properties:
+        completed_cnt:
+          description: Number of datasets correctly processed.
+          type: number
+        created_at:
+          description: Time when the operation was initiated.
+          type: string
+        created_by:
+          description: User who initiated the operation job.
+          type: string
+        dataset_cnt:
+          description: Total number of datasets to process.
+          type: number
+        failed_cnt:
+          description: Number of datasets which processing failed.
+          type: number
+        last_updated_at:
+          description: Time when the operation status was last updated.
+          type: string
+        operation_id:
+          description: Operation id of the operation job.
+          type: string
+        status:
+          description: Status of the operation job.
+          type: string
+      required:
+      - operation_id
+      - status
+    ChangeTierOperationStatus:
+      example:
+        completed_cnt: 997
+        created_at: string
+        created_by: string
+        dataset_cnt: 1000
+        failed_cnt: 3
+        last_updated_at: string
+        operation_id: c3d282e6-e7d1-40d8-8ac2-edc15b6d174c
+        status: Completed
         target_tier: Cool
         failed_datasets:
         - sdpath: sd://tenant1/subproject1/dataset1
@@ -7417,7 +7455,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OperationStatus'
+                $ref: '#/components/schemas/ChangeTierOperationStatus'
           description: Retrieved the change tier operation successfully.
         '400':
           description: Bad request.
