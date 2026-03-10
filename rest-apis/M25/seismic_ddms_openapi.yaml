@@ -5451,6 +5451,8 @@ components:
           type: string
         connected_outer_services:
           type: array
+          items:
+            type: string
         group_id:
           type: string
       required:
