@@ -5558,20 +5558,29 @@ components:
       - status
     ChangeTierOperationStatus:
       example:
-        completed_cnt: 997
-        created_at: string
-        created_by: string
-        dataset_cnt: 1000
-        failed_cnt: 3
-        last_updated_at: string
-        operation_id: c3d282e6-e7d1-40d8-8ac2-edc15b6d174c
-        status: Completed
-        target_tier: Cool
+        operation_id: 9a8f2e31-4c67-4b8a-b123-abcdef123456
+        created_at: '2026-03-10T08:00:00Z'
+        created_by: user_oid
+        last_updated_at: '2026-03-10T08:45:00Z'
+        status: CompletedWithErrors
+        dataset_cnt: 2000
+        completed_cnt: 1994
+        failed_cnt: 6
+        target_tier: Cold
         failed_datasets:
-        - sdpath: sd://tenant1/subproject1/dataset1
-          error: 'Storage tier change failed: Permission denied'
-        - sdpath: sd://tenant1/subproject1/dataset2
-          error: 'Storage tier change failed: Blob not found'
+        - sdpath: sd://opendes/project-alpha/seismic/survey-2024-001
+          error: Failed to change tier for 12 blob(s)
+        - sdpath: sd://opendes/project-alpha/seismic/survey-2024-002
+          error: 'Access denied: user is not authorized to modify this dataset (ACL
+            validation failed)'
+        - sdpath: sd://opendes/project-alpha/seismic/survey-2024-003
+          error: Failed to acquire lock
+        - sdpath: sd://opendes/project-alpha/seismic/survey-2024-004
+          error: Dataset has no associated storage location
+        - sdpath: sd://opendes/project-alpha/seismic/survey-2024-005
+          error: Dataset storage location has invalid format
+        - sdpath: sd://opendes/project-alpha/seismic/survey-2024-006
+          error: Tier changed but metadata update failed after retries
         cursor: ZXlKamIyNTBhVzUxWVhScGIyNVViMnRsYmlJNkltVjRZVzF3YkdVaWZRPT0
       properties:
         completed_cnt:
@@ -5617,8 +5626,8 @@ components:
       - status
     DatasetFailure:
       example:
-        sdpath: sd://tenant1/subproject1/dataset123
-        error: 'Storage tier change failed: Insufficient permissions'
+        sdpath: sd://opendes/project-alpha/seismic/survey-2024-001
+        error: Failed to change tier for 12 blob(s)
       properties:
         error:
           description: Error message describing why the dataset operation failed.
