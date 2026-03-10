@@ -5487,7 +5487,7 @@ components:
       - nextPageCursor
     Operation:
       example:
-        operation_id: c3d282e6-e7d1-40d8-8ac2-edc15b6d174c
+        operation_id: 9a8f2e31-4c67-4b8a-b123-abcdef123456
       properties:
         operation_id:
           description: Operation id of the operation job.
@@ -7465,6 +7465,63 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ChangeTierOperationStatus'
+              examples:
+                in-progress:
+                  summary: Operation in progress
+                  value:
+                    operation_id: 9a8f2e31-4c67-4b8a-b123-abcdef123456
+                    created_at: '2026-03-10T08:00:00Z'
+                    created_by: user_oid
+                    last_updated_at: '2026-03-10T08:15:00Z'
+                    status: InProgress
+                    dataset_cnt: 2000
+                    completed_cnt: 850
+                    failed_cnt: 0
+                    target_tier: Cool
+                completed-success:
+                  summary: Completed successfully (no failures)
+                  value:
+                    operation_id: 9a8f2e31-4c67-4b8a-b123-abcdef123456
+                    created_at: '2026-03-10T08:00:00Z'
+                    created_by: user_oid
+                    last_updated_at: '2026-03-10T08:45:00Z'
+                    status: Completed
+                    dataset_cnt: 2000
+                    completed_cnt: 2000
+                    failed_cnt: 0
+                    target_tier: Cool
+                completed-with-errors:
+                  summary: Completed with errors (show_details=true)
+                  value:
+                    operation_id: 9a8f2e31-4c67-4b8a-b123-abcdef123456
+                    created_at: '2026-03-10T08:00:00Z'
+                    created_by: user_oid
+                    last_updated_at: '2026-03-10T08:45:00Z'
+                    status: CompletedWithErrors
+                    dataset_cnt: 2000
+                    completed_cnt: 1994
+                    failed_cnt: 6
+                    target_tier: Cold
+                    failed_datasets:
+                      - sdpath: sd://opendes/project-alpha/seismic/survey-2024-001
+                        error: 'Failed to change tier for 12 blob(s)'
+                      - sdpath: sd://opendes/project-alpha/seismic/survey-2024-002
+                        error: 'Access denied: user is not authorized to modify this dataset'
+                      - sdpath: sd://opendes/project-alpha/seismic/survey-2024-003
+                        error: 'Failed to acquire lock'
+                    cursor: ZXlKamIyNTBhVzUxWVhScGIyNVViMnRsYmlJNkltVjRZVzF3YkdVaWZRPT0
+                completed-with-errors-no-details:
+                  summary: Completed with errors (show_details=false, default)
+                  value:
+                    operation_id: 9a8f2e31-4c67-4b8a-b123-abcdef123456
+                    created_at: '2026-03-10T08:00:00Z'
+                    created_by: user_oid
+                    last_updated_at: '2026-03-10T08:45:00Z'
+                    status: CompletedWithErrors
+                    dataset_cnt: 2000
+                    completed_cnt: 1994
+                    failed_cnt: 6
+                    target_tier: Cold
           description: Retrieved the change tier operation successfully.
         '400':
           description: Bad request.
