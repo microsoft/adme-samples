@@ -5617,18 +5617,16 @@ components:
         status:
           description: |
             Status of the operation job. Possible values:
-            - **Queued**: The operation has been accepted and is waiting to be processed.
+            - **NotStarted**: The operation has been accepted and is waiting to be processed.
             - **InProgress**: The operation is currently being processed.
             - **Completed**: The operation has finished successfully with all datasets processed.
             - **CompletedWithErrors**: The operation has finished but some datasets failed to process.
-            - **Failed**: The operation has failed entirely.
           type: string
           enum:
-            - Queued
+            - NotStarted
             - InProgress
             - Completed
             - CompletedWithErrors
-            - Failed
         target_tier:
           description: |
             Target storage tier for change-tier operations. Supported tiers:
