@@ -5566,7 +5566,7 @@ components:
         dataset_cnt: 2000
         completed_cnt: 1994
         failed_cnt: 6
-        target_tier: Cold
+        target_tier: Cool
         failed_datasets:
         - sdpath: sd://opendes/project-alpha/seismic/survey-2024-001
           error: Failed to change tier for 12 blob(s)
@@ -5615,12 +5615,31 @@ components:
           description: Operation id of the operation job.
           type: string
         status:
-          description: Status of the operation job.
+          description: |
+            Status of the operation job. Possible values:
+            - **Queued**: The operation has been accepted and is waiting to be processed.
+            - **InProgress**: The operation is currently being processed.
+            - **Completed**: The operation has finished successfully with all datasets processed.
+            - **CompletedWithErrors**: The operation has finished but some datasets failed to process.
+            - **Failed**: The operation has failed entirely.
           type: string
+          enum:
+            - Queued
+            - InProgress
+            - Completed
+            - CompletedWithErrors
+            - Failed
         target_tier:
-          description: Target storage tier for change-tier operations (e.g., Hot,
-            Cool, Cold).
+          description: |
+            Target storage tier for change-tier operations. Supported tiers:
+            - **Hot**: Optimized for frequent access. Highest storage cost, lowest access cost.
+            - **Cool**: Optimized for infrequent access. Lower storage cost, higher access cost.
+            - **Cold**: Optimized for rare access. Lowest storage cost, highest access cost.
           type: string
+          enum:
+            - Hot
+            - Cool
+            - Cold
       required:
       - operation_id
       - status
