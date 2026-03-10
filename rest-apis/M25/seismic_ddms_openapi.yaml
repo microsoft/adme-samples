@@ -1918,7 +1918,6 @@ components:
           - data.sdms.tenant.subproject.1b1417e5-fb0e-402a-b725-606723e50b76.admin@slb.p4d.cloud.slb-ds.com
           viewers:
           - data.sdms.tenant.subproject.1b1417e5-fb0e-402a-b725-606723e50b76.viewer@slb.p4d.cloud.slb-ds.com
-        change_tier: Cool
         dataset_new_name: dsx02
         filemetadata:
           f1: v1
@@ -2095,9 +2094,6 @@ components:
                 type: string
               type: array
           type: object
-        change_tier:
-          description: Tier to update the storage tier of a dataset.
-          type: string
         dataset_new_name:
           description: New name for the dataset.
           type: string
@@ -6239,8 +6235,8 @@ paths:
           <li>Patchable fields:
             <ul>
               <li><b>dataset_new_name:</b> new name to use for the dataset (rename).</li>
-              <li><b>filemetadata:</b> This is a seismic store specific field and describes how the physical data is stored in the cloud storage system (GCS/AzureContainer etc.). This metadata is mainly used by client libraries to correctly reconstruct the dataset. For example, you can store a dataset as truncated in multiple objects of 64MB each, name them from 0 to N and save the filemetadata as: <pre>{nObject: N, totalSize: 1024, objsize: 64, sizeUnit: MB}</pre></li>
-              <li><b>change_tier:</b> tier to update the storage tier of a dataset. If filemetadata.tier_class is also passed, filemetadata.tier_class must == change_tier.</li>
+              <li><b>filemetadata:</b> This is a seismic store specific field and describes how the physical data is stored in the cloud storage system (GCS/AzureContainer etc.). This metadata is mainly used by client libraries to correctly reconstruct the dataset. For example, you can store a dataset as truncated in multiple objects of 64MB each, name them from 0 to N and save the filemetadata as: <pre>{nObject: N, totalSize: 1024, objsize: 64, sizeUnit: MB}</pre>If filemetadata.tier_class is passed, change will be ignored. filemetadata.tier_class is 'readOnly' and can only be updated via a change tier operation.</li>
+              <li><b>change_tier:</b> tier to update the storage tier of a dataset.</li>
               <li><b>gtags:</b> Upsert tags to an existing dataset metadata. If the dataset metadata already has gtags, then new gtags are appended to this list.</li>
               <li><b>ltag:</b> Update the existing legalTag value.</li>
               <li><b>readonly:</b> Update the dataset mode to readonly (true) or to read/write (false).</li>
