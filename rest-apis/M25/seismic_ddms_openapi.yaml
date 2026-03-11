@@ -5451,6 +5451,8 @@ components:
           type: string
         connected_outer_services:
           type: array
+          items:
+            type: string
         group_id:
           type: string
       required:
@@ -5487,7 +5489,7 @@ components:
       - nextPageCursor
     Operation:
       example:
-        operation_id: c3d282e6-e7d1-40d8-8ac2-edc15b6d174c
+        operation_id: 9a8f2e31-4c67-4b8a-b123-abcdef123456
       properties:
         operation_id:
           description: Operation id of the operation job.
@@ -5556,6 +5558,105 @@ components:
       required:
       - operation_id
       - status
+    ChangeTierOperationStatus:
+      example:
+        operation_id: 9a8f2e31-4c67-4b8a-b123-abcdef123456
+        created_at: '2026-03-10T08:00:00Z'
+        created_by: user_oid
+        last_updated_at: '2026-03-10T08:45:00Z'
+        status: CompletedWithErrors
+        dataset_cnt: 2000
+        completed_cnt: 1994
+        failed_cnt: 6
+        target_tier: Cool
+        failed_datasets:
+        - sdpath: sd://opendes/project-alpha/seismic/survey-2024-001
+          error: Failed to change tier for 12 blob(s)
+        - sdpath: sd://opendes/project-alpha/seismic/survey-2024-002
+          error: 'Access denied: user is not authorized to modify this dataset (ACL
+            validation failed)'
+        - sdpath: sd://opendes/project-alpha/seismic/survey-2024-003
+          error: Failed to acquire lock
+        - sdpath: sd://opendes/project-alpha/seismic/survey-2024-004
+          error: Dataset has no associated storage location
+        - sdpath: sd://opendes/project-alpha/seismic/survey-2024-005
+          error: Dataset storage location has invalid format
+        - sdpath: sd://opendes/project-alpha/seismic/survey-2024-006
+          error: Tier changed but metadata update failed after retries
+        cursor: ZXlKamIyNTBhVzUxWVhScGIyNVViMnRsYmlJNkltVjRZVzF3YkdVaWZRPT0
+      properties:
+        completed_cnt:
+          description: Number of datasets correctly processed.
+          type: number
+        created_at:
+          description: Time when the operation was initiated.
+          type: string
+        created_by:
+          description: User who initiated the operation job.
+          type: string
+        cursor:
+          description: Base64 URL-safe encoded cursor to retrieve the next page of
+            failed datasets. Present only if there are more failures to fetch.
+          type: string
+        dataset_cnt:
+          description: Total number of datasets to process.
+          type: number
+        failed_cnt:
+          description: Number of datasets which processing failed.
+          type: number
+        failed_datasets:
+          description: Array of failed datasets with error details. Only included
+            when show_details=true and failed_cnt > 0.
+          items:
+            $ref: '#/components/schemas/DatasetFailure'
+          type: array
+        last_updated_at:
+          description: Time when the operation status was last updated.
+          type: string
+        operation_id:
+          description: Operation id of the operation job.
+          type: string
+        status:
+          description: |
+            Status of the operation job. Possible values:
+            - **NotStarted**: The operation has been accepted and is waiting to be processed.
+            - **InProgress**: The operation is currently being processed.
+            - **Completed**: The operation has finished successfully with all datasets processed.
+            - **CompletedWithErrors**: The operation has finished but some datasets failed to process.
+          type: string
+          enum:
+            - NotStarted
+            - InProgress
+            - Completed
+            - CompletedWithErrors
+        target_tier:
+          description: |
+            Target storage tier for change-tier operations. Supported tiers:
+            - **Hot**: Optimized for frequent access. Highest storage cost, lowest access cost.
+            - **Cool**: Optimized for infrequent access. Lower storage cost, higher access cost.
+            - **Cold**: Optimized for rare access. Lowest storage cost, highest access cost.
+          type: string
+          enum:
+            - Hot
+            - Cool
+            - Cold
+      required:
+      - operation_id
+      - status
+    DatasetFailure:
+      example:
+        sdpath: sd://opendes/project-alpha/seismic/survey-2024-001
+        error: Failed to change tier for 12 blob(s)
+      properties:
+        error:
+          description: Error message describing why the dataset operation failed.
+          type: string
+        sdpath:
+          description: The SDMS path of the dataset that failed (format sd://tenant/subproject/path/dataset).
+          type: string
+      required:
+      - sdpath
+      - error
     PaginatedDatasets:
       properties:
         datasets:
@@ -6188,29 +6289,28 @@ paths:
       tags:
       - Dataset
     patch:
-      description: "<ul>\n  <li>Update the dataset meta information in the seismic\
-        \ store or close (unlock) the dataset. If the endpoint is used without the\
-        \ close parameter, at least one body field is required or the endpoint will\
-        \ return an error.</li>\n  <li>Required roles:\n    <ul>\n      <li>subproject.admin:\
-        \ if the applied subproject policy is 'uniform'</li>\n      <li>dataset.admin:\
-        \ if the applied subproject policy is 'dataset'</li>\n    </ul>\n  </li>\n\
-        \  <li>Patchable fields:\n    <ul>\n      <li><b>dataset_new_name:</b> new\
-        \ name to use for the dataset (rename).</li>\n      <li><b>filemetadata:</b>\
-        \ This is a seismic store specific field and describes how the physical data\
-        \ is stored in the cloud storage system (GCS/AzureContainer etc.). This metadata\
-        \ is mainly used by client libraries to correctly reconstruct the dataset.\
-        \ For example, you can store a dataset as truncated in multiple objects of\
-        \ 64MB each, name them from 0 to N and save the filemetadata as: <pre>{nObject:\
-        \ N, totalSize: 1024, objsize: 64, sizeUnit: MB}</pre></li>\n      <li><b>change_tier:</b>\
-        \ tier to update the storage tier of a dataset. If filemetadata.tier_class\
-        \ is also passed, filemetadata.tier_class must == change_tier.</li>\n    \
-        \  <li><b>gtags:</b> Upsert tags to an existing dataset metadata. If the dataset\
-        \ metadata already has gtags, then new gtags are appended to this list.</li>\n\
-        \      <li><b>ltag:</b> Update the existing legalTag value.</li>\n      <li><b>readonly:</b>\
-        \ Update the dataset mode to readonly (true) or to read/write (false).</li>\n\
-        \      <li><b>status:</b> Update the dataset status.</li>\n    </ul>\n  </li>\n\
-        \  <li><b>NOTE:</b> last_modified_date is updated automatically with each\
-        \ metadata change through Patch endpoint calling.</li>\n</ul>\n"
+      description: |
+        <ul>
+          <li>Update the dataset meta information in the seismic store or close (unlock) the dataset. If the endpoint is used without the close parameter, at least one body field is required or the endpoint will return an error.</li>
+          <li>Required roles:
+            <ul>
+              <li>subproject.admin: if the applied subproject policy is 'uniform'</li>
+              <li>dataset.admin: if the applied subproject policy is 'dataset'</li>
+            </ul>
+          </li>
+          <li>Patchable fields:
+            <ul>
+              <li><b>dataset_new_name:</b> new name to use for the dataset (rename).</li>
+              <li><b>filemetadata:</b> This is a seismic store specific field and describes how the physical data is stored in the cloud storage system (GCS/AzureContainer etc.). This metadata is mainly used by client libraries to correctly reconstruct the dataset. For example, you can store a dataset as truncated in multiple objects of 64MB each, name them from 0 to N and save the filemetadata as: <pre>{nObject: N, totalSize: 1024, objsize: 64, sizeUnit: MB}</pre></li>
+              <li><b>change_tier:</b> tier to update the storage tier of a dataset. If filemetadata.tier_class is also passed, filemetadata.tier_class must == change_tier.</li>
+              <li><b>gtags:</b> Upsert tags to an existing dataset metadata. If the dataset metadata already has gtags, then new gtags are appended to this list.</li>
+              <li><b>ltag:</b> Update the existing legalTag value.</li>
+              <li><b>readonly:</b> Update the dataset mode to readonly (true) or to read/write (false).</li>
+              <li><b>status:</b> Update the dataset status.</li>
+            </ul>
+          </li>
+          <li><b>NOTE:</b> last_modified_date is updated automatically with each metadata change through Patch endpoint calling.</li>
+        </ul>
       operationId: dataset-patch
       parameters:
       - description: The impersonation token context (required only with impersonation
@@ -7303,7 +7403,7 @@ paths:
         schema:
           default: /a/b/c/
           type: string
-      - description: 'The target storage tier class: Hot, Cool, Cold, Archive'
+      - description: 'The target storage tier class: Hot, Cool, Cold'
         in: query
         name: tier
         required: true
@@ -7353,12 +7453,94 @@ paths:
         required: true
         schema:
           type: string
+      - description: Include detailed failure information for failed datasets. Set
+          to 'true' to retrieve the failures array.
+        in: query
+        name: show_details
+        required: false
+        schema:
+          default: false
+          type: boolean
+      - description: Maximum number of failed datasets to return per page (1-1000).
+          Only applicable when show_details is true.
+        in: query
+        name: limit
+        required: false
+        schema:
+          default: 100
+          maximum: 1000
+          minimum: 1
+          type: integer
+      - description: Base64 URL-safe encoded cursor from a previous response to retrieve
+          the next page of failures. Only applicable when show_details is true.
+        in: query
+        name: cursor
+        required: false
+        schema:
+          type: string
       responses:
         '200':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OperationStatus'
+                $ref: '#/components/schemas/ChangeTierOperationStatus'
+              examples:
+                in-progress:
+                  summary: Operation in progress
+                  value:
+                    operation_id: 9a8f2e31-4c67-4b8a-b123-abcdef123456
+                    created_at: '2026-03-10T08:00:00Z'
+                    created_by: user_oid
+                    last_updated_at: '2026-03-10T08:15:00Z'
+                    status: InProgress
+                    dataset_cnt: 2000
+                    completed_cnt: 850
+                    failed_cnt: 0
+                    target_tier: Cool
+                completed-success:
+                  summary: Completed successfully (no failures)
+                  value:
+                    operation_id: 9a8f2e31-4c67-4b8a-b123-abcdef123456
+                    created_at: '2026-03-10T08:00:00Z'
+                    created_by: user_oid
+                    last_updated_at: '2026-03-10T08:45:00Z'
+                    status: Completed
+                    dataset_cnt: 2000
+                    completed_cnt: 2000
+                    failed_cnt: 0
+                    target_tier: Cool
+                completed-with-errors:
+                  summary: Completed with errors (show_details=true)
+                  value:
+                    operation_id: 9a8f2e31-4c67-4b8a-b123-abcdef123456
+                    created_at: '2026-03-10T08:00:00Z'
+                    created_by: user_oid
+                    last_updated_at: '2026-03-10T08:45:00Z'
+                    status: CompletedWithErrors
+                    dataset_cnt: 2000
+                    completed_cnt: 1994
+                    failed_cnt: 6
+                    target_tier: Cold
+                    failed_datasets:
+                      - sdpath: sd://opendes/project-alpha/seismic/survey-2024-001
+                        error: 'Failed to change tier for 12 blob(s)'
+                      - sdpath: sd://opendes/project-alpha/seismic/survey-2024-002
+                        error: 'Access denied: user is not authorized to modify this dataset'
+                      - sdpath: sd://opendes/project-alpha/seismic/survey-2024-003
+                        error: 'Failed to acquire lock'
+                    cursor: ZXlKamIyNTBhVzUxWVhScGIyNVViMnRsYmlJNkltVjRZVzF3YkdVaWZRPT0
+                completed-with-errors-no-details:
+                  summary: Completed with errors (show_details=false, default)
+                  value:
+                    operation_id: 9a8f2e31-4c67-4b8a-b123-abcdef123456
+                    created_at: '2026-03-10T08:00:00Z'
+                    created_by: user_oid
+                    last_updated_at: '2026-03-10T08:45:00Z'
+                    status: CompletedWithErrors
+                    dataset_cnt: 2000
+                    completed_cnt: 1994
+                    failed_cnt: 6
+                    target_tier: Cold
           description: Retrieved the change tier operation successfully.
         '400':
           description: Bad request.
