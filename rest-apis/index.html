@@ -36,14 +36,25 @@
     <script src="../dist/swagger-ui-bundle.js" charset="UTF-8"> </script>
     <script src="../dist/swagger-ui-standalone-preset.js" charset="UTF-8"> </script>
     <script>
+    // =====================================================================
+    // Update LATEST_VERSION when a new milestone folder is added.
+    // This is the ONLY place you need to change when moving to a new version.
+    // =====================================================================
+    var LATEST_VERSION = "M25";
+
     window.onload = function() {
     var idx = document.URL.indexOf('?');
-    //var idx = document.URL.substring(idx + 1, document.URL.length).split('?');
-    var params = {}
-    params = document.URL.substring(idx + 1, document.URL.length).split('&');
+    var params = document.URL.substring(idx + 1, document.URL.length).split('&');
     var page = params[0].split('=');
     var pageUrl = page[1]
     pageUrl = pageUrl.replaceAll("%22", "")
+
+    // If the page parameter is just a filename (no path separators),
+    // automatically resolve it to the latest version folder.
+    if (pageUrl && pageUrl.indexOf('/') === -1) {
+      pageUrl = "/adme-samples/rest-apis/" + LATEST_VERSION + "/" + pageUrl;
+    }
+
       // Begin Swagger UI call region
       const ui = SwaggerUIBundle({
         url: pageUrl,
