@@ -6,7 +6,7 @@ We are enhancing OSDU's entitlement system by allowing customers to integrate Mi
 
 ## Problem
 
-ADME uses a 1P app to query the Entra ID graph in the customer's tenant. The current 1P app registered with ADME does not have the permissions to call into Entra ID and retrieve a user's group membership. This app needs to be updated, which cannot be done by the ADME team automatically. Customers of ADME will need to run the steps below in their environments.
+ADME uses a 1P app to query the Entra ID graph in the customer's tenant. The current 1P app (dffa\*) registered with ADME does not have the permissions to call into Entra ID and retrieve a user's group membership. This app needs to be updated to a new 1P app (bd0c\*), which cannot be done by the ADME team automatically. Customers of ADME will need to run the steps below in their environments.
 
 ## Permissions Needed
 
@@ -27,7 +27,7 @@ az login --tenant <TENANT_ID>
 
 **Find the existing Service Principal**
 
-To find the Service Principal in your tenant that was created for dffa 1P run [find-sp.sh](src/find-sp.sh). No argument is needed because the script defaults to dffa. The Service Principal is shown by *fpaResSpId*.
+To find the Service Principal in your tenant that was created for dffa\*, run [find-sp.sh](src/find-sp.sh). No argument is needed because the script defaults to dffa*. The Service Principal is shown by *fpaResSpId* in the output.
 
 ```text
 $ ./find-sp.sh
@@ -48,7 +48,7 @@ Inspect *servicePrincipalNames* and other current properties of the existing dff
 ./view-1p-app-details.sh
 ```
 
-At this point, the existing dffa Service Principal might still show `https://energy.azure.com`. If so, you must refresh the Service Principal.
+At this point, the existing dffa\* Service Principal might still show `https://energy.azure.com`. If so, you must refresh the Service Principal.
 
 **Refresh the Service Principal**
 
@@ -124,15 +124,15 @@ test.sh $ADME_INSTANCE
 }
 ```
 
-The steps above complete the work needed to enable support for Entra ID groups in OSDU entitlements. If you have existing App Registrations in one or more tenants (aka. 3P app) which you would like to continue using with the ability to authorize with AAD groups, please follow the steps below.
+The steps above complete the work needed to enable support for Entra ID groups in OSDU entitlements. If you have existing App Registrations in one or more tenants (aka. 3P app) which need to work with Azure Data Manager for Energy, please follow the steps below.
 
 ### Update App Registration
 
-a. Navigate to your App Registration in the Azure portal.
+a. Navigate to [App Registrations](https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationsListBlade) in the Azure portal and click on the App Registration that works with Azure Data Manager for Energy.
 
    ![](media/image2.png)
 
-b. Go to **Manage** -> **Authentication** -> **API Permissions**
+b. Go to **Manage** -> **API Permissions**
 
    ![API Permissions configuration](media/image3.png)
 
@@ -146,13 +146,15 @@ d. Click on **"Add a permission"** -> **"APIs my organization uses"** and search
 
    ![Add API permission](media/image6.png)
 
-e. Select **Delegated permissions** in ourder to use this feature
+e. Select **Delegated permissions** in order to use this feature
 
    ![Delegated permissions](media/image7.png)
 
 f. Save to see something like below
 
    ![Configured permissions](media/image8.png)
+
+   Repeat these steps for any other 3P App registered to work with Azure Data Manager for Energy.  
 
 ### Test App Registration
 
