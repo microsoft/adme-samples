@@ -36,7 +36,7 @@ Access to paritition service will soon be revoked in the future, it is recommend
 
 We are enhancing OSDU's entitlement system by allowing customers to integrate Microsoft Entra ID groups directly into access control workflows. This eliminates the need for customers to manage user memberships in multiple places, streamlining identity governance. By allowing Entra ID security groups to be added to OSDU groups, access decisions can be made dynamically at runtime using Microsoft Graph. This enables scalable, policy-driven authorization without duplicating group data. Customers gain flexibility to manage entitlements centrally, leverage dynamic group membership, take advantage of Entra ID's just-in-time (JIT) and Conditional Access policies and reduce operational overhead.
 
-For more informatation see [ADME Support for Authorization with Entra ID Groups](./entra-id-authorization/ADME%20Support%20for%20Authorization%20with%20Entra%20ID%20Groups-Customer%20Communication.md).
+For more informatation see [ADME Support for Authorization with Entra ID Groups](./entra-id-groups-authorization/ADME%20Support%20for%20Authorization%20with%20Entra%20ID%20Groups-Customer%20Communication.md).
 
 ## Contributing
 
