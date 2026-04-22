@@ -142,7 +142,7 @@ c. Delete any existing API permissions for "Azure Data Manager for Energy" if it
 
    ![](media/image5.png)
 
-d. Click on **"Add a permission"** -> **"APIs my organization uses"** and search for Azure Data Manager for Energy and select bd0c\*
+d. Click on **Add a permission** -> **APIs my organization uses** and search for Azure Data Manager for Energy and select bd0c\*
 
    ![Add API permission](media/image6.png)
 
