@@ -1,8 +1,8 @@
 # Azure Data Manager for Energy - Samples
 
-This repo contains samples for Azure Data Manager for Energy APIs.
+This repo contains samples for Azure Data Manager for Energy APIs. And for enabling and using ADME Entitlements Authorization with Entra ID groups.
 
-# REST API Reference
+## REST API Reference
 
 * [CRS Catalog Service](https://microsoft.github.io/adme-samples/rest-apis/index.html?page=crs_catalog_v3_openapi.yaml)
 * [CRS Conversion Service](https://microsoft.github.io/adme-samples/rest-apis/index.html?page=crs_converter_openapi.yaml)
@@ -31,6 +31,12 @@ This repo contains samples for Azure Data Manager for Energy APIs.
 **Note:** \
 Partition service's swagger is not uploaded to this repo because it is an internal service. Users are not expected to call the partition service directly. Partition service is called by other services indirectly for reading partition info. It's also invoked when users interact with the partition management section of ADME Azure portal experience and the ADME partition management APIs.\
 Access to paritition service will soon be revoked in the future, it is recommended by ADME team to not make direct API calls to the partition service.
+
+## ADME Entitlements Authorization wiht Entra ID Groups
+
+We are enhancing OSDU's entitlement system by allowing customers to integrate Microsoft Entra ID groups directly into access control workflows. This eliminates the need for customers to manage user memberships in multiple places, streamlining identity governance. By allowing Entra ID security groups to be added to OSDU groups, access decisions can be made dynamically at runtime using Microsoft Graph. This enables scalable, policy-driven authorization without duplicating group data. Customers gain flexibility to manage entitlements centrally, leverage dynamic group membership, take advantage of Entra ID's just-in-time (JIT) and Conditional Access policies and reduce operational overhead.
+
+For more informatation see [ADME Support for Authorization with Entra ID Groups](./entra-id-groups-authorization/ADME%20Support%20for%20Authorization%20with%20Entra%20ID%20Groups-Customer%20Communication.md).
 
 ## Contributing
 
