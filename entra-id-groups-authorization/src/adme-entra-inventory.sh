@@ -1,4 +1,87 @@
 #!/usr/bin/env bash
+#
+# adme-entra-inventory.sh
+# =======================
+# Customer-facing read-only inventory for the ADME Entra app migration.
+#
+# Why this script exists
+# ----------------------
+# Microsoft is replacing the "Azure Data Manager for Energy" (ADME) first-party
+# Entra app:
+#
+#     old (dffa): dffa82c7-cb2f-4a0a-9e8f-7e86fd7b245e
+#     new (bd0c): bd0c9d90-89ad-4bb3-97bc-d787b9f69cdc
+#
+# Before running the migration, customers often need a read-only view of:
+#   * the old and new ADME service principals in the current tenant
+#   * whether the shared ADME audience is still on dffa or has moved to bd0c
+#   * which client applications still appear to depend on dffa
+#
+# What this script does today
+# ---------------------------
+# This script is read-only with respect to Microsoft Graph and the tenant.
+# It inventories the current Azure CLI tenant context and writes JSON artifacts
+# that help an operator assess migration readiness.
+#
+#   * --scope all
+#       - writes companion JSON files for the dffa and bd0c service principals
+#       - writes a summary JSON file with the current migration-state assessment
+#       - writes a 3P client inventory JSON file for apps that appear to use dffa
+#
+#   * --scope adme-1p-service-principals (alias: adme-1p-sps)
+#       - writes only the dffa/bd0c companion JSON files plus the summary JSON
+#
+#   * --scope dffa-clients
+#       - writes only the 3P client inventory JSON plus the summary JSON
+#
+# Idempotency and operator expectations
+# -------------------------------------
+# This script does not patch, create, delete, or consent anything in the tenant.
+# Re-running it simply produces a fresh snapshot of the current tenant state and
+# writes a new set of timestamped artifacts.
+#
+# Required roles and access
+# -------------------------
+# Least-privilege interactive role for broad inventory: Directory Readers.
+# Full discovery also requires Microsoft Graph read access that covers service
+# principals and oauth2PermissionGrants.
+#
+# Least-privilege app permissions for equivalent non-interactive discovery:
+#   * Application.Read.All
+#   * Directory.Read.All
+#
+# If full discovery is unavailable, retry with:
+#   --scope adme-1p-service-principals
+# to capture only the dffa/bd0c service-principal state.
+#
+# Prerequisites
+# -------------
+#   * Required tools on PATH: az, jq
+#   * Sign in before running: az login --tenant <tenant-id>
+#   * If you use AZURE_CONFIG_DIR, set it in the shell before running this script
+#   * By default the script uses the current Azure CLI tenant context
+#
+# Outputs
+# -------
+# Default artifact directory: ./inventory-output/
+#
+# Depending on --scope, the script writes timestamped files such as:
+#   * dffa-sp-<timestamp>.json
+#   * bd0c-sp-<timestamp>.json
+#   * inventory-summary-<timestamp>.json
+#   * 3p-inventory-<timestamp>.json
+#
+# Current workflow limits
+# -----------------------
+#   * This is an assessment tool, not a migration tool
+#   * It does not change app manifests, grants, service principals, or consent
+#   * It helps identify likely dffa dependencies, but operators should still
+#     review the generated JSON before planning tenant changes
+#   * For limited-permission environments, the 1P service-principal scope is the
+#     safest fallback because it avoids broad 3P discovery requirements
+#   * Every run writes structured INFO/WARN/ERROR lines to stderr and to a
+#     timestamped log file under ./inventory-logs/
+#
 set -euo pipefail
 
 SCRIPT_NAME="$(basename -- "${BASH_SOURCE[0]}")"
@@ -14,6 +97,7 @@ SHARED_AUDIENCE_URI="https://energy.azure.com"
 OUTPUT_DIR="./inventory-output"
 STATE_OUTPUT_DIR="./inventory-state"
 LOG_OUTPUT_DIR="./inventory-logs"
+LOG_FILE=""
 AZURE_CLI_APP_ID="04b07795-8ddb-461a-bbee-02f9e1bf7b46"
 
 LAST_DFFA_PATH=""
@@ -27,10 +111,22 @@ timestamp() {
   date -u +"%Y-%m-%dT%H:%M:%SZ"
 }
 
+init_logging() {
+  mkdir -p "$LOG_OUTPUT_DIR"
+  LOG_FILE="$LOG_OUTPUT_DIR/adme-entra-inventory-$(date -u +%Y%m%dT%H%M%SZ).log"
+  : >"$LOG_FILE"
+}
+
 log() {
   local level="$1"
   shift
-  printf '%s [%s] %s\n' "$(timestamp)" "$level" "$*" >&2
+  local line
+
+  line="$(printf '%s [%s] %s' "$(timestamp)" "$level" "$*")"
+  printf '%s\n' "$line" >&2
+  if [[ -n "$LOG_FILE" ]]; then
+    printf '%s\n' "$line" >>"$LOG_FILE"
+  fi
 }
 
 log_step() {
@@ -314,17 +410,26 @@ Usage:
   $SCRIPT_NAME [--scope all|adme-1p-service-principals|adme-1p-sps|dffa-clients] [--label value]
 
 Description:
-  Read-only inventory preflight for ADME Entra migration.
+  Read-only tenant inventory for ADME Entra migration readiness.
   Defaults to the current Azure CLI tenant context.
 
 Options:
   --scope value    Inventory scope. Defaults to: all
-                   all                         Full inventory preflight
-                   adme-1p-service-principals  Only dffa/bd0c service principal preflight
+                   all                         Write dffa/bd0c companion files, summary JSON, and 3P inventory JSON
+                   adme-1p-service-principals  Write only dffa/bd0c companion files plus summary JSON
                    adme-1p-sps                 Alias for adme-1p-service-principals
-                   dffa-clients                3P app discovery preflight
-  --label value    Optional label reserved for later output filenames.
+                   dffa-clients                Write only the 3P inventory JSON plus summary JSON
+  --label value    Optional label appended to artifact filenames, for example: dffa-sp-baseline-<timestamp>.json
   -h, --help       Show this help text.
+
+Artifacts:
+  Default output directory: ./inventory-output/
+  Files written depend on --scope and include:
+    dffa-sp-<timestamp>.json
+    bd0c-sp-<timestamp>.json
+    inventory-summary-<timestamp>.json
+    3p-inventory-<timestamp>.json
+  Structured logs are also written under: ./inventory-logs/
 
 Prerequisites:
   Required tools: az, jq
@@ -332,6 +437,8 @@ Prerequisites:
   service principals and oauth2PermissionGrants.
   Least-privilege interactive role: Directory Readers.
   Least-privilege app permissions for full discovery: Application.Read.All + Directory.Read.All.
+  If full discovery is unavailable, retry with --scope adme-1p-service-principals for
+  dffa/bd0c service principal status only.
 EOF
 }
 
@@ -981,6 +1088,7 @@ main() {
   local config_dir tenant_id
 
   parse_args "$@"
+  init_logging
   load_runtime_overrides
   config_dir="$(current_config_dir)"
   tenant_id="$(run_preflight "$config_dir")"
