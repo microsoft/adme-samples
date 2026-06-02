@@ -38,6 +38,8 @@ We are enhancing OSDU's entitlement system by allowing customers to integrate Mi
 
 For more informatation see [ADME Support for Authorization with Entra ID Groups](./entra-id-groups-authorization/ADME%20Support%20for%20Authorization%20with%20Entra%20ID%20Groups-Customer%20Communication.md).
 
+On Nix or NixOS, run `nix develop` at the repo root to get Azure CLI, `jq`, and Python 3 with `msal` for the helper scripts under `entra-id-groups-authorization/src/`.
+
 ## Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a

@@ -1,16 +1,3 @@
----
-title: Enable Entra ID groups authorization in Azure Data Manager for Energy
-description: Use the primary ADME inventory and migration scripts to switch from the retiring first-party application to the replacement application and verify Entra ID groups authorization.
-author: kurtschenk
-ms.author: kurtschenk
-ms.service: azure-data-manager-energy
-ms.topic: how-to
-ms.date: 05/28/2026
-ms.custom:
-  - template-how-to
-# Customer intent: As a tenant administrator, I want a clear, script-first workflow for enabling Entra ID groups authorization and verifying the resulting app and token state.
----
-
 # Enable Entra ID groups authorization in Azure Data Manager for Energy
 
 This article shows how to enable Microsoft Entra ID groups authorization for OSDU entitlements in Azure Data Manager for Energy by switching from the retiring first-party application (`dffa82c7-cb2f-4a0a-9e8f-7e86fd7b245e`) to the replacement application (`bd0c9d90-89ad-4bb3-97bc-d787b9f69cdc`).
@@ -92,14 +79,11 @@ Next steps
   ./src/adme-entra-migration.sh migrate api-permissions --client-id <client-app-id>
 ```
 
-Treat **Per-app consent status** as a client-app planning signal. Current ADME telemetry does not show use of **dffa**. This means that even if some client applications still have API permissions defined for **dffa**, that access is not being used based on this telemetry.
+Treat **Per-app consent status** as a planning signal for deciding which client applications to migrate. It reflects how each application is *configured* today, so it reliably points to the apps that should have API permissions updated. 
 
-You can choose the option that best matches your operating posture:
+ADME telemetry shows almost no use of **dffa**, which means that if you have API permissions defined for **dffa** most likely they are not being used (in other words https://energy.azure.com is not being used as the audience when creating OAuth tokens). And this means the API permissions update can be done with no downtime.
 
-1. Run **Step 2** followed immediately by **Step 3** without planning for downtime, based on the current telemetry.
-2. Take the more cautious approach and schedule a downtime window. If inventory shows **API permissions update needed**, run **Step 3** immediately after **Step 2** for those apps. If inventory shows **Admin consent needed**, complete that consent in the same change window so affected apps do not remain in a partially migrated state.
-
-Use the **Per-app consent status** lines written to standard output to identify which client applications still reference the retiring resource, which ones will need the API-permissions migration, and which ones may require admin consent. The generated `3p-inventory-<timestamp>.json` file is available if you want a saved copy for later review.
+However, If you prefer a more conservative rollout, schedule a standard change window if inventory shows **API permissions update needed**. Run **Step 3** right after **Step 2** for those apps. And if inventory shows **Admin consent needed**, complete that consent in the same change window so each app finishes fully migrated.
 
 ## Step 2: Run the audience migration
 

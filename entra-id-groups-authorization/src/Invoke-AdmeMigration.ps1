@@ -1,4 +1,97 @@
 #!/usr/bin/env pwsh
+#
+# Invoke-AdmeMigration.ps1
+# ========================
+# Customer-facing helper for the ADME Entra ID app migration (PowerShell port of
+# adme-entra-migration.sh).
+#
+# Why this script exists
+# ----------------------
+# Microsoft is replacing the "Azure Data Manager for Energy" (ADME) first-party
+# Entra app:
+#
+#     old (dffa): dffa82c7-cb2f-4a0a-9e8f-7e86fd7b245e
+#     new (bd0c): bd0c9d90-89ad-4bb3-97bc-d787b9f69cdc
+#
+# Customer tenants that currently depend on the old app need to refresh the old
+# service principal, provision the new one, move client-app permissions, and
+# verify the resulting token paths. This script provides the same workflow as
+# adme-entra-migration.sh for operators who prefer PowerShell.
+#
+# What this script does today
+# ---------------------------
+#   * migrate adme-audience
+#       - refreshes the old resource (dffa) service principal in the customer tenant
+#       - ensures the new resource (bd0c) service principal exists
+#       - ensures Microsoft Azure CLI has the delegated grant needed for the
+#         new ADME scope
+#       - by default stops before any destructive change; --allow-recreate-dffa
+#         opts in to a guarded dffa delete/recreate fallback if the refresh stays
+#         stale after bounded retries
+#   * migrate api-permissions
+#       - patches the client app selected by --client-id toward the new ADME
+#         requiredResourceAccess
+#       - by default, prints one tenant-wide admin-consent action for the
+#         customer app after the manifest update
+#       - with --auto-grant, creates the delegated grant and, when applicable,
+#         the new ADME app-role assignment for the client app
+#   * verify
+#       - validates customer-tenant state, grant wiring, and the post-migration
+#         token paths
+#       - optionally proves a selected client app's app-only token when given
+#         --client-id and a secret (--client-secret or the CLIENT_SECRET env var)
+#
+# Idempotency and operator expectations
+# -------------------------------------
+# The mutating commands are intended to be safe to re-run:
+#   * migrate adme-audience rechecks current state before patching/creating
+#     objects
+#   * migrate api-permissions validates and reapplies the target client-app
+#     configuration as needed
+# verify is read-only with respect to Microsoft Graph, although it can request
+# tokens using the configured Azure CLI and client-app credentials.
+#
+# Required roles and access
+# -------------------------
+#   * migrate adme-audience / migrate api-permissions:
+#       Application Administrator, Cloud Application Administrator, or Global
+#       Administrator in the customer tenant
+#   * verify:
+#       Azure CLI access to the target tenant
+#
+# Command-line and PowerShell invocation
+# --------------------------------------
+# Commands and options use the same bash-style flags as adme-entra-migration.sh
+# (for example: migrate adme-audience [--allow-recreate-dffa]). Equivalent
+# PowerShell named parameters are also accepted:
+#   -StateDir, -OutputLogging, -Yes, -AllowRecreateDffa, -ClientId,
+#   -ClientSecret, -AutoGrant, -Help
+# Run with -h, --help, or -Help for full usage.
+#
+# Prerequisites
+# -------------
+#   * PowerShell 7+ (pwsh); Azure Cloud Shell is the recommended environment
+#   * Required tools on PATH: az (JSON is parsed with built-in ConvertFrom-Json,
+#     so jq is not required)
+#   * Optional for the enhanced delegated verify proof and selected-client
+#     app-only proof: python3 with the msal package
+#   * Sign in before running: az login --tenant <tenant-id>
+#   * If you use AZURE_CONFIG_DIR, set it in the shell before running this script
+#
+# Current workflow limits
+# -----------------------
+#   * This is a single-client-app operational script, not a batch migration
+#     tool
+#   * It does not perform Azure portal follow-up steps for the operator
+#   * The default client-app consent path remains operator-visible via one
+#     tenant-wide admin-consent action
+#   * It validates customer-tenant state by default; when HOME_CONFIG_DIR is
+#     available, migrate adme-audience can use home-tenant application metadata
+#     as the canonical servicePrincipalNames source for direct repair.
+#   * Every run writes structured INFO/WARN/ERROR lines to stderr and to a
+#     timestamped log file under ./migration-logs/ unless --output-logging
+#     overrides the directory
+#
 [CmdletBinding(PositionalBinding = $false)]
 param(
     [Parameter(ValueFromRemainingArguments = $true)]

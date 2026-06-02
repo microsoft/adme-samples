@@ -34,6 +34,18 @@
 #   * --scope dffa-clients
 #       - writes only the 3P client inventory JSON plus the summary JSON
 #
+# Terminal output
+# ---------------
+# Besides the JSON artifacts, every run prints a human-readable summary to the
+# terminal so an operator can act without opening the files:
+#   * an audience-migration banner plus the shared-audience owner and the overall
+#     migration state (pre-migration, partial, migrated, requires-3p-assessment)
+#   * for each discovered dffa-dependent client app, a per-app consent status
+#     ("Admin consent needed" vs "No action needed")
+#   * a "Next steps" block with the concrete adme-entra-migration.sh commands
+#     (migrate adme-audience / migrate api-permissions) tailored to the detected
+#     state, including any admin-consent follow-up
+#
 # Idempotency and operator expectations
 # -------------------------------------
 # This script does not patch, create, delete, or consent anything in the tenant.

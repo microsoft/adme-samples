@@ -19,7 +19,8 @@
 # What this script does today
 # ---------------------------
 #   * migrate adme-audience
-#       - refreshes the old resource (dffa) service principal in the customer tenant
+#       - refreshes the old resource (dffa) service principal in the customer tenant.
+#       - by default PATCH's dffa but --allow-recreate-dffa allows for a delete/recreate
 #       - ensures the new resource (bd0c) service principal exists
 #       - ensures Microsoft Azure CLI has the delegated grant needed for the
 #         new ADME scope
@@ -33,6 +34,8 @@
 #   * verify
 #       - validates customer-tenant state, grant wiring, and the post-migration
 #         token paths
+#       - optionally proves a selected client app's app-only token when given
+#         --client-id and a secret (--client-secret or the CLIENT_SECRET env var)
 #
 # Idempotency and operator expectations
 # -------------------------------------
