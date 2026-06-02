@@ -348,3 +348,14 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+
+# todos
+# TODO.md
+
+# ADME inventory/script runtime artifacts
+inventory-output/
+inventory-state/
+inventory-logs/
+output-logging/
+adme-3p-inventory.json
+entra-id*/top-priority-improvements.md

@@ -10,6 +10,35 @@ import http.client as http_client
 from pathlib import Path
 from typing import Dict, List, Optional
 
+
+def print_usage() -> None:
+    print(
+        """Usage:
+  get-token.py [--help] [--self-test]
+
+Options:
+  --help       Print this help text and exit without token acquisition.
+  --self-test  Print a short readiness message and exit without token acquisition.
+"""
+    )
+
+
+def maybe_handle_probe_mode(argv: List[str]) -> Optional[int]:
+    if "--help" in argv or "-h" in argv:
+        print_usage()
+        return 0
+
+    if "--self-test" in argv:
+        print("get-token.py self-test: OK")
+        return 0
+
+    return None
+
+
+probe_exit = maybe_handle_probe_mode(sys.argv[1:])
+if probe_exit is not None:
+    sys.exit(probe_exit)
+
 import msal
 import webbrowser
 from http.server import HTTPServer, BaseHTTPRequestHandler

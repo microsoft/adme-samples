@@ -39,17 +39,58 @@ command_name="${1:-show}"
 fpaAppId="${2:-dffa82c7-cb2f-4a0a-9e8f-7e86fd7b245e}"
 stateFile="${3:-/tmp/entra-sp-refresh-${fpaAppId}.json}"
 
+service_principal_json() {
+  local sp_id="$1"
+  az rest -m GET \
+    -u "https://graph.microsoft.com/v1.0/servicePrincipals/$sp_id" -o json
+}
+
 resolve_sp_id() {
   az rest -m GET \
     -u "https://graph.microsoft.com/v1.0/servicePrincipals?\$filter=appId eq '$fpaAppId'" \
     --query "value[0].id" -o tsv 2>/dev/null || true
 }
 
+expected_service_principal_names_json() {
+  case "$1" in
+    dffa82c7-cb2f-4a0a-9e8f-7e86fd7b245e)
+      jq -cn --arg appId "$1" --arg oldUri "https://energy-old.azure.com" --arg sharedUri "https://energy.azure.com" \
+        '[$appId, $oldUri, $sharedUri]'
+      ;;
+    bd0c9d90-89ad-4bb3-97bc-d787b9f69cdc)
+      jq -cn --arg appId "$1" --arg apiUri "api://$1" --arg newUri "https://energy-new.azure.com" --arg sharedUri "https://energy.azure.com" \
+        '[$appId, $apiUri, $newUri, $sharedUri]'
+      ;;
+    *)
+      jq -cn --arg appId "$1" '[$appId]'
+      ;;
+  esac
+}
+
+validated_service_principal_json() {
+  local sp_id="$1"
+  local expected_app_id="$2"
+  local sp_json expected_names_json
+
+  sp_json="$(service_principal_json "$sp_id")"
+  expected_names_json="$(expected_service_principal_names_json "$expected_app_id")"
+
+  jq -e \
+    --arg appId "$expected_app_id" \
+    --argjson expectedNames "$expected_names_json" '
+      (.servicePrincipalNames // []) as $actualNames
+      |
+      .appId == $appId
+      and ((.displayName // "") | length > 0)
+      and all($expectedNames[]; . as $expectedName | ($actualNames | index($expectedName) != null))
+    ' <<<"$sp_json" >/dev/null || die "Resolved service principal $sp_id does not match the expected identity for appId $expected_app_id"
+
+  printf '%s\n' "$sp_json"
+}
+
 show_sp() {
   local spId="$1"
-  az rest -m GET \
-    -u "https://graph.microsoft.com/v1.0/servicePrincipals/$spId" -o json \
-  | jq '{
+  service_principal_json "$spId" | jq '{
       id,
       appId,
       displayName,
@@ -71,9 +112,8 @@ case "$command_name" in
     show_sp "$spId"
     ;;
   apply)
-    originalTags="$(az rest -m GET \
-      -u "https://graph.microsoft.com/v1.0/servicePrincipals/$spId" \
-      --query 'tags' -o json)"
+    spJson="$(validated_service_principal_json "$spId" "$fpaAppId")"
+    originalTags="$(jq -c '.tags // []' <<<"$spJson")"
 
     refreshTag="ADME.RefreshProbe.$(date -u +%Y%m%dT%H%M%SZ).$(printf '%s' "${fpaAppId}-$$-$(date -u +%s)" | sha256sum | cut -c1-8)"
     patchedTags="$(jq -cn --argjson tags "$originalTags" --arg refreshTag "$refreshTag" '$tags + [$refreshTag] | unique')"
@@ -96,8 +136,11 @@ case "$command_name" in
   cleanup)
     [[ -f "$stateFile" ]] || die "State file not found: $stateFile"
 
+    restoreAppId="$(jq -r '.appId' "$stateFile")"
     restoreSpId="$(jq -r '.spId' "$stateFile")"
     restoreTags="$(jq -c '.originalTags' "$stateFile")"
+    [[ "$restoreAppId" == "$fpaAppId" ]] || die "State file appId $restoreAppId does not match requested appId $fpaAppId"
+    validated_service_principal_json "$restoreSpId" "$restoreAppId" >/dev/null
 
     az rest -m PATCH \
       -u "https://graph.microsoft.com/v1.0/servicePrincipals/$restoreSpId" \
