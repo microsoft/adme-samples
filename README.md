@@ -1,5 +1,7 @@
 # Azure Data Manager for Energy - Samples
 
+> **⚠️ Important:** This site will not be updated after **M26**. The REST API references published here are a point-in-time snapshot and will not receive further updates. For the latest API definitions and to test endpoints, please use the Swagger pages available directly from your ADME instance.
+
 This repo contains samples for Azure Data Manager for Energy APIs. And for enabling and using ADME Entitlements Authorization with Entra ID groups.
 
 ## REST API Reference
