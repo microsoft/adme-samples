@@ -1962,9 +1962,7 @@ tags:
   name: query
 - description: Health Check API
   name: health-check-api
-- description: Copying record references management operations
-  name: records
-- description: Records management operations
+- description: Records management operations, including copying record references
   name: records
 - description: Version info endpoint
   name: info
