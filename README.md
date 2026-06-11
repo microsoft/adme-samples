@@ -1,5 +1,7 @@
 # Azure Data Manager for Energy - Samples
 
+> **⚠️ Important:** This site will not be updated after **M26**. The REST API references published here are a point-in-time snapshot and will not receive further updates. For the latest API definitions and to test endpoints, please use the Swagger pages available directly from your ADME instance.
+
 This repo contains samples for Azure Data Manager for Energy APIs. And for enabling and using ADME Entitlements Authorization with Entra ID groups.
 
 ## REST API Reference
@@ -16,7 +18,7 @@ This repo contains samples for Azure Data Manager for Energy APIs. And for enabl
 * [Petrel DDMS Service](https://microsoft.github.io/adme-samples/rest-apis/index.html?page=petrel_ddms_openapi.yaml)
 * [Register Service](https://microsoft.github.io/adme-samples/rest-apis/index.html?page=register_openapi.yaml)
 * [Reservoir DDMS Service](https://microsoft.github.io/adme-samples/rest-apis/index.html?page=reservoir_openapi.yaml)
-* [Rock and Fluid Sample DDMS](https://microsoft.github.io/adme-samples/rest-apis/index.html?page=rock_and_fluid_sample_ddms.yaml)
+* [Rock and Fluid Sample DDMS](https://microsoft.github.io/adme-samples/rest-apis/index.html?page=rock_and_fluid_sample_ddms_openapi.yaml)
 * [Schema Service](https://microsoft.github.io/adme-samples/rest-apis/index.html?page=schema_openapi.yaml)
 * [Search Service](https://microsoft.github.io/adme-samples/rest-apis/index.html?page=search_openapi.yaml)
 * [Secret Service](https://microsoft.github.io/adme-samples/rest-apis/index.html?page=secret_openapi.yaml)
@@ -25,7 +27,6 @@ This repo contains samples for Azure Data Manager for Energy APIs. And for enabl
 * [Storage Service](https://microsoft.github.io/adme-samples/rest-apis/index.html?page=storage_openapi.yaml)
 * [Unit Service](https://microsoft.github.io/adme-samples/rest-apis/index.html?page=unit_openapi.yaml)
 * [Wellbore DDMS Service](https://microsoft.github.io/adme-samples/rest-apis/index.html?page=wellbore_ddms_openapi.yaml)
-* [Well Delivery DDMS Service](https://microsoft.github.io/adme-samples/rest-apis/index.html?page=welldelivery_ddms_openapi.yaml)
 * [Workflow Service](https://microsoft.github.io/adme-samples/rest-apis/index.html?page=ingestion_worflow_openapi.yaml)
 
 **Note:** \
